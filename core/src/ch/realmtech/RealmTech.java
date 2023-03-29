@@ -9,6 +9,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -21,6 +23,7 @@ public final class RealmTech extends Game{
     public final static int SCREEN_WIDTH = 1024;
     public final static int SCREEN_HEIGHT = 576;
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
+    public final static float UNITE_SCALE = 1 / 32f;
     private final String TAG = RealmTech.class.getSimpleName();
     private EnumMap<ScreenType, AbstractScreen> screenCash;
     private AssetManager assetManager;
@@ -35,6 +38,7 @@ public final class RealmTech extends Game{
         assetManager = new AssetManager();
         initSkin();
         initHealper();
+        initMap();
         screenCash = new EnumMap<>(ScreenType.class);
         gameStage = new Stage(
                 new FitViewport(WORLD_WIDTH, WORLD_HEIGHT,
@@ -42,6 +46,7 @@ public final class RealmTech extends Game{
         uiStage = new Stage(
                 new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
+        ecsEngine = new ECSEngine(this);
         setScreen(ScreenType.LOADING);
         setScreen(ScreenType.LOADING);
     }
@@ -62,6 +67,12 @@ public final class RealmTech extends Game{
 		assetManager.finishLoading();
 		skin = assetManager.get("skin/uiSkinComposer.json", Skin.class);
 		Gdx.app.debug(TAG, "skin initialise");
+    }
+
+    private void initMap() {
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
+        assetManager.load("map/mapTest.tmx", TiledMap.class);
+        Gdx.app.debug(TAG, "Map test chargé");
     }
 
     public void setScreen(final ScreenType screenType) {
