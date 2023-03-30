@@ -11,6 +11,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2D;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -31,6 +34,7 @@ public final class RealmTech extends Game{
     private Stage uiStage;
     private Skin skin;
 	private ECSEngine ecsEngine;
+    public World world;
 
     @Override
     public void create() {
@@ -39,6 +43,8 @@ public final class RealmTech extends Game{
         initSkin();
         initHealper();
         initMap();
+        Box2D.init();
+        world = new World(new Vector2(0, 0), true);
         screenCash = new EnumMap<>(ScreenType.class);
         gameStage = new Stage(
                 new FitViewport(WORLD_WIDTH, WORLD_HEIGHT,

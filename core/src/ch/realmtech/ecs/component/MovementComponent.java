@@ -1,16 +1,23 @@
 package ch.realmtech.ecs.component;
 
 import ch.realmtech.ecs.PoolableComponent;
+import com.badlogic.gdx.math.Vector2;
 
 public class MovementComponent implements PoolableComponent {
-    public float speedUnite;
+    public Vector2 speed;
+    public float maxSpeedUnite;
+    public float speedMeterParSeconde;
 
-    public MovementComponent(float speedUniteParSeconde) {
-        this.speedUnite = speedUniteParSeconde;
+    public MovementComponent(float speedMeterParSeconde, float maxSpeedUnite) {
+        this.speedMeterParSeconde = speedMeterParSeconde;
+        this.maxSpeedUnite = maxSpeedUnite;
+        speed = new Vector2();
     }
 
     @Override
     public void reset() {
-        speedUnite = 0;
+        speedMeterParSeconde = 0;
+        maxSpeedUnite = 0;
+        speed.set(0,0);
     }
 }

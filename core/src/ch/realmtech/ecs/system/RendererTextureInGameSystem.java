@@ -11,7 +11,7 @@ import static ch.realmtech.RealmTech.PPM;
 public class RendererTextureInGameSystem extends IteratingSystem {
     private final Batch batch;
     public RendererTextureInGameSystem(Batch batch) {
-        super(Family.all(PossitionComponent.class).all(TextureComponent.class).get());
+        super(Family.all(PossitionComponent.class).all(TextureComponent.class).get(),10);
         this.batch = batch;
     }
 
