@@ -4,11 +4,13 @@ import ch.realmtech.RealmTech;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
@@ -70,19 +72,15 @@ public class GameScreen extends AbstractScreen {
     private void creerTiledMap(TiledMap tiledMap) {
         int width = 10;
         int height = 10;
-        TextureRegion violet = new TextureRegion(new Texture(Gdx.files.internal("map/violet.png")));
+        TextureAtlas groundTitlesAtlas = context.getAssetManager().get("texture/atlas/ground/ground-tiles.atlas", TextureAtlas.class);
+
         tiledMap.getLayers().add(new TiledMapTileLayer(width, height, 32, 32));
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (i % 2 == 0 && j % 2 == 0) {
-                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                    cell.setTile(new StaticTiledMapTile(violet));
-                    ((TiledMapTileLayer) tiledMap.getLayers().get(0)).setCell(i, j, cell);
-                } else if (i % 2 == 1 && j % 2 == 1) {
-                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                    cell.setTile(new StaticTiledMapTile(violet));
-                    ((TiledMapTileLayer) tiledMap.getLayers().get(0)).setCell(i, j, cell);
-                }
+                int randomInt = MathUtils.random(0,groundTitlesAtlas.getRegions().size -1);
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                cell.setTile(new StaticTiledMapTile(groundTitlesAtlas.getRegions().get(randomInt)));
+                ((TiledMapTileLayer) tiledMap.getLayers().get(0)).setCell(i, j, cell);
             }
         }
     }
