@@ -10,6 +10,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
@@ -80,7 +81,8 @@ public final class RealmTech extends Game{
 
     private void initMap() {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
-        assetManager.load("map/mapTest.tmx", TiledMap.class);
+        assetManager.load("map/mapTest.tmx", TiledMap.class); // TODO a supprimer un jour, inutilisé
+        assetManager.load("texture/atlas/ground/ground-tiles.atlas", TextureAtlas.class);
         Gdx.app.debug(TAG, "Map test chargé");
     }
 

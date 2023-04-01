@@ -1,0 +1,97 @@
+
+ground-tiles.png
+size: 512, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+grass01
+  rotate: false
+  xy: 70, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+grass02
+  rotate: false
+  xy: 172, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+grass03
+  rotate: false
+  xy: 240, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+grass04
+  rotate: false
+  xy: 376, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+sand01
+  rotate: false
+  xy: 2, 2
+  size: 32, 33
+  orig: 32, 33
+  offset: 0, 0
+  index: 9
+sand02
+  rotate: false
+  xy: 36, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+sand03
+  rotate: false
+  xy: 36, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+sand04
+  rotate: false
+  xy: 104, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+sand05
+  rotate: false
+  xy: 138, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 6
+sand06
+  rotate: false
+  xy: 206, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 8
+sand07
+  rotate: false
+  xy: 274, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
+sand08
+  rotate: false
+  xy: 308, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+sand09
+  rotate: false
+  xy: 342, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 7
