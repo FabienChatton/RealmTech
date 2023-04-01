@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.ecs.component.*;
 import ch.realmtech.ecs.system.PlayerMouvementSystem;
 import ch.realmtech.ecs.system.RendererTextureInGameSystem;
+import ch.realmtech.ecs.system.UpdateBox2dWithTextureSystem;
 import ch.realmtech.ecs.system.WorldStepSystem;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -28,9 +29,10 @@ public final class ECSEngine extends PooledEngine {
 
     public ECSEngine(final RealmTech context) {
         this.context = context;
-        addSystem(new RendererTextureInGameSystem(context.getGameStage().getBatch()));
         addSystem(new PlayerMouvementSystem(context));
         addSystem(new WorldStepSystem(context.world));
+        addSystem(new UpdateBox2dWithTextureSystem());
+        addSystem(new RendererTextureInGameSystem(context.getGameStage().getBatch()));
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
     }

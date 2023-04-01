@@ -2,10 +2,7 @@ package ch.realmtech.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.ecs.ECSEngine;
-import ch.realmtech.ecs.component.Box2dComponent;
-import ch.realmtech.ecs.component.MovementComponent;
-import ch.realmtech.ecs.component.PlayerComponent;
-import ch.realmtech.ecs.component.PossitionComponent;
+import ch.realmtech.ecs.component.*;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -23,6 +20,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 .all(MovementComponent.class)
                 .all(PossitionComponent.class)
                 .all(Box2dComponent.class)
+                .all(TextureComponent.class)
                 .get()
         ,-10);
         this.context = context;
@@ -30,10 +28,9 @@ public class PlayerMouvementSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        final PlayerComponent playerComponent = ECSEngine.PLAYER_COMPONENT_MAPPER.get(entity);
-        final PossitionComponent possitionComponent = ECSEngine.POSSITION_COMPONENT_MAPPER.get(entity);
         final MovementComponent movementComponent = ECSEngine.MOVEMENT_COMPONENT_MAPPER.get(entity);
         final Box2dComponent box2dComponent = ECSEngine.BOX2D_COMPONENT_MAPPER.get(entity);
+        final PlayerComponent playerComponent = ECSEngine.PLAYER_COMPONENT_MAPPER.get(entity);
         // TODO mettre une vrai gestion des input
         xFactor = 0;
         yFactor = 0;
@@ -73,10 +70,5 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 worldCenter.y,
                 true
         );
-        possitionComponent.x = box2dComponent.body.getWorldCenter().x - box2dComponent.widthWorld / 2;
-        possitionComponent.y = box2dComponent.body.getWorldCenter().y - box2dComponent.heightWorld / 2;
-//        if (!(Gdx.input.isKeyPressed(Input.Keys.W) | Gdx.input.isKeyPressed(Input.Keys.A) | Gdx.input.isKeyPressed(Input.Keys.S) | Gdx.input.isKeyPressed(Input.Keys.D))) {
-//            directionChange = false;
-//        }
     }
 }
