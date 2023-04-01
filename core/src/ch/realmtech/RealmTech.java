@@ -2,6 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.ecs.ECSEngine;
 import ch.realmtech.healper.HealperSetContext;
+import ch.realmtech.input.InputManager;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import com.badlogic.gdx.Application;
@@ -28,6 +29,7 @@ public final class RealmTech extends Game{
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
     private final String TAG = RealmTech.class.getSimpleName();
+    private InputManager inputManager;
     private EnumMap<ScreenType, AbstractScreen> screenCash;
     private AssetManager assetManager;
     private Stage gameStage;
@@ -44,6 +46,7 @@ public final class RealmTech extends Game{
         initHealper();
         initMap();
         Box2D.init();
+        inputManager = InputManager.getInstance();
         world = new World(new Vector2(0, 0), true);
         screenCash = new EnumMap<>(ScreenType.class);
         gameStage = new Stage(
@@ -115,6 +118,10 @@ public final class RealmTech extends Game{
 
     public AssetManager getAssetManager() {
         return assetManager;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 
     @Override

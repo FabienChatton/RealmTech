@@ -3,6 +3,7 @@ package ch.realmtech.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.ecs.ECSEngine;
 import ch.realmtech.ecs.component.*;
+import ch.realmtech.input.InputManager;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -34,22 +35,39 @@ public class PlayerMouvementSystem extends IteratingSystem {
         // TODO mettre une vrai gestion des input
         xFactor = 0;
         yFactor = 0;
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (context.getInputManager().isKeyPressed(InputManager.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (context.getInputManager().isKeyPressed(InputManager.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+        if (context.getInputManager().isKeyPressed(InputManager.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (context.getInputManager().isKeyPressed(InputManager.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
         }
+
+//        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+//            directionChange = true;
+//            yFactor = 1;
+//        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+//            directionChange = true;
+//            xFactor = -1;
+//        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+//            directionChange = true;
+//            yFactor = -1;
+//        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+//            directionChange = true;
+//            xFactor = 1;
+//        }
 
         if (directionChange) {
             directionChange = false;

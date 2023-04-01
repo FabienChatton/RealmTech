@@ -2,14 +2,12 @@ package ch.realmtech.ecs;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.ecs.component.*;
-import ch.realmtech.ecs.system.PlayerMouvementSystem;
-import ch.realmtech.ecs.system.RendererTextureInGameSystem;
-import ch.realmtech.ecs.system.UpdateBox2dWithTextureSystem;
-import ch.realmtech.ecs.system.WorldStepSystem;
+import ch.realmtech.ecs.system.*;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -32,7 +30,8 @@ public final class ECSEngine extends PooledEngine {
         addSystem(new PlayerMouvementSystem(context));
         addSystem(new WorldStepSystem(context.world));
         addSystem(new UpdateBox2dWithTextureSystem());
-        addSystem(new RendererTextureInGameSystem(context.getGameStage().getBatch()));
+        addSystem(new RendererTextureInGameSystem(context.getGameStage()));
+        addSystem(new CameraFollowPlayerSystem((OrthographicCamera) context.getGameStage().getCamera()));
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
     }
