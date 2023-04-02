@@ -1,8 +1,8 @@
-package ch.realmtech.ecs;
+package ch.realmtech.game.ecs;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.ecs.component.*;
-import ch.realmtech.ecs.system.*;
+import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.ecs.system.*;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;

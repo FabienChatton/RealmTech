@@ -1,7 +1,7 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.ecs.ECSEngine;
+import ch.realmtech.game.ecs.ECSEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;

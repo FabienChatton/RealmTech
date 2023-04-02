@@ -1,14 +1,12 @@
-package ch.realmtech.ecs.system;
+package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.ecs.ECSEngine;
-import ch.realmtech.ecs.component.*;
-import ch.realmtech.input.InputManager;
+import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.input.InputMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 
 public class PlayerMouvementSystem extends IteratingSystem {
@@ -35,19 +33,19 @@ public class PlayerMouvementSystem extends IteratingSystem {
         // TODO mettre une vrai gestion des input
         xFactor = 0;
         yFactor = 0;
-        if (context.getInputManager().isKeyPressed(InputManager.moveForward.key)) {
+        if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
         }
-        if (context.getInputManager().isKeyPressed(InputManager.moveLeft.key)) {
+        if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
         }
-        if (context.getInputManager().isKeyPressed(InputManager.moveBack.key)) {
+        if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
         }
-        if (context.getInputManager().isKeyPressed(InputManager.moveRight.key)) {
+        if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
         }

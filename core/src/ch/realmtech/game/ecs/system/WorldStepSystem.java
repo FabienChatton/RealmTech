@@ -1,4 +1,4 @@
-package ch.realmtech.ecs.system;
+package ch.realmtech.game.ecs.system;
 
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.physics.box2d.World;

@@ -1,8 +1,7 @@
-package ch.realmtech.ecs.component;
+package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.ecs.PoolableComponent;
+import ch.realmtech.game.ecs.PoolableComponent;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class TextureComponent implements PoolableComponent {
     public Texture texture;

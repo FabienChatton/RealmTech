@@ -1,8 +1,8 @@
-package ch.realmtech.ecs.system;
+package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.ecs.ECSEngine;
-import ch.realmtech.ecs.component.PlayerComponent;
-import ch.realmtech.ecs.component.PossitionComponent;
+import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.ecs.component.PlayerComponent;
+import ch.realmtech.game.ecs.component.PossitionComponent;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;

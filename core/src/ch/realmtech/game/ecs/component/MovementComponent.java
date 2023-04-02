@@ -1,6 +1,6 @@
-package ch.realmtech.ecs.component;
+package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.ecs.PoolableComponent;
+import ch.realmtech.game.ecs.PoolableComponent;
 import com.badlogic.gdx.math.Vector2;
 
 public class MovementComponent implements PoolableComponent {

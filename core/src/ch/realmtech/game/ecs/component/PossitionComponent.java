@@ -1,6 +1,6 @@
-package ch.realmtech.ecs.component;
+package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.ecs.PoolableComponent;
+import ch.realmtech.game.ecs.PoolableComponent;
 
 public class PossitionComponent implements PoolableComponent {
     public float x;

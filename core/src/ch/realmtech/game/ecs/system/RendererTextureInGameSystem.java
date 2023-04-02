@@ -1,13 +1,11 @@
-package ch.realmtech.ecs.system;
+package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.ecs.ECSEngine;
-import ch.realmtech.ecs.component.PossitionComponent;
-import ch.realmtech.ecs.component.TextureComponent;
+import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.ecs.component.PossitionComponent;
+import ch.realmtech.game.ecs.component.TextureComponent;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import static ch.realmtech.RealmTech.PPM;

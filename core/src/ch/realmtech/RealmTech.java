@@ -1,8 +1,9 @@
 package ch.realmtech;
 
-import ch.realmtech.ecs.ECSEngine;
+import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.map.RealmTechTiledMap;
 import ch.realmtech.healper.HealperSetContext;
-import ch.realmtech.input.InputManager;
+import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import com.badlogic.gdx.Application;
@@ -18,7 +19,7 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.util.EnumMap;
 
@@ -30,7 +31,7 @@ public final class RealmTech extends Game{
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
     private final String TAG = RealmTech.class.getSimpleName();
-    private InputManager inputManager;
+    private InputMapper inputMapper;
     private EnumMap<ScreenType, AbstractScreen> screenCash;
     private AssetManager assetManager;
     private Stage gameStage;
@@ -38,6 +39,7 @@ public final class RealmTech extends Game{
     private Skin skin;
 	private ECSEngine ecsEngine;
     public World world;
+    public RealmTechTiledMap gameMap;
 
     @Override
     public void create() {
@@ -47,15 +49,16 @@ public final class RealmTech extends Game{
         initHealper();
         initMap();
         Box2D.init();
-        inputManager = InputManager.getInstance();
-        world = new World(new Vector2(0, 0), true);
-        screenCash = new EnumMap<>(ScreenType.class);
         gameStage = new Stage(
-                new FitViewport(WORLD_WIDTH, WORLD_HEIGHT,
+                new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
         uiStage = new Stage(
-                new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
+                new ExtendViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
+        gameMap = new RealmTechTiledMap(this);
+        world = new World(new Vector2(0, 0), true);
+        inputMapper = InputMapper.getInstance(this);
+        screenCash = new EnumMap<>(ScreenType.class);
         ecsEngine = new ECSEngine(this);
         setScreen(ScreenType.LOADING);
         setScreen(ScreenType.LOADING);
@@ -122,8 +125,8 @@ public final class RealmTech extends Game{
         return assetManager;
     }
 
-    public InputManager getInputManager() {
-        return inputManager;
+    public InputMapper getInputManager() {
+        return inputMapper;
     }
 
     @Override

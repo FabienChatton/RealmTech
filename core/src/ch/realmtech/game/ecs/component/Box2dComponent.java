@@ -1,6 +1,6 @@
-package ch.realmtech.ecs.component;
+package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.ecs.PoolableComponent;
+import ch.realmtech.game.ecs.PoolableComponent;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public class Box2dComponent implements PoolableComponent {
