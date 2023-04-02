@@ -9,6 +9,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 public final class ECSEngine extends PooledEngine {
@@ -70,6 +71,8 @@ public final class ECSEngine extends PooledEngine {
         resetBodyDef();
         resetFixtureDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
+        Vector2 spawnPoint = context.gameMap.getProperties().get("spawn-point", Vector2.class);
+        bodyDef.position.set(spawnPoint.x,spawnPoint.y);
         Body playerBody = context.world.createBody(bodyDef);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(playerWorldWith/2f, playerWorldHigh/2f);

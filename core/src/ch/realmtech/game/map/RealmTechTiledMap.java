@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 
 public class RealmTechTiledMap extends TiledMap {
     private final RealmTech context;
@@ -16,6 +17,7 @@ public class RealmTechTiledMap extends TiledMap {
     public void creerMapAleatoire() {
         int width = 100;
         int height = 100;
+        getProperties().put("spawn-point", new Vector2(width / 2, height/2));
         TextureAtlas groundTitlesAtlas = context.getAssetManager().get("texture/atlas/ground/ground-tiles.atlas", TextureAtlas.class);
 
         getLayers().add(new TiledMapTileLayer(width, height, 32, 32));
