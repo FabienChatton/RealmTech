@@ -35,6 +35,9 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             context.gameMap.creerMapAleatoire();
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+            context.getEcsEngine().createBodyPlayer();
+        }
         mapRenderer.setView((OrthographicCamera) context.getGameStage().getCamera());
         mapRenderer.render();
         ecsEngine.update(Gdx.graphics.getDeltaTime());

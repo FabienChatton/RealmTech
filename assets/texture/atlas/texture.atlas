@@ -1,0 +1,11 @@
+texture.png
+	size: 128, 64
+	repeat: none
+grass-01
+	bounds: 96, 32, 32, 32
+reimu
+	bounds: 0, 0, 64, 64
+sand-01
+	bounds: 64, 0, 32, 32
+water-01
+	bounds: 64, 32, 32, 32

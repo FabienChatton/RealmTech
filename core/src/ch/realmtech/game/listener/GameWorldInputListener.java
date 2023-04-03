@@ -31,7 +31,7 @@ public class GameWorldInputListener implements Listener<InputMapper.PointerMappe
                     gameMap.getLayerTiledLayer(0).setCell((int) gameCoordinate.x, (int) gameCoordinate.y, null);
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {
-                    TextureAtlas groundTitlesAtlas = context.getAssetManager().get("texture/atlas/ground/ground-tiles.atlas", TextureAtlas.class);
+                    TextureAtlas groundTitlesAtlas = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class);
                     TextureRegion texture = groundTitlesAtlas.getRegions().get(MathUtils.random(0,groundTitlesAtlas.getRegions().size - 1));
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                     cell.setTile(new StaticTiledMapTile(texture));

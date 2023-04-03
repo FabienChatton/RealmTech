@@ -11,6 +11,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -40,6 +41,8 @@ public final class RealmTech extends Game{
 	private ECSEngine ecsEngine;
     public World world;
     public RealmTechTiledMap gameMap;
+
+    private TextureAtlas textureAtlas;
 
     @Override
     public void create() {
@@ -85,7 +88,7 @@ public final class RealmTech extends Game{
     private void initMap() {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
         assetManager.load("map/mapTest.tmx", TiledMap.class); // TODO a supprimer un jour, inutilisé
-        assetManager.load("texture/atlas/ground/ground-tiles.atlas", TextureAtlas.class);
+        assetManager.load("texture/atlas/texture.atlas", TextureAtlas.class);
         Gdx.app.debug(TAG, "Map test chargé");
     }
 
@@ -134,5 +137,12 @@ public final class RealmTech extends Game{
         gameStage.dispose();
         uiStage.dispose();
         assetManager.dispose();
+    }
+
+    public TextureAtlas getTextureAtlas() {
+        if (textureAtlas == null) {
+            textureAtlas = assetManager.get("texture/atlas/texture.atlas");
+        }
+        return textureAtlas;
     }
 }

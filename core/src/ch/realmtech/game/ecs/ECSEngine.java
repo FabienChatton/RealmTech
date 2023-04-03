@@ -3,12 +3,13 @@ package ch.realmtech.game.ecs;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
+import ch.realmtech.game.level.cell.CellType;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -26,7 +27,7 @@ public final class ECSEngine extends PooledEngine {
 
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
-    private Body bodyPlayer;
+    private Entity playerEntity;
     private Body bodyWorldBorder;
 
     public ECSEngine(final RealmTech context) {
@@ -67,20 +68,19 @@ public final class ECSEngine extends PooledEngine {
     }
 
     public void createBodyPlayer(){
-        if (bodyPlayer != null) {
-            Gdx.app.log(TAG,"Un joueur existe déjà. Le nouveau joueur n'a pas été créer");
-            return;
+        if (playerEntity != null) {
+            removeEntity(playerEntity);
         }
         final int playerWorldWith = 1;
         final int playerWorldHigh = 1;
-        Entity player = new Entity();
+        playerEntity = createEntity();
 
         resetBodyDef();
         resetFixtureDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         Vector2 spawnPoint = context.gameMap.getProperties().get("spawn-point", Vector2.class);
         bodyDef.position.set(spawnPoint.x,spawnPoint.y);
-        bodyPlayer = context.world.createBody(bodyDef);
+        Body bodyPlayer = context.world.createBody(bodyDef);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(playerWorldWith/2f, playerWorldHigh/2f);
         fixtureDef.shape = playerShape;
@@ -90,13 +90,43 @@ public final class ECSEngine extends PooledEngine {
 
         playerShape.dispose();
 
-        final Box2dComponent box2dComponent = new Box2dComponent(playerWorldWith,playerWorldHigh,bodyPlayer);
-        player.add(box2dComponent);
-        player.add(new PlayerComponent());
-        player.add(new MovementComponent(10,10));
-        player.add(new PossitionComponent());
-        player.add(new TextureComponent(new Texture(Gdx.files.internal("reimu.png"))));
-        addEntity(player);
+        // box2d component
+        Box2dComponent box2dComponent = createComponent(Box2dComponent.class);
+        box2dComponent.init(playerWorldWith, playerWorldHigh, bodyPlayer);
+        playerEntity.add(box2dComponent);
+
+        // player component
+        PlayerComponent playerComponent = createComponent(PlayerComponent.class);
+        playerEntity.add(playerComponent);
+
+        // movement component
+        MovementComponent movementComponent = createComponent(MovementComponent.class);
+        movementComponent.init(10,10);
+        playerEntity.add(movementComponent);
+
+        // position component
+        PossitionComponent possitionComponent = createComponent(PossitionComponent.class);
+        playerEntity.add(possitionComponent);
+
+        // texture component
+        TextureComponent textureComponent = createComponent(TextureComponent.class);
+        final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
+        textureComponent.init(texture);
+        playerEntity.add(textureComponent);
+
+
+        addEntity(playerEntity);
+    }
+
+    public Entity createCell(CellType cellType){
+        Entity gameCell = createEntity();
+
+        CellComponent cellComponent = createComponent(CellComponent.class);
+        cellComponent.init(context.getEcsEngine().context.getTextureAtlas().findRegion(cellType.textureName));
+        gameCell.add(cellComponent);
+
+        addEntity(gameCell);
+        return gameCell;
     }
 
     // TODO a changer de place car ne contient pas d'entités a ajouter au system

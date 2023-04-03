@@ -8,10 +8,13 @@ public class MovementComponent implements PoolableComponent {
     public float maxSpeedUnite;
     public float speedMeterParSeconde;
 
-    public MovementComponent(float speedMeterParSeconde, float maxSpeedUnite) {
-        this.speedMeterParSeconde = speedMeterParSeconde;
-        this.maxSpeedUnite = maxSpeedUnite;
+    public MovementComponent() {
         speed = new Vector2();
+    }
+
+    public void init(float maxSpeedUnite, float speedMeterParSeconde){
+        this.maxSpeedUnite = maxSpeedUnite;
+        this.speedMeterParSeconde = speedMeterParSeconde;
     }
 
     @Override

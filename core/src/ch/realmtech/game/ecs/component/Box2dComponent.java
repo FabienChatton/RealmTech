@@ -8,7 +8,7 @@ public class Box2dComponent implements PoolableComponent {
     public float widthWorld;
     public float heightWorld;
 
-    public Box2dComponent(float widthWorld, float heightWorld, Body body) {
+    public void init(float widthWorld, float heightWorld, Body body) {
         this.widthWorld = widthWorld;
         this.heightWorld = heightWorld;
         this.body = body;

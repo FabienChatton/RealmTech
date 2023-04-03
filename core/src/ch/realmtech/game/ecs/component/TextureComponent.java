@@ -2,11 +2,12 @@ package ch.realmtech.game.ecs.component;
 
 import ch.realmtech.game.ecs.PoolableComponent;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TextureComponent implements PoolableComponent {
-    public Texture texture;
+    public TextureRegion texture;
 
-    public TextureComponent(Texture texture) {
+    public void init(TextureRegion texture) {
         this.texture = texture;
     }
 

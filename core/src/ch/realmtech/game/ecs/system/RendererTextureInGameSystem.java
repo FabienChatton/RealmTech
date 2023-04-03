@@ -23,7 +23,7 @@ public class RendererTextureInGameSystem extends IteratingSystem {
         gameStage.getCamera().update();
         gameStage.getBatch().setProjectionMatrix(gameStage.getCamera().combined);
         gameStage.getBatch().begin();
-        gameStage.getBatch().draw(textureComponent.texture, possitionComponent.x, possitionComponent.y, textureComponent.texture.getWidth() / PPM, textureComponent.texture.getHeight() / PPM);
+        gameStage.getBatch().draw(textureComponent.texture, possitionComponent.x, possitionComponent.y, textureComponent.texture.getRegionWidth() / PPM, textureComponent.texture.getRegionHeight() / PPM);
         gameStage.getBatch().end();
     }
 }
