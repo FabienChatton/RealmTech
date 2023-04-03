@@ -1,42 +1,31 @@
 ground-tiles.png
 	size: 128, 128
 	repeat: none
-grass
-	index: 4
-	bounds: 0, 64, 32, 32
-grass
-	index: 1
-	bounds: 0, 0, 32, 32
-grass
-	index: 3
-	bounds: 96, 96, 32, 32
-grass
-	index: 2
-	bounds: 64, 64, 32, 32
-sand
-	index: 4
-	bounds: 0, 96, 32, 32
-sand
-	index: 3
-	bounds: 0, 96, 32, 32
-sand
-	index: 9
-	bounds: 32, 96, 32, 32
-sand
-	index: 1
-	bounds: 0, 32, 32, 32
-sand
-	index: 6
-	bounds: 32, 64, 32, 32
-sand
-	index: 8
+grass-01
+	bounds: 64, 32, 32, 32
+grass-02
 	bounds: 64, 96, 32, 32
-sand
-	index: 5
+grass-03
+	bounds: 0, 64, 32, 32
+grass-04
 	bounds: 32, 32, 32, 32
-sand
-	index: 2
-	bounds: 32, 0, 32, 32
-sand
-	index: 7
+sand-01
+	bounds: 64, 64, 32, 32
+sand-02
+	bounds: 0, 0, 32, 32
+sand-04
+	bounds: 96, 96, 32, 32
+sand-03
+	bounds: 96, 96, 32, 32
+sand-05
+	bounds: 32, 96, 32, 32
+sand-06
 	bounds: 96, 64, 32, 32
+sand-07
+	bounds: 32, 64, 32, 32
+sand-08
+	bounds: 0, 96, 32, 32
+sand-09
+	bounds: 32, 0, 32, 32
+water-01
+	bounds: 0, 32, 32, 32

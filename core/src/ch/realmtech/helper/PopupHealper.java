@@ -1,4 +1,4 @@
-package ch.realmtech.healper;
+package ch.realmtech.helper;
 
 import ch.realmtech.RealmTech;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;

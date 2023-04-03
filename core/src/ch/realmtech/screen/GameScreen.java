@@ -1,11 +1,14 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.worldGeneration.PerlinNoise;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+
+import java.util.Random;
 
 public class GameScreen extends AbstractScreen {
 
@@ -18,8 +21,7 @@ public class GameScreen extends AbstractScreen {
         context.gameMap.creerMapAleatoire();
         mapRenderer = new OrthogonalTiledMapRenderer(context.gameMap, RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
         box2DDebugRenderer = new Box2DDebugRenderer();
-        context.getEcsEngine().createPlayer();
-
+        context.getEcsEngine().createBodyPlayer();
     }
 
     @Override

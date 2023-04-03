@@ -2,7 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.map.RealmTechTiledMap;
-import ch.realmtech.healper.HealperSetContext;
+import ch.realmtech.helper.HealperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
