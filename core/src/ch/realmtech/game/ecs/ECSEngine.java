@@ -3,7 +3,6 @@ package ch.realmtech.game.ecs;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
-import ch.realmtech.game.level.cell.CellType;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
@@ -31,6 +30,7 @@ public final class ECSEngine extends PooledEngine {
     private Body bodyWorldBorder;
 
     public ECSEngine(final RealmTech context) {
+        super(10,1000,10,100);
         this.context = context;
         addSystem(new PlayerMouvementSystem(context));
         addSystem(new WorldStepSystem(context.world));
@@ -116,17 +116,6 @@ public final class ECSEngine extends PooledEngine {
 
 
         addEntity(playerEntity);
-    }
-
-    public Entity createCell(CellType cellType){
-        Entity gameCell = createEntity();
-
-        CellComponent cellComponent = createComponent(CellComponent.class);
-        cellComponent.init(context.getEcsEngine().context.getTextureAtlas().findRegion(cellType.textureName));
-        gameCell.add(cellComponent);
-
-        addEntity(gameCell);
-        return gameCell;
     }
 
     // TODO a changer de place car ne contient pas d'entités a ajouter au system
