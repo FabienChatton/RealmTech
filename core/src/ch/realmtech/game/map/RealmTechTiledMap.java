@@ -1,37 +1,34 @@
 package ch.realmtech.game.map;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.level.cell.CellType;
+import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.worldGeneration.PerlinNoise;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.ashley.core.Entity;
 
 import java.util.Random;
 
 public class RealmTechTiledMap extends TiledMap {
+    public final static int NUMBER_CHUNK_WITH = 10;
+    public final static int NUMBER_CHUNK_HIGH = 10;
+
+    public final static int WORLD_WITH = NUMBER_CHUNK_WITH * GameChunk.CHUNK_SIZE;
+    public final static int WORLD_HIGH = NUMBER_CHUNK_HIGH * GameChunk.CHUNK_SIZE;
     private final RealmTech context;
-    private final Array<Entity> gameCells;
+    private PerlinNoise perlinNoise;
     public RealmTechTiledMap(RealmTech context) {
         this.context = context;
-        gameCells = new Array<>();
+//        perlinNoise = new PerlinNoise(new Random(), 1, MAP_WIDTH, MAP_HEIGHT);
+//        perlinNoise.initialise();
     }
 
     public void creerMapAleatoire() {
-        if (!gameCells.isEmpty()) {
-            for (Entity gameCell : gameCells) {
-                context.getEcsEngine().removeEntity(gameCell);
-            }
-        }
         int width = 100;
         int height = 100;
-        PerlinNoise perlinNoise = new PerlinNoise(new Random(), 1, width, height);
+        PerlinNoise perlinNoise = new PerlinNoise(new Random(666), 1, width, height);
         perlinNoise.initialise();
         getProperties().put("spawn-point", new Vector2(width / 2, height/2));
         context.getEcsEngine().generateBodyWorldBorder(0,0,width,width);
@@ -47,14 +44,11 @@ public class RealmTechTiledMap extends TiledMap {
                 } else {
                     cellType = CellType.WATER;
                 }
-                Entity entityCell = context.getEcsEngine().createCell(cellType);
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                cell.setTile(entityCell.getComponent(CellComponent.class).cell.getTile());
-                gameCells.add(entityCell);
-                getLayerTiledLayer(0).setCell(i, j, cell);
+                getLayerTiledLayer(0).setCell(i, j, new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(context.getTextureAtlas().findRegion(cellType.textureName))));
             }
         }
     }
+
 
     public TiledMapTileLayer getLayerTiledLayer(int index) {
         return (TiledMapTileLayer) super.getLayers().get(index);
