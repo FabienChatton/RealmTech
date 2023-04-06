@@ -7,15 +7,13 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 public class GameCell {
     private final CellType cellType;
     private final GameChunk gameChunk;
-    private final byte innerChunkPossX;
-    private final byte innerChunkPossY;
+    private final byte innerChunkPoss;
     private final TiledMapTileLayer.Cell cell;
     private final StaticTiledMapTile tile;
     public GameCell(GameChunk gameChunk, byte innerChunkPossX, byte innerChunkPossY, CellType cellType) {
         this.gameChunk = gameChunk;
         this.cellType = cellType;
-        this.innerChunkPossX = innerChunkPossX;
-        this.innerChunkPossY = innerChunkPossY;
+        innerChunkPoss = (byte) ((innerChunkPossX << 4) + innerChunkPossY);
         cell = new TiledMapTileLayer.Cell();
         tile = new StaticTiledMapTile(gameChunk.getContext().getTextureAtlas().findRegion(cellType.textureName));
         cell.setTile(tile);
@@ -26,6 +24,14 @@ public class GameCell {
     }
 
     public void placeCellOnMap(int layer) {
-        gameChunk.getMap().getLayerTiledLayer(layer).setCell(gameChunk.getWorldPossX(innerChunkPossX), gameChunk.getWorldPossY(innerChunkPossY),cell);
+        gameChunk.getMap().getLayerTiledLayer(layer).setCell(gameChunk.getWorldPossX(getInnerChunkPossX()), gameChunk.getWorldPossY(getInnerChunkPossY()),cell);
+    }
+
+    public byte getInnerChunkPossY(){
+        return (byte) (innerChunkPoss & 0x0F);
+    }
+
+    public byte getInnerChunkPossX() {
+        return (byte) ((innerChunkPoss >> 4) & 0x0F);
     }
 }
