@@ -1,4 +1,4 @@
-package ch.realmtech.game.worldGeneration;
+package ch.realmtech.game.level.worldGeneration;
 
 import java.util.Random;
 

@@ -3,6 +3,7 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.input.InputMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -30,24 +31,27 @@ public class PlayerMouvementSystem extends IteratingSystem {
         final MovementComponent movementComponent = ECSEngine.MOVEMENT_COMPONENT_MAPPER.get(entity);
         final Box2dComponent box2dComponent = ECSEngine.BOX2D_COMPONENT_MAPPER.get(entity);
         final PlayerComponent playerComponent = ECSEngine.PLAYER_COMPONENT_MAPPER.get(entity);
+        final PossitionComponent possitionComponent = ECSEngine.POSSITION_COMPONENT_MAPPER.get(entity);
+
+        final GameCell gameCell = context.gameMap.getGameCell((int) possitionComponent.x, (int) possitionComponent.y);
         // TODO mettre une vrai gestion des input
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
-            yFactor = 1;
+            yFactor = 1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
-            xFactor = -1;
+            xFactor = -1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
-            yFactor = -1;
+            yFactor = -1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
-            xFactor = 1;
+            xFactor = 1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
         }
 
 //        if (Gdx.input.isKeyPressed(Input.Keys.W)) {

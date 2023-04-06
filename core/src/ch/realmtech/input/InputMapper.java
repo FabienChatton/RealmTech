@@ -4,11 +4,9 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.listener.GameCameraListener;
 import ch.realmtech.game.listener.GameWorldInputListener;
 import com.badlogic.ashley.signals.Signal;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public final class InputMapper implements InputProcessor {

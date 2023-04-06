@@ -1,7 +1,7 @@
 package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
-import ch.realmtech.game.map.RealmTechTiledMap;
+import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.helper.HealperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
@@ -11,7 +11,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;

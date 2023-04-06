@@ -2,9 +2,7 @@ package ch.realmtech.game.ecs.component;
 
 import ch.realmtech.game.ecs.PoolableComponent;
 import ch.realmtech.game.level.cell.CellType;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
 import java.util.EnumMap;

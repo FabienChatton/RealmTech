@@ -3,10 +3,8 @@ package ch.realmtech.game.level.chunk;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.cell.GameCell;
-import ch.realmtech.game.map.RealmTechTiledMap;
-import ch.realmtech.game.worldGeneration.PerlinNoise;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import ch.realmtech.game.level.map.RealmTechTiledMap;
+import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 
 public class GameChunk {
     public final static byte CHUNK_SIZE = 16;
@@ -36,29 +34,47 @@ public class GameChunk {
                 } else {
                     cellType = CellType.WATER;
                 }
-                cells[x][y] = new GameCell(this, cellType);
+                cells[x][y] = new GameCell(this,(byte)x, (byte) y, cellType);
             }
         }
     }
 
-    public GameCell getCell(int relatifChunkPossX, int relatifChunkPossY) {
-        return cells[relatifChunkPossX][relatifChunkPossY];
-    }
-
-    public void placeChunkOnMap(RealmTechTiledMap map) {
+    public void placeChunkOnMap() {
         for (int x = 0; x < GameChunk.CHUNK_SIZE; x++) {
             for (int y = 0; y < GameChunk.CHUNK_SIZE; y++) {
-                GameCell gameCell = getCell(x,y);
-                map.getLayerTiledLayer(0).setCell((chunkPossX * GameChunk.CHUNK_SIZE) + x, (chunkPossY * GameChunk.CHUNK_SIZE) + y, new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(context.getTextureAtlas().findRegion(gameCell.getCellType().textureName))));
+                GameCell gameCell = cells[x][y];
+                gameCell.placeCellOnMap(0);
             }
         }
     }
 
-    public int getWorldPossX(int cellX) {
-        return chunkPossX * GameChunk.CHUNK_SIZE + cellX;
+    public int getWorldPossX(int innerChunkX) {
+        return chunkPossX * GameChunk.CHUNK_SIZE + innerChunkX;
     }
 
-    public int getWorldPossY(int cellY) {
-        return chunkPossY * GameChunk.CHUNK_SIZE + cellY;
+    public int getWorldPossY(int innerChunkY) {
+        return chunkPossY * GameChunk.CHUNK_SIZE + innerChunkY;
+    }
+
+    public GameCell getCell(int innerChunkX, int innerChunkY) {
+
+        return cells[innerChunkX][innerChunkY];
+    }
+
+    public void setCell(int innerChunkX, int innerChunkY, GameCell gameCell) {
+        cells[innerChunkX][innerChunkY] = gameCell;
+        if (gameCell == null) {
+            map.getLayerTiledLayer(0).setCell(getWorldPossX(innerChunkX), getWorldPossY(innerChunkY), null);
+        } else {
+            gameCell.placeCellOnMap(0);
+        }
+    }
+
+    public RealmTech getContext() {
+        return context;
+    }
+
+    public RealmTechTiledMap getMap() {
+        return map;
     }
 }
