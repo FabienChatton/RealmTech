@@ -6,6 +6,8 @@ import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.level.chunk.GameChunkFactory;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
+import ch.realmtech.game.level.worldGeneration.PerlineNoise1;
+import ch.realmtech.game.level.worldGeneration.PerlineNoise2;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
@@ -30,8 +32,7 @@ public class RealmTechTiledMap extends TiledMap {
     }
 
     public void creerMapAleatoire() {
-        perlinNoise = new PerlinNoise(new Random(), 1, WORLD_WITH, WORLD_HIGH);
-        perlinNoise.initialise();
+        perlinNoise = new PerlinNoise(new Random(), WORLD_WITH, WORLD_HIGH, new PerlineNoise2(7, 0.6f, 0.005f));
         final GameChunk[][] chunks = new GameChunk[NUMBER_CHUNK_WITH][NUMBER_CHUNK_HIGH];
         for (int chunkPossX = 0; chunkPossX < NUMBER_CHUNK_WITH; chunkPossX++) {
             for (int chunkPossY = 0; chunkPossY < NUMBER_CHUNK_HIGH; chunkPossY++) {

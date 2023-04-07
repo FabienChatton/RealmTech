@@ -30,6 +30,7 @@ public class SelectionDeSauvegarde extends AbstractScreen{
         listeDesSauvegarde = new VerticalGroup();
         Array<File> saveFile = Save.getTousLesSauvegarde();
         for (final File file : saveFile) {
+            Table table = new Table(skin);
             TextButton loadSaveButton = new TextButton(file.getName().split("\\.")[0],skin);
             String version = null;
             try {
@@ -37,20 +38,15 @@ public class SelectionDeSauvegarde extends AbstractScreen{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            TextButton supprimerSave = new TextButton("supprimer", skin);
+            supprimerSave.addListener(supprimerSave(file));
             loadSaveButton.row();
-            loadSaveButton.add(new Label("RealmTechFile : " + version + "",skin));
-            loadSaveButton.addListener(new ClickListener(){
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    try {
-                        context.loadSave(file);
-                        context.setScreen(ScreenType.GAME_SCREEN);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-            listeDesSauvegarde.addActor(loadSaveButton);
+            loadSaveButton.addListener(loadSaveButton(file));
+            table.add(loadSaveButton);
+//            table.row();
+//            loadSaveButton.add(new Label("rtsV : " + version + "",skin));
+            table.add(supprimerSave);
+            listeDesSauvegarde.addActor(table);
         }
         listeDesSauvegardeScrollPane = new ScrollPane(listeDesSauvegarde);
         uiTable.add(listeDesSauvegardeScrollPane);
@@ -60,6 +56,29 @@ public class SelectionDeSauvegarde extends AbstractScreen{
         TextButton nouvelleCarteButton = new TextButton("générer nouvelle carte",skin);
         nouvelleCarteButton.addListener(nouvelleCarte(nomNouvelleCarte));
         uiTable.add(nouvelleCarteButton);
+    }
+
+    private ClickListener loadSaveButton(File file) {
+        return new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    context.loadSave(file);
+                    context.setScreen(ScreenType.GAME_SCREEN);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
+    private ClickListener supprimerSave(File file) {
+        return new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                file.delete();
+                show();
+            }
+        };
     }
 
     private ClickListener nouvelleCarte(TextField nomNouvelleCarte) {
