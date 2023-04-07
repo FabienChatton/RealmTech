@@ -1,7 +1,6 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.io.Save;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,16 +13,14 @@ public class GameScreen extends AbstractScreen {
 
     private final OrthogonalTiledMapRenderer mapRenderer;
     private final Box2DDebugRenderer box2DDebugRenderer;
-    private final Save save;
+
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
         //tiledMap = context.getAssetManager().get("map/mapTest.tmx", TiledMap.class);
-        context.gameMap.creerMapAleatoire();
-        mapRenderer = new OrthogonalTiledMapRenderer(context.gameMap, RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
+        mapRenderer = new OrthogonalTiledMapRenderer(context.getSave().getMap(), RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
         box2DDebugRenderer = new Box2DDebugRenderer();
         context.getEcsEngine().createBodyPlayer();
-        save = new Save(context.gameMap, Gdx.files.local("Save-test-1.rts"), context);
     }
 
     @Override
@@ -33,27 +30,28 @@ public class GameScreen extends AbstractScreen {
     }
 
     @Override
-    public void draw() {
+    public void update(float delta) {
+        super.update(delta);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            context.setScreen(ScreenType.GAME_PAUSE);
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            context.gameMap.creerMapAleatoire();
+            context.getSave().getMap().creerMapAleatoire();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             context.getEcsEngine().createBodyPlayer();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             try {
-                save.save();
+                context.writeSave();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
-            try {
-                save.loadMap();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    }
+
+    @Override
+    public void draw() {
         mapRenderer.setView((OrthographicCamera) context.getGameStage().getCamera());
         mapRenderer.render();
         ecsEngine.update(Gdx.graphics.getDeltaTime());
@@ -65,10 +63,5 @@ public class GameScreen extends AbstractScreen {
     public void dispose() {
         super.dispose();
         box2DDebugRenderer.dispose();
-        try {
-            save.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

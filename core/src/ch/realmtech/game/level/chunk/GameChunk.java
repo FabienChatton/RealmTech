@@ -1,6 +1,5 @@
 package ch.realmtech.game.level.chunk;
 
-import ch.realmtech.RealmTech;
 import ch.realmtech.game.io.Save;
 import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.cell.GameCell;
@@ -11,20 +10,42 @@ import java.io.IOException;
 
 public class GameChunk {
     public final static byte CHUNK_SIZE = 16;
-    private final RealmTech context;
     private final GameCell[][] cells;
     private final int chunkPossX, chunkPossY;
     private final RealmTechTiledMap map;
 
-    public GameChunk(RealmTechTiledMap map, RealmTech context, int chunkPossX, int chunkPossY) {
+    GameChunk(RealmTechTiledMap map, int chunkPossX, int chunkPossY, PerlinNoise perlinNoise) {
         this.map = map;
-        this.context = context;
         this.chunkPossX = chunkPossX;
         this.chunkPossY = chunkPossY;
-        cells = new GameCell[CHUNK_SIZE][CHUNK_SIZE];
+        this.cells = generateCellNewChunk(perlinNoise);
+//        cells = new GameCell[CHUNK_SIZE][CHUNK_SIZE];
+//        for (byte x = 0; x < CHUNK_SIZE; x++) {
+//            for (byte y = 0; y < CHUNK_SIZE; y++) {
+//                final int worldX = getWorldPossX(x);
+//                final int worldY = getWorldPossY(y);
+//                final CellType cellType;
+//                if (perlinNoise.getGrid()[worldX][worldY] > 0f && perlinNoise.getGrid()[worldX][worldY] < 0.5f){
+//                    cellType = CellType.GRASS;
+//                } else if (perlinNoise.getGrid()[worldX][worldY] >= 0.5f) {
+//                    cellType = CellType.SAND;
+//                } else {
+//                    cellType = CellType.WATER;
+//                }
+//                cells[x][y] = new GameCell(this, x, y, cellType);
+//            }
+//        }
     }
 
-    public void generateNewChunk(PerlinNoise perlinNoise) {
+    GameChunk(RealmTechTiledMap map, int chunkPossX, int chunkPossY, GameCell[][] gameCells) {
+        this.map = map;
+        this.chunkPossX = chunkPossX;
+        this.chunkPossY = chunkPossY;
+        this.cells = gameCells;
+    }
+
+    private GameCell[][] generateCellNewChunk(PerlinNoise perlinNoise) {
+        final GameCell[][] gameCells = new GameCell[CHUNK_SIZE][CHUNK_SIZE];
         for (byte x = 0; x < CHUNK_SIZE; x++) {
             for (byte y = 0; y < CHUNK_SIZE; y++) {
                 final int worldX = getWorldPossX(x);
@@ -37,10 +58,10 @@ public class GameChunk {
                 } else {
                     cellType = CellType.WATER;
                 }
-                GameCell gameCell = new GameCell(this, x, y, cellType);
-                gameCell.placeCellOnMap(0);
+                gameCells[x][y] = new GameCell(this, x, y, cellType);
             }
         }
+        return gameCells;
     }
 
     public void placeChunkOnMap() {
@@ -57,10 +78,18 @@ public class GameChunk {
     }
 
     public int getWorldPossX(int innerChunkX) {
+        return getWorldPossX(chunkPossX, innerChunkX);
+    }
+
+    public static int getWorldPossX(int chunkPossX, int innerChunkX) {
         return chunkPossX * GameChunk.CHUNK_SIZE + innerChunkX;
     }
 
     public int getWorldPossY(int innerChunkY) {
+        return getWorldPossY(chunkPossY, innerChunkY);
+    }
+
+    public static int getWorldPossY(int chunkPossY, int innerChunkY) {
         return chunkPossY * GameChunk.CHUNK_SIZE + innerChunkY;
     }
 
@@ -101,11 +130,15 @@ public class GameChunk {
         return chunkPossY;
     }
 
-    public RealmTech getContext() {
-        return context;
-    }
-
     public RealmTechTiledMap getMap() {
         return map;
+    }
+
+    public void setCells(GameCell[][] gameCells) {
+        for (int x = 0; x < GameChunk.CHUNK_SIZE; x++) {
+            for (int y = 0; y < GameChunk.CHUNK_SIZE; y++) {
+                cells[x][y] = gameCells[x][y];
+            }
+        }
     }
 }

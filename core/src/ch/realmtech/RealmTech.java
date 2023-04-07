@@ -1,6 +1,9 @@
 package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.io.Save;
+import ch.realmtech.game.io.SaveFactory;
+import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;
@@ -21,6 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.EnumMap;
 
 public final class RealmTech extends Game{
@@ -39,7 +44,7 @@ public final class RealmTech extends Game{
     private Skin skin;
 	private ECSEngine ecsEngine;
     public World world;
-    public RealmTechTiledMap gameMap;
+    private Save save;
 
     private TextureAtlas textureAtlas;
 
@@ -57,7 +62,6 @@ public final class RealmTech extends Game{
         uiStage = new Stage(
                 new ExtendViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
-        gameMap = new RealmTechTiledMap(this);
         world = new World(new Vector2(0, 0), true);
         inputMapper = InputMapper.getInstance(this);
         screenCash = new EnumMap<>(ScreenType.class);
@@ -143,5 +147,48 @@ public final class RealmTech extends Game{
             textureAtlas = assetManager.get("texture/atlas/texture.atlas");
         }
         return textureAtlas;
+    }
+
+    public void loadSave(File saveFile) throws IOException {
+        save = SaveFactory.loadSave(saveFile,this);
+    }
+
+    public void writeSave() throws IOException {
+        if (save != null) {
+            save.saveLast();
+        } else {
+            Gdx.app.debug(TAG, "La save n'a pas put être sauvegarde car elle n'existe pas");
+        }
+    }
+
+    public void newSave(String saveName) throws IOException {
+        save = SaveFactory.genereteNewSave(Gdx.files.local(saveName + ".rts").file(), this);
+    }
+
+    public void quiteAndSave() {
+        try {
+            writeSave();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            setScreen(ScreenType.MENU);
+            screenCash.remove(ScreenType.GAME_SCREEN);
+        }
+    }
+
+    public void drawGameScreen() {
+        if (screenCash.containsKey(ScreenType.GAME_SCREEN)) {
+            screenCash.get(ScreenType.GAME_SCREEN).draw();
+        }
+    }
+
+    public Save getSave() {
+        return save;
+    }
+
+    public RealmTechTiledMap getMap() {
+        Save save = getSave();
+        if (save != null) return save.getMap();
+        return null;
     }
 }

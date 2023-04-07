@@ -33,35 +33,35 @@ public class PlayerMouvementSystem extends IteratingSystem {
         final PlayerComponent playerComponent = ECSEngine.PLAYER_COMPONENT_MAPPER.get(entity);
         final PossitionComponent possitionComponent = ECSEngine.POSSITION_COMPONENT_MAPPER.get(entity);
 
-        final GameCell gameCell = context.gameMap.getGameCell((int) possitionComponent.x, (int) possitionComponent.y);
+        final GameCell gameCell = context.getSave().getMap().getGameCell((int) possitionComponent.x, (int) possitionComponent.y);
         // TODO mettre une vrai gestion des input
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
-            if (gameCell != null) {
+            if (gameCell != null && gameCell.getCellType() != null) {
                 yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
-            if (gameCell != null) {
+            if (gameCell != null && gameCell.getCellType() != null) {
                 xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
-            if (gameCell != null) {
+            if (gameCell != null && gameCell.getCellType() != null) {
                 yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
-            if (gameCell != null) {
+            if (gameCell != null && gameCell.getCellType() != null) {
                 xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
             }
         }

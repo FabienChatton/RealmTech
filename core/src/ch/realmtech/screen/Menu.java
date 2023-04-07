@@ -9,10 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class Menu extends AbstractScreen {
     public Menu(RealmTech context) {
         super(context);
-        TextButton lancerLeJeu = new TextButton("Lancer le jeu",skin);
-        lancerLeJeu.addListener(lancerLeJeu());
+        TextButton selectionnerSauvegarde = new TextButton("Sélectionner une sauvegarde",skin);
+        selectionnerSauvegarde.addListener(lancerLeJeu());
         uiTable.add(new Label("Bienvenu dans realmTech", skin));
-        uiTable.add(lancerLeJeu);
+        uiTable.row();
+        uiTable.add(selectionnerSauvegarde);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class Menu extends AbstractScreen {
         return new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                context.setScreen(ScreenType.GAME_SCREEN);
+                context.setScreen(ScreenType.SELECTION_DE_SAUVEGARDE);
             }
         };
     }

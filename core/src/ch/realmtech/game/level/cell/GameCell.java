@@ -23,10 +23,9 @@ public class GameCell {
             tile = null;
         } else {
             cell = new TiledMapTileLayer.Cell();
-            tile = new StaticTiledMapTile(gameChunk.getContext().getTextureAtlas().findRegion(cellType.textureName));
+            tile = new StaticTiledMapTile(gameChunk.getMap().getContext().getTextureAtlas().findRegion(cellType.textureName));
             cell.setTile(tile);
         }
-        gameChunk.setCell(getInnerChunkPossX(),getInnerChunkPossY(),this);
     }
 
     public GameCell(GameChunk gameChunk, byte innerChunkPossX, byte innerChunkPossY, CellType cellType) {

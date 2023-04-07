@@ -3,7 +3,9 @@ package ch.realmtech.screen;
 public enum ScreenType {
     LOADING(Loading.class),
     MENU(Menu.class),
-    GAME_SCREEN(GameScreen.class);
+    GAME_SCREEN(GameScreen.class),
+    SELECTION_DE_SAUVEGARDE(SelectionDeSauvegarde.class),
+    GAME_PAUSE(GamePauseScreen.class);
     public final Class<? extends AbstractScreen> screenClass;
 
     ScreenType(Class<? extends AbstractScreen> screenClass){

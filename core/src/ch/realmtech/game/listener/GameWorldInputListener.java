@@ -12,10 +12,8 @@ import com.badlogic.gdx.math.Vector3;
 
 public class GameWorldInputListener implements Listener<InputMapper.PointerMapper> {
     private final RealmTech context;
-    private final RealmTechTiledMap gameMap;
     public GameWorldInputListener(RealmTech context) {
         this.context = context;
-        this.gameMap = context.gameMap;
     }
 
     @Override
@@ -27,10 +25,12 @@ public class GameWorldInputListener implements Listener<InputMapper.PointerMappe
                 if (pointerMapper.button == InputMapper.leftClick.button) {
                     int worldX = (int) gameCoordinate.x;
                     int worldY = (int) gameCoordinate.y;
-                    final GameCell gameCell = gameMap.getGameCell(worldX,worldY);
-                    if (gameCell != null) {
-                        if (gameCell.getCellType().cellBehavior.getBreakWith() == ItemType.PELLE) {
-                            gameMap.setCell(worldX, worldY, null);
+                    if (context.getMap() != null ) {
+                        final GameCell gameCell = context.getMap().getGameCell(worldX, worldY);
+                        if (gameCell != null && gameCell.getCellType() != null) {
+                            if (gameCell.getCellType().cellBehavior.getBreakWith() == ItemType.PELLE) {
+                                context.getMap().setCell(worldX, worldY, null);
+                            }
                         }
                     }
                     //gameMap.getLayerTiledLayer(0).setCell((int) gameCoordinate.x, (int) gameCoordinate.y, null);

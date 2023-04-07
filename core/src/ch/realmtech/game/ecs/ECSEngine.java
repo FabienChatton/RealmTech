@@ -78,7 +78,7 @@ public final class ECSEngine extends PooledEngine {
         resetBodyDef();
         resetFixtureDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Vector2 spawnPoint = context.gameMap.getProperties().get("spawn-point", Vector2.class);
+        Vector2 spawnPoint = context.getSave().getMap().getProperties().get("spawn-point", Vector2.class);
         bodyDef.position.set(spawnPoint.x,spawnPoint.y);
         Body bodyPlayer = context.world.createBody(bodyDef);
         PolygonShape playerShape = new PolygonShape();
