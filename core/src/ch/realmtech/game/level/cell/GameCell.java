@@ -1,8 +1,11 @@
 package ch.realmtech.game.level.cell;
 
+import ch.realmtech.game.io.Save;
 import ch.realmtech.game.level.chunk.GameChunk;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+
+import java.io.IOException;
 
 public class GameCell {
     private final CellType cellType;
@@ -10,13 +13,24 @@ public class GameCell {
     private final byte innerChunkPoss;
     private final TiledMapTileLayer.Cell cell;
     private final StaticTiledMapTile tile;
-    public GameCell(GameChunk gameChunk, byte innerChunkPossX, byte innerChunkPossY, CellType cellType) {
+
+    public GameCell(GameChunk gameChunk, byte innerChunkPoss, CellType cellType) {
         this.gameChunk = gameChunk;
         this.cellType = cellType;
-        innerChunkPoss = (byte) ((innerChunkPossX << 4) + innerChunkPossY);
-        cell = new TiledMapTileLayer.Cell();
-        tile = new StaticTiledMapTile(gameChunk.getContext().getTextureAtlas().findRegion(cellType.textureName));
-        cell.setTile(tile);
+        this.innerChunkPoss = innerChunkPoss;
+        if (cellType == null) {
+            cell = null;
+            tile = null;
+        } else {
+            cell = new TiledMapTileLayer.Cell();
+            tile = new StaticTiledMapTile(gameChunk.getContext().getTextureAtlas().findRegion(cellType.textureName));
+            cell.setTile(tile);
+        }
+        gameChunk.setCell(getInnerChunkPossX(),getInnerChunkPossY(),this);
+    }
+
+    public GameCell(GameChunk gameChunk, byte innerChunkPossX, byte innerChunkPossY, CellType cellType) {
+        this(gameChunk,GameCell.getInnerChunkPoss(innerChunkPossX,innerChunkPossY), cellType);
     }
 
     public CellType getCellType() {
@@ -28,10 +42,27 @@ public class GameCell {
     }
 
     public byte getInnerChunkPossY(){
+        return getInnerChunkPossY(innerChunkPoss);
+    }
+
+    public static byte getInnerChunkPossY(byte innerChunkPoss) {
         return (byte) (innerChunkPoss & 0x0F);
     }
 
     public byte getInnerChunkPossX() {
+        return getInnerChunkPossX(innerChunkPoss);
+    }
+
+    public static byte getInnerChunkPossX(byte innerChunkPoss) {
         return (byte) ((innerChunkPoss >> 4) & 0x0F);
+    }
+
+    public void write(Save save) throws IOException {
+        save.write(CellType.getIdCellType(cellType));
+        save.write(innerChunkPoss);
+    }
+
+    public static byte getInnerChunkPoss(byte innerChunkPossX, byte innerChunkPossY) {
+        return (byte) ((innerChunkPossX << 4) + innerChunkPossY);
     }
 }

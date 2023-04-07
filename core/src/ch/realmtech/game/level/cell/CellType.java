@@ -14,4 +14,29 @@ public enum CellType {
         this.textureName = textureName;
         this.cellBehavior = cellBehavior;
     }
+
+    public static byte getIdCellType(CellType cellType) {
+        if (cellType == null) return 0;
+        byte ret = 0;
+        for (byte i = 0; i < CellType.values().length; i++) {
+            CellType type = CellType.values()[i];
+            if (cellType == type) {
+                ret = (byte) (i + 1);
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public static CellType getCellTypeByID(byte id) {
+        if (id == 0) return null;
+        CellType ret = null;
+        for (int i = 1; i < CellType.values().length + 1; i++) {
+            if (i == id) {
+                ret = CellType.values()[id - 1];
+                break;
+            }
+        }
+        return ret;
+    }
 }

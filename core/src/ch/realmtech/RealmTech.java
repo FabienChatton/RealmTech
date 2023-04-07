@@ -2,7 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.level.map.RealmTechTiledMap;
-import ch.realmtech.helper.HealperSetContext;
+import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
@@ -67,7 +67,7 @@ public final class RealmTech extends Game{
     }
 
     private void initHealper() {
-        HealperSetContext.setContext(this);
+        HelperSetContext.setContext(this);
     }
 
     @Override

@@ -39,19 +39,31 @@ public class PlayerMouvementSystem extends IteratingSystem {
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
-            yFactor = 1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
+            yFactor = 1;
+            if (gameCell != null) {
+                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
-            xFactor = -1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
+            xFactor = -1;
+            if (gameCell != null) {
+                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
-            yFactor = -1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
+            yFactor = -1;
+            if (gameCell != null) {
+                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
-            xFactor = 1 * gameCell.getCellType().cellBehavior.getSpeedEffect();
+            xFactor = 1;
+            if (gameCell != null) {
+                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+            }
         }
 
 //        if (Gdx.input.isKeyPressed(Input.Keys.W)) {

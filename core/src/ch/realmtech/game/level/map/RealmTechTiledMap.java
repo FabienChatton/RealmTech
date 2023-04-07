@@ -1,6 +1,7 @@
 package ch.realmtech.game.level.map;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.io.Save;
 import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class RealmTechTiledMap extends TiledMap {
@@ -58,6 +60,10 @@ public class RealmTechTiledMap extends TiledMap {
         return gameChunks[chunkPossX][chunkPossY];
     }
 
+    public void setGameChunk(int chunkPossX, int chunkPossY, GameChunk gameChunk) {
+        gameChunks[chunkPossX][chunkPossY] = gameChunk;
+    }
+
     public GameCell getGameCell(int worldX, int worldY) {
         GameChunk gameChunk = getGameChunk(worldX, worldY);
         int innerChunkX = worldX % GameChunk.CHUNK_SIZE;
@@ -71,5 +77,16 @@ public class RealmTechTiledMap extends TiledMap {
         int innerChunkY = worldY % GameChunk.CHUNK_SIZE;
         gameChunk.setCell(innerChunkX,innerChunkY, gameCell);
 
+    }
+
+    public void save(final Save save) throws IOException {
+        for (int x = 0; x < NUMBER_CHUNK_WITH; x++) {
+            for (int y = 0; y < NUMBER_CHUNK_HIGH; y++) {
+                final GameChunk gameChunk = gameChunks[x][y];
+                if (gameChunk != null) {
+                    gameChunk.saveChunk(save);
+                }
+            }
+        }
     }
 }

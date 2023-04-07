@@ -1,15 +1,18 @@
 package ch.realmtech.game.level.chunk;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.io.Save;
 import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 
+import java.io.IOException;
+
 public class GameChunk {
     public final static byte CHUNK_SIZE = 16;
     private final RealmTech context;
-    private final GameCell cells[][];
+    private final GameCell[][] cells;
     private final int chunkPossX, chunkPossY;
     private final RealmTechTiledMap map;
 
@@ -22,8 +25,8 @@ public class GameChunk {
     }
 
     public void generateNewChunk(PerlinNoise perlinNoise) {
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            for (int y = 0; y < CHUNK_SIZE; y++) {
+        for (byte x = 0; x < CHUNK_SIZE; x++) {
+            for (byte y = 0; y < CHUNK_SIZE; y++) {
                 final int worldX = getWorldPossX(x);
                 final int worldY = getWorldPossY(y);
                 final CellType cellType;
@@ -34,7 +37,8 @@ public class GameChunk {
                 } else {
                     cellType = CellType.WATER;
                 }
-                cells[x][y] = new GameCell(this,(byte)x, (byte) y, cellType);
+                GameCell gameCell = new GameCell(this, x, y, cellType);
+                gameCell.placeCellOnMap(0);
             }
         }
     }
@@ -43,7 +47,11 @@ public class GameChunk {
         for (int x = 0; x < GameChunk.CHUNK_SIZE; x++) {
             for (int y = 0; y < GameChunk.CHUNK_SIZE; y++) {
                 GameCell gameCell = cells[x][y];
-                gameCell.placeCellOnMap(0);
+                if (gameCell != null) {
+                    gameCell.placeCellOnMap(0);
+                } else {
+                    map.getLayerTiledLayer(0).setCell(getWorldPossX(x),getWorldPossY(y),null);
+                }
             }
         }
     }
@@ -57,7 +65,6 @@ public class GameChunk {
     }
 
     public GameCell getCell(int innerChunkX, int innerChunkY) {
-
         return cells[innerChunkX][innerChunkY];
     }
 
@@ -68,6 +75,30 @@ public class GameChunk {
         } else {
             gameCell.placeCellOnMap(0);
         }
+    }
+
+    public void saveChunk(final Save save) throws IOException {
+        save.write(chunkPossX);
+        save.write(chunkPossY);
+        for (byte innerChunkPossX = 0; innerChunkPossX < GameChunk.CHUNK_SIZE; innerChunkPossX++) {
+            for (byte innerChunkPossY = 0; innerChunkPossY < GameChunk.CHUNK_SIZE; innerChunkPossY++) {
+                final GameCell gameCell = cells[innerChunkPossX][innerChunkPossY];
+                if (gameCell != null) {
+                    gameCell.write(save);
+                } else {
+                    save.write(CellType.getIdCellType(null));
+                    save.write(GameCell.getInnerChunkPoss(innerChunkPossX, innerChunkPossY));
+                }
+            }
+        }
+    }
+
+    public int getChunkPossX() {
+        return chunkPossX;
+    }
+
+    public int getChunkPossY() {
+        return chunkPossY;
     }
 
     public RealmTech getContext() {
