@@ -32,8 +32,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
         final Box2dComponent box2dComponent = ECSEngine.BOX2D_COMPONENT_MAPPER.get(entity);
         final PlayerComponent playerComponent = ECSEngine.PLAYER_COMPONENT_MAPPER.get(entity);
         final PossitionComponent possitionComponent = ECSEngine.POSSITION_COMPONENT_MAPPER.get(entity);
-
-        final GameCell gameCell = context.getSave().getMap().getGameCell((int) possitionComponent.x, (int) possitionComponent.y);
+        final GameCell gameCell = context.getSave().getTiledMap().getGroundCell((int) possitionComponent.x, (int) possitionComponent.y);
         // TODO mettre une vrai gestion des input
         xFactor = 0;
         yFactor = 0;

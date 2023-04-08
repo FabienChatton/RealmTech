@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
@@ -18,9 +19,13 @@ public class GameScreen extends AbstractScreen {
     public GameScreen(RealmTech context) throws IOException {
         super(context);
         //tiledMap = context.getAssetManager().get("map/mapTest.tmx", TiledMap.class);
-        mapRenderer = new OrthogonalTiledMapRenderer(context.getSave().getMap(), RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
+        mapRenderer = new OrthogonalTiledMapRenderer(context.getSave().getTiledMap().getMap(), RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
         box2DDebugRenderer = new Box2DDebugRenderer();
         context.getEcsEngine().createBodyPlayer();
+    }
+
+    public void setMapRenderer(TiledMap map) {
+        mapRenderer.setMap(map);
     }
 
     @Override
@@ -36,7 +41,12 @@ public class GameScreen extends AbstractScreen {
             context.setScreen(ScreenType.GAME_PAUSE);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            context.getSave().getMap().creerMapAleatoire();
+            try {
+                context.newSave("test");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            //context.getSave().getTiledMap().creerMapAleatoire();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
             context.getEcsEngine().createBodyPlayer();

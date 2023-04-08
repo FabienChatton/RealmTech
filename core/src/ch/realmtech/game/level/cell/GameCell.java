@@ -6,18 +6,21 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class GameCell {
     private final CellType cellType;
     private final GameChunk gameChunk;
     private final byte innerChunkPoss;
+    private final byte layer;
     private final TiledMapTileLayer.Cell cell;
     private final StaticTiledMapTile tile;
 
-    public GameCell(GameChunk gameChunk, byte innerChunkPoss, CellType cellType) {
+    GameCell(GameChunk gameChunk, byte innerChunkPoss, byte layer, CellType cellType) {
         this.gameChunk = gameChunk;
         this.cellType = cellType;
         this.innerChunkPoss = innerChunkPoss;
+        this.layer = layer;
         if (cellType == null) {
             cell = null;
             tile = null;
@@ -28,8 +31,14 @@ public class GameCell {
         }
     }
 
-    public GameCell(GameChunk gameChunk, byte innerChunkPossX, byte innerChunkPossY, CellType cellType) {
-        this(gameChunk,GameCell.getInnerChunkPoss(innerChunkPossX,innerChunkPossY), cellType);
+    GameCell(GameChunk gameChunk, byte innerChunkPossX, byte innerChunkPossY, byte layer, CellType cellType) {
+        this(gameChunk,GameCell.getInnerChunkPoss(innerChunkPossX,innerChunkPossY), layer, cellType);
+    }
+
+    public static byte getInnerChunkPossByWorldPoss(int worldX, int worldY) {
+        byte innerChunkX = (byte) (worldX % GameChunk.CHUNK_SIZE);
+        byte innerChunkY = (byte) (worldY % GameChunk.CHUNK_SIZE);
+        return GameCell.getInnerChunkPoss(innerChunkX, innerChunkY);
     }
 
     public CellType getCellType() {
@@ -59,9 +68,24 @@ public class GameCell {
     public void write(Save save) throws IOException {
         save.write(CellType.getIdCellType(cellType));
         save.write(innerChunkPoss);
+        save.write(layer);
     }
 
     public static byte getInnerChunkPoss(byte innerChunkPossX, byte innerChunkPossY) {
         return (byte) ((innerChunkPossX << 4) + innerChunkPossY);
+    }
+
+    public static byte[] write(GameCell cell) {
+        ByteBuffer buffer = ByteBuffer.allocate(Byte.BYTES * 3);
+        if (cell != null) {
+            buffer.put(CellType.getIdCellType(cell.cellType));
+            buffer.put(cell.innerChunkPoss);
+            buffer.put(cell.layer);
+        }
+        return buffer.array();
+    }
+
+    public byte getLayer() {
+        return layer;
     }
 }

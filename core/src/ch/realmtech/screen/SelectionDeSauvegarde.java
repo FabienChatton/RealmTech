@@ -35,8 +35,8 @@ public class SelectionDeSauvegarde extends AbstractScreen{
             String version = null;
             try {
                 version = String.valueOf(ByteBuffer.wrap(Files.readAllBytes(file.toPath()),9,Integer.BYTES).getInt());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                continue;
             }
             TextButton supprimerSave = new TextButton("supprimer", skin);
             supprimerSave.addListener(supprimerSave(file));
@@ -86,7 +86,7 @@ public class SelectionDeSauvegarde extends AbstractScreen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (nomNouvelleCarte.getText().isEmpty()) {
-                    PopupHelper.popupErreur("Le nom de la carte ne doit pas être vide");
+                    uiStage.addActor(PopupHelper.popupErreur("Le nom de la carte ne doit pas être vide"));
                     return;
                 }
                 try {

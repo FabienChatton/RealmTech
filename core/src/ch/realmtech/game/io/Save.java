@@ -1,14 +1,17 @@
 package ch.realmtech.game.io;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.PossitionComponent;
 import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.game.level.cell.GameCellFactory;
 import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.level.chunk.GameChunkFactory;
 import ch.realmtech.game.level.map.RealmTechTiledMap;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.io.*;
@@ -40,20 +43,26 @@ public class Save implements Closeable, Flushable{
         String magicGameName = new String(rawFile,0,9);
         int version = ByteBuffer.wrap(rawFile, 9,Integer.BYTES).getInt();
         switch (version) {
-            case 2 -> loadMapV2(rawFile);
             default -> loadLast(rawFile);
         }
         inputStream.close();
     }
 
-
-    private void loadMapV2(byte[] rawFile) {
+    private void loadMapV3(byte[] rawFile) {
         Date date = new Date(ByteBuffer.wrap(rawFile, 13, Long.BYTES).getLong());
         int i = 21;
         int worldWith = ByteBuffer.wrap(rawFile, i, Integer.BYTES).getInt();
         i += Integer.BYTES;
         int worldHigh = ByteBuffer.wrap(rawFile, i, Integer.BYTES).getInt();
         i += Integer.BYTES;
+        byte numberLayer = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
+        i += Byte.BYTES;
+        long seed = ByteBuffer.wrap(rawFile, i, Long.BYTES).getLong();
+        i += Long.BYTES;
+        float playerPositionX = ByteBuffer.wrap(rawFile, i, Float.BYTES).getFloat();
+        i += Float.BYTES;
+        float playerPositionY = ByteBuffer.wrap(rawFile, i, Float.BYTES).getFloat();
+        i += Float.BYTES;
         GameChunk[][] chunks = new GameChunk[worldWith / GameChunk.CHUNK_SIZE][worldHigh / GameChunk.CHUNK_SIZE];
         while (i < rawFile.length) {
             int chunkPossX = ByteBuffer.wrap(rawFile, i, Integer.BYTES).getInt();
@@ -62,23 +71,27 @@ public class Save implements Closeable, Flushable{
             i += Integer.BYTES;
             chunks[chunkPossX][chunkPossY] = GameChunkFactory.createEmptyChunk(map, chunkPossX, chunkPossY);
             GameChunk chunk = chunks[chunkPossX][chunkPossY];
-            GameCell[][] gameCells = new GameCell[GameChunk.CHUNK_SIZE][GameChunk.CHUNK_SIZE];
+            GameCell[][][] gameCells = new GameCell[GameChunk.CHUNK_SIZE][GameChunk.CHUNK_SIZE][GameChunk.NUMBER_LAYER];
             for (byte x = 0; x < GameChunk.CHUNK_SIZE; x++) {
                 for (byte y = 0; y < GameChunk.CHUNK_SIZE; y++) {
-                    CellType cellType = CellType.getCellTypeByID(ByteBuffer.wrap(rawFile, i, Byte.BYTES).get());
-                    i += Byte.BYTES;
-                    byte innerPoss = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
-                    i += Byte.BYTES;
-                    gameCells[x][y] = GameCellFactory.createByteType(chunk,innerPoss,cellType);
+                    for (byte z = 0; z < numberLayer; z++) {
+                        CellType cellType = CellType.getCellTypeByID(ByteBuffer.wrap(rawFile, i, Byte.BYTES).get());
+                        i += Byte.BYTES;
+                        byte innerPoss = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
+                        i += Byte.BYTES;
+                        byte layer = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
+                        i += Byte.BYTES;
+                        gameCells[x][y][z] = cellType == null ? null : GameCellFactory.createByType(chunk, innerPoss, layer, cellType);
+                    }
                 }
             }
             chunk.setCells(gameCells);
         }
-        map.initAndPlace(worldWith, worldHigh, 32, 32, chunks);
+        map.initAndPlace(worldWith, worldHigh, 32, 32, numberLayer, chunks);
     }
 
     private void loadLast(byte[] rawFile) {
-        loadMapV2(rawFile);
+        loadMapV3(rawFile);
     }
 
     @Deprecated
@@ -95,6 +108,7 @@ public class Save implements Closeable, Flushable{
         outputStream.close();
     }
 
+    @Deprecated
     public void saveV2() throws IOException {
         final int version = 2;
         if (file.exists()) {
@@ -111,8 +125,30 @@ public class Save implements Closeable, Flushable{
         outputStream.close();
     }
 
+    public void saveV3() throws IOException {
+        final int version = 3;
+        if (file.exists()) {
+            Files.newBufferedWriter(file.toPath(), StandardOpenOption.TRUNCATE_EXISTING).close();
+        }
+        outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+        outputStream.write("RealmTech".getBytes());
+        outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(version).array());
+        outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(System.currentTimeMillis()).array());
+        outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(RealmTechTiledMap.WORLD_WITH).array());
+        outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(RealmTechTiledMap.WORLD_HIGH).array());
+        outputStream.write(ByteBuffer.allocate(Byte.BYTES).put(GameChunk.NUMBER_LAYER).array());
+        outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(map.getSeed()).array());
+        Entity player = context.getPlayer();
+        PossitionComponent playerPosition = player.getComponent(PossitionComponent.class);
+        outputStream.write(ByteBuffer.allocate(Float.BYTES).putFloat(playerPosition.x).array());
+        outputStream.write(ByteBuffer.allocate(Float.BYTES).putFloat(playerPosition.y).array());
+        map.save(this);
+        outputStream.flush();
+        outputStream.close();
+    }
+
     public void saveLast() throws IOException {
-        saveV2();
+        saveV3();
     }
 
     public void write (int aInt) throws IOException{
@@ -144,13 +180,14 @@ public class Save implements Closeable, Flushable{
     @Override
     public void close() throws IOException {
         outputStream.close();
+        inputStream.close();
     }
 
     public RealmTech getContext() {
         return context;
     }
 
-    public RealmTechTiledMap getMap() {
+    public RealmTechTiledMap getTiledMap() {
         return map;
     }
 }

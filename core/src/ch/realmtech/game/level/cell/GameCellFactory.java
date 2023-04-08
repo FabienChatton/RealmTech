@@ -4,11 +4,16 @@ import ch.realmtech.game.level.chunk.GameChunk;
 
 public class GameCellFactory {
 
-    public static GameCell createByteType(GameChunk chunk, byte innerPossX, byte innerPossY, CellType cellType) {
-        return new GameCell(chunk, innerPossX, innerPossY, cellType);
+    public static GameCell createbytype(GameChunk chunk, byte innerPossX, byte innerPossY, byte layer, CellType cellType) {
+        return new GameCell(chunk, innerPossX, innerPossY, layer, cellType);
     }
 
-    public static GameCell createByteType(GameChunk chunk, byte innerPoss, CellType cellType) {
-        return new GameCell(chunk, innerPoss, cellType);
+    public static GameCell createByType(GameChunk chunk, byte innerPoss, byte layer, CellType cellType) {
+        return new GameCell(chunk, innerPoss, layer, cellType);
+    }
+
+    public static GameCell createByTypeOnTop(GameChunk gameChunk, byte innerPoss, CellType cellType) {
+        byte topLayer = gameChunk.getOnTopLayer(GameCell.getInnerChunkPossX(innerPoss), GameCell.getInnerChunkPossY(innerPoss));
+        return createByType(gameChunk, innerPoss, topLayer, cellType);
     }
 }

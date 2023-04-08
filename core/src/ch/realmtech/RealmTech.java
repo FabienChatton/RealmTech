@@ -3,12 +3,13 @@ package ch.realmtech;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.io.Save;
 import ch.realmtech.game.io.SaveFactory;
-import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
+import ch.realmtech.screen.GameScreen;
 import ch.realmtech.screen.ScreenType;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -90,7 +91,6 @@ public final class RealmTech extends Game{
 
     private void initMap() {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
-        assetManager.load("map/mapTest.tmx", TiledMap.class); // TODO a supprimer un jour, inutilisé
         assetManager.load("texture/atlas/texture.atlas", TextureAtlas.class);
         Gdx.app.debug(TAG, "Map test chargé");
     }
@@ -188,7 +188,17 @@ public final class RealmTech extends Game{
 
     public RealmTechTiledMap getMap() {
         Save save = getSave();
-        if (save != null) return save.getMap();
+        if (save != null) return save.getTiledMap();
         return null;
+    }
+
+    public void setMapRenderer(TiledMap map) {
+        if (screenCash.containsKey(ScreenType.GAME_SCREEN)) {
+            ((GameScreen) screenCash.get(ScreenType.GAME_SCREEN)).setMapRenderer(map);
+        }
+    }
+
+    public Entity getPlayer() {
+        return ecsEngine.getPlayer();
     }
 }

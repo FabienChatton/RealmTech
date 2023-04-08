@@ -2,8 +2,10 @@ package ch.realmtech.game.listener;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.item.ItemType;
+import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.cell.GameCell;
-import ch.realmtech.game.level.map.RealmTechTiledMap;
+import ch.realmtech.game.level.cell.GameCellFactory;
+import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.input.InputMapper;
 import com.badlogic.ashley.signals.Listener;
 import com.badlogic.ashley.signals.Signal;
@@ -25,25 +27,23 @@ public class GameWorldInputListener implements Listener<InputMapper.PointerMappe
                 if (pointerMapper.button == InputMapper.leftClick.button) {
                     int worldX = (int) gameCoordinate.x;
                     int worldY = (int) gameCoordinate.y;
-                    if (context.getMap() != null ) {
-                        final GameCell gameCell = context.getMap().getGameCell(worldX, worldY);
+                    if (context.getMap() != null) {
+                        final GameCell gameCell = context.getMap().getTopCell(worldX, worldY);
                         if (gameCell != null && gameCell.getCellType() != null) {
                             if (gameCell.getCellType().cellBehavior.getBreakWith() == ItemType.PELLE) {
-                                context.getMap().setCell(worldX, worldY, null);
+                                context.getMap().setTopCell(worldX, worldY, null);
                             }
                         }
                     }
-                    //gameMap.getLayerTiledLayer(0).setCell((int) gameCoordinate.x, (int) gameCoordinate.y, null);
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {
-
-                    /*
-                    TextureAtlas groundTitlesAtlas = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class);
-                    TextureRegion texture = groundTitlesAtlas.getRegions().get(MathUtils.random(0,groundTitlesAtlas.getRegions().size - 1));
-                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                    cell.setTile(new StaticTiledMapTile(texture));
-                    gameMap.getLayerTiledLayer(0).setCell((int) gameCoordinate.x, (int) gameCoordinate.y, cell);
-                     */
+                    if (context.getMap() != null) {
+                        int worldX = (int) gameCoordinate.x;
+                        int worldY = (int) gameCoordinate.y;
+                        GameChunk gameChunk = context.getMap().getGameChunk(worldX, worldY);
+                        GameCell newTopCell = GameCellFactory.createByTypeOnTop(gameChunk,GameCell.getInnerChunkPossByWorldPoss(worldX, worldY), CellType.GRASS);
+                        gameChunk.setCell(newTopCell);
+                    }
                 }
             }
         }

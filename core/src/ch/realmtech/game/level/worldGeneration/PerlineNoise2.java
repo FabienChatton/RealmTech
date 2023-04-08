@@ -20,7 +20,6 @@ public class PerlineNoise2 implements GeneratePerlinNoise {
         float layerFrequency = scale;
         float layerWeight = 1;
         float weightSum = 0;
-        SimplexNoise.setRand(rand);
 
         // Summing up all octaves, the whole expression makes up a weighted average
         // computation where the noise with the lowest frequencies have the least effect
