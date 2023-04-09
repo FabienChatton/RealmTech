@@ -6,8 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.io.IOException;
-
 public class GamePauseScreen extends AbstractScreen {
     public GamePauseScreen(RealmTech context) {
         super(context);

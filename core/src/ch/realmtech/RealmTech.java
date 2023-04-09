@@ -9,7 +9,7 @@ import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.GameScreen;
 import ch.realmtech.screen.ScreenType;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Entity;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -44,7 +44,7 @@ public final class RealmTech extends Game{
     private Stage uiStage;
     private Skin skin;
 	private ECSEngine ecsEngine;
-    public World world;
+    public World physicWorld;
     private Save save;
 
     private TextureAtlas textureAtlas;
@@ -63,7 +63,7 @@ public final class RealmTech extends Game{
         uiStage = new Stage(
                 new ExtendViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
-        world = new World(new Vector2(0, 0), true);
+        physicWorld = new World(new Vector2(0, 0), true);
         inputMapper = InputMapper.getInstance(this);
         screenCash = new EnumMap<>(ScreenType.class);
         ecsEngine = new ECSEngine(this);

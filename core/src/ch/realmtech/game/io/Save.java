@@ -1,17 +1,16 @@
 package ch.realmtech.game.io;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.PossitionComponent;
+import ch.realmtech.game.ecs.component.PositionComponent;
 import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.game.level.cell.GameCellFactory;
 import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.game.level.chunk.GameChunkFactory;
 import ch.realmtech.game.level.map.RealmTechTiledMap;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.io.*;
@@ -139,7 +138,7 @@ public class Save implements Closeable, Flushable{
         outputStream.write(ByteBuffer.allocate(Byte.BYTES).put(GameChunk.NUMBER_LAYER).array());
         outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(map.getSeed()).array());
         Entity player = context.getPlayer();
-        PossitionComponent playerPosition = player.getComponent(PossitionComponent.class);
+        PositionComponent playerPosition = player.getComponent(PositionComponent.class);
         outputStream.write(ByteBuffer.allocate(Float.BYTES).putFloat(playerPosition.x).array());
         outputStream.write(ByteBuffer.allocate(Float.BYTES).putFloat(playerPosition.y).array());
         map.save(this);

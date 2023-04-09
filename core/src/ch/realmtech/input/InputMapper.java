@@ -3,7 +3,7 @@ package ch.realmtech.input;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.listener.GameCameraListener;
 import ch.realmtech.game.listener.GameWorldInputListener;
-import com.badlogic.ashley.signals.Signal;
+import ch.realmtech.observer.Observer;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,8 +19,8 @@ public final class InputMapper implements InputProcessor {
     public static PointerMapper rightClick;
     private final Array<KeysMapper> keysMappers;
     private final Array<PointerMapper> pointerMappers;
-    private final Signal<PointerMapper> pointerSignal;
-    private final Signal<float[]> scrollSignal;
+    private final Observer<PointerMapper> pointerSignal;
+    private final Observer<float[]> scrollSignal;
     private static InputMapper instance;
 
     private InputMapper(RealmTech context) {
@@ -47,11 +47,11 @@ public final class InputMapper implements InputProcessor {
         pointerMappers.add(rightClick);
 
         // signal pointer
-        pointerSignal = new Signal<>();
+        pointerSignal = new Observer<>();
         pointerSignal.add(new GameWorldInputListener(context));
 
         // scroll signal
-        scrollSignal = new Signal<>();
+        scrollSignal = new Observer<>();
         scrollSignal.add(new GameCameraListener((OrthographicCamera) context.getGameStage().getCamera()));
     }
 
@@ -104,7 +104,7 @@ public final class InputMapper implements InputProcessor {
                 pointerMapper.isPressed = true;
                 pointerMapper.lastTouchedScreenX = screenX;
                 pointerMapper.lastTouchedScreenY = screenY;
-                pointerSignal.dispatch(pointerMapper);
+                pointerSignal.notifySubscribers(pointerMapper);
                 return true;
             }
         }
@@ -118,7 +118,7 @@ public final class InputMapper implements InputProcessor {
                 pointerMapper.isPressed = false;
                 pointerMapper.lastReleaseScreenX = screenX;
                 pointerMapper.lastReleaseScreenY = screenY;
-                pointerSignal.dispatch(pointerMapper);
+                pointerSignal.notifySubscribers(pointerMapper);
                 return true;
             }
         }
@@ -137,7 +137,7 @@ public final class InputMapper implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        scrollSignal.dispatch(new float[]{amountX,amountY});
+        scrollSignal.notifySubscribers(new float[]{amountX,amountY});
         return false;
     }
 

@@ -1,14 +1,8 @@
 package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.game.ecs.PoolableComponent;
+import com.artemis.Component;
 
-public class PlayerComponent implements PoolableComponent {
-
-
-    @Override
-    public void reset() {
-
-    }
+public class PlayerComponent extends Component {
 
 
 }

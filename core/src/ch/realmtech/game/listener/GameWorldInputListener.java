@@ -7,19 +7,18 @@ import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.game.level.cell.GameCellFactory;
 import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.input.InputMapper;
-import com.badlogic.ashley.signals.Listener;
-import com.badlogic.ashley.signals.Signal;
+import ch.realmtech.observer.Subcriber;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 
-public class GameWorldInputListener implements Listener<InputMapper.PointerMapper> {
+public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapper> {
     private final RealmTech context;
     public GameWorldInputListener(RealmTech context) {
         this.context = context;
     }
 
     @Override
-    public void receive(Signal<InputMapper.PointerMapper> signal, InputMapper.PointerMapper pointerMapper) {
+    public void receive(InputMapper.PointerMapper pointerMapper) {
         // supprime ou place cellule sur la carte
         if (pointerMapper.isPressed) {
             Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));

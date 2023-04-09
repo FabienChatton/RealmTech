@@ -1,17 +1,18 @@
 package ch.realmtech.game.ecs.system;
 
-import com.badlogic.ashley.core.EntitySystem;
+import com.artemis.EntitySystem;
+import com.artemis.annotations.Exclude;
+import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 
+@Exclude
 public class WorldStepSystem extends EntitySystem {
-    private final World world;
-    public WorldStepSystem(World world) {
-        super(0);
-        this.world = world;
-    }
+    @Wire(name = "physicWorld")
+    World physicWorld;
 
     @Override
-    public void update(float deltaTime) {
-        world.step(deltaTime, 6, 2);
+    protected void processSystem() {
+        physicWorld.step(Gdx.graphics.getDeltaTime(), 6, 2);
     }
 }

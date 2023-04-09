@@ -3,22 +3,18 @@ package ch.realmtech.game.ecs;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
-import com.badlogic.ashley.core.ComponentMapper;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.artemis.Entity;
+import com.artemis.World;
+import com.artemis.WorldConfiguration;
+import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-public final class ECSEngine extends PooledEngine {
+public final class ECSEngine {
     private final static String TAG = ECSEngine.class.getSimpleName();
-    public final static ComponentMapper<PossitionComponent> POSSITION_COMPONENT_MAPPER = ComponentMapper.getFor(PossitionComponent.class);
-    public final static ComponentMapper<TextureComponent> TEXTURE_COMPONENT_MAPPER = ComponentMapper.getFor(TextureComponent.class);
-    public final static ComponentMapper<PlayerComponent> PLAYER_COMPONENT_MAPPER = ComponentMapper.getFor(PlayerComponent.class);
-    public final static ComponentMapper<MovementComponent> MOVEMENT_COMPONENT_MAPPER = ComponentMapper.getFor(MovementComponent.class);
-    public static final ComponentMapper<Box2dComponent> BOX2D_COMPONENT_MAPPER = ComponentMapper.getFor(Box2dComponent.class);
+
     private final static byte BIT_PLAYER = 1 << 1;
     private final static byte BIT_WORLD = 1 << 2;
     private final static byte BIT_GAME_OBJECT = 1 << 3;
@@ -26,19 +22,31 @@ public final class ECSEngine extends PooledEngine {
 
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
-    private Entity playerEntity;
     private Body bodyWorldBorder;
+    private final World ecsWorld;
+    private int playerEntity;
 
     public ECSEngine(final RealmTech context) {
-        super(10,1000,10,100);
         this.context = context;
-        addSystem(new PlayerMouvementSystem(context));
-        addSystem(new WorldStepSystem(context.world));
-        addSystem(new UpdateBox2dWithTextureSystem());
-        addSystem(new RendererTextureInGameSystem(context.getGameStage()));
-        addSystem(new CameraFollowPlayerSystem((OrthographicCamera) context.getGameStage().getCamera()));
+        WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
+                .with(new PlayerMouvementSystem())
+                .with(new WorldStepSystem())
+                .with(new UpdateBox2dWithTextureSystem())
+                .with(new CameraFollowPlayerSystem())
+                .with(new RendererTextureInGameSystem())
+                .build();
+        worldConfiguration.register("physicWorld", context.physicWorld);
+        worldConfiguration.register("gameStage", context.getGameStage());
+        worldConfiguration.register("context", context);
+        worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
+        ecsWorld = new World(worldConfiguration);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
+    }
+
+    public void process(float delta) {
+        ecsWorld.setDelta(delta);
+        ecsWorld.process();
     }
 
     private void resetBodyDef() {
@@ -68,19 +76,20 @@ public final class ECSEngine extends PooledEngine {
     }
 
     public void createBodyPlayer(){
-        if (playerEntity != null) {
-            removeEntity(playerEntity);
-        }
         final int playerWorldWith = 1;
         final int playerWorldHigh = 1;
-        playerEntity = createEntity();
+        if (ecsWorld.getEntity(playerEntity) != null) {
+            context.physicWorld.destroyBody(ecsWorld.edit(playerEntity).create(Box2dComponent.class).body);
+            ecsWorld.delete(playerEntity);
+        }
+        playerEntity = ecsWorld.create();
 
         resetBodyDef();
         resetFixtureDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         Vector2 spawnPoint = context.getSave().getTiledMap().getProperties().get("spawn-point", Vector2.class);
         bodyDef.position.set(spawnPoint.x,spawnPoint.y);
-        Body bodyPlayer = context.world.createBody(bodyDef);
+        Body bodyPlayer = context.physicWorld.createBody(bodyDef);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(playerWorldWith/2f, playerWorldHigh/2f);
         fixtureDef.shape = playerShape;
@@ -91,37 +100,29 @@ public final class ECSEngine extends PooledEngine {
         playerShape.dispose();
 
         // box2d component
-        Box2dComponent box2dComponent = createComponent(Box2dComponent.class);
+        Box2dComponent box2dComponent = ecsWorld.edit(playerEntity).create(Box2dComponent.class);
         box2dComponent.init(playerWorldWith, playerWorldHigh, bodyPlayer);
-        playerEntity.add(box2dComponent);
 
         // player component
-        PlayerComponent playerComponent = createComponent(PlayerComponent.class);
-        playerEntity.add(playerComponent);
+        PlayerComponent playerComponent = ecsWorld.edit(playerEntity).create(PlayerComponent.class);
 
         // movement component
-        MovementComponent movementComponent = createComponent(MovementComponent.class);
+        MovementComponent movementComponent = ecsWorld.edit(playerEntity).create(MovementComponent.class);
         movementComponent.init(10,10);
-        playerEntity.add(movementComponent);
 
         // position component
-        PossitionComponent possitionComponent = createComponent(PossitionComponent.class);
-        playerEntity.add(possitionComponent);
+        PositionComponent possitionComponent = ecsWorld.edit(playerEntity).create(PositionComponent.class);
 
         // texture component
-        TextureComponent textureComponent = createComponent(TextureComponent.class);
+        TextureComponent textureComponent = ecsWorld.edit(playerEntity).create(TextureComponent.class);
         final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
         textureComponent.init(texture);
-        playerEntity.add(textureComponent);
-
-
-        addEntity(playerEntity);
     }
 
     // TODO a changer de place car ne contient pas d'entités a ajouter au system
     public void generateBodyWorldBorder(int x, int y, int x2, int y2) {
         if (bodyWorldBorder != null) {
-            context.world.destroyBody(bodyWorldBorder);
+            context.physicWorld.destroyBody(bodyWorldBorder);
             bodyWorldBorder = null;
         }
         resetBodyDef();
@@ -129,7 +130,7 @@ public final class ECSEngine extends PooledEngine {
         bodyDef.position.set(x, y);
         bodyDef.gravityScale = 0;
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyWorldBorder = context.world.createBody(bodyDef);
+        bodyWorldBorder = context.physicWorld.createBody(bodyDef);
         ChainShape chain = new ChainShape();
         chain.createChain(new float[]{x,x,x,x2,x2,y2,y2,y,y,x});
         fixtureDef.shape = chain;
@@ -140,6 +141,6 @@ public final class ECSEngine extends PooledEngine {
     }
 
     public Entity getPlayer() {
-        return playerEntity;
+        return ecsWorld.getEntity(playerEntity);
     }
 }

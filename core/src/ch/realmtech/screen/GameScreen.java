@@ -64,9 +64,9 @@ public class GameScreen extends AbstractScreen {
     public void draw() {
         mapRenderer.setView((OrthographicCamera) context.getGameStage().getCamera());
         mapRenderer.render();
-        ecsEngine.update(Gdx.graphics.getDeltaTime());
+        ecsEngine.process(Gdx.graphics.getDeltaTime());
         uiStage.draw();
-        box2DDebugRenderer.render(context.world, gameCamera.combined);
+        box2DDebugRenderer.render(context.physicWorld, gameCamera.combined);
     }
 
     @Override

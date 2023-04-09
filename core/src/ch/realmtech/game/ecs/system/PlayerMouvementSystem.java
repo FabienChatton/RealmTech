@@ -1,39 +1,39 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.input.InputMapper;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.ComponentMapper;
+import com.artemis.annotations.All;
+import com.artemis.annotations.Wire;
+import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 
+@All({PlayerComponent.class,
+        MovementComponent.class,
+        PositionComponent.class,
+        Box2dComponent.class,
+        TextureComponent.class})
 public class PlayerMouvementSystem extends IteratingSystem {
+    @Wire(name = "context")
+    private RealmTech context;
+    ComponentMapper<PlayerComponent> mPlayer;
+    ComponentMapper<MovementComponent> mMouvement;
+    ComponentMapper<PositionComponent> mPosition;
+    ComponentMapper<Box2dComponent> mBox2d;
     private boolean directionChange = false;
     private float xFactor = 0;
     private float yFactor = 0;
-    private final RealmTech context;
-    public PlayerMouvementSystem(RealmTech context) {
-        super(Family.all(PlayerComponent.class)
-                .all(MovementComponent.class)
-                .all(PossitionComponent.class)
-                .all(Box2dComponent.class)
-                .all(TextureComponent.class)
-                .get()
-        ,-10);
-        this.context = context;
-    }
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        final MovementComponent movementComponent = ECSEngine.MOVEMENT_COMPONENT_MAPPER.get(entity);
-        final Box2dComponent box2dComponent = ECSEngine.BOX2D_COMPONENT_MAPPER.get(entity);
-        final PlayerComponent playerComponent = ECSEngine.PLAYER_COMPONENT_MAPPER.get(entity);
-        final PossitionComponent possitionComponent = ECSEngine.POSSITION_COMPONENT_MAPPER.get(entity);
-        final GameCell gameCell = context.getSave().getTiledMap().getGroundCell((int) possitionComponent.x, (int) possitionComponent.y);
-        // TODO mettre une vrai gestion des input
+    protected void process(int entityId) {
+        PlayerComponent playerComponent = mPlayer.create(entityId);
+        MovementComponent movementComponent = mMouvement.create(entityId);
+        PositionComponent positionComponent = mPosition.create(entityId);
+        Box2dComponent box2dComponent = mBox2d.create(entityId);
+        GameCell gameCell = context.getSave().getTiledMap().getGroundCell((int) positionComponent.x, (int) positionComponent.y);
+
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
@@ -64,23 +64,6 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
             }
         }
-
-//        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-//            directionChange = true;
-//            yFactor = 1;
-//        }
-//        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-//            directionChange = true;
-//            xFactor = -1;
-//        }
-//        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-//            directionChange = true;
-//            yFactor = -1;
-//        }
-//        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-//            directionChange = true;
-//            xFactor = 1;
-//        }
 
         if (directionChange) {
             directionChange = false;

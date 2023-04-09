@@ -1,29 +1,31 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.ECSEngine;
-import ch.realmtech.game.ecs.component.PossitionComponent;
+import ch.realmtech.game.ecs.component.PositionComponent;
 import ch.realmtech.game.ecs.component.TextureComponent;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.ComponentMapper;
+import com.artemis.annotations.All;
+import com.artemis.annotations.Wire;
+import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import static ch.realmtech.RealmTech.PPM;
+
+@All({PositionComponent.class, TextureComponent.class})
 public class RendererTextureInGameSystem extends IteratingSystem {
-    private final Stage gameStage;
-    public RendererTextureInGameSystem(Stage gameStage) {
-        super(Family.all(PossitionComponent.class).all(TextureComponent.class).get(),10);
-        this.gameStage = gameStage;
-    }
+    @Wire(name = "gameStage")
+    Stage gameStage;
+
+    ComponentMapper<TextureComponent> mTexture;
+    ComponentMapper<PositionComponent> mPosition;
 
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        TextureComponent textureComponent = ECSEngine.TEXTURE_COMPONENT_MAPPER.get(entity);
-        PossitionComponent possitionComponent = ECSEngine.POSSITION_COMPONENT_MAPPER.get(entity);
+    protected void process(int entityId) {
+        TextureComponent textureComponent = mTexture.create(entityId);
+        PositionComponent positionComponent = mPosition.create(entityId);
         gameStage.getCamera().update();
         gameStage.getBatch().setProjectionMatrix(gameStage.getCamera().combined);
         gameStage.getBatch().begin();
-        gameStage.getBatch().draw(textureComponent.texture, possitionComponent.x, possitionComponent.y, textureComponent.texture.getRegionWidth() / PPM, textureComponent.texture.getRegionHeight() / PPM);
+        gameStage.getBatch().draw(textureComponent.texture, positionComponent.x, positionComponent.y, textureComponent.texture.getRegionWidth() / PPM, textureComponent.texture.getRegionHeight() / PPM);
         gameStage.getBatch().end();
     }
 }
