@@ -19,7 +19,7 @@ public class Loading extends AbstractScreen {
     public void update(float delta) {
         super.update(delta);
         if (context.getAssetManager().update()) {
-            context.setScreen(ScreenType.MENU);
+            context.loadingFinish();
         }
     }
 }

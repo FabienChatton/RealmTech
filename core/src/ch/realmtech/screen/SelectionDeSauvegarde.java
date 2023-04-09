@@ -63,7 +63,8 @@ public class SelectionDeSauvegarde extends AbstractScreen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 try {
-                    context.loadSave(file);
+                    context.newSaveInitWorld(file);
+                    context.loadSaveOnWorkingSave();
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -90,7 +91,8 @@ public class SelectionDeSauvegarde extends AbstractScreen{
                     return;
                 }
                 try {
-                    context.newSave(nomNouvelleCarte.getText());
+                    context.newSaveInitWorld(nomNouvelleCarte.getText());
+                    context.generateNewWorld();
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
                     throw new RuntimeException(e);

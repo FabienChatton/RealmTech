@@ -1,9 +1,10 @@
 package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.ecs.component.SaveComponent;
+import ch.realmtech.game.ecs.system.WorldMapManager;
 import ch.realmtech.game.io.Save;
-import ch.realmtech.game.io.SaveFactory;
-import ch.realmtech.game.level.map.RealmTechTiledMap;
+import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
@@ -45,7 +46,6 @@ public final class RealmTech extends Game{
     private Skin skin;
 	private ECSEngine ecsEngine;
     public World physicWorld;
-    private Save save;
 
     private TextureAtlas textureAtlas;
 
@@ -66,9 +66,12 @@ public final class RealmTech extends Game{
         physicWorld = new World(new Vector2(0, 0), true);
         inputMapper = InputMapper.getInstance(this);
         screenCash = new EnumMap<>(ScreenType.class);
+        setScreen(ScreenType.LOADING);
+    }
+
+    public void loadingFinish() {
         ecsEngine = new ECSEngine(this);
-        setScreen(ScreenType.LOADING);
-        setScreen(ScreenType.LOADING);
+        setScreen(ScreenType.MENU);
     }
 
     private void initHealper() {
@@ -149,25 +152,37 @@ public final class RealmTech extends Game{
         return textureAtlas;
     }
 
-    public void loadSave(File saveFile) throws IOException {
-        save = SaveFactory.loadSave(saveFile,this);
+    public void loadSaveOnWorkingSave() throws IOException {
+        ecsEngine.loadSaveOnWorkingSave();
+        //workingSave = SaveFactory.loadSave(saveFile,this);
     }
 
-    public void writeSave() throws IOException {
-        if (save != null) {
-            save.saveLast();
-        } else {
-            Gdx.app.debug(TAG, "La save n'a pas put être sauvegarde car elle n'existe pas");
-        }
+    public void saveWorldMap() throws IOException {
+        ecsEngine.saveWorldMap();
+
+//        if (workingSave != null) {
+//            workingSave.saveLast();
+//        } else {
+//            Gdx.app.debug(TAG, "La save n'a pas put être sauvegarde car elle n'existe pas");
+//        }
     }
 
-    public void newSave(String saveName) throws IOException {
-        save = SaveFactory.genereteNewSave(Gdx.files.local(saveName + ".rts").file(), this);
+    public void newSaveInitWorld(String saveName) throws IOException {
+        newSaveInitWorld(new File(saveName + ".rts"));
+        //workingSave = SaveFactory.genereteNewSave(Gdx.files.local(saveName + ".rts").file(), this);
+    }
+
+    public void newSaveInitWorld(File saveFile) throws IOException {
+        ecsEngine.newSaveInitWorld(saveFile);
+    }
+
+    public void generateNewWorld() {
+        ecsEngine.generateNewWorldMap();
     }
 
     public void quiteAndSave() {
         try {
-            writeSave();
+            saveWorldMap();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -182,14 +197,19 @@ public final class RealmTech extends Game{
         }
     }
 
-    public Save getSave() {
-        return save;
+    public SaveComponent getWorkingSave() {
+        //return workingSave;
+        return ecsEngine.getWorkingSave();
     }
 
-    public RealmTechTiledMap getMap() {
-        Save save = getSave();
-        if (save != null) return save.getTiledMap();
-        return null;
+    public WorldMap getWorldMap() {
+//        Save save = getWorkingSave();
+//        if (save != null) return save.getTiledMap();
+        return ecsEngine.getWorkingMap();
+    }
+
+    public WorldMapManager getWorldMapManager() {
+        return ecsEngine.getWorldMapManager();
     }
 
     public void setMapRenderer(TiledMap map) {

@@ -14,8 +14,8 @@ public class CameraFollowPlayerSystem extends IteratingSystem {
     @Wire(name = "gameCamera")
     OrthographicCamera gameCamera;
 
-    ComponentMapper<PositionComponent> mPosition;
-    ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<Box2dComponent> mBox2d;
 
     @Override
     protected void process(int entityId) {

@@ -2,14 +2,15 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.ecs.component.Box2dComponent;
 import ch.realmtech.game.ecs.component.PositionComponent;
+import ch.realmtech.game.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
 @All({Box2dComponent.class, PositionComponent.class})
 public class UpdateBox2dWithTextureSystem extends IteratingSystem {
-    ComponentMapper<Box2dComponent> mbox2d;
-    ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<Box2dComponent> mbox2d;
+    private ComponentMapper<PositionComponent> mPosition;
 
     @Override
     protected void process(int entityId) {

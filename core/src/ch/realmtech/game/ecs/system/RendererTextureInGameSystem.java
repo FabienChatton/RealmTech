@@ -15,8 +15,8 @@ public class RendererTextureInGameSystem extends IteratingSystem {
     @Wire(name = "gameStage")
     Stage gameStage;
 
-    ComponentMapper<TextureComponent> mTexture;
-    ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<TextureComponent> mTexture;
+    private ComponentMapper<PositionComponent> mPosition;
 
     @Override
     protected void process(int entityId) {

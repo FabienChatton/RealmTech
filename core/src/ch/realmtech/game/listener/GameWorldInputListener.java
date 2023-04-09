@@ -26,23 +26,23 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                 if (pointerMapper.button == InputMapper.leftClick.button) {
                     int worldX = (int) gameCoordinate.x;
                     int worldY = (int) gameCoordinate.y;
-                    if (context.getMap() != null) {
-                        final GameCell gameCell = context.getMap().getTopCell(worldX, worldY);
-                        if (gameCell != null && gameCell.getCellType() != null) {
-                            if (gameCell.getCellType().cellBehavior.getBreakWith() == ItemType.PELLE) {
-                                context.getMap().setTopCell(worldX, worldY, null);
-                            }
-                        }
-                    }
+//                    if (context.getWorldMap() != null) {
+//                        final GameCell gameCell = context.getWorldMapManager().getTopCell(worldX, worldY);
+//                        if (gameCell != null && gameCell.getCellType() != null) {
+//                            if (gameCell.getCellType().cellBehavior.getBreakWith() == ItemType.PELLE) {
+//                                context.getWorldMap().setTopCell(worldX, worldY, null);
+//                            }
+//                        }
+//                    } TODO remettre qu'on puisse enlever une cellule
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {
-                    if (context.getMap() != null) {
-                        int worldX = (int) gameCoordinate.x;
-                        int worldY = (int) gameCoordinate.y;
-                        GameChunk gameChunk = context.getMap().getGameChunk(worldX, worldY);
-                        GameCell newTopCell = GameCellFactory.createByTypeOnTop(gameChunk,GameCell.getInnerChunkPossByWorldPoss(worldX, worldY), CellType.GRASS);
-                        gameChunk.setCell(newTopCell);
-                    }
+//                    if (context.getWorldMap() != null) {
+//                        int worldX = (int) gameCoordinate.x;
+//                        int worldY = (int) gameCoordinate.y;
+//                        GameChunk gameChunk = context.getWorldMap().getGameChunk(worldX, worldY);
+//                        GameCell newTopCell = GameCellFactory.createByTypeOnTop(gameChunk,GameCell.getInnerChunkPossByWorldPoss(worldX, worldY), CellType.GRASS);
+//                        gameChunk.setCell(newTopCell);
+//                    } TODO placer cellule
                 }
             }
         }
