@@ -18,10 +18,10 @@ import com.badlogic.gdx.math.Vector2;
 public class PlayerMouvementSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
-    ComponentMapper<PlayerComponent> mPlayer;
-    ComponentMapper<MovementComponent> mMouvement;
-    ComponentMapper<PositionComponent> mPosition;
-    ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<PlayerComponent> mPlayer;
+    private ComponentMapper<MovementComponent> mMouvement;
+    private ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<Box2dComponent> mBox2d;
     private boolean directionChange = false;
     private float xFactor = 0;
     private float yFactor = 0;
@@ -32,37 +32,37 @@ public class PlayerMouvementSystem extends IteratingSystem {
         MovementComponent movementComponent = mMouvement.create(entityId);
         PositionComponent positionComponent = mPosition.create(entityId);
         Box2dComponent box2dComponent = mBox2d.create(entityId);
-        GameCell gameCell = context.getSave().getTiledMap().getGroundCell((int) positionComponent.x, (int) positionComponent.y);
+        //GameCell gameCell = context.getWorldMap().getGroundCell((int) positionComponent.x, (int) positionComponent.y); TODO remettre la detection de ceulle
 
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
-            if (gameCell != null && gameCell.getCellType() != null) {
-                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-            }
+//            if (gameCell != null && gameCell.getCellType() != null) {
+//                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+//            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
-            if (gameCell != null && gameCell.getCellType() != null) {
-                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-            }
+//            if (gameCell != null && gameCell.getCellType() != null) {
+//                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+//            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
-            if (gameCell != null && gameCell.getCellType() != null) {
-                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-            }
+//            if (gameCell != null && gameCell.getCellType() != null) {
+//                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+//            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
-            if (gameCell != null && gameCell.getCellType() != null) {
-                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-            }
+//            if (gameCell != null && gameCell.getCellType() != null) {
+//                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
+//            }
         }
 
         if (directionChange) {

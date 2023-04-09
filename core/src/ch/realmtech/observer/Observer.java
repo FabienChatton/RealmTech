@@ -1,12 +1,13 @@
 package ch.realmtech.observer;
 
+import com.artemis.utils.Bag;
 import com.badlogic.gdx.utils.Array;
 
 public class Observer<T> {
-    private Array<Subcriber<T>> subscribers;
+    private Bag<Subcriber<T>> subscribers;
 
     public Observer() {
-        subscribers = new Array<>();
+        subscribers = new Bag<>();
     }
 
     public void add(Subcriber<T> subcriber) {
@@ -14,7 +15,7 @@ public class Observer<T> {
     }
 
     public void remove(Subcriber<T> subcriber) {
-        subscribers.removeValue(subcriber, true);
+        subscribers.remove(subcriber);
     }
 
     public void notifySubscribers(T objectToNotify){

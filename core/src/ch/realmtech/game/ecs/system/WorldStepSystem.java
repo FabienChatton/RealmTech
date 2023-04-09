@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 @Exclude
 public class WorldStepSystem extends EntitySystem {
     @Wire(name = "physicWorld")
-    World physicWorld;
+    private World physicWorld;
 
     @Override
     protected void processSystem() {

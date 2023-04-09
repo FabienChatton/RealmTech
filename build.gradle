@@ -61,5 +61,8 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         api "net.onedaybeard.artemis:artemis-odb:2.3.0"
+        api "net.mostlyoriginal.artemis-odb:contrib-core:2.4.0"
+        api "net.mostlyoriginal.artemis-odb:contrib-eventbus:2.4.0"
+        api "net.mostlyoriginal.artemis-odb:contrib-plugin-singleton:2.5.0"
     }
 }
