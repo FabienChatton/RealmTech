@@ -1,11 +1,6 @@
 package ch.realmtech.game.listener;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.item.ItemType;
-import ch.realmtech.game.level.cell.CellType;
-import ch.realmtech.game.level.cell.GameCell;
-import ch.realmtech.game.level.cell.GameCellFactory;
-import ch.realmtech.game.level.chunk.GameChunk;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
 import com.badlogic.gdx.Gdx;

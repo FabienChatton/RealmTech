@@ -5,8 +5,6 @@ import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.WorldMapComponent;
 import ch.realmtech.game.level.cell.CellType;
-import ch.realmtech.game.level.cell.GameCell;
-import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 import ch.realmtech.game.level.worldGeneration.PerlineNoise2;
@@ -24,7 +22,6 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Random;
 
 @All(WorldMapComponent.class)
@@ -57,10 +54,10 @@ public class WorldMapManager extends EntitySystem {
         context.getEcsEngine().generateBodyWorldBorder(0, 0, worldWith, worldHigh);
     }
 
-    public void genereNewWorldMap(int worldMapId) {
+    public void generateNewWorldMap(int worldMapId) {
         final WorldMapComponent worldMap = mWorldMap.get(worldMapId);
         worldMap.seed = MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1);
-        worldMap.perlinNoise = new PerlinNoise(new Random(worldMap.seed), RealmTechTiledMap.WORLD_WITH, RealmTechTiledMap.WORLD_HIGH, new PerlineNoise2(7, 0.6f, 0.005f));
+        worldMap.perlinNoise = new PerlinNoise(new Random(worldMap.seed), WorldMap.WORLD_WITH, WorldMap.WORLD_HIGH, new PerlineNoise2(7, 0.6f, 0.005f));
         world.getSystem(ChunkManager.class).genereteNewChunks(worldMapId, worldMap.perlinNoise);
         placeWorldMap(worldMapId);
     }
@@ -78,6 +75,7 @@ public class WorldMapManager extends EntitySystem {
     }
 
     public void saveWorldMap(OutputStream outputStream) throws IOException {
+        CellManager cellManager = world.getSystem(CellManager.class);
         EntitySubscription chunkSubscription = world.getAspectSubscriptionManager()
                 .get(Aspect.all(ChunkComponent.class));
         EntitySubscription cellSubscription = world.getAspectSubscriptionManager()
@@ -108,7 +106,7 @@ public class WorldMapManager extends EntitySystem {
                     CellComponent cellComponent = mCell.get(cellId);
                     if (cellComponent != null && cellComponent.parentChunk == chunkId) {
                         outputStream.write(CellType.getIdCellType(cellComponent.cellType));
-                        outputStream.write(GameCell.getInnerChunkPoss(cellComponent.innerChunkPossX, cellComponent.innerChunkPossY));
+                        outputStream.write(cellManager.getInnerChunkPoss(cellComponent.innerChunkPossX, cellComponent.innerChunkPossY));
                         outputStream.write(cellComponent.layer);
                     }
                 }

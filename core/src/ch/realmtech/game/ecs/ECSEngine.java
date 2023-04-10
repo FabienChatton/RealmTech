@@ -3,8 +3,6 @@ package ch.realmtech.game.ecs;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
-import ch.realmtech.game.level.chunk.GameChunk;
-import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.game.level.map.WorldMap;
 import com.artemis.*;
 import com.artemis.World;
@@ -49,7 +47,7 @@ public final class ECSEngine {
         worldConfiguration.register("gameStage", context.getGameStage());
         worldConfiguration.register("context", context);
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
-        worldConfiguration.register("textureAtlas", context.getTextureAtlas());
+        worldConfiguration.register(context.getTextureAtlas());
         ecsWorld = new World(worldConfiguration);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
@@ -146,11 +144,11 @@ public final class ECSEngine {
         ecsWorld.edit(save).create(SaveComponent.class).init(context, saveFile);
         ecsWorld.edit(worldMap).create(WorldMapComponent.class).saveId = save;
 
-        ecsWorld.getSystem(WorldMapManager.class).init(worldMap, RealmTechTiledMap.WORLD_WITH, RealmTechTiledMap.WORLD_HIGH, 32, 32, GameChunk.NUMBER_LAYER);
+        ecsWorld.getSystem(WorldMapManager.class).init(worldMap, WorldMap.WORLD_WITH, WorldMap.WORLD_HIGH, 32, 32, WorldMap.NUMBER_LAYER);
     }
 
     public void generateNewWorldMap() {
-        ecsWorld.getSystem(WorldMapManager.class).genereNewWorldMap(worldMap);
+        ecsWorld.getSystem(WorldMapManager.class).generateNewWorldMap(worldMap);
     }
 
     // TODO a changer de place car ne contient pas d'entités a ajouter au system
@@ -203,5 +201,13 @@ public final class ECSEngine {
                 ecsWorld.getEntity(worldMap).getComponent(WorldMapComponent.class),
                 getWorkingSave().file
         );
+    }
+
+    public CellManager getCellManager() {
+        return ecsWorld.getSystem(CellManager.class);
+    }
+
+    public <T extends BaseSystem> T getSystem(Class<T> system) {
+        return ecsWorld.getSystem(system);
     }
 }

@@ -1,12 +1,12 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.io.Save;
+import ch.realmtech.game.ecs.system.SaveManager;
 import ch.realmtech.helper.PopupHelper;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +28,8 @@ public class SelectionDeSauvegarde extends AbstractScreen{
         uiTable.add(new Label("Sélectionner une sauvegarde",skin));
         uiTable.row();
         listeDesSauvegarde = new VerticalGroup();
-        Array<File> saveFile = Save.getTousLesSauvegarde();
-        for (final File file : saveFile) {
+        ImmutableBag<File> tousLesSauvegarde = context.getEcsEngine().getSystem(SaveManager.class).getTousLesSauvegarde();
+        for (final File file : tousLesSauvegarde) {
             Table table = new Table(skin);
             TextButton loadSaveButton = new TextButton(file.getName().split("\\.")[0],skin);
             String version = null;

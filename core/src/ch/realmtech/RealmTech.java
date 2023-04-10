@@ -3,7 +3,6 @@ package ch.realmtech;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.component.SaveComponent;
 import ch.realmtech.game.ecs.system.WorldMapManager;
-import ch.realmtech.game.io.Save;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;

@@ -2,14 +2,15 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.level.cell.CellType;
-import ch.realmtech.game.level.cell.GameCell;
-import ch.realmtech.game.level.chunk.GameChunk;
-import ch.realmtech.game.level.map.RealmTechTiledMap;
 import ch.realmtech.game.level.map.WorldMap;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.annotations.All;
+import com.artemis.utils.Bag;
+import com.artemis.utils.ImmutableBag;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import net.mostlyoriginal.api.Singleton;
 
 import java.io.*;
@@ -39,9 +40,9 @@ public class SaveManager extends EntitySystem {
             outputStream.write("RealmTech".getBytes());
             outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(SAVE_PROTOCOLE_VERSION).array());
             outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(System.currentTimeMillis()).array());
-            outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(RealmTechTiledMap.WORLD_WITH).array());
-            outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(RealmTechTiledMap.WORLD_HIGH).array());
-            outputStream.write(ByteBuffer.allocate(Byte.BYTES).put(GameChunk.NUMBER_LAYER).array());
+            outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(WorldMap.WORLD_WITH).array());
+            outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(WorldMap.WORLD_HIGH).array());
+            outputStream.write(ByteBuffer.allocate(Byte.BYTES).put(WorldMap.NUMBER_LAYER).array());
             outputStream.write(ByteBuffer.allocate(Long.BYTES).putLong(saveComponent.context.getWorldMapManager().getSeed()).array());
             Entity player = saveComponent.context.getPlayer();
             PositionComponent playerPosition = player.getComponent(PositionComponent.class);
@@ -55,6 +56,7 @@ public class SaveManager extends EntitySystem {
     }
 
     public void loadSave(WorldMapComponent worldMapComponent, File saveFile) throws IOException{
+        CellManager cellManager = world.getSystem(CellManager.class);
         try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(saveFile)))) {
             byte[] rawFile = inputStream.readAllBytes();
             String magicGameName = new String(rawFile, 0, 9);
@@ -100,13 +102,22 @@ public class SaveManager extends EntitySystem {
                     world.inject(cellComponent);
                     cellComponent.init(
                             chunkId,
-                            GameCell.getInnerChunkPossX(innerPoss),
-                            GameCell.getInnerChunkPossY(innerPoss),
+                            cellManager.getInnerChunkPossX(innerPoss),
+                            cellManager.getInnerChunkPossY(innerPoss),
                             layer,
                             cellType
                     );
                 }
             }
         }
+    }
+
+    public ImmutableBag<File> getTousLesSauvegarde() {
+        Bag<File> files = new Bag<>();
+        FileHandle[] list = Gdx.files.local("").list(pathname -> pathname.getName().matches(".*\\.rts"));
+        for (FileHandle fileHandle : list) {
+            files.add(fileHandle.file());
+        }
+        return files;
     }
 }

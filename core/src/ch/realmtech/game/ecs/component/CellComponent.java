@@ -18,7 +18,7 @@ public class CellComponent extends PooledComponent {
     public CellType cellType;
     public TiledMapTileLayer.Cell cell;
     public StaticTiledMapTile tile;
-    @Wire(name = "textureAtlas")
+    @Wire()
     public TextureAtlas textureAtlas;
 
     public void init(int parentChunk, byte innerChunkPossX, byte innerChunkPossY, byte layer, CellType cellType) {
@@ -31,9 +31,13 @@ public class CellComponent extends PooledComponent {
             cell = null;
             tile = null;
         } else {
-            cell = new TiledMapTileLayer.Cell();
-            tile = new StaticTiledMapTile(textureAtlas.findRegion(cellType.textureName));
-            cell.setTile(tile);
+            if (cell != null && tile != null){
+                tile.setTextureRegion(textureAtlas.findRegion(cellType.textureName));
+            } else {
+                cell = new TiledMapTileLayer.Cell();
+                tile = new StaticTiledMapTile(textureAtlas.findRegion(cellType.textureName));
+                cell.setTile(tile);
+            }
         }
     }
 

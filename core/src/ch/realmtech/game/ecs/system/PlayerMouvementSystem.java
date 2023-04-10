@@ -2,7 +2,6 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
-import ch.realmtech.game.level.cell.GameCell;
 import ch.realmtech.input.InputMapper;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -22,6 +21,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
     private ComponentMapper<MovementComponent> mMouvement;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<CellComponent> mCell;
     private boolean directionChange = false;
     private float xFactor = 0;
     private float yFactor = 0;
@@ -32,37 +32,29 @@ public class PlayerMouvementSystem extends IteratingSystem {
         MovementComponent movementComponent = mMouvement.create(entityId);
         PositionComponent positionComponent = mPosition.create(entityId);
         Box2dComponent box2dComponent = mBox2d.create(entityId);
-        //GameCell gameCell = context.getWorldMap().getGroundCell((int) positionComponent.x, (int) positionComponent.y); TODO remettre la detection de ceulle
-
+        int cellId = context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
+        CellComponent cellComponent = mCell.create(cellId);
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
-//            if (gameCell != null && gameCell.getCellType() != null) {
-//                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-//            }
+            yFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
-//            if (gameCell != null && gameCell.getCellType() != null) {
-//                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-//            }
+            xFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
-//            if (gameCell != null && gameCell.getCellType() != null) {
-//                yFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-//            }
+            yFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
-//            if (gameCell != null && gameCell.getCellType() != null) {
-//                xFactor *= gameCell.getCellType().cellBehavior.getSpeedEffect();
-//            }
+            xFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
         }
 
         if (directionChange) {

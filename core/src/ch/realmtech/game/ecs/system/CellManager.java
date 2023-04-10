@@ -1,10 +1,11 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.CellComponent;
+import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.level.cell.CellType;
-import ch.realmtech.game.level.chunk.GameChunk;
+import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
+import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.link.EntityLinkManager;
 import com.artemis.link.LinkAdapter;
@@ -49,9 +50,9 @@ public class CellManager extends EntityLinkManager {
 
     public void generateNewCells(int chunkId, PerlinNoise perlinNoise) {
         final ChunkComponent parentChunkComponent = mChunk.get(chunkId);
-        IntBag cells = new IntBag(GameChunk.CHUNK_SIZE * GameChunk.CHUNK_SIZE);
-        for (byte innerChunkX = 0; innerChunkX < GameChunk.CHUNK_SIZE; innerChunkX++) {
-            for (byte innerChunkY = 0; innerChunkY < GameChunk.CHUNK_SIZE; innerChunkY++) {
+        IntBag cells = new IntBag(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
+        for (byte innerChunkX = 0; innerChunkX < WorldMap.CHUNK_SIZE; innerChunkX++) {
+            for (byte innerChunkY = 0; innerChunkY < WorldMap.CHUNK_SIZE; innerChunkY++) {
                 int worldX = getWorldPossX(parentChunkComponent.chunkPossX, innerChunkX);
                 int worldY = getWorldPossY(parentChunkComponent.chunkPossY, innerChunkY);
                 int cell = world.create();
@@ -73,10 +74,55 @@ public class CellManager extends EntityLinkManager {
     }
 
     public int getWorldPossX(int chunkPossX, int innerChunkX) {
-        return chunkPossX * GameChunk.CHUNK_SIZE + innerChunkX;
+        return chunkPossX * WorldMap.CHUNK_SIZE + innerChunkX;
     }
 
     public int getWorldPossY(int chunkPossY, int innerChunkY) {
-        return chunkPossY * GameChunk.CHUNK_SIZE + innerChunkY;
+        return chunkPossY * WorldMap.CHUNK_SIZE + innerChunkY;
+    }
+
+    public int getCell(int worldX, int worldY, byte layer) {
+        int chunkId = world.getSystem(ChunkManager.class).getChunk(worldX, worldY);
+        for (int cellId : getCells(chunkId).getData()) {
+            byte innerX = (byte) (worldX % WorldMap.CHUNK_SIZE);
+            byte innerY = (byte) (worldY % WorldMap.CHUNK_SIZE);
+            CellComponent cellComponent = mCell.create(cellId);
+            if (cellComponent.innerChunkPossX == innerX &&
+                    cellComponent.innerChunkPossY == innerY &&
+                    cellComponent.layer == layer) {
+                return cellId;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Donne toutes les cellules qui appartiennent un chunk
+     *
+     * @param partentChunkId le chunk id du parent
+     * @return un bag qui contient toutes les cellules du chunk partent passé en parameter
+     */
+    public IntBag getCells(int partentChunkId) {
+        IntBag ret = new IntBag();
+        IntBag cells = world.getAspectSubscriptionManager().get(Aspect.all(CellComponent.class)).getEntities();
+        for (int cell : cells.getData()) {
+            CellComponent cellComponent = mCell.create(cell);
+            if (cellComponent.parentChunk == partentChunkId) {
+                ret.add(cell);
+            }
+        }
+        return ret;
+    }
+
+    public byte getInnerChunkPossY(byte innerChunkPoss) {
+        return (byte) (innerChunkPoss & 0x0F);
+    }
+
+    public byte getInnerChunkPossX(byte innerChunkPoss) {
+        return (byte) ((innerChunkPoss >> 4) & 0x0F);
+    }
+
+    public byte getInnerChunkPoss(byte innerChunkPossX, byte innerChunkPossY) {
+        return (byte) ((innerChunkPossX << 4) + innerChunkPossY);
     }
 }
