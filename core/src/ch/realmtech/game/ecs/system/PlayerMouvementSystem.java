@@ -33,28 +33,35 @@ public class PlayerMouvementSystem extends IteratingSystem {
         PositionComponent positionComponent = mPosition.create(entityId);
         Box2dComponent box2dComponent = mBox2d.create(entityId);
         int cellId = context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
-        CellComponent cellComponent = mCell.create(cellId);
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
-            yFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
+            if (cellId != -1) {
+                yFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
-            xFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
+            if (cellId != -1) {
+                xFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
-            yFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
+            if (cellId != -1) {
+                yFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+            }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
-            xFactor *= cellComponent.cellType.cellBehavior.getSpeedEffect();
+            if (cellId != -1) {
+                xFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+            }
         }
 
         if (directionChange) {

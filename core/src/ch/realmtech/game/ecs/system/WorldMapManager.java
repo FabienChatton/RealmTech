@@ -1,8 +1,8 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.CellComponent;
+import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.WorldMapComponent;
 import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.map.WorldMap;
@@ -112,5 +112,13 @@ public class WorldMapManager extends EntitySystem {
                 }
             }
         }
+    }
+
+    public int getWorldX(int chunkPossX, byte innerChunkPossX) {
+        return chunkPossX * WorldMap.CHUNK_SIZE + innerChunkPossX;
+    }
+
+    public int getWorldY(int chunkPossY, byte innerChunkPossY) {
+        return chunkPossY * WorldMap.CHUNK_SIZE + innerChunkPossY;
     }
 }

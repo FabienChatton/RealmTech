@@ -1,9 +1,16 @@
 package ch.realmtech.game.listener;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.CellComponent;
+import ch.realmtech.game.ecs.system.CellManager;
+import ch.realmtech.game.ecs.system.ChunkManager;
+import ch.realmtech.game.item.ItemType;
+import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
+import com.artemis.ComponentMapper;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
 public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapper> {
@@ -21,23 +28,28 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                 if (pointerMapper.button == InputMapper.leftClick.button) {
                     int worldX = (int) gameCoordinate.x;
                     int worldY = (int) gameCoordinate.y;
-//                    if (context.getWorldMap() != null) {
-//                        final GameCell gameCell = context.getWorldMapManager().getTopCell(worldX, worldY);
-//                        if (gameCell != null && gameCell.getCellType() != null) {
-//                            if (gameCell.getCellType().cellBehavior.getBreakWith() == ItemType.PELLE) {
-//                                context.getWorldMap().setTopCell(worldX, worldY, null);
-//                            }
-//                        }
-//                    } TODO remettre qu'on puisse enlever une cellule
+                    ComponentMapper<CellComponent> cMap = context.getEcsEngine().getEcsWorld().getMapper(CellComponent.class);
+                    int topCellId = context.getEcsEngine().getSystem(CellManager.class).getTopCell(worldX, worldY);
+                    if (topCellId != -1) {
+                        CellComponent cellComponent = cMap.create(topCellId);
+                        if (cellComponent.cellType.cellBehavior.getBreakWith() == ItemType.PELLE) {
+                            context.getEcsEngine().getEcsWorld().delete(topCellId);
+                        }
+                    }
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {
-//                    if (context.getWorldMap() != null) {
-//                        int worldX = (int) gameCoordinate.x;
-//                        int worldY = (int) gameCoordinate.y;
-//                        GameChunk gameChunk = context.getWorldMap().getGameChunk(worldX, worldY);
-//                        GameCell newTopCell = GameCellFactory.createByTypeOnTop(gameChunk,GameCell.getInnerChunkPossByWorldPoss(worldX, worldY), CellType.GRASS);
-//                        gameChunk.setCell(newTopCell);
-//                    } TODO placer cellule
+                    int worldX = (int) gameCoordinate.x;
+                    int worldY = (int) gameCoordinate.y;
+                    ComponentMapper<CellComponent> cMap = context.getEcsEngine().getEcsWorld().getMapper(CellComponent.class);
+                    int parentChunkId = context.getEcsEngine().getSystem(ChunkManager.class).getChunk(worldX, worldY);
+                    CellManager cellManager = context.getEcsEngine().getSystem(CellManager.class);
+                    byte innerChunkX = cellManager.getInnerChunkX(worldX);
+                    byte innerChunkY = cellManager.getInnerChunkY(worldY);
+                    CellType cellType = CellType.getCellTypeByID((byte) MathUtils.random(1, CellType.values().length - 1));
+                    byte onTopLayer = cellManager.getOnTopLayer(worldX, worldY);
+                    if (onTopLayer != -1) {
+                        cellManager.newCell(parentChunkId, innerChunkX, innerChunkY, onTopLayer, cellType);
+                    }
                 }
             }
         }

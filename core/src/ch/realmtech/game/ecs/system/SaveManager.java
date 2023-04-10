@@ -91,7 +91,11 @@ public class SaveManager extends EntitySystem {
                 i += Short.BYTES;
                 chunkComponent.init(worldMapComponent.saveId,chunkPossX, chunkPossY);
                 for (int j = 0; j < nombreDeCells; j++) {
-                    CellType cellType = CellType.getCellTypeByID(ByteBuffer.wrap(rawFile, i, Byte.BYTES).get());
+                    byte cellTypeId = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
+                    CellType cellType = CellType.getCellTypeByID(cellTypeId);
+                    if (cellTypeId == 0) {
+                        System.out.println("fumier");
+                    }
                     i += Byte.BYTES;
                     byte innerPoss = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
                     i += Byte.BYTES;

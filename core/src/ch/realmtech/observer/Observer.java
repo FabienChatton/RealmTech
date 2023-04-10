@@ -1,7 +1,6 @@
 package ch.realmtech.observer;
 
 import com.artemis.utils.Bag;
-import com.badlogic.gdx.utils.Array;
 
 public class Observer<T> {
     private Bag<Subcriber<T>> subscribers;

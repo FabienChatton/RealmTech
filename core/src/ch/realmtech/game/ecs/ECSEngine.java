@@ -4,8 +4,9 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.level.map.WorldMap;
-import com.artemis.*;
 import com.artemis.World;
+import com.artemis.*;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -26,7 +27,7 @@ public final class ECSEngine {
     private final FixtureDef fixtureDef;
     private Body bodyWorldBorder;
     private final World ecsWorld;
-    private int playerEntity;
+    private int playerEntity = -1;
     private int save = -1;
     private int worldMap = -1;
 
@@ -90,7 +91,7 @@ public final class ECSEngine {
     private void createPlayer() {
         final int playerWorldWith = 1;
         final int playerWorldHigh = 1;
-        if (ecsWorld.getEntity(playerEntity) != null) {
+        if (playerEntity != -1) {
             context.physicWorld.destroyBody(ecsWorld.edit(playerEntity).create(Box2dComponent.class).body);
             ecsWorld.delete(playerEntity);
         }
@@ -194,6 +195,12 @@ public final class ECSEngine {
 
     public void saveWorldMap() throws IOException {
         ecsWorld.getSystem(SaveManager.class).saveWorldMap(save);
+        IntBag entitiesToRemove = ecsWorld.getAspectSubscriptionManager().get(Aspect.one(CellComponent.class, ChunkComponent.class)).getEntities();
+        for (int toRemove : entitiesToRemove.getData()) {
+            if (toRemove != playerEntity) {
+                ecsWorld.delete(toRemove);
+            }
+        }
     }
 
     public void loadSaveOnWorkingSave() throws IOException{
@@ -209,5 +216,9 @@ public final class ECSEngine {
 
     public <T extends BaseSystem> T getSystem(Class<T> system) {
         return ecsWorld.getSystem(system);
+    }
+
+    public World getEcsWorld() {
+        return ecsWorld;
     }
 }

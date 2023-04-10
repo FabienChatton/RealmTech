@@ -3,7 +3,7 @@ package ch.realmtech.game.ecs.component;
 import ch.realmtech.RealmTech;
 import com.artemis.Component;
 
-import java.io.*;
+import java.io.File;
 
 public class SaveComponent extends Component {
 
