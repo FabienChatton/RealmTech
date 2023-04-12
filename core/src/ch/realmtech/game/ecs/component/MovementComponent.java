@@ -13,7 +13,7 @@ public class MovementComponent extends Component {
         speed = new Vector2();
     }
 
-    public void init(float maxSpeedUnite, float speedMeterParSeconde){
+    public void set(float maxSpeedUnite, float speedMeterParSeconde){
         this.maxSpeedUnite = maxSpeedUnite;
         this.speedMeterParSeconde = speedMeterParSeconde;
     }

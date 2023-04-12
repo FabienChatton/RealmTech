@@ -4,7 +4,6 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.WorldMapComponent;
-import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 import ch.realmtech.game.level.worldGeneration.PerlineNoise2;
@@ -97,15 +96,17 @@ public class WorldMapManager extends EntitySystem {
                 short nombreDeCelluleDansCeChunk = 0;
                 for (int cellId : cellBag.getData()) {
                     CellComponent cellComponent = mCell.get(cellId);
-                    if (cellComponent != null && cellComponent.parentChunk == chunkId) {
-                        nombreDeCelluleDansCeChunk++;
+                    if (cellComponent != null) {
+                        if (cellComponent.parentChunk == chunkId) {
+                            nombreDeCelluleDansCeChunk++;
+                        }
                     }
                 }
                 outputStream.write(ByteBuffer.allocate(Short.BYTES).putShort(nombreDeCelluleDansCeChunk).array());
                 for (int cellId : cellBag.getData()) {
                     CellComponent cellComponent = mCell.get(cellId);
                     if (cellComponent != null && cellComponent.parentChunk == chunkId) {
-                        outputStream.write(CellType.getIdCellType(cellComponent.cellType));
+                        outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(cellManager.getModAndCellHash(cellComponent.cellRegisterEntry)).array());
                         outputStream.write(cellManager.getInnerChunkPoss(cellComponent.innerChunkPossX, cellComponent.innerChunkPossY));
                         outputStream.write(cellComponent.layer);
                     }

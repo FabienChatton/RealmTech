@@ -2,9 +2,10 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.ChunkComponent;
-import ch.realmtech.game.level.cell.CellType;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
+import ch.realmtech.game.mod.RealmTechCoreMod;
+import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.link.EntityLinkManager;
@@ -15,7 +16,9 @@ public class CellManager extends EntityLinkManager {
     private ComponentMapper<ChunkComponent> mChunk;
     private ComponentMapper<CellComponent> mCell;
 
-    public void register() {
+    @Override
+    protected void initialize() {
+        super.initialize();
         register(CellComponent.class, new LinkAdapter() {
             @Override
             public void onLinkEstablished(int sourceId, int targetId) {
@@ -70,15 +73,15 @@ public class CellManager extends EntityLinkManager {
             for (byte innerChunkY = 0; innerChunkY < WorldMap.CHUNK_SIZE; innerChunkY++) {
                 int worldX = getWorldPossX(parentChunkComponent.chunkPossX, innerChunkX);
                 int worldY = getWorldPossY(parentChunkComponent.chunkPossY, innerChunkY);
-                CellType cellType;
+                final CellRegisterEntry cellRegisterEntry;
                 if (perlinNoise.getGrid()[worldX][worldY] > 0f && perlinNoise.getGrid()[worldX][worldY] < 0.5f) {
-                    cellType = CellType.GRASS;
+                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreMod.GRASS);
                 } else if (perlinNoise.getGrid()[worldX][worldY] >= 0.5f) {
-                    cellType = CellType.SAND;
+                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreMod.SAND);
                 } else {
-                    cellType = CellType.WATER;
+                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreMod.WATER);
                 }
-                cells.add(newCell(chunkId, innerChunkX, innerChunkY, (byte) 0, cellType));
+                cells.add(newCell(chunkId, innerChunkX, innerChunkY, (byte) 0, cellRegisterEntry));
             }
         }
         inserted(cells);
@@ -91,14 +94,13 @@ public class CellManager extends EntityLinkManager {
      * @param innerChunkX   La coordonnée x dans le chunk.
      * @param innerChunkY   La coordonnée y dans le chunk.
      * @param layer         Le layer de la future cellule
-     * @param cellType      Le type de la future cellule.
+     * @param cellRegisterEntry  Le registre sur lequel la création de la cellule va se baser
      * @return L'id de la nouvelle cellule créer.
      */
-    public int newCell(int parentChunkId, byte innerChunkX, byte innerChunkY, byte layer, CellType cellType) {
-        int cell = world.create();
+    public int newCell(int parentChunkId, byte innerChunkX, byte innerChunkY, byte layer, CellRegisterEntry cellRegisterEntry) {
+        int cell = cellRegisterEntry.archetype != null ? world.create(cellRegisterEntry.archetype) : world.create();
         CellComponent cellComponent = world.edit(cell).create(CellComponent.class);
-        world.inject(cellComponent);
-        cellComponent.init(parentChunkId, innerChunkX, innerChunkY, layer, cellType);
+        cellComponent.set(parentChunkId, innerChunkX, innerChunkY, layer, cellRegisterEntry);
         return cell;
     }
 
@@ -220,4 +222,38 @@ public class CellManager extends EntityLinkManager {
     public byte getInnerChunkPoss(byte innerChunkPossX, byte innerChunkPossY) {
         return (byte) ((innerChunkPossX << 4) + innerChunkPossY);
     }
+
+    /**
+     * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
+     * @param cellRegisterHash La hash de clé (mod + nom cellule) que l'ont souhait connaitre le registre.
+     * @return Le registre qui correspond au hash sinon null
+     */
+    public CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
+        CellRegisterEntry ret = null;
+        for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
+            int keyHash = key.hashCode();
+            if (keyHash == cellRegisterHash) {
+                ret = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(key);
+                break;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Donne le hash du mod et du nom de la cellule
+     * @param cellRegisterEntry Le nom du registre qu'ont souhait connaitre la clé (mod + nom cellule)
+     * @return Le hash du mod avec le nom de la cellule ou -1 si le registre global ne contient pas ce registre.
+     */
+    public int getModAndCellHash(CellRegisterEntry cellRegisterEntry) {
+        int ret = -1;
+        for (String cellKey : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
+            if (RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(cellKey) == cellRegisterEntry) {
+                ret = cellKey.hashCode();
+                break;
+            }
+        }
+        return ret;
+    }
+
 }

@@ -1,13 +1,10 @@
 package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.game.level.cell.CellType;
+import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
 import com.artemis.annotations.EntityId;
-import com.artemis.annotations.Wire;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-
 public class CellComponent extends PooledComponent {
 
     @EntityId
@@ -15,29 +12,22 @@ public class CellComponent extends PooledComponent {
     public byte innerChunkPossX;
     public byte innerChunkPossY;
     public byte layer;
-    public CellType cellType;
     public TiledMapTileLayer.Cell cell;
     public StaticTiledMapTile tile;
-    @Wire()
-    public TextureAtlas textureAtlas;
+    public CellRegisterEntry cellRegisterEntry;
 
-    public void init(int parentChunk, byte innerChunkPossX, byte innerChunkPossY, byte layer, CellType cellType) {
+    public void set(int parentChunk, byte innerChunkPossX, byte innerChunkPossY, byte layer, CellRegisterEntry cellRegisterEntry) {
         this.parentChunk = parentChunk;
         this.innerChunkPossX = innerChunkPossX;
         this.innerChunkPossY = innerChunkPossY;
-        this.cellType = cellType;
         this.layer = layer;
-        if (cellType == null) {
-            cell = null;
-            tile = null;
+        this.cellRegisterEntry = cellRegisterEntry;
+        if (cell != null && tile != null){
+            tile.setTextureRegion(cellRegisterEntry.textureRegion);
         } else {
-            if (cell != null && tile != null){
-                tile.setTextureRegion(textureAtlas.findRegion(cellType.textureName));
-            } else {
-                cell = new TiledMapTileLayer.Cell();
-                tile = new StaticTiledMapTile(textureAtlas.findRegion(cellType.textureName));
-                cell.setTile(tile);
-            }
+            cell = new TiledMapTileLayer.Cell();
+            tile = new StaticTiledMapTile(cellRegisterEntry.textureRegion);
+            cell.setTile(tile);
         }
     }
 
@@ -46,6 +36,5 @@ public class CellComponent extends PooledComponent {
         parentChunk = -1;
         innerChunkPossX = 0;
         innerChunkPossY = 0;
-        cellType = null;
     }
 }

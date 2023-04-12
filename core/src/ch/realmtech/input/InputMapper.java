@@ -8,7 +8,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Array;
-
+//TODO mettre la gestion des input dans l'ECS avec un composent singleton
 public final class InputMapper implements InputProcessor {
     private final RealmTech context;
     public static KeysMapper moveForward;

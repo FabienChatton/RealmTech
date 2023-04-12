@@ -1,11 +1,14 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.*;
-import ch.realmtech.game.level.cell.CellType;
+import ch.realmtech.game.ecs.component.ChunkComponent;
+import ch.realmtech.game.ecs.component.PositionComponent;
+import ch.realmtech.game.ecs.component.SaveComponent;
+import ch.realmtech.game.ecs.component.WorldMapComponent;
 import ch.realmtech.game.level.map.WorldMap;
+import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.EntitySystem;
+import com.artemis.Manager;
 import com.artemis.annotations.All;
 import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
@@ -21,16 +24,13 @@ import java.util.Date;
 
 @Singleton
 @All(SaveComponent.class)
-public class SaveManager extends EntitySystem {
-    public final static int SAVE_PROTOCOLE_VERSION = 4;
+public class SaveManager extends Manager {
+    private final static String TAG = SaveManager.class.getSimpleName();
+    public final static int SAVE_PROTOCOLE_VERSION = 5;
     private ComponentMapper<SaveComponent> mSave;
 
-    @Override
-    protected void processSystem() {
-
-    }
-
     public void saveWorldMap(int saveEntityId) throws IOException {
+        long timeStart = System.currentTimeMillis();
         SaveComponent saveComponent = mSave.get(saveEntityId);
         if (saveComponent.file.exists()) {
             Files.newBufferedWriter(saveComponent.file.toPath(), StandardOpenOption.TRUNCATE_EXISTING).close();
@@ -53,9 +53,12 @@ public class SaveManager extends EntitySystem {
             outputStream.flush();
             outputStream.close();
         }
+        long timeEnd = System.currentTimeMillis();
+        Gdx.app.log(TAG, String.format("La carte a ete sauvegarde en %fs", (timeEnd - timeStart)/1000f));
     }
 
     public void loadSave(WorldMapComponent worldMapComponent, File saveFile) throws IOException{
+        long timeStart = System.currentTimeMillis();
         CellManager cellManager = world.getSystem(CellManager.class);
         try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(saveFile)))) {
             byte[] rawFile = inputStream.readAllBytes();
@@ -89,31 +92,29 @@ public class SaveManager extends EntitySystem {
                 i += Integer.BYTES;
                 short nombreDeCells = ByteBuffer.wrap(rawFile, i, Short.BYTES).getShort();
                 i += Short.BYTES;
-                chunkComponent.init(worldMapComponent.saveId,chunkPossX, chunkPossY);
+                chunkComponent.set(worldMapComponent.saveId,chunkPossX, chunkPossY);
+
                 for (int j = 0; j < nombreDeCells; j++) {
-                    byte cellTypeId = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
-                    CellType cellType = CellType.getCellTypeByID(cellTypeId);
-                    if (cellTypeId == 0) {
-                        System.out.println("fumier");
-                    }
-                    i += Byte.BYTES;
+                    int cellRegisterHash = ByteBuffer.wrap(rawFile, i, Integer.BYTES).getInt();
+                    CellRegisterEntry cellRegisterEntry = cellManager.getCellModAndCellHash(cellRegisterHash);
+
+                    i += Integer.BYTES;
                     byte innerPoss = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
                     i += Byte.BYTES;
                     byte layer = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
                     i += Byte.BYTES;
-                    int cellId = world.create();
-                    CellComponent cellComponent = world.edit(cellId).create(CellComponent.class);
-                    world.inject(cellComponent);
-                    cellComponent.init(
+                    cellManager.newCell(
                             chunkId,
                             cellManager.getInnerChunkPossX(innerPoss),
                             cellManager.getInnerChunkPossY(innerPoss),
                             layer,
-                            cellType
+                            cellRegisterEntry
                     );
                 }
             }
         }
+        long timeEnd = System.currentTimeMillis();
+        Gdx.app.log(TAG, String.format("La carte a ete charge en %fs", (timeEnd - timeStart)/1000f));
     }
 
     public ImmutableBag<File> getTousLesSauvegarde() {

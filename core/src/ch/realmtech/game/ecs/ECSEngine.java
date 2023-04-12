@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.level.map.WorldMap;
+import ch.realmtech.game.mod.RealmTechCorePlugin;
 import com.artemis.World;
 import com.artemis.*;
 import com.artemis.utils.IntBag;
@@ -34,6 +35,7 @@ public final class ECSEngine {
     public ECSEngine(final RealmTech context) {
         this.context = context;
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
+                .dependsOn(RealmTechCorePlugin.class)
                 .with(new CellManager())
                 .with(new ChunkManager())
                 .with(new SaveManager())
@@ -52,8 +54,8 @@ public final class ECSEngine {
         ecsWorld = new World(worldConfiguration);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
-        ecsWorld.getSystem(CellManager.class).register();
-        ecsWorld.getSystem(ChunkManager.class).register();
+        ecsWorld.getSystem(CellManager.class);
+        ecsWorld.getSystem(ChunkManager.class);
         createPlayer();
     }
 
@@ -112,14 +114,14 @@ public final class ECSEngine {
 
         // box2d component
         Box2dComponent box2dComponent = ecsWorld.edit(playerEntity).create(Box2dComponent.class);
-        box2dComponent.init(playerWorldWith, playerWorldHigh, bodyPlayer);
+        box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
         // player component
         PlayerComponent playerComponent = ecsWorld.edit(playerEntity).create(PlayerComponent.class);
 
         // movement component
         MovementComponent movementComponent = ecsWorld.edit(playerEntity).create(MovementComponent.class);
-        movementComponent.init(10, 10);
+        movementComponent.set(10, 10);
 
         // position component
         PositionComponent possitionComponent = ecsWorld.edit(playerEntity).create(PositionComponent.class);
@@ -127,7 +129,7 @@ public final class ECSEngine {
         // texture component
         TextureComponent textureComponent = ecsWorld.edit(playerEntity).create(TextureComponent.class);
         final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
-        textureComponent.init(texture);
+        textureComponent.set(texture);
     }
 
     public void spawnPlayer(Vector2 spawnPoint) {
@@ -142,7 +144,7 @@ public final class ECSEngine {
         }
         save = ecsWorld.create();
         worldMap = ecsWorld.create();
-        ecsWorld.edit(save).create(SaveComponent.class).init(context, saveFile);
+        ecsWorld.edit(save).create(SaveComponent.class).set(context, saveFile);
         ecsWorld.edit(worldMap).create(WorldMapComponent.class).saveId = save;
 
         ecsWorld.getSystem(WorldMapManager.class).init(worldMap, WorldMap.WORLD_WITH, WorldMap.WORLD_HIGH, 32, 32, WorldMap.NUMBER_LAYER);

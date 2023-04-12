@@ -3,7 +3,7 @@ package ch.realmtech.observer;
 import com.artemis.utils.Bag;
 
 public class Observer<T> {
-    private Bag<Subcriber<T>> subscribers;
+    private final Bag<Subcriber<T>> subscribers;
 
     public Observer() {
         subscribers = new Bag<>();

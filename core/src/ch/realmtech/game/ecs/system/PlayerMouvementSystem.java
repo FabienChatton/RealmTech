@@ -39,28 +39,29 @@ public class PlayerMouvementSystem extends IteratingSystem {
             directionChange = true;
             yFactor = 1;
             if (cellId != -1) {
-                yFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+                CellComponent cellComponent = mCell.create(cellId);
+                yFactor *= cellComponent.cellRegisterEntry.cellBehavior.getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
             if (cellId != -1) {
-                xFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+                xFactor *= mCell.create(cellId).cellRegisterEntry.cellBehavior.getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
             if (cellId != -1) {
-                yFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+                yFactor *= mCell.create(cellId).cellRegisterEntry.cellBehavior.getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
             if (cellId != -1) {
-                xFactor *= mCell.create(cellId).cellType.cellBehavior.getSpeedEffect();
+                xFactor *= mCell.create(cellId).cellRegisterEntry.cellBehavior.getSpeedEffect();
             }
         }
 

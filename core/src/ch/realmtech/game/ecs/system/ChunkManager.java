@@ -11,7 +11,10 @@ import com.artemis.utils.IntBag;
 
 public class ChunkManager extends EntityLinkManager {
     private ComponentMapper<ChunkComponent> mChunk;
-    public void register(){
+
+    @Override
+    protected void initialize() {
+        super.initialize();
         register(ChunkComponent.class, new LinkAdapter() {
             @Override
             public void onLinkEstablished(int sourceId, int targetId) {
@@ -41,7 +44,7 @@ public class ChunkManager extends EntityLinkManager {
         for (byte chunkPossX = 0; chunkPossX < WorldMap.NUMBER_CHUNK_WITH; chunkPossX++) {
             for (byte chunkPossY = 0; chunkPossY < WorldMap.NUMBER_CHUNK_HIGH; chunkPossY++) {
                 int newChunk = world.create();
-                world.edit(newChunk).create(ChunkComponent.class).init(saveId, chunkPossX, chunkPossY);
+                world.edit(newChunk).create(ChunkComponent.class).set(saveId, chunkPossX, chunkPossY);
                 world.getSystem(CellManager.class).generateNewCells(newChunk, perlinNoise);
             }
         }

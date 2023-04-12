@@ -5,7 +5,8 @@ import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.system.CellManager;
 import ch.realmtech.game.ecs.system.ChunkManager;
 import ch.realmtech.game.item.ItemType;
-import ch.realmtech.game.level.cell.CellType;
+import ch.realmtech.game.mod.RealmTechCoreMod;
+import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
 import com.artemis.ComponentMapper;
@@ -32,7 +33,7 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                     int topCellId = context.getEcsEngine().getSystem(CellManager.class).getTopCell(worldX, worldY);
                     if (topCellId != -1) {
                         CellComponent cellComponent = cMap.create(topCellId);
-                        if (cellComponent.cellType.cellBehavior.getBreakWith() == ItemType.PELLE) {
+                        if (cellComponent.cellRegisterEntry.cellBehavior.getBreakWith() == ItemType.PELLE) {
                             context.getEcsEngine().getEcsWorld().delete(topCellId);
                         }
                     }
@@ -45,10 +46,10 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                     CellManager cellManager = context.getEcsEngine().getSystem(CellManager.class);
                     byte innerChunkX = cellManager.getInnerChunkX(worldX);
                     byte innerChunkY = cellManager.getInnerChunkY(worldY);
-                    CellType cellType = CellType.getCellTypeByID((byte) MathUtils.random(1, CellType.values().length - 1));
+                    CellRegisterEntry cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.values().stream().toList().get(MathUtils.random(0, RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.values().size()-1));
                     byte onTopLayer = cellManager.getOnTopLayer(worldX, worldY);
                     if (onTopLayer != -1) {
-                        cellManager.newCell(parentChunkId, innerChunkX, innerChunkY, onTopLayer, cellType);
+                        cellManager.newCell(parentChunkId, innerChunkX, innerChunkY, onTopLayer, cellRegisterEntry);
                     }
                 }
             }

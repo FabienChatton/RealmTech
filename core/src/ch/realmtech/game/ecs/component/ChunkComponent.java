@@ -9,7 +9,7 @@ public class ChunkComponent extends PooledComponent {
     public int chunkPossX;
     public int chunkPossY;
 
-    public void init(int saveId, int chunkPossX, int chunkPossY) {
+    public void set(int saveId, int chunkPossX, int chunkPossY) {
         this.saveId = saveId;
         this.chunkPossX = chunkPossX;
         this.chunkPossY = chunkPossY;

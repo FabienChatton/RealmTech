@@ -153,22 +153,14 @@ public final class RealmTech extends Game{
 
     public void loadSaveOnWorkingSave() throws IOException {
         ecsEngine.loadSaveOnWorkingSave();
-        //workingSave = SaveFactory.loadSave(saveFile,this);
     }
 
     public void saveWorldMap() throws IOException {
         ecsEngine.saveWorldMap();
-
-//        if (workingSave != null) {
-//            workingSave.saveLast();
-//        } else {
-//            Gdx.app.debug(TAG, "La save n'a pas put être sauvegarde car elle n'existe pas");
-//        }
     }
 
     public void newSaveInitWorld(String saveName) throws IOException {
         newSaveInitWorld(new File(saveName + ".rts"));
-        //workingSave = SaveFactory.genereteNewSave(Gdx.files.local(saveName + ".rts").file(), this);
     }
 
     public void newSaveInitWorld(File saveFile) throws IOException {
@@ -197,13 +189,10 @@ public final class RealmTech extends Game{
     }
 
     public SaveComponent getWorkingSave() {
-        //return workingSave;
         return ecsEngine.getWorkingSave();
     }
 
     public WorldMap getWorldMap() {
-//        Save save = getWorkingSave();
-//        if (save != null) return save.getTiledMap();
         return ecsEngine.getWorkingMap();
     }
 

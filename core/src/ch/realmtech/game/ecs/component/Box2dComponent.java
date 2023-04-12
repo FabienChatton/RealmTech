@@ -8,7 +8,7 @@ public class Box2dComponent extends Component {
     public float widthWorld;
     public float heightWorld;
 
-    public void init(float widthWorld, float heightWorld, Body body) {
+    public void set(float widthWorld, float heightWorld, Body body) {
         this.widthWorld = widthWorld;
         this.heightWorld = heightWorld;
         this.body = body;

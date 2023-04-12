@@ -11,7 +11,7 @@ public class SaveComponent extends Component {
 
     public RealmTech context;
 
-    public void init(RealmTech context, File file) {
+    public void set(RealmTech context, File file) {
         this.context = context;
         this.file = file;
     }
