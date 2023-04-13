@@ -2,10 +2,14 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.ChunkComponent;
+import ch.realmtech.game.ecs.component.ToSaveComponent;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
+import ch.realmtech.game.mod.RealmTechCoreCell;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
+import com.artemis.Archetype;
+import com.artemis.ArchetypeBuilder;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.link.EntityLinkManager;
@@ -15,10 +19,16 @@ import com.artemis.utils.IntBag;
 public class CellManager extends EntityLinkManager {
     private ComponentMapper<ChunkComponent> mChunk;
     private ComponentMapper<CellComponent> mCell;
+    private Archetype defaultCellArchetype;
 
     @Override
     protected void initialize() {
         super.initialize();
+        defaultCellArchetype = new ArchetypeBuilder()
+                .add(CellComponent.class)
+                .add(ToSaveComponent.class)
+                .build(world);
+
         register(CellComponent.class, new LinkAdapter() {
             @Override
             public void onLinkEstablished(int sourceId, int targetId) {
@@ -63,7 +73,8 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Génère toutes les cellules d'un chunk.
-     * @param chunkId L'id du chunk parent.
+     *
+     * @param chunkId     L'id du chunk parent.
      * @param perlinNoise Le bruit auquel la cellule va pouvoir de référer pour ce créer.
      */
     public void generateNewCells(int chunkId, PerlinNoise perlinNoise) {
@@ -75,11 +86,11 @@ public class CellManager extends EntityLinkManager {
                 int worldY = getWorldPossY(parentChunkComponent.chunkPossY, innerChunkY);
                 final CellRegisterEntry cellRegisterEntry;
                 if (perlinNoise.getGrid()[worldX][worldY] > 0f && perlinNoise.getGrid()[worldX][worldY] < 0.5f) {
-                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreMod.GRASS);
+                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.GRASS_CELL);
                 } else if (perlinNoise.getGrid()[worldX][worldY] >= 0.5f) {
-                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreMod.SAND);
+                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.SAND_CELL);
                 } else {
-                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreMod.WATER);
+                    cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.WATER_CELL);
                 }
                 cells.add(newCell(chunkId, innerChunkX, innerChunkY, (byte) 0, cellRegisterEntry));
             }
@@ -90,15 +101,20 @@ public class CellManager extends EntityLinkManager {
     /**
      * Créer une nouvelle cellule.
      *
-     * @param parentChunkId Le chunk parent.
-     * @param innerChunkX   La coordonnée x dans le chunk.
-     * @param innerChunkY   La coordonnée y dans le chunk.
-     * @param layer         Le layer de la future cellule
-     * @param cellRegisterEntry  Le registre sur lequel la création de la cellule va se baser
+     * @param parentChunkId     Le chunk parent.
+     * @param innerChunkX       La coordonnée x dans le chunk.
+     * @param innerChunkY       La coordonnée y dans le chunk.
+     * @param layer             Le layer de la future cellule
+     * @param cellRegisterEntry Le registre sur lequel la création de la cellule va se baser
      * @return L'id de la nouvelle cellule créer.
      */
     public int newCell(int parentChunkId, byte innerChunkX, byte innerChunkY, byte layer, CellRegisterEntry cellRegisterEntry) {
-        int cell = cellRegisterEntry.archetype != null ? world.create(cellRegisterEntry.archetype) : world.create();
+        final int cell;
+        if (cellRegisterEntry.getArchetype() != null) {
+            cell = world.create(cellRegisterEntry.getArchetype());
+        } else {
+            cell = world.create(defaultCellArchetype);
+        }
         CellComponent cellComponent = world.edit(cell).create(CellComponent.class);
         cellComponent.set(parentChunkId, innerChunkX, innerChunkY, layer, cellRegisterEntry);
         return cell;
@@ -114,9 +130,10 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Récupère l'id de la cellule à la coordonnée et au niveau spécifiés.
+     *
      * @param worldX La coordonnée du monde x.
      * @param worldY La coordonnée du monde y.
-     * @param layer le niveau de la carte.
+     * @param layer  le niveau de la carte.
      * @return return l'id de la cellule ou -1 si aucune cellule n'a été trouvée à la coordonnée spécifiée.
      */
     public int getCell(int worldX, int worldY, byte layer) {
@@ -136,6 +153,7 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Récupère une position Y dans un chunk via la position Y du monde.
+     *
      * @param worldY La position Y dans le monde.
      * @return La position Y dans le chunk.
      */
@@ -145,6 +163,7 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Récupère une position X dans un chunk via la position X du monde.
+     *
      * @param worldX La position X dans le monde.
      * @return La position X dans le chunk.
      */
@@ -154,6 +173,7 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Récupère l'id cellule qui est la plus en haut.
+     *
      * @param worldX La coordonnée du monde X.
      * @param worldY La coordonnée du monde Y.
      * @return return l'id de la cellule qui est au sommet ou -1 si aucune cellule n'est à cette coordonnée.
@@ -173,6 +193,7 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Récupère le layer au-dessus de la cellule la plus haute.
+     *
      * @param worldX La coordonnée X du monde.
      * @param worldY La coordonnée Y du monde.
      * @return -1 si une cellule se trouve déjà sur le niveau maximum.
@@ -225,6 +246,7 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
+     *
      * @param cellRegisterHash La hash de clé (mod + nom cellule) que l'ont souhait connaitre le registre.
      * @return Le registre qui correspond au hash sinon null
      */
@@ -242,6 +264,7 @@ public class CellManager extends EntityLinkManager {
 
     /**
      * Donne le hash du mod et du nom de la cellule
+     *
      * @param cellRegisterEntry Le nom du registre qu'ont souhait connaitre la clé (mod + nom cellule)
      * @return Le hash du mod avec le nom de la cellule ou -1 si le registre global ne contient pas ce registre.
      */

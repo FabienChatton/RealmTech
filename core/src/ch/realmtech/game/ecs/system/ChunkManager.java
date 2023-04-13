@@ -1,8 +1,11 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.ecs.component.ChunkComponent;
+import ch.realmtech.game.ecs.component.ToSaveComponent;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
+import com.artemis.Archetype;
+import com.artemis.ArchetypeBuilder;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.link.EntityLinkManager;
@@ -11,10 +14,15 @@ import com.artemis.utils.IntBag;
 
 public class ChunkManager extends EntityLinkManager {
     private ComponentMapper<ChunkComponent> mChunk;
+    private Archetype defaultChunkArchetype;
 
     @Override
     protected void initialize() {
         super.initialize();
+        defaultChunkArchetype = new ArchetypeBuilder()
+                .add(ChunkComponent.class)
+                .add(ToSaveComponent.class)
+                .build(world);
         register(ChunkComponent.class, new LinkAdapter() {
             @Override
             public void onLinkEstablished(int sourceId, int targetId) {
@@ -43,7 +51,7 @@ public class ChunkManager extends EntityLinkManager {
         IntBag chunks = new IntBag();
         for (byte chunkPossX = 0; chunkPossX < WorldMap.NUMBER_CHUNK_WITH; chunkPossX++) {
             for (byte chunkPossY = 0; chunkPossY < WorldMap.NUMBER_CHUNK_HIGH; chunkPossY++) {
-                int newChunk = world.create();
+                int newChunk = world.create(defaultChunkArchetype);
                 world.edit(newChunk).create(ChunkComponent.class).set(saveId, chunkPossX, chunkPossY);
                 world.getSystem(CellManager.class).generateNewCells(newChunk, perlinNoise);
             }

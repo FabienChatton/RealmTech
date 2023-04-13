@@ -5,9 +5,21 @@ import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class CellRegisterEntry implements RegistryEntry {
-    public Archetype archetype;
-    public TextureRegion textureRegion;
-    public CellBehavior cellBehavior;
+    private Archetype archetype;
+    private final TextureRegion textureRegion;
+    private final CellBehavior cellBehavior;
+
+    public TextureRegion getTextureRegion() {
+        return textureRegion;
+    }
+
+    public CellBehavior getCellBehavior() {
+        return cellBehavior;
+    }
+
+    public Archetype getArchetype() {
+        return archetype;
+    }
 
     public CellRegisterEntry(Archetype archetype, TextureRegion textureRegion, CellBehavior cellBehavior) {
         this.archetype = archetype;

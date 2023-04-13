@@ -7,7 +7,6 @@ import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
-import ch.realmtech.screen.GameScreen;
 import ch.realmtech.screen.ScreenType;
 import com.artemis.Entity;
 import com.badlogic.gdx.Application;
@@ -198,12 +197,6 @@ public final class RealmTech extends Game{
 
     public WorldMapManager getWorldMapManager() {
         return ecsEngine.getWorldMapManager();
-    }
-
-    public void setMapRenderer(TiledMap map) {
-        if (screenCash.containsKey(ScreenType.GAME_SCREEN)) {
-            ((GameScreen) screenCash.get(ScreenType.GAME_SCREEN)).setMapRenderer(map);
-        }
     }
 
     public Entity getPlayer() {

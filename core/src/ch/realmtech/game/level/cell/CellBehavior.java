@@ -7,8 +7,7 @@ public class CellBehavior {
     private ItemType breakWith;
     private float speedEffect = 1;
 
-    public CellBehavior() {
-    }
+    private CellBehavior() {}
 
     public ItemType getBreakWith() {
         return breakWith;

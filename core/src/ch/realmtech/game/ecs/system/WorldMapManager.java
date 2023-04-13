@@ -62,7 +62,7 @@ public class WorldMapManager extends EntitySystem {
     }
 
     public void placeWorldMap(int worldMapId) {
-        context.setMapRenderer(mWorldMap.get(worldMapId).worldMap);
+        world.getSystem(WorldMapRendererSystem.class).setMapRenderer(mWorldMap.get(worldMapId).worldMap);
     }
 
     public void placeOnMap(int worldPossX, int worldPossY, byte layer, TiledMapTileLayer.Cell cell) {

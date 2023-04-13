@@ -36,13 +36,17 @@ public final class ECSEngine {
         this.context = context;
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
+                // manageur
                 .with(new CellManager())
                 .with(new ChunkManager())
+                .with(new ItemManager())
                 .with(new SaveManager())
                 .with(new WorldMapManager())
+                // system
                 .with(new PlayerMouvementSystem())
                 .with(new WorldStepSystem())
                 .with(new UpdateBox2dWithTextureSystem())
+                .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
                 .build();
@@ -197,7 +201,7 @@ public final class ECSEngine {
 
     public void saveWorldMap() throws IOException {
         ecsWorld.getSystem(SaveManager.class).saveWorldMap(save);
-        IntBag entitiesToRemove = ecsWorld.getAspectSubscriptionManager().get(Aspect.one(CellComponent.class, ChunkComponent.class)).getEntities();
+        IntBag entitiesToRemove = ecsWorld.getAspectSubscriptionManager().get(Aspect.all()).getEntities();
         for (int toRemove : entitiesToRemove.getData()) {
             if (toRemove != playerEntity) {
                 ecsWorld.delete(toRemove);
@@ -210,6 +214,7 @@ public final class ECSEngine {
                 ecsWorld.getEntity(worldMap).getComponent(WorldMapComponent.class),
                 getWorkingSave().file
         );
+        ecsWorld.getSystem(WorldMapManager.class).placeWorldMap(worldMap);
     }
 
     public CellManager getCellManager() {
@@ -222,5 +227,9 @@ public final class ECSEngine {
 
     public World getEcsWorld() {
         return ecsWorld;
+    }
+
+    public ItemManager getItemManager() {
+        return ecsWorld.getSystem(ItemManager.class);
     }
 }

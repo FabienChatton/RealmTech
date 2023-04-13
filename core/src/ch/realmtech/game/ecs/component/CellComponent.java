@@ -23,10 +23,10 @@ public class CellComponent extends PooledComponent {
         this.layer = layer;
         this.cellRegisterEntry = cellRegisterEntry;
         if (cell != null && tile != null){
-            tile.setTextureRegion(cellRegisterEntry.textureRegion);
+            tile.setTextureRegion(cellRegisterEntry.getTextureRegion());
         } else {
             cell = new TiledMapTileLayer.Cell();
-            tile = new StaticTiledMapTile(cellRegisterEntry.textureRegion);
+            tile = new StaticTiledMapTile(cellRegisterEntry.getTextureRegion());
             cell.setTile(tile);
         }
     }

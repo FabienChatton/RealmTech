@@ -33,7 +33,7 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                     int topCellId = context.getEcsEngine().getSystem(CellManager.class).getTopCell(worldX, worldY);
                     if (topCellId != -1) {
                         CellComponent cellComponent = cMap.create(topCellId);
-                        if (cellComponent.cellRegisterEntry.cellBehavior.getBreakWith() == ItemType.PELLE) {
+                        if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.PELLE) {
                             context.getEcsEngine().getEcsWorld().delete(topCellId);
                         }
                     }
