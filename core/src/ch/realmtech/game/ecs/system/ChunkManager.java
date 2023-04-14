@@ -66,9 +66,11 @@ public class ChunkManager extends EntityLinkManager {
         IntBag chunksId = world.getAspectSubscriptionManager().get(Aspect.all(ChunkComponent.class)).getEntities();
         for (int chunkId : chunksId.getData()) {
             ChunkComponent chunkComponent = mChunk.get(chunkId);
-            if (chunkComponent.chunkPossX == chunkPossX && chunkComponent.chunkPossY == chunkPossY) {
-                ret = chunkId;
-                break;
+            if (chunkComponent != null) {
+                if (chunkComponent.chunkPossX == chunkPossX && chunkComponent.chunkPossY == chunkPossY) {
+                    ret = chunkId;
+                    break;
+                }
             }
         }
         return ret;

@@ -7,11 +7,14 @@ import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
 import com.artemis.World;
 import com.artemis.*;
+import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +31,7 @@ public final class ECSEngine {
     private final FixtureDef fixtureDef;
     private Body bodyWorldBorder;
     private final World ecsWorld;
-    private int playerEntity = -1;
+    //private int playerEntity = -1;
     private int save = -1;
     private int worldMap = -1;
 
@@ -37,11 +40,14 @@ public final class ECSEngine {
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
+                .with(new TagManager())
                 .with(new CellManager())
                 .with(new ChunkManager())
                 .with(new ItemManager())
                 .with(new SaveManager())
                 .with(new WorldMapManager())
+                .with(new InventoryManager())
+                .with(new PlayerInentoryDisplayManager())
                 // system
                 .with(new PlayerMouvementSystem())
                 .with(new WorldStepSystem())
@@ -49,6 +55,7 @@ public final class ECSEngine {
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
+                .with(new PickUpOnGroundItemSystem())
                 .build();
         worldConfiguration.register("physicWorld", context.physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
@@ -97,11 +104,14 @@ public final class ECSEngine {
     private void createPlayer() {
         final int playerWorldWith = 1;
         final int playerWorldHigh = 1;
-        if (playerEntity != -1) {
-            context.physicWorld.destroyBody(ecsWorld.edit(playerEntity).create(Box2dComponent.class).body);
-            ecsWorld.delete(playerEntity);
+        if (ecsWorld.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
+            int playerId = ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+            ecsWorld.getSystem(TagManager.class).unregister(PlayerComponent.TAG);
+            context.physicWorld.destroyBody(ecsWorld.edit(playerId).create(Box2dComponent.class).body);
+            ecsWorld.delete(playerId);
         }
-        playerEntity = ecsWorld.create();
+        int playerId = ecsWorld.create();
+        ecsWorld.getSystem(TagManager.class).register(PlayerComponent.TAG, playerId);
 
         resetBodyDef();
         resetFixtureDef();
@@ -117,27 +127,36 @@ public final class ECSEngine {
         playerShape.dispose();
 
         // box2d component
-        Box2dComponent box2dComponent = ecsWorld.edit(playerEntity).create(Box2dComponent.class);
+        Box2dComponent box2dComponent = ecsWorld.edit(playerId).create(Box2dComponent.class);
         box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
         // player component
-        PlayerComponent playerComponent = ecsWorld.edit(playerEntity).create(PlayerComponent.class);
+        PlayerComponent playerComponent = ecsWorld.edit(playerId).create(PlayerComponent.class);
 
         // movement component
-        MovementComponent movementComponent = ecsWorld.edit(playerEntity).create(MovementComponent.class);
+        MovementComponent movementComponent = ecsWorld.edit(playerId).create(MovementComponent.class);
         movementComponent.set(10, 10);
 
         // position component
-        PositionComponent possitionComponent = ecsWorld.edit(playerEntity).create(PositionComponent.class);
+        PositionComponent positionComponent = ecsWorld.edit(playerId).create(PositionComponent.class);
+
+        // inventory component
+        InventoryComponent inventoryComponent = ecsWorld.edit(playerId).create(InventoryComponent.class);
+        inventoryComponent.set(32);
+
+        // pick up item component
+        PickUpOnGroundItemComponent pickUpOnGroundItemComponent = ecsWorld.edit(playerId).create(PickUpOnGroundItemComponent.class);
+        pickUpOnGroundItemComponent.set(10);
 
         // texture component
-        TextureComponent textureComponent = ecsWorld.edit(playerEntity).create(TextureComponent.class);
+        TextureComponent textureComponent = ecsWorld.edit(playerId).create(TextureComponent.class);
         final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
         textureComponent.set(texture);
     }
 
     public void spawnPlayer(Vector2 spawnPoint) {
-        Box2dComponent box2dComponent = ecsWorld.edit(playerEntity).create(Box2dComponent.class);
+        Box2dComponent box2dComponent = ecsWorld.edit(ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG))
+                .create(Box2dComponent.class);
         box2dComponent.body.setTransform(spawnPoint.x, spawnPoint.y, box2dComponent.body.getAngle());
     }
 
@@ -180,7 +199,7 @@ public final class ECSEngine {
     }
 
     public Entity getPlayer() {
-        return ecsWorld.getEntity(playerEntity);
+        return ecsWorld.getEntity(ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
     }
 
     public SaveComponent getWorkingSave() {
@@ -203,7 +222,7 @@ public final class ECSEngine {
         ecsWorld.getSystem(SaveManager.class).saveWorldMap(save);
         IntBag entitiesToRemove = ecsWorld.getAspectSubscriptionManager().get(Aspect.all()).getEntities();
         for (int toRemove : entitiesToRemove.getData()) {
-            if (toRemove != playerEntity) {
+            if (toRemove != ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)) {
                 ecsWorld.delete(toRemove);
             }
         }
@@ -231,5 +250,9 @@ public final class ECSEngine {
 
     public ItemManager getItemManager() {
         return ecsWorld.getSystem(ItemManager.class);
+    }
+
+    public void togglePlayerInventoryWindow() {
+        ecsWorld.getSystem(PlayerInentoryDisplayManager.class).togglePlayerInventoryWindow();
     }
 }

@@ -48,6 +48,9 @@ public class GameScreen extends AbstractScreen {
             Vector3 worldPosition = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             context.getEcsEngine().getItemManager().newItem(worldPosition.x, worldPosition.y, RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PIOCHE_ITEM));
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            context.getEcsEngine().togglePlayerInventoryWindow();
+        }
     }
 
     @Override

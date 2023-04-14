@@ -5,6 +5,7 @@ import net.mostlyoriginal.api.Singleton;
 
 @Singleton
 public class PlayerComponent extends Component {
+    public final static String TAG = "PLAYER";
 
 
 }
