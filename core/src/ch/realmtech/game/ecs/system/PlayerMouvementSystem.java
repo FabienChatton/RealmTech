@@ -69,6 +69,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             directionChange = false;
             movementComponent.speed.x = xFactor * movementComponent.speedMeterParSeconde;
             movementComponent.speed.y = yFactor * movementComponent.speedMeterParSeconde;
+            world.getSystem(SoundManager.class).playFootStepGrass();
         } else {
             movementComponent.speed.x = 0;
             movementComponent.speed.y = 0;

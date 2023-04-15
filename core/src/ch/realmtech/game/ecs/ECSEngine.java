@@ -47,7 +47,10 @@ public final class ECSEngine {
                 .with(new SaveManager())
                 .with(new WorldMapManager())
                 .with(new InventoryManager())
+                .with(new WorldContactListenerManager())
                 // system
+                .with(new ItemBeingPickAnimationSystem())
+                .with(new SoundManager())
                 .with(new PickUpOnGroundItemSystem())
                 .with(new PlayerMouvementSystem())
                 .with(new WorldStepSystem())
@@ -63,6 +66,7 @@ public final class ECSEngine {
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
         worldConfiguration.register(context.getTextureAtlas());
         ecsWorld = new World(worldConfiguration);
+        context.physicWorld.setContactListener(ecsWorld.getSystem(WorldContactListenerManager.class));
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         ecsWorld.getSystem(CellManager.class);
@@ -125,6 +129,7 @@ public final class ECSEngine {
         resetFixtureDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         Body bodyPlayer = context.physicWorld.createBody(bodyDef);
+        bodyPlayer.setUserData(playerId);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(playerWorldWith / 2f, playerWorldHigh / 2f);
         fixtureDef.shape = playerShape;
@@ -204,6 +209,24 @@ public final class ECSEngine {
         fixtureDef.filter.maskBits = -1;
         bodyWorldBorder.createFixture(fixtureDef);
         chain.dispose();
+    }
+
+    public Body createBox2dItem(int itemId, float worldX, float worldY, TextureRegion texture) {
+        resetBodyDef();
+        resetFixtureDef();
+        bodyDef.position.set(worldX, worldY);
+        bodyDef.gravityScale = 0;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        Body itemBody = context.physicWorld.createBody(bodyDef);
+        itemBody.setUserData(itemId);
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(texture.getRegionWidth() / RealmTech.PPM, texture.getRegionHeight() / RealmTech.PPM);
+        fixtureDef.shape = polygonShape;
+        fixtureDef.filter.categoryBits = BIT_GAME_OBJECT;
+        fixtureDef.filter.maskBits = BIT_WORLD | BIT_GAME_OBJECT | BIT_PLAYER;
+        itemBody.createFixture(fixtureDef);
+        polygonShape.dispose();
+        return itemBody;
     }
 
     public Entity getPlayer() {

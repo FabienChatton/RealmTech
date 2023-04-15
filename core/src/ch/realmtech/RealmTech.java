@@ -2,6 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.component.SaveComponent;
+import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.game.ecs.system.WorldMapManager;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.helper.HelperSetContext;
@@ -54,6 +55,7 @@ public final class RealmTech extends Game{
         initSkin();
         initHealper();
         initMap();
+        initSound();
         Box2D.init();
         gameStage = new Stage(
                 new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT,
@@ -94,6 +96,10 @@ public final class RealmTech extends Game{
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
         assetManager.load("texture/atlas/texture.atlas", TextureAtlas.class);
         Gdx.app.debug(TAG, "Map test chargé");
+    }
+
+    private void initSound() {
+        SoundManager.initAsset(assetManager);
     }
 
     public void setScreen(final ScreenType screenType) {

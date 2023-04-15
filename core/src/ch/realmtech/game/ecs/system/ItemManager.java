@@ -1,15 +1,18 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.ItemComponent;
-import ch.realmtech.game.ecs.component.PositionComponent;
-import ch.realmtech.game.ecs.component.TextureComponent;
-import ch.realmtech.game.ecs.component.ToSaveComponent;
+import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
 import com.artemis.Manager;
+import com.artemis.annotations.Wire;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.Body;
 
 public class ItemManager extends Manager {
+    @Wire(name ="context")
+    RealmTech context;
     private Archetype defaultItemArchetype;
 
     @Override
@@ -20,6 +23,7 @@ public class ItemManager extends Manager {
                 .add(ToSaveComponent.class)
                 .add(PositionComponent.class)
                 .add(TextureComponent.class)
+                .add(Box2dComponent.class)
                 .build(world);
     }
 
@@ -37,9 +41,39 @@ public class ItemManager extends Manager {
             itemId = world.create(defaultItemArchetype);
         }
         world.edit(itemId).create(ItemComponent.class);
+//        PositionComponent positionComponent = world.edit(itemId).create(PositionComponent.class);
+//        positionComponent.set(worldPossX, worldPossY);
+//        positionComponent.x = worldPossX;
+//        positionComponent.y = worldPossY;
+        TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
+        setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(), worldPossX, worldPossY);
+//        textureComponent.texture = itemRegisterEntry.getTextureRegion();
+//        Box2dComponent box2dComponent = world.edit(itemId).create(Box2dComponent.class);
+//        Body itemBody = context.getEcsEngine().createBox2dItem(itemId, worldPossX, worldPossY, textureComponent.texture);
+//        box2dComponent.set(
+//                textureComponent.texture.getRegionWidth() / RealmTech.PPM,
+//                textureComponent.texture.getRegionHeight() / RealmTech.PPM,
+//                itemBody
+//        );
+    }
+
+    public void setItemTexturePositionAndPhysicBody(int itemId, TextureRegion texture, float worldPossX, float worldPossY) {
         PositionComponent positionComponent = world.edit(itemId).create(PositionComponent.class);
-        positionComponent.x = worldPossX;
-        positionComponent.y = worldPossY;
-        world.edit(itemId).create(TextureComponent.class).texture = itemRegisterEntry.getTextureRegion();
+        positionComponent.set(worldPossX, worldPossY);
+        TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
+        textureComponent.set(texture);
+        Box2dComponent box2dComponent = world.edit(itemId).create(Box2dComponent.class);
+        Body itemBody = context.getEcsEngine().createBox2dItem(itemId, worldPossX, worldPossY, textureComponent.texture);
+        box2dComponent.set(
+                textureComponent.texture.getRegionWidth() / RealmTech.PPM,
+                textureComponent.texture.getRegionHeight() / RealmTech.PPM,
+                itemBody
+        );
+    }
+
+    public void playerPickUpItem(int itemId, int playerId) {
+        world.edit(itemId).remove(Box2dComponent.class);
+        world.edit(itemId).remove(PositionComponent.class);
+        world.getSystem(InventoryManager.class).addItemToPlayerInventory(itemId, playerId);
     }
 }

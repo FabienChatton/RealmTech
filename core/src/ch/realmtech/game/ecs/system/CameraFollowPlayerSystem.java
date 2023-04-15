@@ -1,6 +1,7 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.ecs.component.Box2dComponent;
+import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.ecs.component.PositionComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -8,8 +9,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-@All({PositionComponent.class,
-        Box2dComponent.class})
+@All({PositionComponent.class, Box2dComponent.class, PlayerComponent.class})
 public class CameraFollowPlayerSystem extends IteratingSystem {
     @Wire(name = "gameCamera")
     OrthographicCamera gameCamera;

@@ -1,6 +1,7 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.game.mod.RealmTechCoreItem;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import com.badlogic.gdx.Gdx;
@@ -50,6 +51,7 @@ public class GameScreen extends AbstractScreen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             context.getEcsEngine().togglePlayerInventoryWindow();
+            context.getEcsEngine().getSystem(SoundManager.class).playOpenInventory();
         }
     }
 
