@@ -56,8 +56,8 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void draw() {
         ecsEngine.process(Gdx.graphics.getDeltaTime());
-        uiStage.draw();
         box2DDebugRenderer.render(context.physicWorld, gameCamera.combined);
+        uiStage.draw();
     }
 
     @Override

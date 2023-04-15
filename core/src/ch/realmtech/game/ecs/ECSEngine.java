@@ -5,16 +5,16 @@ import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
+import ch.realmtech.screen.GamePauseScreen;
 import com.artemis.World;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,15 +47,15 @@ public final class ECSEngine {
                 .with(new SaveManager())
                 .with(new WorldMapManager())
                 .with(new InventoryManager())
-                .with(new PlayerInentoryDisplayManager())
                 // system
+                .with(new PickUpOnGroundItemSystem())
                 .with(new PlayerMouvementSystem())
                 .with(new WorldStepSystem())
                 .with(new UpdateBox2dWithTextureSystem())
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
-                .with(new PickUpOnGroundItemSystem())
+                .with(new InventoryPlayerDisplaySystem())
                 .build();
         worldConfiguration.register("physicWorld", context.physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
@@ -73,6 +73,14 @@ public final class ECSEngine {
     public void process(float delta) {
         ecsWorld.setDelta(delta);
         ecsWorld.process();
+        if (canPlayerInteractWithTileWorld()) {
+            Gdx.input.setInputProcessor(context.getInputManager());
+        } else {
+            Gdx.input.setInputProcessor(context.getUiStage());
+        }
+        if (ecsWorld.getSystem(InventoryPlayerDisplaySystem.class).isDisplay()) {
+            ecsWorld.getSystem(InventoryPlayerDisplaySystem.class).setInputProcessor();
+        }
     }
 
     private void resetBodyDef() {
@@ -253,6 +261,14 @@ public final class ECSEngine {
     }
 
     public void togglePlayerInventoryWindow() {
-        ecsWorld.getSystem(PlayerInentoryDisplayManager.class).togglePlayerInventoryWindow();
+        ecsWorld.getSystem(InventoryPlayerDisplaySystem.class).togglePlayerInventoryWindow();
+    }
+
+    public boolean canPlayerInteractWithTileWorld(){
+        boolean ret = true;
+        if (context.getScreen() instanceof GamePauseScreen) {
+            ret = false;
+        }
+        return ret;
     }
 }
