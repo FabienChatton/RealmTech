@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.input.InputMapper;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -69,7 +70,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             directionChange = false;
             movementComponent.speed.x = xFactor * movementComponent.speedMeterParSeconde;
             movementComponent.speed.y = yFactor * movementComponent.speedMeterParSeconde;
-            world.getSystem(SoundManager.class).playFootStepGrass();
+            playFootStepSound(cellId);
         } else {
             movementComponent.speed.x = 0;
             movementComponent.speed.y = 0;
@@ -85,5 +86,14 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 worldCenter.y,
                 true
         );
+    }
+
+    private void playFootStepSound(int cellId) {
+        if (cellId != -1) {
+            PlayerFootStepSound playerWalkSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+            if (playerWalkSound != null) {
+                world.getSystem(SoundManager.class).playFootStep(playerWalkSound.playerFootStepSound(), playerWalkSound.volume());
+            }
+        }
     }
 }

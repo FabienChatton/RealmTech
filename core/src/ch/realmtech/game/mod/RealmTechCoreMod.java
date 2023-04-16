@@ -1,5 +1,6 @@
 package ch.realmtech.game.mod;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.game.registery.Registry;
@@ -9,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 public class RealmTechCoreMod extends ModInitializerManager {
     @Wire
     private TextureAtlas textureAtlas;
+    @Wire(name = "context")
+    private RealmTech context;
 
     public final static String MOD_ID = "realmtech";
 
@@ -17,7 +20,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
 
     @Override
     public void initialize() {
-        RealmTechCoreCell.initCell(textureAtlas);
+        RealmTechCoreCell.initCell(context);
         RealmTechCoreItem.initItem(textureAtlas);
     }
 
