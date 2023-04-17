@@ -2,6 +2,7 @@ package ch.realmtech.game.mod;
 
 
 import ch.realmtech.game.item.ItemBehavior;
+import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
@@ -15,12 +16,14 @@ public class RealmTechCoreItem {
         REALM_TECH_CORE_ITEM_REGISTRY.put(PIOCHE_ITEM, new ItemRegisterEntry(
                 textureAtlas.findRegion("pioche-01"),
                 new ItemBehavior.Builder()
+                        .setItemType(ItemType.PIOCHE)
                         .build()
                 ));
 
         REALM_TECH_CORE_ITEM_REGISTRY.put(PELLE_ITEM, new ItemRegisterEntry(
                 textureAtlas.findRegion("pelle-01"),
                 new ItemBehavior.Builder()
+                        .setItemType(ItemType.PELLE)
                         .build()
         ));
     }

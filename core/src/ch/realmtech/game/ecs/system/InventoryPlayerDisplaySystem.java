@@ -94,7 +94,7 @@ public class InventoryPlayerDisplaySystem extends BaseSystem {
 
                     @Override
                     public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                        Gdx.app.postRunnable(() -> playerInventoryWindow.add((source.getActor())));
+                        //Gdx.app.postRunnable(() -> playerInventoryWindow.add((source.getActor())));
                     }
                 });
                 playerInventoryWindow.add(itemImage);

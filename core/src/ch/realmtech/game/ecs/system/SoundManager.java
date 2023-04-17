@@ -15,6 +15,8 @@ public class SoundManager extends Manager {
     public final static String FOOT_STEP_GRASS_2 = "sound/effects/level/foot-step/sfx_step_grass_r.mp3";
     public final static String FOOT_STEP_WATER_1 = "sound/effects/level/foot-step/splash1.wav";
     public final static String FOOT_STEP_SAND_1 = "sound/effects/level/foot-step/Fantozzi-SandR1.ogg";
+    public final static String ITEM_PICK_UP = "sound/effects/inventory/click.mp3";
+    public final static String ITEM_DROP = "sound/effects/inventory/pop3.ogg";
     public float soundVolume = 1f;
     private long footStep = 0;
 
@@ -36,6 +38,8 @@ public class SoundManager extends Manager {
         assetManager.load(FOOT_STEP_GRASS_2, Sound.class);
         assetManager.load(FOOT_STEP_WATER_1, Sound.class);
         assetManager.load(FOOT_STEP_SAND_1, Sound.class);
+        assetManager.load(ITEM_PICK_UP, Sound.class);
+        assetManager.load(ITEM_DROP, Sound.class);
     }
 
     public void playFootStep(Sound playerWalkSound, float volume) {
@@ -43,5 +47,13 @@ public class SoundManager extends Manager {
             footStep = System.currentTimeMillis();
             playerWalkSound.play(soundVolume * volume);
         }
+    }
+
+    public void playItemPickUp() {
+        assetManager.get(ITEM_PICK_UP,Sound.class).play(soundVolume);
+    }
+
+    public void playItemDrop() {
+        assetManager.get(ITEM_DROP, Sound.class).play(soundVolume);
     }
 }

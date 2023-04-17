@@ -40,21 +40,10 @@ public class ItemManager extends Manager {
         } else {
             itemId = world.create(defaultItemArchetype);
         }
-        world.edit(itemId).create(ItemComponent.class);
-//        PositionComponent positionComponent = world.edit(itemId).create(PositionComponent.class);
-//        positionComponent.set(worldPossX, worldPossY);
-//        positionComponent.x = worldPossX;
-//        positionComponent.y = worldPossY;
+        ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
+        itemComponent.set(itemRegisterEntry);
         TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
         setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(), worldPossX, worldPossY);
-//        textureComponent.texture = itemRegisterEntry.getTextureRegion();
-//        Box2dComponent box2dComponent = world.edit(itemId).create(Box2dComponent.class);
-//        Body itemBody = context.getEcsEngine().createBox2dItem(itemId, worldPossX, worldPossY, textureComponent.texture);
-//        box2dComponent.set(
-//                textureComponent.texture.getRegionWidth() / RealmTech.PPM,
-//                textureComponent.texture.getRegionHeight() / RealmTech.PPM,
-//                itemBody
-//        );
     }
 
     public void setItemTexturePositionAndPhysicBody(int itemId, TextureRegion texture, float worldPossX, float worldPossY) {
