@@ -1,13 +1,12 @@
 package ch.realmtech.game.ecs.component;
 
 import com.artemis.Component;
-import com.artemis.utils.IntBag;
 public class InventoryComponent extends Component {
-    public int maxSize;
-    public IntBag inventory;
-
-    public void set(int maxSize) {
-        this.maxSize = maxSize;
-        inventory = new IntBag(maxSize);
+    public final static int STACK_LIMITE = 64;
+    public final static int NUMBER_OF_ROW = 4;
+    public final static int NUMBER_OF_SLOT_PAR_ROW = 9;
+    public int[][] inventory;
+    public void set(int numberOfSlot) {
+        inventory = new int[numberOfSlot][STACK_LIMITE];
     }
 }

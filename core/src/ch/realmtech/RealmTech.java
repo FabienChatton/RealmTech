@@ -208,4 +208,9 @@ public final class RealmTech extends Game{
     public Entity getPlayer() {
         return ecsEngine.getPlayer();
     }
+
+    public int getPlayerId() {
+        return ecsEngine.getPlayerId();
+    }
+
 }

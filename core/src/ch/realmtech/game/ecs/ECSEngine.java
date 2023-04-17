@@ -10,7 +10,6 @@ import com.artemis.World;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -58,7 +57,6 @@ public final class ECSEngine {
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
-                .with(new InventoryPlayerDisplaySystem())
                 .build();
         worldConfiguration.register("physicWorld", context.physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
@@ -77,14 +75,6 @@ public final class ECSEngine {
     public void process(float delta) {
         ecsWorld.setDelta(delta);
         ecsWorld.process();
-        if (canPlayerInteractWithTileWorld()) {
-            Gdx.input.setInputProcessor(context.getInputManager());
-        } else {
-            Gdx.input.setInputProcessor(context.getUiStage());
-        }
-        if (ecsWorld.getSystem(InventoryPlayerDisplaySystem.class).isDisplay()) {
-            ecsWorld.getSystem(InventoryPlayerDisplaySystem.class).setInputProcessor();
-        }
     }
 
     private void resetBodyDef() {
@@ -155,7 +145,7 @@ public final class ECSEngine {
 
         // inventory component
         InventoryComponent inventoryComponent = ecsWorld.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(32);
+        inventoryComponent.set(InventoryComponent.NUMBER_OF_SLOT_PAR_ROW * InventoryComponent.NUMBER_OF_ROW);
 
         // pick up item component
         PickUpOnGroundItemComponent pickUpOnGroundItemComponent = ecsWorld.edit(playerId).create(PickUpOnGroundItemComponent.class);
@@ -233,6 +223,10 @@ public final class ECSEngine {
         return ecsWorld.getEntity(ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
     }
 
+    public int getPlayerId() {
+        return ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+    }
+
     public SaveComponent getWorkingSave() {
         return ecsWorld.getEntity(save).getComponent(SaveComponent.class);
     }
@@ -281,10 +275,6 @@ public final class ECSEngine {
 
     public ItemManager getItemManager() {
         return ecsWorld.getSystem(ItemManager.class);
-    }
-
-    public void togglePlayerInventoryWindow() {
-        ecsWorld.getSystem(InventoryPlayerDisplaySystem.class).togglePlayerInventoryWindow();
     }
 
     public boolean canPlayerInteractWithTileWorld(){

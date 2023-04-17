@@ -7,7 +7,6 @@ import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.ecs.system.CellManager;
 import ch.realmtech.game.ecs.system.ChunkManager;
 import ch.realmtech.game.ecs.system.InventoryManager;
-import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.input.InputMapper;
@@ -40,14 +39,14 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                         CellComponent cellComponent = cMap.create(topCellId);
                         IntBag playerInventory = context.getEcsEngine().getSystem(InventoryManager.class).getInventory(context.getEcsEngine().getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
                         ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getEcsWorld().getMapper(ItemComponent.class);
-                        for (int item : playerInventory.getData()) {
-                            if (mItem.get(item) != null) {
-                                if (mItem.get(item).itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {
-                                    context.getEcsEngine().getEcsWorld().delete(topCellId);
-                                    break;
-                                }
-                            }
-                        }
+//                        for (int item : playerInventory.getData()) {
+//                            if (mItem.get(item) != null) {
+//                                if (mItem.get(item).itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {
+//                                    context.getEcsEngine().getEcsWorld().delete(topCellId);
+//                                    break;
+//                                }
+//                            }
+//                        }
                     }
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {

@@ -2,7 +2,6 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InventoryComponent;
-import ch.realmtech.game.ecs.component.PositionComponent;
 import ch.realmtech.game.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -15,35 +14,41 @@ public class InventoryManager extends Manager {
 
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
-
     public void addItemToPlayerInventory(int itemId, int playerId) {
         InventoryComponent inventoryComponent = mInventory.create(playerId);
-        if (inventoryComponent.inventory.size() < inventoryComponent.maxSize) {
-            world.edit(itemId).remove(PositionComponent.class);
-            inventoryComponent.inventory.add(itemId);
+        for (int slotId = 0; slotId < inventoryComponent.inventory.length; slotId++) {
+            int iCellId = inventoryComponent.inventory[slotId][0];
+            if (iCellId == 0) {
+                inventoryComponent.inventory[slotId][0] = itemId;
+                break;
+            }
         }
-        world.getSystem(InventoryPlayerDisplaySystem.class).refreshInventoryWindows();
-        world.getSystem(SoundManager.class).playItemPickUp();
+//
+//        if (inventoryComponent.inventory.size() < inventoryComponent.maxSize) {
+//            world.edit(itemId).remove(PositionComponent.class);
+//            inventoryComponent.inventory.add(itemId);
+//        }
+//        world.getSystem(InventoryPlayerDisplaySystem.class).refreshInventoryWindows();
+//        world.getSystem(SoundManager.class).playItemPickUp();
     }
 
     public void dropItemFromPlayerInventory(int itemId, int playerId, float worldPositionX, float worldPositionY) {
-        InventoryComponent inventoryComponent = mInventory.create(playerId);
-        inventoryComponent.inventory.removeValue(itemId);
-        world.getSystem(ItemManager.class).setItemTexturePositionAndPhysicBody(
-                itemId,
-                mTexture.create(itemId).texture,
-                worldPositionX,
-                worldPositionY
-        );
-        world.getSystem(SoundManager.class).playItemDrop();
+//        InventoryComponent inventoryComponent = mInventory.create(playerId);
+//        inventoryComponent.inventory.removeValue(itemId);
+//        world.getSystem(ItemManager.class).setItemTexturePositionAndPhysicBody(
+//                itemId,
+//                mTexture.create(itemId).texture,
+//                worldPositionX,
+//                worldPositionY
+//        );
+//        world.getSystem(SoundManager.class).playItemDrop();
     }
-
     public IntBag getInventory(int playerId) {
         IntBag ret = null;
-        InventoryComponent inventoryComponent = mInventory.get(playerId);
-        if (inventoryComponent != null) {
-            ret = inventoryComponent.inventory;
-        }
+//        InventoryComponent inventoryComponent = mInventory.get(playerId);
+//        if (inventoryComponent != null) {
+//            ret = inventoryComponent.inventory;
+//        }
         return ret;
     }
 }
