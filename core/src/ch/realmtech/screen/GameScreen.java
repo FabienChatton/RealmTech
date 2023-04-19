@@ -49,9 +49,7 @@ public class GameScreen extends AbstractScreen {
             context.getEcsEngine().getItemManager().newItem(worldPosition.x, worldPosition.y, RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PELLE_ITEM));
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            context.setScreen(ScreenType.GAME_PLAYER_INVENTORY);
-//            context.getEcsEngine().togglePlayerInventoryWindow();
-//            context.getEcsEngine().getSystem(SoundManager.class).playOpenInventory();
+            context.getEcsEngine().togglePlayerInventoryWindow();
         }
     }
 

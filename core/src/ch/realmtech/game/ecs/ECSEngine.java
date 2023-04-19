@@ -57,6 +57,7 @@ public final class ECSEngine {
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
+                .with(new PlayerInventoryManager())
                 .build();
         worldConfiguration.register("physicWorld", context.physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
@@ -283,5 +284,10 @@ public final class ECSEngine {
             ret = false;
         }
         return ret;
+    }
+
+    public void togglePlayerInventoryWindow() {
+        ecsWorld.getSystem(PlayerInventoryManager.class).toggleInventoryWindow(getPlayerId());
+        ecsWorld.getSystem(SoundManager.class).playOpenInventory();
     }
 }

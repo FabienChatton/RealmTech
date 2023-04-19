@@ -5,8 +5,7 @@ public enum ScreenType {
     MENU(Menu.class),
     GAME_SCREEN(GameScreen.class),
     SELECTION_DE_SAUVEGARDE(SelectionDeSauvegarde.class),
-    GAME_PAUSE(GamePauseScreen.class),
-    GAME_PLAYER_INVENTORY(GamePlayerInventory.class);
+    GAME_PAUSE(GamePauseScreen.class);
     public final Class<? extends AbstractScreen> screenClass;
 
     ScreenType(Class<? extends AbstractScreen> screenClass){
