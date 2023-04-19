@@ -141,6 +141,7 @@ public class CellManager extends EntityLinkManager {
         for (int cellId : getCells(chunkId).getData()) {
             byte innerX = getInnerChunkX(worldX);
             byte innerY = getInnerChunkY(worldY);
+            if (cellId == 0) continue;
             CellComponent cellComponent = mCell.create(cellId);
             if (cellComponent.innerChunkPossX == innerX &&
                     cellComponent.innerChunkPossY == innerY &&

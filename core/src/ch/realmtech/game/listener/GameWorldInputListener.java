@@ -7,13 +7,13 @@ import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.ecs.system.CellManager;
 import ch.realmtech.game.ecs.system.ChunkManager;
 import ch.realmtech.game.ecs.system.InventoryManager;
+import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
 import com.artemis.ComponentMapper;
 import com.artemis.managers.TagManager;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -37,8 +37,16 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                     int topCellId = context.getEcsEngine().getSystem(CellManager.class).getTopCell(worldX, worldY);
                     if (topCellId != -1) {
                         CellComponent cellComponent = cMap.create(topCellId);
-                        IntBag playerInventory = context.getEcsEngine().getSystem(InventoryManager.class).getInventory(context.getEcsEngine().getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
+                        int[][] inventory = context.getEcsEngine().getSystem(InventoryManager.class).getInventory(context.getEcsEngine().getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
                         ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getEcsWorld().getMapper(ItemComponent.class);
+                        for (int[] slot : inventory) {
+                            ItemComponent itemComponent = mItem.get(slot[0]);
+                            if (itemComponent == null) continue;
+                            if (itemComponent.itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {
+                                context.getEcsEngine().getEcsWorld().delete(topCellId);
+                                    break;
+                            }
+                        }
 //                        for (int item : playerInventory.getData()) {
 //                            if (mItem.get(item) != null) {
 //                                if (mItem.get(item).itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {

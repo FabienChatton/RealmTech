@@ -170,6 +170,7 @@ public final class RealmTech extends Game{
 
     public void newSaveInitWorld(File saveFile) throws IOException {
         ecsEngine.newSaveInitWorld(saveFile);
+        newGamePlayer();
     }
 
     public void generateNewWorld() {
@@ -212,5 +213,9 @@ public final class RealmTech extends Game{
     public int getPlayerId() {
         return ecsEngine.getPlayerId();
     }
-
+    public void newGamePlayer() {
+        getEcsEngine().createPlayer();
+        getEcsEngine().spawnPlayer(getWorldMap().getProperties().get("spawn-point", Vector2.class));
+        setScreen(ScreenType.GAME_SCREEN);
+    }
 }

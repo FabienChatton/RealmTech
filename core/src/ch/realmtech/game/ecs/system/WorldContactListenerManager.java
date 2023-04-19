@@ -50,13 +50,13 @@ public class WorldContactListenerManager extends Manager implements ContactListe
                     contact.setEnabled(false);
                     int itemId = (int) contact.getFixtureB().getBody().getUserData();
                     world.getSystem(ItemManager.class).playerPickUpItem(itemId, playerId);
+                    world.getSystem(SoundManager.class).playItemPickUp();
                     Gdx.app.postRunnable(() -> {
                         try {
                             world.edit(itemId).remove(ItemBeingPickComponent.class);
                         } catch (NullPointerException e) {
                         } finally {
                             context.physicWorld.destroyBody(contact.getFixtureB().getBody());
-
                         }
                     });
                 }

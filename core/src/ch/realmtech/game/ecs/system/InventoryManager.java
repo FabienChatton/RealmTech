@@ -6,7 +6,6 @@ import ch.realmtech.game.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.utils.IntBag;
 
 public class InventoryManager extends Manager {
     @Wire(name = "context")
@@ -23,13 +22,6 @@ public class InventoryManager extends Manager {
                 break;
             }
         }
-//
-//        if (inventoryComponent.inventory.size() < inventoryComponent.maxSize) {
-//            world.edit(itemId).remove(PositionComponent.class);
-//            inventoryComponent.inventory.add(itemId);
-//        }
-//        world.getSystem(InventoryPlayerDisplaySystem.class).refreshInventoryWindows();
-//        world.getSystem(SoundManager.class).playItemPickUp();
     }
 
     public void dropItemFromPlayerInventory(int itemId, int playerId, float worldPositionX, float worldPositionY) {
@@ -43,12 +35,7 @@ public class InventoryManager extends Manager {
 //        );
 //        world.getSystem(SoundManager.class).playItemDrop();
     }
-    public IntBag getInventory(int playerId) {
-        IntBag ret = null;
-//        InventoryComponent inventoryComponent = mInventory.get(playerId);
-//        if (inventoryComponent != null) {
-//            ret = inventoryComponent.inventory;
-//        }
-        return ret;
+    public int[][] getInventory(int playerId) {
+        return mInventory.get(playerId).inventory;
     }
 }

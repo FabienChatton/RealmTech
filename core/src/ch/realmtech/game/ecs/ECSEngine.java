@@ -70,7 +70,6 @@ public final class ECSEngine {
         fixtureDef = new FixtureDef();
         ecsWorld.getSystem(CellManager.class);
         ecsWorld.getSystem(ChunkManager.class);
-        createPlayer();
     }
 
     public void process(float delta) {
@@ -104,7 +103,7 @@ public final class ECSEngine {
         fixtureDef.filter.maskBits = 0;
     }
 
-    private void createPlayer() {
+    public void createPlayer() {
         final int playerWorldWith = 1;
         final int playerWorldHigh = 1;
         if (ecsWorld.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
@@ -246,6 +245,7 @@ public final class ECSEngine {
 
     public void saveWorldMap() throws IOException {
         ecsWorld.getSystem(SaveManager.class).saveWorldMap(save);
+        getPlayer().getComponent(InventoryComponent.class).inventory = null;
         IntBag entitiesToRemove = ecsWorld.getAspectSubscriptionManager().get(Aspect.all()).getEntities();
         for (int toRemove : entitiesToRemove.getData()) {
             if (toRemove != ecsWorld.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)) {

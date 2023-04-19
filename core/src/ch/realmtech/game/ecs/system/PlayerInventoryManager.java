@@ -35,8 +35,6 @@ public class PlayerInventoryManager extends BaseSystem {
     protected void processSystem() {
         inventoryStage.draw();
         inventoryStage.setDebugAll(true);
-        int[][] inventory = context.getEcsEngine().getEcsWorld().getMapper(InventoryComponent.class).get(context.getPlayerId()).inventory;
-
     }
     /*
     inventoryStage
@@ -87,7 +85,7 @@ public class PlayerInventoryManager extends BaseSystem {
             itemSlotTable.setBackground(new TextureRegionDrawable(defaultBackGroundTexture));
             final Image imageItem;
             if (slotId[0] != 0) {
-                imageItem = new Image(mItem.create(slotId[0]).itemRegisterEntry.getTextureRegion());
+                imageItem = new Image(mItem.get(slotId[0]).itemRegisterEntry.getTextureRegion());
             } else {
                 imageItem = new Image(defaultBackGroundTexture);
             }

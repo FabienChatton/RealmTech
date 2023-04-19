@@ -65,7 +65,7 @@ public class SelectionDeSauvegarde extends AbstractScreen{
                 try {
                     context.newSaveInitWorld(file);
                     context.loadSaveOnWorkingSave();
-                    context.setScreen(ScreenType.GAME_SCREEN);
+                    context.newGamePlayer();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -93,7 +93,6 @@ public class SelectionDeSauvegarde extends AbstractScreen{
                 try {
                     context.newSaveInitWorld(nomNouvelleCarte.getText());
                     context.generateNewWorld();
-                    context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
