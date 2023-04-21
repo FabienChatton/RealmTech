@@ -35,7 +35,7 @@ public class InventoryManager extends Manager {
 //        );
 //        world.getSystem(SoundManager.class).playItemDrop();
     }
-    public int[][] getInventory(int playerId) {
-        return mInventory.get(playerId).inventory;
+    public int[][] getInventory(int entityId) {
+        return mInventory.get(entityId).inventory;
     }
 }

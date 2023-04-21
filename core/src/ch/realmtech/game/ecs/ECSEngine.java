@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.level.map.WorldMap;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
 import ch.realmtech.screen.GamePauseScreen;
 import com.artemis.World;
@@ -48,6 +49,7 @@ public final class ECSEngine {
                 .with(new InventoryManager())
                 .with(new WorldContactListenerManager())
                 // system
+                .with(new CraftingSystem())
                 .with(new ItemBeingPickAnimationSystem())
                 .with(new SoundManager())
                 .with(new PickUpOnGroundItemSystem())
@@ -145,7 +147,7 @@ public final class ECSEngine {
 
         // inventory component
         InventoryComponent inventoryComponent = ecsWorld.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(InventoryComponent.NUMBER_OF_SLOT_PAR_ROW * InventoryComponent.NUMBER_OF_ROW);
+        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
 
         // pick up item component
         PickUpOnGroundItemComponent pickUpOnGroundItemComponent = ecsWorld.edit(playerId).create(PickUpOnGroundItemComponent.class);
@@ -155,6 +157,14 @@ public final class ECSEngine {
         TextureComponent textureComponent = ecsWorld.edit(playerId).create(TextureComponent.class);
         final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
         textureComponent.set(texture);
+
+        // default crafting table
+        int defaultCraftingTable = ecsWorld.create();
+        CraftingComponent craftingComponent = ecsWorld.edit(defaultCraftingTable).create(CraftingComponent.class);
+        craftingComponent.set(RealmTechCoreMod.REALM_TECH_CORE_CRAFTING_RECIPE_ENTRY);
+        InventoryComponent craftingInventoryComponent = ecsWorld.edit(defaultCraftingTable).create(InventoryComponent.class);
+        craftingInventoryComponent.set(3, 3);
+        ecsWorld.getSystem(TagManager.class).register("crafting", defaultCraftingTable);
     }
 
     public void spawnPlayer(Vector2 spawnPoint) {

@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Source;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 
 public class PlayerInventoryManager extends BaseSystem {
     private static TextureRegion defaultBackGroundTexture;
@@ -28,13 +29,14 @@ public class PlayerInventoryManager extends BaseSystem {
     private Window inventoryWindow;
     private Table inventoryTable;
     private DragAndDrop dragAndDrop;
+    private ComponentMapper<InventoryComponent> mInventory;
     @Wire(name = "context")
     private RealmTech context;
 
     @Override
     protected void processSystem() {
         inventoryStage.draw();
-        inventoryStage.setDebugAll(true);
+        //inventoryStage.setDebugAll(true);
     }
     /*
     inventoryStage
@@ -45,13 +47,13 @@ public class PlayerInventoryManager extends BaseSystem {
     protected void initialize() {
         super.initialize();
         this.inventoryStage = new Stage(context.getUiStage().getViewport(), context.getUiStage().getBatch());
-        this.inventoryWindow = new Window("player inventory", context.getSkin());
+        this.inventoryWindow = new Window("Inventaire", context.getSkin());
         this.inventoryTable = new Table(context.getSkin());
         this.dragAndDrop = new DragAndDrop();
         dragAndDrop.setDragTime(0);
         inventoryWindow.add(inventoryTable);
-        float with = inventoryStage.getWidth() * 0.9f;
-        float height = inventoryStage.getHeight() * 0.9f;
+        float with = inventoryStage.getWidth() * 0.5f;
+        float height = inventoryStage.getHeight() * 0.5f;
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) /2 ,(inventoryStage.getHeight() - height ) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
@@ -65,20 +67,38 @@ public class PlayerInventoryManager extends BaseSystem {
         } else {
             super.setEnabled(true);
             Gdx.input.setInputProcessor(inventoryStage);
-            setInventoryToDisplay(playerId);
+            clearDisplayInventory();
+            setPlayerInventoryToDisplay(playerId);
         }
     }
 
-    public void setInventoryToDisplay(int playerId) {
+    public void setInventoryAndCraftingToDisplay(int playerId, int craftingEntityId) {
+
+    }
+
+    private void clearDisplayInventory() {
         inventoryTable.clear();
         dragAndDrop.clear();
+    }
+
+    public void setPlayerInventoryToDisplay(int playerId) {
+        Array<Table> inventoryTableToDisplay = getInventoryTableToDisplay(playerId);
+        for (int i = 0; i < inventoryTableToDisplay.size; i++) {
+            if (i % mInventory.get(playerId).numberOfSlotParRow == 0) {
+                inventoryTable.row().padBottom(2f);
+            }
+            inventoryTable.add(inventoryTableToDisplay.get(i)).padLeft(2f);
+        }
+    }
+
+    private Array<Table> getInventoryTableToDisplay(int entityId) {
         ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getEcsWorld().getMapper(ItemComponent.class);
         ComponentMapper<StoredItemComponent> mStoredItem = context.getEcsEngine().getEcsWorld().getMapper(StoredItemComponent.class);
-
-        int[][] inventory = context.getEcsEngine().getEcsWorld().getMapper(InventoryComponent.class).get(playerId).inventory;
+        Array<Table> itemSlots = new Array<>();
+        int[][] inventory = mInventory.get(entityId).inventory;
         int row = 0;
         for (int[] slotId : inventory) {
-            if (row % InventoryComponent.NUMBER_OF_SLOT_PAR_ROW == 0) {
+            if (row % InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW == 0) {
                 inventoryTable.row().padBottom(2f);
             }
             Table itemSlotTable = new Table(context.getSkin());
@@ -90,10 +110,11 @@ public class PlayerInventoryManager extends BaseSystem {
                 imageItem = new Image(defaultBackGroundTexture);
             }
             itemSlotTable.add(imageItem);
-            inventoryTable.add(itemSlotTable).padLeft(2f);
+            itemSlots.add(itemSlotTable);
             addDragAndDrop(itemSlotTable, imageItem, slotId);
             row++;
         }
+        return itemSlots;
     }
 
     private void addDragAndDrop(Table itemSlotTable, Image imageItem, int[] itemId) {
@@ -149,7 +170,8 @@ public class PlayerInventoryManager extends BaseSystem {
                 }
             }
             payload.getDragActor().remove();
-            manager.setInventoryToDisplay(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
+            manager.clearDisplayInventory();
+            manager.setPlayerInventoryToDisplay(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
         }
     }
     static class InventoryTarget extends Target {

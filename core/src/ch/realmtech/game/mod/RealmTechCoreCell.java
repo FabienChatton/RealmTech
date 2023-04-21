@@ -5,8 +5,7 @@ import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.registery.CellRegisterEntry;
-
-import static ch.realmtech.game.mod.RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY;
+import ch.realmtech.game.registery.Registry;
 
 public class RealmTechCoreCell {
 
@@ -14,8 +13,8 @@ public class RealmTechCoreCell {
     public final static String SAND_CELL = "cell.sand";
     public final static String WATER_CELL = "cell.water";
 
-    static void initCell(RealmTech context) {
-        REALM_TECH_CORE_CELL_REGISTRY.put(GRASS_CELL, new CellRegisterEntry(
+    static void initCell(Registry<CellRegisterEntry> registry, RealmTech context) {
+        registry.put(GRASS_CELL, new CellRegisterEntry(
                 context.getTextureAtlas().findRegion("grass-01"),
                 new CellBehavior.Builder()
                         .breakWith(ItemType.PELLE)
@@ -23,7 +22,7 @@ public class RealmTechCoreCell {
                         .build()
         ));
 
-        REALM_TECH_CORE_CELL_REGISTRY.put(SAND_CELL, new CellRegisterEntry(
+        registry.put(SAND_CELL, new CellRegisterEntry(
                 context.getTextureAtlas().findRegion("sand-01"),
                 new CellBehavior.Builder()
                         .breakWith(ItemType.PELLE)
@@ -31,7 +30,7 @@ public class RealmTechCoreCell {
                         .build()
         ));
 
-        REALM_TECH_CORE_CELL_REGISTRY.put(WATER_CELL, new CellRegisterEntry(
+        registry.put(WATER_CELL, new CellRegisterEntry(
                 context.getTextureAtlas().findRegion("water-01"),
                 new CellBehavior.Builder()
                         .speedEffect(0.5f)

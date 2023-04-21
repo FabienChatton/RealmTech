@@ -65,7 +65,6 @@ public class SelectionDeSauvegarde extends AbstractScreen{
                 try {
                     context.newSaveInitWorld(file);
                     context.loadSaveOnWorkingSave();
-                    context.newGamePlayer();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

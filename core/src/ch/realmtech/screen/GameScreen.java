@@ -1,8 +1,12 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.ItemComponent;
+import ch.realmtech.game.ecs.system.InventoryManager;
 import ch.realmtech.game.mod.RealmTechCoreItem;
 import ch.realmtech.game.mod.RealmTechCoreMod;
+import com.artemis.Entity;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
@@ -55,12 +59,18 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             context.getEcsEngine().togglePlayerInventoryWindow();
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            Entity craft = context.getEcsEngine().getEcsWorld().getSystem(TagManager.class).getEntity("crafting");
+            int item = context.getEcsEngine().getEcsWorld().create();
+            context.getEcsEngine().getEcsWorld().edit(item).create(ItemComponent.class).set(RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PELLE_ITEM));
+            context.getEcsEngine().getSystem(InventoryManager.class).addItemToPlayerInventory(item, craft.getId());
+        }
     }
 
     @Override
     public void draw() {
         ecsEngine.process(Gdx.graphics.getDeltaTime());
-        box2DDebugRenderer.render(context.physicWorld, gameCamera.combined);
+        //box2DDebugRenderer.render(context.physicWorld, gameCamera.combined);
         uiStage.draw();
     }
 
