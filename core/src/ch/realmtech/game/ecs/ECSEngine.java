@@ -6,7 +6,6 @@ import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
-import ch.realmtech.screen.GamePauseScreen;
 import com.artemis.World;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
@@ -286,14 +285,6 @@ public final class ECSEngine {
 
     public ItemManager getItemManager() {
         return ecsWorld.getSystem(ItemManager.class);
-    }
-
-    public boolean canPlayerInteractWithTileWorld(){
-        boolean ret = true;
-        if (context.getScreen() instanceof GamePauseScreen) {
-            ret = false;
-        }
-        return ret;
     }
 
     public void togglePlayerInventoryWindow() {

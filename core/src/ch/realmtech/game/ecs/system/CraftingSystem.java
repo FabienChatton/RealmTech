@@ -3,10 +3,12 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.game.ecs.component.CraftingComponent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
+import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
+import com.artemis.managers.TagManager;
 import com.artemis.systems.IteratingSystem;
 
 @All({InventoryComponent.class, CraftingComponent.class})
@@ -28,8 +30,15 @@ public class CraftingSystem extends IteratingSystem {
             }
         }
         for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
-            if (craftingRecipeEntry.craft(itemRegister) != null) {
-                System.out.println("fumier");
+            ItemRegisterEntry craftResult = craftingRecipeEntry.craft(itemRegister);
+            if (craftResult != null) {
+                world.getSystem(InventoryManager.class).clearInventory(mInventory.get(entityId).inventory);
+                int itemResult = world.getSystem(ItemManager.class).newItemInventory(craftResult);
+                inventory[0][0] = 0;
+                int playerId = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+                world.getSystem(InventoryManager.class).addItemToInventory(itemResult, playerId);
+                world.getSystem(PlayerInventoryManager.class).toggleInventoryWindow(playerId);
+                world.getSystem(PlayerInventoryManager.class).toggleInventoryWindow(playerId);
             }
         }
     }

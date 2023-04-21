@@ -68,12 +68,9 @@ public class PlayerInventoryManager extends BaseSystem {
             super.setEnabled(true);
             Gdx.input.setInputProcessor(inventoryStage);
             clearDisplayInventory();
-            setPlayerInventoryToDisplay(playerId);
+            setInventoryToDisplay(playerId);
+            setInventoryToDisplay(world.getSystem(TagManager.class).getEntityId("crafting"));
         }
-    }
-
-    public void setInventoryAndCraftingToDisplay(int playerId, int craftingEntityId) {
-
     }
 
     private void clearDisplayInventory() {
@@ -81,10 +78,10 @@ public class PlayerInventoryManager extends BaseSystem {
         dragAndDrop.clear();
     }
 
-    public void setPlayerInventoryToDisplay(int playerId) {
-        Array<Table> inventoryTableToDisplay = getInventoryTableToDisplay(playerId);
+    public void setInventoryToDisplay(int entityId) {
+        Array<Table> inventoryTableToDisplay = getInventoryTableToDisplay(entityId);
         for (int i = 0; i < inventoryTableToDisplay.size; i++) {
-            if (i % mInventory.get(playerId).numberOfSlotParRow == 0) {
+            if (i % mInventory.get(entityId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
             }
             inventoryTable.add(inventoryTableToDisplay.get(i)).padLeft(2f);
@@ -170,8 +167,9 @@ public class PlayerInventoryManager extends BaseSystem {
                 }
             }
             payload.getDragActor().remove();
-            manager.clearDisplayInventory();
-            manager.setPlayerInventoryToDisplay(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
+            // TODO faire quelque chose de plus propre pour rafraichir l'inventaire que de le fermer de de le réouvrir
+            manager.toggleInventoryWindow(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
+            manager.toggleInventoryWindow(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
         }
     }
     static class InventoryTarget extends Target {

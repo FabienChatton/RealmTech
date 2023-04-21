@@ -7,13 +7,15 @@ import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 
+import java.util.Arrays;
+
 public class InventoryManager extends Manager {
     @Wire(name = "context")
     private RealmTech context;
 
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
-    public void addItemToPlayerInventory(int itemId, int playerId) {
+    public void addItemToInventory(int itemId, int playerId) {
         InventoryComponent inventoryComponent = mInventory.create(playerId);
         for (int slotId = 0; slotId < inventoryComponent.inventory.length; slotId++) {
             int iCellId = inventoryComponent.inventory[slotId][0];
@@ -37,5 +39,11 @@ public class InventoryManager extends Manager {
     }
     public int[][] getInventory(int entityId) {
         return mInventory.get(entityId).inventory;
+    }
+
+    public void clearInventory(int[][] inventory) {
+        for (int[] ints : inventory) {
+            Arrays.fill(ints, 0);
+        }
     }
 }
