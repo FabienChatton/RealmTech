@@ -16,6 +16,11 @@ public class ItemBehavior {
         return attackDommage;
     }
 
+    @Override
+    public String toString() {
+        return itemType.toString();
+    }
+
     public static class Builder {
         private final ItemBehavior itemBehavior = new ItemBehavior();
 
@@ -32,6 +37,5 @@ public class ItemBehavior {
         public ItemBehavior build(){
             return itemBehavior;
         }
-
     }
 }

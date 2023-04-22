@@ -149,8 +149,8 @@ public final class ECSEngine {
         inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
 
         // pick up item component
-        PickUpOnGroundItemComponent pickUpOnGroundItemComponent = ecsWorld.edit(playerId).create(PickUpOnGroundItemComponent.class);
-        pickUpOnGroundItemComponent.set(10);
+        PickerGroundItemComponent pickerGroundItemComponent = ecsWorld.edit(playerId).create(PickerGroundItemComponent.class);
+        pickerGroundItemComponent.set(10);
 
         // texture component
         TextureComponent textureComponent = ecsWorld.edit(playerId).create(TextureComponent.class);

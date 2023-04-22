@@ -9,4 +9,9 @@ public class ItemComponent extends Component {
     public void set(ItemRegisterEntry itemRegisterEntry) {
         this.itemRegisterEntry = itemRegisterEntry;
     }
+
+    @Override
+    public String toString() {
+        return itemRegisterEntry.toString();
+    }
 }

@@ -18,7 +18,6 @@ public class GamePauseScreen extends AbstractScreen {
         TextButton quiteAndSave = new TextButton("Sauvegarder et quitter",skin);
         quiteAndSave.addListener(quiteAndSave());
         uiTable.add(quiteAndSave);
-
     }
 
     @Override

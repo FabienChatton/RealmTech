@@ -7,10 +7,12 @@ import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public class ItemManager extends Manager {
+    private final static String TAG = ItemManager.class.getSimpleName();
     @Wire(name ="context")
     RealmTech context;
     private Archetype defaultItemGroundArchetype;
@@ -45,6 +47,7 @@ public class ItemManager extends Manager {
         itemComponent.set(itemRegisterEntry);
         TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
         setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(), worldPossX, worldPossY);
+        Gdx.app.debug(TAG, "nouvel item sur la carte (" + itemId + "). Position : " + worldPossX + "," + worldPossY);
     }
 
     public int newItemInventory(ItemRegisterEntry itemRegisterEntry) {

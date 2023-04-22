@@ -8,12 +8,10 @@ import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.*;
 
 public class WorldContactListenerManager extends Manager implements ContactListener {
+    private final static String TAG = WorldContactListenerManager.class.getSimpleName();
     @Wire(name = "context")
     private RealmTech context;
 
@@ -34,7 +32,6 @@ public class WorldContactListenerManager extends Manager implements ContactListe
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-
     }
 
     @Override
@@ -46,23 +43,26 @@ public class WorldContactListenerManager extends Manager implements ContactListe
         try {
             if (mPlayer.has((int) contact.getFixtureA().getBody().getUserData())) {
                 int playerId = (int) contact.getFixtureA().getBody().getUserData();
-                if (mItem.has((int) contact.getFixtureB().getBody().getUserData())) {
+                final Fixture fixtureB = contact.getFixtureB();
+                if (mItem.has((int) fixtureB.getBody().getUserData())) {
                     contact.setEnabled(false);
-                    int itemId = (int) contact.getFixtureB().getBody().getUserData();
+                    int itemId = (int) fixtureB.getBody().getUserData();
+                    Gdx.app.debug(TAG, "le joueur (" + playerId + ") a touche l'item (" + itemId + ")");
                     world.getSystem(ItemManager.class).playerPickUpItem(itemId, playerId);
                     world.getSystem(SoundManager.class).playItemPickUp();
                     Gdx.app.postRunnable(() -> {
                         try {
                             world.edit(itemId).remove(ItemBeingPickComponent.class);
                         } catch (NullPointerException e) {
+                            Gdx.app.error(TAG, e.getMessage());
                         } finally {
-                            context.physicWorld.destroyBody(contact.getFixtureB().getBody());
+                            context.physicWorld.destroyBody(fixtureB.getBody());
                         }
                     });
                 }
             }
         } catch (NullPointerException e) {
-            // sa va trop vite, surement
+            Gdx.app.error(TAG, e.getLocalizedMessage());
         }
     }
 }

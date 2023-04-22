@@ -2,7 +2,7 @@ package ch.realmtech.game.ecs.component;
 
 import com.artemis.Component;
 
-public class PickUpOnGroundItemComponent extends Component {
+public class PickerGroundItemComponent extends Component {
     public float magnetRange = 1;
 
     public void set(float magnetRange) {

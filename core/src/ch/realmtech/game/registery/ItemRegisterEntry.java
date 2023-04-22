@@ -31,4 +31,11 @@ public class ItemRegisterEntry implements RegistryEntry {
         this.textureRegion = textureRegion;
         this.itemBehavior = itemBehavior;
     }
+
+    @Override
+    public String toString() {
+        return  "Archetype : " + archetype + "\n" +
+                "\tTextureRegion : " + textureRegion + "\n" +
+                "\tItemBehavior : " + itemBehavior;
+    }
 }
