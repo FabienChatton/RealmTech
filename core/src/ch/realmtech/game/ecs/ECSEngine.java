@@ -146,7 +146,7 @@ public final class ECSEngine {
 
         // inventory component
         InventoryComponent inventoryComponent = ecsWorld.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, context.getTextureAtlas().findRegion("water-01"));
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = ecsWorld.edit(playerId).create(PickerGroundItemComponent.class);
@@ -159,11 +159,14 @@ public final class ECSEngine {
 
         // default crafting table
         int defaultCraftingTable = ecsWorld.create();
+        int defaultResultInventory = ecsWorld.create();
         CraftingComponent craftingComponent = ecsWorld.edit(defaultCraftingTable).create(CraftingComponent.class);
-        craftingComponent.set(RealmTechCoreMod.REALM_TECH_CORE_CRAFTING_RECIPE_ENTRY);
+        ecsWorld.edit(defaultResultInventory).create(InventoryComponent.class).set(1,1, context.getTextureAtlas().findRegion("water-01"));
+        craftingComponent.set(RealmTechCoreMod.REALM_TECH_CORE_CRAFTING_RECIPE_ENTRY, defaultResultInventory);
         InventoryComponent craftingInventoryComponent = ecsWorld.edit(defaultCraftingTable).create(InventoryComponent.class);
-        craftingInventoryComponent.set(3, 3);
+        craftingInventoryComponent.set(3, 3,context.getTextureAtlas().findRegion("water-01"));
         ecsWorld.getSystem(TagManager.class).register("crafting", defaultCraftingTable);
+        ecsWorld.getSystem(TagManager.class).register("crafting-result-inventory", defaultResultInventory);
     }
 
     public void spawnPlayer(Vector2 spawnPoint) {

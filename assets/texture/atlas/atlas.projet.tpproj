@@ -34,7 +34,7 @@ prettyPrint=true
 legacyOutput=false
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:../raw/grass-01.png,type:Input,regionName:null},{path:../raw/reimu.png,type:Input,regionName:null},{path:../raw/sand-01.png,type:Input,regionName:null},{path:../raw/water-01.png,type:Input,regionName:null},{path:../raw/pelle-01.png,type:Input,regionName:null},{path:../raw/pioche-01.png,type:Input,regionName:""}]
+inputFiles=[{path:../raw/grass-01.png,type:Input,regionName:null},{path:../raw/reimu.png,type:Input,regionName:null},{path:../raw/sand-01.png,type:Input,regionName:null},{path:../raw/water-01.png,type:Input,regionName:null},{path:../raw/pelle-01.png,type:Input,regionName:null},{path:../raw/pioche-01.png,type:Input,regionName:""},{path:../raw/inventory-01.png,type:Input,regionName:null}]
 keepInputFileExtensions=false
 
 

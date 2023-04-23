@@ -16,10 +16,11 @@ public class CraftingComponent extends Component {
         craftingRecipe = new Array<>();
     }
 
-    public void set(RegistryAnonyme<CraftingRecipeEntry> registry) {
+    public void set(RegistryAnonyme<CraftingRecipeEntry> registry, int resultInventory) {
         for (int i = 0; i < registry.size; i++) {
             craftingRecipe.add(registry.get(i));
         }
+        this.resultInventory = resultInventory;
     }
 
 }

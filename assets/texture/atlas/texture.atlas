@@ -1,15 +1,17 @@
 texture.png
-	size: 256, 64
+	size: 128, 256
 	repeat: none
 grass-01
-	bounds: 168, 32, 32, 32
+	bounds: 0, 34, 32, 32
+inventory-01
+	bounds: 0, 136, 32, 32
 pelle-01
-	bounds: 202, 32, 32, 32
+	bounds: 0, 0, 32, 32
 pioche-01
-	bounds: 134, 32, 32, 32
+	bounds: 0, 68, 32, 32
 reimu
-	bounds: 0, 0, 64, 64
+	bounds: 0, 170, 64, 64
 sand-01
-	bounds: 100, 32, 32, 32
+	bounds: 0, 102, 32, 32
 water-01
-	bounds: 66, 32, 32, 32
+	bounds: 66, 202, 32, 32

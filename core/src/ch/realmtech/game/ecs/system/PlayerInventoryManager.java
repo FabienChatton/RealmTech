@@ -10,7 +10,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -24,7 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 public class PlayerInventoryManager extends BaseSystem {
-    private static TextureRegion defaultBackGroundTexture;
     private Stage inventoryStage;
     private Window inventoryWindow;
     private Table inventoryTable;
@@ -57,7 +55,6 @@ public class PlayerInventoryManager extends BaseSystem {
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) /2 ,(inventoryStage.getHeight() - height ) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
-        defaultBackGroundTexture = context.getTextureAtlas().findRegion("water-01");
     }
 
     public void toggleInventoryWindow(int playerId){
@@ -70,6 +67,7 @@ public class PlayerInventoryManager extends BaseSystem {
             clearDisplayInventory();
             setInventoryToDisplay(playerId);
             setInventoryToDisplay(world.getSystem(TagManager.class).getEntityId("crafting"));
+            setInventoryToDisplay(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"));
         }
     }
 
@@ -92,19 +90,20 @@ public class PlayerInventoryManager extends BaseSystem {
         ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getEcsWorld().getMapper(ItemComponent.class);
         ComponentMapper<StoredItemComponent> mStoredItem = context.getEcsEngine().getEcsWorld().getMapper(StoredItemComponent.class);
         Array<Table> itemSlots = new Array<>();
-        int[][] inventory = mInventory.get(entityId).inventory;
+        InventoryComponent inventoryComponent = mInventory.get(entityId);
+        int[][] inventory = inventoryComponent.inventory;
         int row = 0;
         for (int[] slotId : inventory) {
             if (row % InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW == 0) {
                 inventoryTable.row().padBottom(2f);
             }
             Table itemSlotTable = new Table(context.getSkin());
-            itemSlotTable.setBackground(new TextureRegionDrawable(defaultBackGroundTexture));
+            itemSlotTable.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
             final Image imageItem;
             if (slotId[0] != 0) {
                 imageItem = new Image(mItem.get(slotId[0]).itemRegisterEntry.getTextureRegion());
             } else {
-                imageItem = new Image(defaultBackGroundTexture);
+                imageItem = new Image(inventoryComponent.backgroundTexture);
             }
             itemSlotTable.add(imageItem);
             itemSlots.add(itemSlotTable);
@@ -148,7 +147,7 @@ public class PlayerInventoryManager extends BaseSystem {
             payload.setObject(inventoryItem);
             payload.setDragActor(inventoryItem.itemImage);
             dragAndDrop.setDragActorPosition(inventoryItem.itemImage.getImageWidth() /2f, -inventoryItem.itemImage.getImageHeight()/2f);
-            inventoryItem.slotTable.add(new Image(PlayerInventoryManager.defaultBackGroundTexture));
+            inventoryItem.slotTable.add(new Image());
             manager.inventoryStage.addActor(inventoryItem.itemImage);
             return payload;
         }
