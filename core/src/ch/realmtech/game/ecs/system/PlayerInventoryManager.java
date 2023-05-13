@@ -86,7 +86,7 @@ public class PlayerInventoryManager extends BaseSystem {
         }
     }
 
-    private Array<Table> getInventoryTableToDisplay(int entityId) {
+    public Array<Table> getInventoryTableToDisplay(int entityId) {
         ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getEcsWorld().getMapper(ItemComponent.class);
         ComponentMapper<StoredItemComponent> mStoredItem = context.getEcsEngine().getEcsWorld().getMapper(StoredItemComponent.class);
         Array<Table> itemSlots = new Array<>();

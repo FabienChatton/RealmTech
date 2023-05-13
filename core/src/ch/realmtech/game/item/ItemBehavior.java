@@ -3,9 +3,11 @@ package ch.realmtech.game.item;
 public class ItemBehavior {
     private int attackDommage;
     private ItemType itemType;
+    private float speedEffect;
 
     private ItemBehavior() {
         attackDommage = 1;
+        speedEffect = 1;
     }
 
     public ItemType getItemType() {
@@ -14,6 +16,10 @@ public class ItemBehavior {
 
     public int getAttackDommage() {
         return attackDommage;
+    }
+
+    public float getSpeedEffect() {
+        return speedEffect;
     }
 
     @Override
@@ -31,6 +37,10 @@ public class ItemBehavior {
 
         public Builder setItemType(ItemType itemType) {
             itemBehavior.itemType = itemType;
+            return this;
+        }
+        public Builder setSpeedEffect(float speedEffect) {
+            itemBehavior.speedEffect = speedEffect;
             return this;
         }
 

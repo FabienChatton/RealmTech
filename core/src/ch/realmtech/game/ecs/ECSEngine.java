@@ -47,6 +47,7 @@ public final class ECSEngine {
                 .with(new WorldMapManager())
                 .with(new InventoryManager())
                 .with(new WorldContactListenerManager())
+
                 // system
                 .with(new CraftingSystem())
                 .with(new ItemBeingPickAnimationSystem())
@@ -58,7 +59,10 @@ public final class ECSEngine {
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
+
+                // ui
                 .with(new PlayerInventoryManager())
+                .with(new ItemBarManager())
                 .build();
         worldConfiguration.register("physicWorld", context.physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());

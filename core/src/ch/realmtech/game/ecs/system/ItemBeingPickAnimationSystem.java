@@ -15,7 +15,7 @@ public class ItemBeingPickAnimationSystem extends IteratingSystem {
     private final static String TAG = ItemBeingPickAnimationSystem.class.getSimpleName();
     private ComponentMapper<ItemBeingPickComponent> mItemPick;
     private ComponentMapper<Box2dComponent> mBox2D;
-    private final static float FORCE_D_ATTRACTION = 10;
+    private final static float FORCE_D_ATTRACTION = 10f;
 
     @Override
     protected void process(int itemId) {

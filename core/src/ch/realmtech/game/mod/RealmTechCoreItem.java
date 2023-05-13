@@ -10,6 +10,7 @@ public class RealmTechCoreItem {
 
     public final static String PIOCHE_ITEM = "item.pioche";
     public final static String PELLE_ITEM = "item.pelle";
+    public final static String SANDALES_ITEM = "item.sandales";
 
     static void initItem(Registry<ItemRegisterEntry> registry, TextureAtlas textureAtlas) {
         registry.put(PIOCHE_ITEM, new ItemRegisterEntry(
@@ -23,6 +24,12 @@ public class RealmTechCoreItem {
                 textureAtlas.findRegion("pelle-01"),
                 new ItemBehavior.Builder()
                         .setItemType(ItemType.PELLE)
+                        .build()
+        ));
+        registry.put(SANDALES_ITEM, new ItemRegisterEntry(
+                textureAtlas.findRegion("sandales-01"),
+                new ItemBehavior.Builder()
+                        .setSpeedEffect(2)
                         .build()
         ));
     }

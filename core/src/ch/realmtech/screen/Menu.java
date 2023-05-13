@@ -11,7 +11,7 @@ public class Menu extends AbstractScreen {
         super(context);
         TextButton selectionnerSauvegarde = new TextButton("Sélectionner une sauvegarde",skin);
         selectionnerSauvegarde.addListener(lancerLeJeu());
-        uiTable.add(new Label("Bienvenu dans realmTech", skin));
+        uiTable.add(new Label("Bienvenue dans realmTech", skin));
         uiTable.row();
         uiTable.add(selectionnerSauvegarde);
     }

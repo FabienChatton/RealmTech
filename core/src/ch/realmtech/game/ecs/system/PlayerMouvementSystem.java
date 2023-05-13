@@ -66,6 +66,18 @@ public class PlayerMouvementSystem extends IteratingSystem {
             }
         }
 
+        ComponentMapper<ItemComponent> mInventory = world.getMapper(ItemComponent.class);
+        int[][] inventory = world.getSystem(InventoryManager.class).getInventory(entityId);
+        for (int i = 0; i < inventory.length; i++) {
+            for (int j = 0; j < inventory[i].length; j++) {
+                ItemComponent itemComponent = mInventory.get(inventory[i][j]);
+                if (itemComponent != null) {
+                    float speedEffect = itemComponent.itemRegisterEntry.getItemBehavior().getSpeedEffect();
+                    xFactor *= speedEffect;
+                    yFactor *= speedEffect;
+                }
+            }
+        }
         if (directionChange) {
             directionChange = false;
             movementComponent.speed.x = xFactor * movementComponent.speedMeterParSeconde;

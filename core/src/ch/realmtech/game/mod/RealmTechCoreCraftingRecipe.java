@@ -13,5 +13,13 @@ public class RealmTechCoreCraftingRecipe {
                 return null;
             }
         });
+        registry.add(itemRegisterEntries -> {
+            if (itemRegisterEntries[0][2] == RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PELLE_ITEM) &&
+                    itemRegisterEntries[2][2] == RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PELLE_ITEM)) {
+                return RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.SANDALES_ITEM);
+            } else {
+                return null;
+            }
+        });
     }
 }
