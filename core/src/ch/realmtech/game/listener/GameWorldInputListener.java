@@ -3,17 +3,15 @@ package ch.realmtech.game.listener;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
-import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.ecs.system.CellManager;
 import ch.realmtech.game.ecs.system.ChunkManager;
-import ch.realmtech.game.ecs.system.InventoryManager;
+import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
 import com.artemis.ComponentMapper;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -37,24 +35,12 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                     int topCellId = context.getEcsEngine().getSystem(CellManager.class).getTopCell(worldX, worldY);
                     if (topCellId != -1) {
                         CellComponent cellComponent = cMap.create(topCellId);
-                        int[][] inventory = context.getEcsEngine().getSystem(InventoryManager.class).getInventory(context.getEcsEngine().getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
                         ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getEcsWorld().getMapper(ItemComponent.class);
-                        for (int[] slot : inventory) {
-                            ItemComponent itemComponent = mItem.get(slot[0]);
-                            if (itemComponent == null) continue;
-                            if (itemComponent.itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {
-                                context.getEcsEngine().getEcsWorld().delete(topCellId);
-                                    break;
-                            }
+                        ItemComponent itemComponent = mItem.get(context.getEcsEngine().getSystem(ItemBarManager.class).getSelectItem());
+                        if (itemComponent == null) return;
+                        if (itemComponent.itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {
+                            context.getEcsEngine().getEcsWorld().delete(topCellId);
                         }
-//                        for (int item : playerInventory.getData()) {
-//                            if (mItem.get(item) != null) {
-//                                if (mItem.get(item).itemRegisterEntry.getItemBehavior().getItemType() == ItemType.PELLE) {
-//                                    context.getEcsEngine().getEcsWorld().delete(topCellId);
-//                                    break;
-//                                }
-//                            }
-//                        }
                     }
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {

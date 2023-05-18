@@ -1,6 +1,7 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.mod.RealmTechCoreItem;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import com.badlogic.gdx.Gdx;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import java.io.IOException;
 
 public class GameScreen extends AbstractScreen {
+    private final static String TAG = GameScreen.class.getSimpleName();
 
     private final Box2DDebugRenderer box2DDebugRenderer;
 
@@ -52,9 +54,19 @@ public class GameScreen extends AbstractScreen {
                 context.getEcsEngine().getItemManager().newItemOnGround(worldPosition.x, worldPosition.y, RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PIOCHE_ITEM));
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            context.getEcsEngine().togglePlayerInventoryWindow();
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) context.getEcsEngine().togglePlayerInventoryWindow();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 0);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 1);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 2);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 3);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 4);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 5);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 6);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 7);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) context.getEcsEngine().getSystem(ItemBarManager.class).setSlotSelected((byte) 8);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getSystem(ItemBarManager.class).slotSelectedUp();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getSystem(ItemBarManager.class).slotSelectedDown();
     }
 
     @Override
