@@ -233,18 +233,6 @@ public class CellManager extends EntityLinkManager {
         return ret;
     }
 
-    public byte getInnerChunkPossY(byte innerChunkPoss) {
-        return (byte) (innerChunkPoss & 0x0F);
-    }
-
-    public byte getInnerChunkPossX(byte innerChunkPoss) {
-        return (byte) ((innerChunkPoss >> 4) & 0x0F);
-    }
-
-    public byte getInnerChunkPoss(byte innerChunkPossX, byte innerChunkPossY) {
-        return (byte) ((innerChunkPossX << 4) + innerChunkPossY);
-    }
-
     /**
      * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
      *

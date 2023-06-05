@@ -1,6 +1,7 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.Cells;
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.WorldMapComponent;
@@ -107,7 +108,7 @@ public class WorldMapManager extends EntitySystem {
                     CellComponent cellComponent = mCell.get(cellId);
                     if (cellComponent != null && cellComponent.parentChunk == chunkId) {
                         outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(cellManager.getModAndCellHash(cellComponent.cellRegisterEntry)).array());
-                        outputStream.write(cellManager.getInnerChunkPoss(cellComponent.innerChunkPossX, cellComponent.innerChunkPossY));
+                        outputStream.write(Cells.getInnerChunkPoss(cellComponent.innerChunkPossX, cellComponent.innerChunkPossY));
                         outputStream.write(cellComponent.layer);
                     }
                 }

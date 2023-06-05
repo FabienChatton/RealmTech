@@ -1,5 +1,6 @@
 package ch.realmtech.game.ecs.system;
 
+import ch.realmtech.game.Cells;
 import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.PositionComponent;
 import ch.realmtech.game.ecs.component.SaveComponent;
@@ -105,8 +106,8 @@ public class SaveManager extends Manager {
                     i += Byte.BYTES;
                     cellManager.newCell(
                             chunkId,
-                            cellManager.getInnerChunkPossX(innerPoss),
-                            cellManager.getInnerChunkPossY(innerPoss),
+                            Cells.getInnerChunkPossX(innerPoss),
+                            Cells.getInnerChunkPossY(innerPoss),
                             layer,
                             cellRegisterEntry
                     );
