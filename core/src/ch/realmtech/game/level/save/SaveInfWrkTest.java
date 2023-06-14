@@ -1,4 +1,4 @@
-package ch.realmtech.game.level;
+package ch.realmtech.game.level.save;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

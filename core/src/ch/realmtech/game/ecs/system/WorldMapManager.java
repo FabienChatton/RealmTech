@@ -1,10 +1,10 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.Cells;
 import ch.realmtech.game.ecs.component.CellComponent;
 import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.WorldMapComponent;
+import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 import ch.realmtech.game.level.worldGeneration.PerlineNoise2;

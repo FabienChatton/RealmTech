@@ -1,10 +1,10 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.Cells;
 import ch.realmtech.game.ecs.component.ChunkComponent;
 import ch.realmtech.game.ecs.component.PositionComponent;
 import ch.realmtech.game.ecs.component.SaveComponent;
 import ch.realmtech.game.ecs.component.WorldMapComponent;
+import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;

@@ -1,4 +1,4 @@
-package ch.realmtech.game;
+package ch.realmtech.game.level.cell;
 
 public class Cells {
     public static byte getInnerChunkPossY(byte innerChunkPoss) {
