@@ -22,7 +22,7 @@ public class WorldMapRendererSystem extends BaseSystem {
         if (mapRenderer != null) {
             mapRenderer.setMap(map);
         } else {
-            mapRenderer = new OrthogonalTiledMapRenderer(context.getWorldMap(), RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
+            mapRenderer = new OrthogonalTiledMapRenderer(map, RealmTech.UNITE_SCALE, context.getGameStage().getBatch());
         }
     }
 }

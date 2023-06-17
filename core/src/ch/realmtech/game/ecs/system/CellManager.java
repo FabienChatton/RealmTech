@@ -36,8 +36,8 @@ public class CellManager extends EntityLinkManager {
                 ChunkComponent chunkComponent = mChunk.get(targetId);
                 CellComponent cellComponent = mCell.get(sourceId);
                 world.getSystem(WorldMapManager.class).placeOnMap(
-                        getWorldPossX(chunkComponent.chunkPossX, cellComponent.innerChunkPossX),
-                        getWorldPossY(chunkComponent.chunkPossY, cellComponent.innerChunkPossY),
+                        WorldMapManager.getWorldPossX(chunkComponent.chunkPossX, cellComponent.innerChunkPossX),
+                        WorldMapManager.getWorldPossY(chunkComponent.chunkPossY, cellComponent.innerChunkPossY),
                         cellComponent.layer,
                         cellComponent.cell
                 );
@@ -49,8 +49,8 @@ public class CellManager extends EntityLinkManager {
                     ChunkComponent chunkComponent = mChunk.get(targetId);
                     CellComponent cellComponent = mCell.get(sourceId);
                     world.getSystem(WorldMapManager.class).placeOnMap(
-                            getWorldPossX(chunkComponent.chunkPossX, cellComponent.innerChunkPossX),
-                            getWorldPossY(chunkComponent.chunkPossY, cellComponent.innerChunkPossY),
+                            WorldMapManager.getWorldPossX(chunkComponent.chunkPossX, cellComponent.innerChunkPossX),
+                            WorldMapManager.getWorldPossY(chunkComponent.chunkPossY, cellComponent.innerChunkPossY),
                             cellComponent.layer,
                             null
                     );
@@ -82,8 +82,8 @@ public class CellManager extends EntityLinkManager {
         IntBag cells = new IntBag(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
         for (byte innerChunkX = 0; innerChunkX < WorldMap.CHUNK_SIZE; innerChunkX++) {
             for (byte innerChunkY = 0; innerChunkY < WorldMap.CHUNK_SIZE; innerChunkY++) {
-                int worldX = getWorldPossX(parentChunkComponent.chunkPossX, innerChunkX);
-                int worldY = getWorldPossY(parentChunkComponent.chunkPossY, innerChunkY);
+                int worldX = WorldMapManager.getWorldPossX(parentChunkComponent.chunkPossX, innerChunkX);
+                int worldY = WorldMapManager.getWorldPossY(parentChunkComponent.chunkPossY, innerChunkY);
                 final CellRegisterEntry cellRegisterEntry;
                 if (perlinNoise.getGrid()[worldX][worldY] > 0f && perlinNoise.getGrid()[worldX][worldY] < 0.5f) {
                     cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.GRASS_CELL);
@@ -120,14 +120,6 @@ public class CellManager extends EntityLinkManager {
         return cell;
     }
 
-    public int getWorldPossX(int chunkPossX, int innerChunkX) {
-        return chunkPossX * WorldMap.CHUNK_SIZE + innerChunkX;
-    }
-
-    public int getWorldPossY(int chunkPossY, int innerChunkY) {
-        return chunkPossY * WorldMap.CHUNK_SIZE + innerChunkY;
-    }
-
     /**
      * Récupère l'id de la cellule à la coordonnée et au niveau spécifiés.
      *
@@ -139,8 +131,8 @@ public class CellManager extends EntityLinkManager {
     public int getCell(int worldX, int worldY, byte layer) {
         int chunkId = world.getSystem(ChunkManager.class).getChunk(worldX, worldY);
         for (int cellId : getCells(chunkId).getData()) {
-            byte innerX = getInnerChunkX(worldX);
-            byte innerY = getInnerChunkY(worldY);
+            byte innerX = WorldMapManager.getInnerChunkX(worldX);
+            byte innerY = WorldMapManager.getInnerChunkY(worldY);
             if (cellId == 0) continue;
             CellComponent cellComponent = mCell.create(cellId);
             if (cellComponent.innerChunkPossX == innerX &&
@@ -150,26 +142,6 @@ public class CellManager extends EntityLinkManager {
             }
         }
         return -1;
-    }
-
-    /**
-     * Récupère une position Y dans un chunk via la position Y du monde.
-     *
-     * @param worldY La position Y dans le monde.
-     * @return La position Y dans le chunk.
-     */
-    public byte getInnerChunkY(int worldY) {
-        return (byte) (worldY % WorldMap.CHUNK_SIZE);
-    }
-
-    /**
-     * Récupère une position X dans un chunk via la position X du monde.
-     *
-     * @param worldX La position X dans le monde.
-     * @return La position X dans le chunk.
-     */
-    public byte getInnerChunkX(int worldX) {
-        return (byte) (worldX % WorldMap.CHUNK_SIZE);
     }
 
     /**
@@ -228,24 +200,6 @@ public class CellManager extends EntityLinkManager {
             CellComponent cellComponent = mCell.create(cell);
             if (cellComponent.parentChunk == partentChunkId) {
                 ret.add(cell);
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
-     *
-     * @param cellRegisterHash La hash de clé (mod + nom cellule) que l'ont souhait connaitre le registre.
-     * @return Le registre qui correspond au hash sinon null
-     */
-    public CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
-        CellRegisterEntry ret = null;
-        for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
-            int keyHash = key.hashCode();
-            if (keyHash == cellRegisterHash) {
-                ret = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(key);
-                break;
             }
         }
         return ret;

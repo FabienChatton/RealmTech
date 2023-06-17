@@ -97,7 +97,7 @@ public class SaveManager extends Manager {
 
                 for (int j = 0; j < nombreDeCells; j++) {
                     int cellRegisterHash = ByteBuffer.wrap(rawFile, i, Integer.BYTES).getInt();
-                    CellRegisterEntry cellRegisterEntry = cellManager.getCellModAndCellHash(cellRegisterHash);
+                    CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(cellRegisterHash);
 
                     i += Integer.BYTES;
                     byte innerPoss = ByteBuffer.wrap(rawFile, i, Byte.BYTES).get();
@@ -106,8 +106,8 @@ public class SaveManager extends Manager {
                     i += Byte.BYTES;
                     cellManager.newCell(
                             chunkId,
-                            Cells.getInnerChunkPossX(innerPoss),
-                            Cells.getInnerChunkPossY(innerPoss),
+                            Cells.getInnerChunkPosX(innerPoss),
+                            Cells.getInnerChunkPosY(innerPoss),
                             layer,
                             cellRegisterEntry
                     );

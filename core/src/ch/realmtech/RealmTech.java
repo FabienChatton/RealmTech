@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.EnumMap;
 
 public final class RealmTech extends Game{
@@ -217,5 +218,9 @@ public final class RealmTech extends Game{
         getEcsEngine().createPlayer();
         getEcsEngine().spawnPlayer(getWorldMap().getProperties().get("spawn-point", Vector2.class));
         setScreen(ScreenType.GAME_SCREEN);
+    }
+
+    public void loadInfFile(Path path) throws IOException {
+        ecsEngine.loadInfFile(path);
     }
 }

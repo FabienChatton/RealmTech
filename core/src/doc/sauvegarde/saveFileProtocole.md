@@ -27,10 +27,9 @@ Ce fichier contient des métadonnées sur le monde.
 "RealmTech", String (offset 0, len 9 bytes)
 Version protocole file save, int (offset 9, len 4 bytes)
 save date, long (offset 13, len 8 bytes)
-number layer, byte (offset 22, len 1 byte)
-seed, long (offset 23, len 8)
-player position x, float (offset 31, len 4)
-player position y, float (offset 35, len 4)
+seed, long (offset 22, len 8)
+player position x, float (offset 30, len 4)
+player position y, float (offset 34, len 4)
 ````
 ### fichier .rsc
 Le nom du fichier qui correspond à un fichier .rsc, correspond à la position
@@ -45,10 +44,10 @@ Métadonnées
 Header
     - nombre de layer, byte (offset 5, len 1 byte)
     pour chaque layer :
-        - nombre de cellule sur ce layer, byte (offset 6, len 1 byte)
+        - nombre de cellule sur ce layer, short (offset 6, len 2 bytes)
 Body
     pour chaque cellule :
-        - id du cellRegisterEntry, byte (1 byte)
+        - hash du cellRegisterEntry, byte (4 bytes)
         - position dans le chunk, byte (1 byte)
 ````
 
