@@ -1,5 +1,5 @@
-# format : .rts (RealmTechFileSave)
-# version 6
+# Protocole de sauvegarde de RealmTech
+## version 6
 
 Le layer d'une cellule représente sa position dans la hauteur. C'est la
 cellule avec le plus grand layer qui sera affiché. Le layer ne peut
@@ -24,12 +24,14 @@ pas être négatif.
 ### fichier header.rsh
 Ce fichier contient des métadonnées sur le monde.
 ````
-"RealmTech", String (offset 0, len 9 bytes)
-Version protocole file save, int (offset 9, len 4 bytes)
-save date, long (offset 13, len 8 bytes)
-seed, long (offset 22, len 8)
-player position x, float (offset 30, len 4)
-player position y, float (offset 34, len 4)
+"RealmTech", String
+taille nom sauvegarde, byte
+nomSauvegade, bytes len n
+Version protocole file save, int
+save date, long
+seed, long
+player position x, float
+player position y, float
 ````
 ### fichier .rsc
 Le nom du fichier qui correspond à un fichier .rsc, correspond à la position

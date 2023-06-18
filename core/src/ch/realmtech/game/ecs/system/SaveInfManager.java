@@ -5,6 +5,7 @@ import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 import ch.realmtech.game.level.worldGeneration.PerlineNoise2;
+import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.badlogic.gdx.Gdx;
@@ -28,6 +29,10 @@ public class SaveInfManager extends Manager {
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<InfLayerComponent> mLayer;
+    public void saveInfMap(int mapId) {
+
+    }
+
     public void saveInfMap(int mapId, Path rootSaveDirPath) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         if (infMapComponent != null) {
@@ -75,12 +80,15 @@ public class SaveInfManager extends Manager {
         }
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(metaDonneesFile)))) {
-            outputStream.writeUTF("RealmTech");
+            outputStream.write("RealmTech".getBytes());
+            outputStream.write(rootSaveDirPath.getFileName().toString().getBytes().length);
+            outputStream.write(rootSaveDirPath.getFileName().toString().getBytes());
             outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
             outputStream.writeLong(System.currentTimeMillis());
             outputStream.writeLong(infMetaDonneesComponent.seed);
             outputStream.writeFloat(infMetaDonneesComponent.playerPositionX);
             outputStream.writeFloat(infMetaDonneesComponent.playerPositionY);
+            outputStream.flush();
         } catch (FileNotFoundException e) {
             Gdx.app.error(TAG, "Le fichier header n'a pas été trouve", e);
         } catch (IOException e) {
@@ -103,8 +111,8 @@ public class SaveInfManager extends Manager {
             // Métadonnées
             outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(SAVE_PROTOCOLE_VERSION).array());
             // Header
-            outputStream.write(infChunkComponent.infLayers.length); // nombre de layer
-            for (int i = 0; i < infChunkComponent.infLayers.length; i++) { // pour chaque layer
+            outputStream.write(ByteBuffer.allocate(Byte.BYTES).put((byte) infChunkComponent.infLayers.length).array()); // nombre de layer
+            for (byte i = 0; i < infChunkComponent.infLayers.length; i++) { // pour chaque layer
                 int infLayerId = infChunkComponent.infLayers[i];
                 InfLayerComponent infLayerComponent = mLayer.get(infLayerId);
                 outputStream.write(ByteBuffer.allocate(Short.BYTES).putShort((short) infLayerComponent.infCells.length).array()); // nombre de cellules pour de ce layer
@@ -114,7 +122,7 @@ public class SaveInfManager extends Manager {
                 InfLayerComponent infLayerComponent = mLayer.get(infChunkComponent.infLayers[i]);
                 for (short k = 0; k < infLayerComponent.infCells.length; k++) {
                     InfCellComponent infCellComponent = mCell.get(infLayerComponent.infCells[k]);
-                    outputStream.writeLong(infCellComponent.hashCellRegistry);
+                    outputStream.writeInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
                     outputStream.write(Cells.getInnerChunkPos(infCellComponent.posX, infCellComponent.posY));
                 }
             }
@@ -146,10 +154,17 @@ public class SaveInfManager extends Manager {
         try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(metaDonneesFile)))) {
             ByteBuffer buffer = ByteBuffer.wrap(inputStream.readAllBytes());
             byte[] realmTechMagic = new byte[9];
-            buffer.get(9, realmTechMagic);
-            if (!Arrays.equals(realmTechMagic, "RealmTech".getBytes())) {
+            buffer.get(realmTechMagic, 0, realmTechMagic.length);
+            byte[] bytesExpected = "RealmTech".getBytes();
+            if (!Arrays.equals(realmTechMagic, bytesExpected)) {
                 throw new IOException("ce n'est pas un fichier header de RealmTech");
             }
+            byte tailleSaveName = buffer.get();
+            byte[] saveNameChar = new byte[tailleSaveName];
+            for (int i = 0; i < saveNameChar.length; i++) {
+                saveNameChar[i] = buffer.get();
+            }
+            String saveName = new String(saveNameChar);
             int version = buffer.getInt();
             if (version != SAVE_PROTOCOLE_VERSION) {
                 throw new IOException("Ce n'est pas la bonne version. Fichier : " + version + " jeu : " + SAVE_PROTOCOLE_VERSION);
@@ -198,13 +213,13 @@ public class SaveInfManager extends Manager {
                 infLayerId[i] = world.create();
                 int[] infCellsId = new int[nombreDeCelluleParLayer[i]];
                 world.edit(infLayerId[i]).create(InfLayerComponent.class).set(i,infCellsId);
-                for (byte j = 0; j < infCellsId.length; j++) {
+                for (short j = 0; j < infCellsId.length; j++) {
                     int hashRegistry = inputWrap.getInt();
                     byte pos = inputWrap.get();
                     byte posX = Cells.getInnerChunkPosX(pos);
                     byte posY = Cells.getInnerChunkPosY(pos);
                     infCellsId[j] = world.create();
-                    world.edit(infCellsId[j]).create(InfCellComponent.class).set(posX, posY, hashRegistry);
+                    world.edit(infCellsId[j]).create(InfCellComponent.class).set(posX, posY, CellRegisterEntry.getCellModAndCellHash(hashRegistry));
                 }
             }
             return chunkId;

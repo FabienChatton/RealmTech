@@ -1,15 +1,11 @@
 package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
-import ch.realmtech.game.ecs.component.SaveComponent;
 import ch.realmtech.game.ecs.system.SoundManager;
-import ch.realmtech.game.ecs.system.WorldMapManager;
-import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.helper.HelperSetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
-import com.artemis.Entity;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,16 +14,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.EnumMap;
 
 public final class RealmTech extends Game{
@@ -45,7 +36,6 @@ public final class RealmTech extends Game{
     private Stage uiStage;
     private Skin skin;
 	private ECSEngine ecsEngine;
-    public World physicWorld;
 
     private TextureAtlas textureAtlas;
 
@@ -64,7 +54,7 @@ public final class RealmTech extends Game{
         uiStage = new Stage(
                 new ExtendViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
-        physicWorld = new World(new Vector2(0, 0), true);
+
         inputMapper = InputMapper.getInstance(this);
         screenCash = new EnumMap<>(ScreenType.class);
         setScreen(ScreenType.LOADING);
@@ -157,32 +147,9 @@ public final class RealmTech extends Game{
         return textureAtlas;
     }
 
-    public void loadSaveOnWorkingSave() throws IOException {
-        ecsEngine.loadSaveOnWorkingSave();
-    }
-
-    public void saveWorldMap() throws IOException {
-        ecsEngine.saveWorldMap();
-    }
-
-    public void newSaveInitWorld(String saveName) throws IOException {
-        newSaveInitWorld(new File(saveName + ".rts"));
-    }
-
-    public void newSaveInitWorld(File saveFile) throws IOException {
-        ecsEngine.newSaveInitWorld(saveFile);
-        newGamePlayer();
-    }
-
-    public void generateNewWorld() {
-        ecsEngine.generateNewWorldMap();
-    }
-
     public void quiteAndSave() {
         try {
-            saveWorldMap();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            ecsEngine.saveInfMap();
         } finally {
             setScreen(ScreenType.MENU);
             screenCash.remove(ScreenType.GAME_SCREEN);
@@ -193,34 +160,5 @@ public final class RealmTech extends Game{
         if (screenCash.containsKey(ScreenType.GAME_SCREEN)) {
             screenCash.get(ScreenType.GAME_SCREEN).draw();
         }
-    }
-
-    public SaveComponent getWorkingSave() {
-        return ecsEngine.getWorkingSave();
-    }
-
-    public WorldMap getWorldMap() {
-        return ecsEngine.getWorkingMap();
-    }
-
-    public WorldMapManager getWorldMapManager() {
-        return ecsEngine.getWorldMapManager();
-    }
-
-    public Entity getPlayer() {
-        return ecsEngine.getPlayer();
-    }
-
-    public int getPlayerId() {
-        return ecsEngine.getPlayerId();
-    }
-    public void newGamePlayer() {
-        getEcsEngine().createPlayer();
-        getEcsEngine().spawnPlayer(getWorldMap().getProperties().get("spawn-point", Vector2.class));
-        setScreen(ScreenType.GAME_SCREEN);
-    }
-
-    public void loadInfFile(Path path) throws IOException {
-        ecsEngine.loadInfFile(path);
     }
 }

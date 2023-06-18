@@ -47,14 +47,17 @@ public class SelectionDeSauvegarde extends AbstractScreen {
 //            table.add(supprimerSave);
 //            listeDesSauvegarde.addActor(table);
 //        }
-        List<File> files = null;
         try {
-            files = SaveInfManager.listSauvegardeInfinie();
+            List<File> files = SaveInfManager.listSauvegardeInfinie();
+            for (File file : files) {
+                Table fichierTable = new Table(skin);
+                listeDesSauvegarde.addActor(fichierTable);
+                TextButton buttonFichier = new TextButton(file.getName(), skin);
+                buttonFichier.addListener(loadSaveButton(file));
+                fichierTable.add(buttonFichier);
+            }
         } catch (IOException e) {
             Gdx.app.error(TAG, e.getMessage(), e);
-        }
-        for (int i = 0; i < files.size(); i++) {
-            System.out.println(files.get(i));
         }
         listeDesSauvegardeScrollPane = new ScrollPane(listeDesSauvegarde);
         uiTable.add(listeDesSauvegardeScrollPane);
@@ -70,9 +73,12 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //context.loadInfFile(file);
-                //context.newSaveInitWorld(file);
-                //context.loadSaveOnWorkingSave();
+                try {
+                    ecsEngine.loadInfFile(file.toPath());
+                    context.setScreen(ScreenType.GAME_SCREEN);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
     }

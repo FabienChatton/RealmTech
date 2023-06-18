@@ -8,14 +8,9 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 public class InfCellComponent extends PooledComponent {
     public byte posX;
     public byte posY;
-    public int hashCellRegistry;
     public TiledMapTileLayer.Cell cell;
     public StaticTiledMapTile tile;
     public CellRegisterEntry cellRegisterEntry;
-
-    public InfCellComponent set(byte innerPosX, byte innerPosY, int hashCellRegistry) {
-        return set(innerPosX, innerPosY, CellRegisterEntry.getCellModAndCellHash(hashCellRegistry));
-    }
 
     public InfCellComponent set (byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry) {
         this.posX = innerPosX;
@@ -34,6 +29,5 @@ public class InfCellComponent extends PooledComponent {
     protected void reset() {
         posX = 0;
         posY = 0;
-        hashCellRegistry = 0;
     }
 }
