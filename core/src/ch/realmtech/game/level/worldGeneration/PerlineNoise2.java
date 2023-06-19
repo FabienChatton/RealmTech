@@ -39,4 +39,9 @@ public class PerlineNoise2 implements GeneratePerlinNoise {
         }
         return totalNoise;
     }
+
+    @Override
+    public float get(int x, int y) {
+        return 0.1f;
+    }
 }

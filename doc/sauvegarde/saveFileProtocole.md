@@ -16,9 +16,9 @@ pas être négatif.
     |-- level
         |-- header.rsh
         |-- chunks
-            |-- 0-0.rsc
-            |-- 0-1.rsc
-            |-- 1-0.rsc
+            |-- 0,0.rsc
+            |-- 0,1.rsc
+            |-- 1,0.rsc
             |-- ...  
 ````
 ### fichier header.rsh
@@ -35,8 +35,8 @@ player position y, float
 ````
 ### fichier .rsc
 Le nom du fichier qui correspond à un fichier .rsc, correspond à la position
-du chunk en jeu. Le nom du fichier contient la position X du chunk, un "-" et
-La position Y du chunk. 12-23.rsc. Chaque fichier contient un petit header pour
+du chunk en jeu. Le nom du fichier contient la position X du chunk, un "," et
+La position Y du chunk. 12,23.rsc. Chaque fichier contient un petit header pour
 specifier la version du protocole de sauvegarde. Le header contient aussi
 un "tableau associatif" entre hash (int) et id (byte) des entrées des registres
 des celles pour éviter de les hash soit pour chaque cellule dans le fichier.

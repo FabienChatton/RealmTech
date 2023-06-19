@@ -28,6 +28,12 @@ public class PerlineNoise1 implements GeneratePerlinNoise {
         generate(0, 0, xh, yh);
         return grid;
     }
+
+    @Override
+    public float get(int x, int y) {
+        return 0;
+    }
+
     private float roughen(float v, int l, int h) {
         return v + roughness * (float) (rand.nextGaussian() * (h - l));
     }

@@ -2,13 +2,14 @@ package ch.realmtech.game.ecs.component;
 
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+
+import static com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 
 public class InfCellComponent extends PooledComponent {
     public byte posX;
     public byte posY;
-    public TiledMapTileLayer.Cell cell;
+    public Cell cell;
     public StaticTiledMapTile tile;
     public CellRegisterEntry cellRegisterEntry;
 
@@ -19,7 +20,7 @@ public class InfCellComponent extends PooledComponent {
         if (cell != null && tile != null){
             tile.setTextureRegion(cellRegisterEntry.getTextureRegion());
         } else {
-            cell = new TiledMapTileLayer.Cell();
+            cell = new Cell();
             tile = new StaticTiledMapTile(cellRegisterEntry.getTextureRegion());
             cell.setTile(tile);
         }

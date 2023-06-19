@@ -70,11 +70,7 @@ public class SaveInfManager extends Manager {
     public void saveInfHeaderFile(int infMetaDonneesId, Path rootSaveDirPath) throws IOException {
         InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
         File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath, true);
-        try {
-            metaDonneesFile.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        metaDonneesFile.createNewFile();
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(metaDonneesFile)))) {
             outputStream.write("RealmTech".getBytes());
@@ -86,10 +82,6 @@ public class SaveInfManager extends Manager {
             outputStream.writeFloat(infMetaDonneesComponent.playerPositionX);
             outputStream.writeFloat(infMetaDonneesComponent.playerPositionY);
             outputStream.flush();
-        } catch (FileNotFoundException e) {
-            Gdx.app.error(TAG, "Le fichier header n'a pas été trouve", e);
-        } catch (IOException e) {
-            Gdx.app.error(TAG, "Une erreur concernant le fichier header inattendue est survenue" + metaDonneesFile.toPath(), e);
         }
     }
 
@@ -97,11 +89,7 @@ public class SaveInfManager extends Manager {
         InfChunkComponent infChunkComponent = mChunk.get(infChunkId);
         File chunksFile = getChunkFile(infChunkComponent.chunkPossX, infChunkComponent.chunkPossY, rootSaveDirPath);
         if (!chunksFile.exists()) {
-            try {
-                Files.createDirectories(chunksFile.toPath().getParent());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Files.createDirectories(chunksFile.toPath().getParent());
         }
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(chunksFile)))) {
@@ -116,10 +104,6 @@ public class SaveInfManager extends Manager {
                 outputStream.write(Cells.getInnerChunkPos(infCellComponent.posX, infCellComponent.posY));
             }
             outputStream.flush();
-        } catch (FileNotFoundException e) {
-            Gdx.app.error(TAG, "Le fichier du chunk n'a pas été trouve", e);
-        } catch (IOException e) {
-            Gdx.app.error(TAG, "Une erreur inattendue est survenue" + chunksFile.toPath(), e);
         }
     }
 
@@ -165,10 +149,6 @@ public class SaveInfManager extends Manager {
             int metaDonnesId = world.create();
             world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, playerPosX, playerPosY, saveName);
             return metaDonnesId;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -227,7 +207,7 @@ public class SaveInfManager extends Manager {
     private static File getChunkFile(int chunkPossX, int chunkPossY, Path rootSaveDirPath) throws IOException {
         verifiePathLevelExiste(rootSaveDirPath);
         verifiePathChunkExiste(rootSaveDirPath);
-        String chunkFileName = String.format("%s-%s", chunkPossX, chunkPossY);
+        String chunkFileName = String.format("%s,%s", chunkPossX, chunkPossY);
         return new File(rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
     }
 

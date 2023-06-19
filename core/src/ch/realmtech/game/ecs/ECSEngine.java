@@ -3,7 +3,6 @@ package ch.realmtech.game.ecs;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
-import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
@@ -216,7 +215,6 @@ public final class ECSEngine {
     public void loadInfFile(Path path) throws IOException {
         int mapId = world.getSystem(SaveInfManager.class).readInfMap(path);
         mapRequirementBeforeShow(mapId);
-        world.getSystem(WorldMapSystem.class).mountInfMap(mapId);
     }
 
     public void generateNewSave(String name) throws IOException {
@@ -225,15 +223,11 @@ public final class ECSEngine {
         int chunkId = world.getSystem(WorldMapSystem.class).generateNewChunk(mapId, 0, 0);
         infMapComponent.infChunks = new int[]{chunkId};
         mapRequirementBeforeShow(mapId);
-        world.getSystem(WorldMapSystem.class).mountInfMap(mapId);
         world.getSystem(SaveInfManager.class).saveInfMap(mapId);
     }
 
     public void mapRequirementBeforeShow(int mapId) {
-        InfMapComponent infMapComponent = world.getMapper(InfMapComponent.class).get(mapId);
-        infMapComponent.worldMap = new WorldMap();
         createPlayer();
-        world.getSystem(WorldMapSystem.class).placeWorldInfMap(mapId);
         world.getSystem(TagManager.class).register("infMap", mapId);
     }
 
@@ -246,10 +240,10 @@ public final class ECSEngine {
      * Donne l'id de la cellule via ses cordonnées dans le monde.
      * @param worldPosX
      * @param worldPosY
-     * @return l'ide de la cellule ou -1 si pas trouvé.
+     * @return l'id de la cellule ou -1 si pas trouvé.
      */
     public int getCell(float worldPosX, float worldPosY) {
-        return world.getSystem(WorldMapSystem.class).getCell((int) worldPosX, (int) worldPosY);
+        return world.getSystem(WorldMapSystem.class).getCell(world.getSystem(TagManager.class).getEntityId("infMap") ,(int) worldPosX, (int) worldPosY);
     }
 
     public void playFootStep(PlayerFootStepSound footStep) {
