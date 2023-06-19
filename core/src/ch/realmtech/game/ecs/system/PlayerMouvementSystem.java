@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.input.InputMapper;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -18,6 +19,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
     private ComponentMapper<PlayerComponent> mPlayer;
+    private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<MovementComponent> mMouvement;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
@@ -31,35 +33,36 @@ public class PlayerMouvementSystem extends IteratingSystem {
         MovementComponent movementComponent = mMouvement.create(entityId);
         PositionComponent positionComponent = mPosition.create(entityId);
         Box2dComponent box2dComponent = mBox2d.create(entityId);
-        int cellId = -1; // context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
+        //int cellId = context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
+        int cellId = context.getEcsEngine().getCell(positionComponent.x, positionComponent.y);
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
             if (cellId != -1) {
-
+                yFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
             directionChange = true;
             xFactor = -1;
             if (cellId != -1) {
-                //xFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
+                xFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
             directionChange = true;
             yFactor = -1;
             if (cellId != -1) {
-                //yFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
+                yFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
             directionChange = true;
             xFactor = 1;
             if (cellId != -1) {
-                //xFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
+                xFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
         }
 
@@ -99,10 +102,10 @@ public class PlayerMouvementSystem extends IteratingSystem {
 
     private void playFootStepSound(int cellId) {
         if (cellId != -1) {
-//            PlayerFootStepSound playerWalkSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
-//            if (playerWalkSound != null) {
-//                world.getSystem(SoundManager.class).playFootStep(playerWalkSound.playerFootStepSound(), playerWalkSound.volume());
-//            }
+            PlayerFootStepSound playerFootStepSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+            if (playerFootStepSound != null) {
+                context.getEcsEngine().playFootStep(playerFootStepSound);
+            }
         }
     }
 }

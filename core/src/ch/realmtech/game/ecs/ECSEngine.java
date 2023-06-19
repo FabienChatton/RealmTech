@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.level.map.WorldMap;
+import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
 import com.artemis.World;
@@ -42,26 +43,26 @@ public final class ECSEngine {
                 // manageur
                 .with(new TagManager())
                 .with(new ItemManager())
-                .with(new WorldMapManager())
                 .with(new InventoryManager())
                 .with(new WorldContactListenerManager())
                 .with(new SaveInfManager())
 
                 // system
+                .with(new WorldMapSystem())
                 .with(new CraftingSystem())
                 .with(new ItemBeingPickAnimationSystem())
                 .with(new SoundManager())
                 .with(new PickUpOnGroundItemSystem())
                 .with(new PlayerMouvementSystem())
-                .with(new WorldStepSystem())
+                .with(new PhysiqueWorldStepSystem())
                 .with(new UpdateBox2dWithTextureSystem())
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new RendererTextureInGameSystem())
 
                 // ui
-                //.with(new PlayerInventoryManager())
-                //.with(new ItemBarManager())
+                .with(new PlayerInventoryManager())
+                .with(new ItemBarManager())
                 .build();
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
@@ -215,29 +216,51 @@ public final class ECSEngine {
     public void loadInfFile(Path path) throws IOException {
         int mapId = world.getSystem(SaveInfManager.class).readInfMap(path);
         mapRequirementBeforeShow(mapId);
-        world.getSystem(WorldMapManager.class).mountInfMap(mapId);
+        world.getSystem(WorldMapSystem.class).mountInfMap(mapId);
     }
 
     public void generateNewSave(String name) throws IOException {
         int mapId = world.getSystem(SaveInfManager.class).generateNewSave(name);
-        mapRequirementBeforeShow(mapId);
         InfMapComponent infMapComponent = world.getMapper(InfMapComponent.class).get(mapId);
-        int chunkId = world.getSystem(WorldMapManager.class).generateNewChunk(infMapComponent.infMetaDonnees, 0, 0);
+        int chunkId = world.getSystem(WorldMapSystem.class).generateNewChunk(mapId, 0, 0);
         infMapComponent.infChunks = new int[]{chunkId};
-        world.getSystem(WorldMapManager.class).mountInfMap(mapId);
-        world.getSystem(SaveInfManager.class).saveInfMap(mapId, name);
+        mapRequirementBeforeShow(mapId);
+        world.getSystem(WorldMapSystem.class).mountInfMap(mapId);
+        world.getSystem(SaveInfManager.class).saveInfMap(mapId);
     }
 
     public void mapRequirementBeforeShow(int mapId) {
         InfMapComponent infMapComponent = world.getMapper(InfMapComponent.class).get(mapId);
         infMapComponent.worldMap = new WorldMap();
         createPlayer();
-        world.getSystem(WorldMapManager.class).placeWorldInfMap(mapId);
+        world.getSystem(WorldMapSystem.class).placeWorldInfMap(mapId);
         world.getSystem(TagManager.class).register("infMap", mapId);
     }
 
-    public void saveInfMap() {
+    public void saveInfMap() throws IOException {
         int mapId = world.getSystem(TagManager.class).getEntityId("infMap");
         world.getSystem(SaveInfManager.class).saveInfMap(mapId);
+    }
+
+    /**
+     * Donne l'id de la cellule via ses cordonnées dans le monde.
+     * @param worldPosX
+     * @param worldPosY
+     * @return l'ide de la cellule ou -1 si pas trouvé.
+     */
+    public int getCell(float worldPosX, float worldPosY) {
+        return world.getSystem(WorldMapSystem.class).getCell((int) worldPosX, (int) worldPosY);
+    }
+
+    public void playFootStep(PlayerFootStepSound footStep) {
+        world.getSystem(SoundManager.class).playFootStep(footStep.playerFootStepSound(), footStep.volume());
+    }
+
+    public int readSavedInfChunk(int chunkX, int chunkY, Path rootSaveDirPath) throws IOException {
+        return world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, rootSaveDirPath);
+    }
+
+    public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {
+        world.getSystem(SaveInfManager.class).saveInfChunk(infChunkId, rootSaveDirPath);
     }
 }

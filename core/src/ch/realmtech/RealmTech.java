@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
+import java.io.IOException;
 import java.util.EnumMap;
 
 public final class RealmTech extends Game{
@@ -150,6 +151,8 @@ public final class RealmTech extends Game{
     public void quiteAndSave() {
         try {
             ecsEngine.saveInfMap();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } finally {
             setScreen(ScreenType.MENU);
             screenCash.remove(ScreenType.GAME_SCREEN);

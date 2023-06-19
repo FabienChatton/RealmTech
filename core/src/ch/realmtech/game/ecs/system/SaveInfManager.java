@@ -6,8 +6,6 @@ import ch.realmtech.game.ecs.component.InfMapComponent;
 import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
 import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
-import ch.realmtech.game.level.worldGeneration.PerlinNoise;
-import ch.realmtech.game.level.worldGeneration.PerlineNoise2;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -22,7 +20,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class SaveInfManager extends Manager {
     private final static int SAVE_PROTOCOLE_VERSION = 7;
@@ -31,8 +28,11 @@ public class SaveInfManager extends Manager {
     private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
-    public void saveInfMap(int mapId) {
 
+    public void saveInfMap(int mapId) throws IOException {
+        InfMapComponent infMapComponent = mInfMap.get(mapId);
+        InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMapComponent.infMetaDonnees);
+        saveInfMap(mapId, infMetaDonneesComponent.saveName);
     }
 
     public void saveInfMap(int mapId, Path rootSaveDirPath) throws IOException {
@@ -43,10 +43,6 @@ public class SaveInfManager extends Manager {
                 saveInfChunk(infChunkId, rootSaveDirPath);
             }
         }
-    }
-
-    public void saveInfMap(int mapdId, String nameRootSaveDir) throws IOException {
-        saveInfMap(mapdId, Gdx.files.internal(nameRootSaveDir).file().toPath());
     }
 
     /**
@@ -66,8 +62,7 @@ public class SaveInfManager extends Manager {
         int metaDonneesId = world.create();
         InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
         InfMetaDonneesComponent infMetaDonneesComponent = world.edit(metaDonneesId).create(InfMetaDonneesComponent.class);
-        infMetaDonneesComponent.seed = MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1);
-        infMetaDonneesComponent.perlinNoise = new PerlinNoise(new Random(infMetaDonneesComponent.seed), WorldMap.WORLD_WITH, WorldMap.WORLD_HIGH, new PerlineNoise2(7, 0.6f, 0.005f));;
+        infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, name);
         infMapComponent.infMetaDonnees = metaDonneesId;
         return mapId;
     }
@@ -168,7 +163,7 @@ public class SaveInfManager extends Manager {
             float playerPosX = buffer.getFloat();
             float playerPosY = buffer.getFloat();
             int metaDonnesId = world.create();
-            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, playerPosX, playerPosY);
+            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, playerPosX, playerPosY, saveName);
             return metaDonnesId;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -209,12 +204,7 @@ public class SaveInfManager extends Manager {
                 world.edit(cellulesId[i]).create(InfCellComponent.class).set(posX, posY, CellRegisterEntry.getCellModAndCellHash(hashRegistry));
             }
             return chunkId;
-        } catch (FileNotFoundException e) {
-            Gdx.app.error(TAG, "Le fichier n'a pas été trouve", e);
-        } catch (IOException e) {
-            Gdx.app.error(TAG, "Une erreur inattendue est survenue", e);
         }
-        return -1;
     }
 
     public static List<File> listSauvegardeInfinie() throws IOException {
@@ -238,7 +228,7 @@ public class SaveInfManager extends Manager {
         verifiePathLevelExiste(rootSaveDirPath);
         verifiePathChunkExiste(rootSaveDirPath);
         String chunkFileName = String.format("%s-%s", chunkPossX, chunkPossY);
-        return new File(rootSaveDirPath.toString() + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
+        return new File(rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
     }
 
     private static void verifiePathLevelExiste(Path rootSaveDirPath) throws IOException {
