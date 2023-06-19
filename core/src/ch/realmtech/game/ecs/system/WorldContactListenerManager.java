@@ -56,7 +56,7 @@ public class WorldContactListenerManager extends Manager implements ContactListe
                         } catch (NullPointerException e) {
                             Gdx.app.error(TAG, e.getMessage());
                         } finally {
-                            context.physicWorld.destroyBody(fixtureB.getBody());
+                            context.getEcsEngine().physicWorld.destroyBody(fixtureB.getBody());
                         }
                     });
                 }

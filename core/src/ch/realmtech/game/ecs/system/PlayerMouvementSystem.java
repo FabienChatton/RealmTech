@@ -19,10 +19,10 @@ public class PlayerMouvementSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
     private ComponentMapper<PlayerComponent> mPlayer;
+    private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<MovementComponent> mMouvement;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
-    private ComponentMapper<CellComponent> mCell;
     private boolean directionChange = false;
     private float xFactor = 0;
     private float yFactor = 0;
@@ -33,15 +33,15 @@ public class PlayerMouvementSystem extends IteratingSystem {
         MovementComponent movementComponent = mMouvement.create(entityId);
         PositionComponent positionComponent = mPosition.create(entityId);
         Box2dComponent box2dComponent = mBox2d.create(entityId);
-        int cellId = context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
+        //int cellId = context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
+        int cellId = context.getEcsEngine().getCell(positionComponent.x, positionComponent.y);
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
             directionChange = true;
             yFactor = 1;
             if (cellId != -1) {
-                CellComponent cellComponent = mCell.create(cellId);
-                yFactor *= cellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
+                yFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
@@ -102,9 +102,9 @@ public class PlayerMouvementSystem extends IteratingSystem {
 
     private void playFootStepSound(int cellId) {
         if (cellId != -1) {
-            PlayerFootStepSound playerWalkSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
-            if (playerWalkSound != null) {
-                world.getSystem(SoundManager.class).playFootStep(playerWalkSound.playerFootStepSound(), playerWalkSound.volume());
+            PlayerFootStepSound playerFootStepSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+            if (playerFootStepSound != null) {
+                context.getEcsEngine().playFootStep(playerFootStepSound);
             }
         }
     }

@@ -1,7 +1,10 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.ecs.component.Box2dComponent;
+import ch.realmtech.game.ecs.component.ItemComponent;
+import ch.realmtech.game.ecs.component.PositionComponent;
+import ch.realmtech.game.ecs.component.TextureComponent;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
@@ -23,14 +26,12 @@ public class ItemManager extends Manager {
         super.initialize();
         defaultItemGroundArchetype = new ArchetypeBuilder()
                 .add(ItemComponent.class)
-                .add(ToSaveComponent.class)
                 .add(PositionComponent.class)
                 .add(TextureComponent.class)
                 .add(Box2dComponent.class)
                 .build(world);
         defaultItemInventoryArchetype = new ArchetypeBuilder()
                 .add(ItemComponent.class)
-                .add(ToSaveComponent.class)
                 .add(TextureComponent.class)
                 .build(world);
     }

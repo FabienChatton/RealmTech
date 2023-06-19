@@ -7,7 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 
 @Exclude
-public class WorldStepSystem extends EntitySystem {
+public class PhysiqueWorldStepSystem extends EntitySystem {
     @Wire(name = "physicWorld")
     private World physicWorld;
 

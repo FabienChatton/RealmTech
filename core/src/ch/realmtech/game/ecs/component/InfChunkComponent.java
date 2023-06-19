@@ -3,22 +3,23 @@ package ch.realmtech.game.ecs.component;
 import com.artemis.PooledComponent;
 import com.artemis.annotations.EntityId;
 
-public class ChunkComponent extends PooledComponent {
-    @EntityId
-    public int saveId = -1;
+public class InfChunkComponent extends PooledComponent {
     public int chunkPossX;
     public int chunkPossY;
+    @EntityId
+    public int[] infCellsId;
 
-    public void set(int saveId, int chunkPossX, int chunkPossY) {
-        this.saveId = saveId;
+    public InfChunkComponent set(int chunkPossX, int chunkPossY, int[] infCellsId) {
         this.chunkPossX = chunkPossX;
         this.chunkPossY = chunkPossY;
+        this.infCellsId = infCellsId;
+        return this;
     }
 
     @Override
     protected void reset() {
-        saveId = -1;
         chunkPossX = 0;
         chunkPossY = 0;
+        infCellsId = null;
     }
 }

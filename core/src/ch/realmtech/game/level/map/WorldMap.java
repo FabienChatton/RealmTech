@@ -12,7 +12,13 @@ public class WorldMap extends TiledMap {
     public final static int WORLD_HIGH = NUMBER_CHUNK_HIGH * CHUNK_SIZE;
     public final static byte NUMBER_LAYER = 4;
 
-    public TiledMapTileLayer getLayerTiledLayer(int index) {
-        return (TiledMapTileLayer) getLayers().get(index);
+    public TiledMapTileLayer getLayerTiledLayer(byte layer) {
+        if (layer > 3) throw new IllegalArgumentException("Il existe uniquement 4 layer. 0, 1, 2, 3");
+        for (int i = 0; i <= layer; i++) {
+            if (getLayers().size() == i) {
+                getLayers().add(new TiledMapTileLayer(WORLD_WITH, WORLD_HIGH, 32, 32));
+            }
+        }
+        return (TiledMapTileLayer) getLayers().get(layer);
     }
 }
