@@ -1,5 +1,5 @@
 # Protocole de sauvegarde de RealmTech
-## version 6
+## version 7
 
 Le layer d'une cellule représente sa position dans la hauteur. C'est la
 cellule avec le plus grand layer qui sera affiché. Le layer ne peut
@@ -40,16 +40,17 @@ La position Y du chunk. 12-23.rsc. Chaque fichier contient un petit header pour
 specifier la version du protocole de sauvegarde. Le header contient aussi
 un "tableau associatif" entre hash (int) et id (byte) des entrées des registres
 des celles pour éviter de les hash soit pour chaque cellule dans le fichier.
-````
+```
 Métadonnées
-    - version du protocole, int (offset 0, len 4 bytes)
+    - version du protocole, int
 Header
-    - nombre de layer, byte (offset 5, len 1 byte)
-    pour chaque layer :
-        - nombre de cellule sur ce layer, short (offset 6, len 2 bytes)
+    - nombre de cellule que contient le chunk, short
 Body
     pour chaque cellule :
-        - hash du cellRegisterEntry, byte (4 bytes)
-        - position dans le chunk, byte (1 byte)
-````
+        - hash du cellRegisterEntry mini, byte
+        - position dans le chunk, byte
+```
+Pour récupérer le hash du registre pour la cellule qui est un int,
+il faut cast le int en byte, cella va faire des overflow et c'est
+tout à fait normal.
 

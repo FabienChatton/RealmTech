@@ -19,10 +19,10 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
             Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             if (pointerMapper.pointer == 0) {
                 if (pointerMapper.button == InputMapper.leftClick.button) {
-                    throw new RuntimeException("à implémenté");
+                    //throw new RuntimeException("à implémenté");
                 }
                 if (pointerMapper.button == InputMapper.rightClick.button) {
-                    throw new RuntimeException("à implémenté");
+                    //throw new RuntimeException("à implémenté");
                 }
             }
         }

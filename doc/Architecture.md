@@ -25,3 +25,18 @@ joueur à quitter la partie. L'ECS contient :
 - le monde physique
 - le joueur
 - la sauvegarde
+
+### cellules
+Les cellules composent le monde. Elles sont divisées en plusieurs catégories
+en fonction de leur layer. Le layer représente le niveau où la cellule
+se trouve.
+
+0. ground
+1. gournd deco
+2. build
+3. build déco
+
+Ce système de layer, peut varier dans les futures versions du protocole
+de sauvegarde du monde, mais pour le moment, ça marche comme ça.
+Le layer est sauvegardé dans le CelleBehavior.
+Le layer est utilisé pour poser la cellule sur le plateau

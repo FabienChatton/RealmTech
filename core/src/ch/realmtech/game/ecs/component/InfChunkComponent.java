@@ -7,12 +7,12 @@ public class InfChunkComponent extends PooledComponent {
     public int chunkPossX;
     public int chunkPossY;
     @EntityId
-    public int[] infLayers;
+    public int[] infCellsId;
 
-    public InfChunkComponent set(int chunkPossX, int chunkPossY, int[] infLayers) {
+    public InfChunkComponent set(int chunkPossX, int chunkPossY, int[] infCellsId) {
         this.chunkPossX = chunkPossX;
         this.chunkPossY = chunkPossY;
-        this.infLayers = infLayers;
+        this.infCellsId = infCellsId;
         return this;
     }
 
@@ -20,6 +20,6 @@ public class InfChunkComponent extends PooledComponent {
     protected void reset() {
         chunkPossX = 0;
         chunkPossY = 0;
-        infLayers = null;
+        infCellsId = null;
     }
 }

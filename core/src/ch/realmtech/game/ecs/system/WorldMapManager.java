@@ -13,6 +13,9 @@ import com.artemis.annotations.Wire;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WorldMapManager extends Manager {
 
     @Wire(name = "context")
@@ -25,7 +28,6 @@ public class WorldMapManager extends Manager {
     private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
-    private ComponentMapper<InfLayerComponent> mLayer;
 
     public static int getWorldPossX(int chunkPossX, int innerChunkX) {
         return chunkPossX * WorldMap.CHUNK_SIZE + innerChunkX;
@@ -58,16 +60,11 @@ public class WorldMapManager extends Manager {
      */
     public int generateNewChunk(int metaDonnees, int chunkPosX, int chunkPosY) {
         int chunkId = world.create();
-        int[] layerId = new int[WorldMap.NUMBER_LAYER];
-        for (byte i = 0; i < layerId.length; i++) {
-            layerId[i] = world.create();
-            int[] cellsId = new int[WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE];
-            for (short j = 0; j < cellsId.length; j++) {
-                cellsId[j] = generateNewCell(metaDonnees, chunkPosX, chunkPosY, j);
-            }
-            world.edit(layerId[i]).create(InfLayerComponent.class).set(i, cellsId);
+        List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
+        for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
+            cellsId.add(generateNewCell(metaDonnees, chunkPosX, chunkPosY, i));
         }
-        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, layerId);
+        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
         return chunkId;
     }
 
@@ -111,34 +108,16 @@ public class WorldMapManager extends Manager {
         }
     }
 
-    public void mountChunk(int worldMapId, int infChunkId) {
-        InfChunkComponent infChunkComponent = mChunk.get(infChunkId);
-        placeOnMapInf(worldMapId, infChunkId);
-//        for (int i = 0; i < infChunkComponent.infLayers.length; i++) {
-//            InfLayerComponent infLayerComponent = mLayer.get(infChunkComponent.infLayers[i]);
-//            for (int j = 0; j < infLayerComponent.infCells.length; j++) {
-//                InfCellComponent infCellComponent = mCell.get(infLayerComponent.infCells[j]);
-//                int worldPosX = getWorldPossX(infChunkComponent.chunkPossX, infCellComponent.posX);
-//                int worldPosY = getWorldPossY(infChunkComponent.chunkPossY, infCellComponent.posY);
-//                placeOnMap(worldPosX, worldPosY, infLayerComponent.layer, infCellComponent.cell);
-//            }
-//        }
-    }
-
-    public void placeOnMapInf(int infMapId, int chunkId) {
+    public void mountChunk(int infMapId, int infChunkId) {
         InfMapComponent infMapComponent = mInfMap.get(infMapId);
-        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        for (byte i = 0; i < infChunkComponent.infLayers.length; i++) {
-            InfLayerComponent infLayerComponent = mLayer.get(infChunkComponent.infLayers[i]);
-            for (short j = 0; j < infLayerComponent.infCells.length; j++) {
-                InfCellComponent infCellComponent = mCell.get(infLayerComponent.infCells[j]);
-                infMapComponent.worldMap.getLayerTiledLayer(infLayerComponent.layer)
-                        .setCell(getWorldPossX(infChunkComponent.chunkPossX, infCellComponent.posX),
-                                getWorldPossY(infChunkComponent.chunkPossY, infCellComponent.posY),
-                                infCellComponent.cell
-                        );
-            }
-
+        InfChunkComponent infChunkComponent = mChunk.get(infChunkId);
+        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
+            InfCellComponent infCellComponent = mCell.get(infChunkComponent.infCellsId[i]);
+            infMapComponent.worldMap.getLayerTiledLayer(infCellComponent.cellRegisterEntry.getCellBehavior().getLayer())
+                    .setCell(getWorldPossX(infChunkComponent.chunkPossX, infCellComponent.posX),
+                            getWorldPossY(infChunkComponent.chunkPossY, infCellComponent.posY),
+                            infCellComponent.cell
+                    );
         }
     }
 

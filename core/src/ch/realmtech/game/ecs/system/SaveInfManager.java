@@ -1,6 +1,9 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.ecs.component.InfCellComponent;
+import ch.realmtech.game.ecs.component.InfChunkComponent;
+import ch.realmtech.game.ecs.component.InfMapComponent;
+import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
 import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
@@ -22,13 +25,12 @@ import java.util.List;
 import java.util.Random;
 
 public class SaveInfManager extends Manager {
-    private final static int SAVE_PROTOCOLE_VERSION = 6;
+    private final static int SAVE_PROTOCOLE_VERSION = 7;
     private final static String TAG = SaveInfManager.class.getSimpleName();
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
-    private ComponentMapper<InfLayerComponent> mLayer;
     public void saveInfMap(int mapId) {
 
     }
@@ -111,20 +113,12 @@ public class SaveInfManager extends Manager {
             // Métadonnées
             outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(SAVE_PROTOCOLE_VERSION).array());
             // Header
-            outputStream.write(ByteBuffer.allocate(Byte.BYTES).put((byte) infChunkComponent.infLayers.length).array()); // nombre de layer
-            for (byte i = 0; i < infChunkComponent.infLayers.length; i++) { // pour chaque layer
-                int infLayerId = infChunkComponent.infLayers[i];
-                InfLayerComponent infLayerComponent = mLayer.get(infLayerId);
-                outputStream.write(ByteBuffer.allocate(Short.BYTES).putShort((short) infLayerComponent.infCells.length).array()); // nombre de cellules pour de ce layer
-            }
+            outputStream.writeShort(infChunkComponent.infCellsId.length); // nombre de cellules dans ce chunk
             // body
-            for (byte i = 0; i < infChunkComponent.infLayers.length; i++) {
-                InfLayerComponent infLayerComponent = mLayer.get(infChunkComponent.infLayers[i]);
-                for (short k = 0; k < infLayerComponent.infCells.length; k++) {
-                    InfCellComponent infCellComponent = mCell.get(infLayerComponent.infCells[k]);
-                    outputStream.writeInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
-                    outputStream.write(Cells.getInnerChunkPos(infCellComponent.posX, infCellComponent.posY));
-                }
+            for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
+                InfCellComponent infCellComponent = mCell.get(infChunkComponent.infCellsId[i]);
+                outputStream.write((byte) CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
+                outputStream.write(Cells.getInnerChunkPos(infCellComponent.posX, infCellComponent.posY));
             }
             outputStream.flush();
         } catch (FileNotFoundException e) {
@@ -200,27 +194,19 @@ public class SaveInfManager extends Manager {
                 Gdx.app.error(TAG, "La version de la sauvegarde ne correspond pas. Fichier :" + versionProtocole + ". Jeu :" + SAVE_PROTOCOLE_VERSION);
             }
             // Header
-            byte nombreDeLayer = inputWrap.get();
-            short[] nombreDeCelluleParLayer = new short[nombreDeLayer];
-            for (int i = 0; i < nombreDeLayer; i++) {
-                nombreDeCelluleParLayer[i] = inputWrap.getShort();
-            }
+            short nombreDeCellule = inputWrap.getShort();
+
             // Body
-            int[] infLayerId = new int[nombreDeLayer];
+            int[] cellulesId = new int[nombreDeCellule];
             int chunkId = world.create();
-            world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, infLayerId);
-            for (byte i = 0; i < infLayerId.length; i++) {
-                infLayerId[i] = world.create();
-                int[] infCellsId = new int[nombreDeCelluleParLayer[i]];
-                world.edit(infLayerId[i]).create(InfLayerComponent.class).set(i,infCellsId);
-                for (short j = 0; j < infCellsId.length; j++) {
-                    int hashRegistry = inputWrap.getInt();
-                    byte pos = inputWrap.get();
-                    byte posX = Cells.getInnerChunkPosX(pos);
-                    byte posY = Cells.getInnerChunkPosY(pos);
-                    infCellsId[j] = world.create();
-                    world.edit(infCellsId[j]).create(InfCellComponent.class).set(posX, posY, CellRegisterEntry.getCellModAndCellHash(hashRegistry));
-                }
+            world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId);
+            for (int i = 0; i < cellulesId.length; i++) {
+                cellulesId[i] = world.create();
+                byte hashRegistry = inputWrap.get();
+                byte pos = inputWrap.get();
+                byte posX = Cells.getInnerChunkPosX(pos);
+                byte posY = Cells.getInnerChunkPosY(pos);
+                world.edit(cellulesId[i]).create(InfCellComponent.class).set(posX, posY, CellRegisterEntry.getCellModAndCellHash(hashRegistry));
             }
             return chunkId;
         } catch (FileNotFoundException e) {

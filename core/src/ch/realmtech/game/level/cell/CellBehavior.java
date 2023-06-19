@@ -4,13 +4,18 @@ import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import com.badlogic.gdx.audio.Sound;
 
+import static ch.realmtech.game.level.cell.Cells.Layer;
+
 public class CellBehavior {
 
     private ItemType breakWith;
     private float speedEffect = 1;
     private PlayerFootStepSound playerFootStepSound;
+    private byte layer;
 
-    private CellBehavior() {}
+    private CellBehavior(byte layer) {
+        this.layer = layer;
+    }
 
     public ItemType getBreakWith() {
         return breakWith;
@@ -24,8 +29,21 @@ public class CellBehavior {
         return playerFootStepSound;
     }
 
+    public byte getLayer() {
+        return layer;
+    }
+
     public static class Builder {
-        private final CellBehavior cellBehavior = new CellBehavior();
+        private final CellBehavior cellBehavior;
+
+        public Builder(byte layer) {
+            cellBehavior = new CellBehavior(layer);
+        }
+
+        public Builder(Layer ground) {
+            this(ground.layer);
+        }
+
         public Builder breakWith(ItemType itemType){
             cellBehavior.breakWith = itemType;
             return this;

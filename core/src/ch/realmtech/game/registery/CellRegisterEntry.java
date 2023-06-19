@@ -28,6 +28,18 @@ public class CellRegisterEntry implements RegistryEntry {
         return ret;
     }
 
+    public static CellRegisterEntry getCellModAndCellHash(byte cellRegisterHash) {
+        CellRegisterEntry ret = null;
+        for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
+            byte keyHash = (byte) key.hashCode();
+            if (keyHash == cellRegisterHash) {
+                ret = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(key);
+                break;
+            }
+        }
+        return ret;
+    }
+
     public static int getHash(CellRegisterEntry cellRegisterEntry) {
         int ret = -1;
         for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
