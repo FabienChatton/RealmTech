@@ -12,10 +12,13 @@ import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 @All(InfMapComponent.class)
@@ -28,6 +31,7 @@ public class WorldMapSystem extends IteratingSystem {
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<PositionComponent> mPosition;
+    private final static int RENDER_DISTANCE = 5;
 
     @Override
     protected void process(int mapId) {
@@ -35,30 +39,94 @@ public class WorldMapSystem extends IteratingSystem {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMapComponent.infMetaDonnees);
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
-        int chunkX = getChunkX((int) positionPlayerComponent.x);
-        int chunkY = getChunkY((int) positionPlayerComponent.y);
-        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-            InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
-            if (!(infChunkComponent.chunkPossX == chunkX && infChunkComponent.chunkPossY == chunkY)) {
-                int chunkId;
-                try {
-                    chunkId = context.getEcsEngine().readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
-                } catch (FileNotFoundException e) {
-                    chunkId = generateNewChunk(mapId, chunkX, chunkY);
-                    try {
-                        context.getEcsEngine().saveInfChunk(chunkId, infMetaDonneesComponent.saveName);
-                    } catch (IOException ex) {
-                        Gdx.app.error(TAG, e.getMessage(), e);
-                        throw new RuntimeException(ex);
-                    }
-                } catch (IOException e) {
-                    Gdx.app.error(TAG, e.getMessage(), e);
-                    throw new RuntimeException(e);
+        int chunkPosX = getChunkX((int) positionPlayerComponent.x);
+        int chunkPosY = getChunkY((int) positionPlayerComponent.y);
+        HashMap<Integer, HashMap<Integer, Integer>> chunkACharger = new HashMap<>();
+        // remplie la map qui représente tous les chunks dans
+        for (int i = -RENDER_DISTANCE + chunkPosX; i <= RENDER_DISTANCE + chunkPosX; i++) {
+            for (int j = -RENDER_DISTANCE + chunkPosY; j <= RENDER_DISTANCE + chunkPosY; j++) {
+                HashMap<Integer, Integer> chunkY;
+                if (chunkACharger.get(i) == null) {
+                    chunkY = new HashMap<>();
+                    chunkACharger.put(i, chunkY);
+                } else {
+                    chunkY = chunkACharger.get(i);
                 }
-                setNewChunkAfterUMount(mapId, infMapComponent.infChunks[i], chunkId);
+                chunkY.put(j, 0);
             }
         }
+        // trouve les chunk à de charger
+        List<Integer> chunkADeCharger = new LinkedList<>();
+        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
+            int chunkId = infMapComponent.infChunks[i];
+            InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+            if (!chunkEstDansLaRenderDistance(chunkId, chunkPosX, chunkPosY)) {
+                chunkADeCharger.add(chunkId);
+            }
+        }
+        // met les chunks à conserver
+        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
+            int chunkId = infMapComponent.infChunks[i];
+            if (!chunkADeCharger.contains(chunkId)) {
+                InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+                chunkACharger.get(infChunkComponent.chunkPossX).put(infChunkComponent.chunkPossY, chunkId);
+            }
+        }
+        // ajoute les chunk manquant
+        for (int chunkX : chunkACharger.keySet()) {
+            for (int chunkY : chunkACharger.get(chunkX).keySet()) {
+                int chunkId = chunkACharger.get(chunkX).get(chunkY);
+                if (chunkId == 0) {
+                    chunkACharger.get(chunkX).put(chunkY, getOrGenerateChunk(mapId, chunkX, chunkY));
+                }
+            }
+        }
+        List<Integer> chunkFinal = new LinkedList<>();
+        for (int chunkX : chunkACharger.keySet()) {
+            for (int chunkY : chunkACharger.get(chunkX).keySet()) {
+                chunkFinal.add(chunkACharger.get(chunkX).get(chunkY));
+            }
+        }
+        infMapComponent.infChunks = chunkFinal.stream().mapToInt(x -> x).toArray();
 
+
+//
+//
+//        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
+//            InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
+//            if (!(infChunkComponent.chunkPossX == chunkPosX && infChunkComponent.chunkPossY == chunkPosY)) {
+//                int chunkId = getOrGenerateChunk(mapId, chunkPosX, chunkPosY);
+//                replaceChunk(mapId, infMapComponent.infChunks[i], chunkId);
+//            }
+//        }
+
+    }
+
+    private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
+        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+        int chunkX = infChunkComponent.chunkPossX;
+        int chunkY = infChunkComponent.chunkPossY;
+        return Vector2.dst2(chunkX, chunkY, posX, posY) < RENDER_DISTANCE;
+    }
+
+    private int getOrGenerateChunk(int mapId, int chunkX, int chunkY) {
+        InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(mInfMap.get(mapId).infMetaDonnees);
+        int chunkId;
+        try {
+            chunkId = context.getEcsEngine().readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
+        } catch (FileNotFoundException e) {
+            chunkId = generateNewChunk(mapId, chunkX, chunkY);
+            try {
+                context.getEcsEngine().saveInfChunk(chunkId, infMetaDonneesComponent.saveName);
+            } catch (IOException ex) {
+                Gdx.app.error(TAG, e.getMessage(), e);
+                throw new RuntimeException(ex);
+            }
+        } catch (IOException e) {
+            Gdx.app.error(TAG, e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return chunkId;
     }
 
     public static int getWorldPossX(int chunkPossX, int innerChunkX) {
@@ -189,7 +257,7 @@ public class WorldMapSystem extends IteratingSystem {
         return ret;
     }
 
-    private void setNewChunkAfterUMount(int mapId, int oldChunk, int newChunkId) {
+    private void replaceChunk(int mapId, int oldChunk, int newChunkId) {
         int[] chunks = mInfMap.get(mapId).infChunks;
         for (int i = 0; i < chunks.length; i++) {
             if (chunks[i] == oldChunk) {

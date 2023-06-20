@@ -1,8 +1,7 @@
 package ch.realmtech.game.ecs.component;
 
-import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
-import ch.realmtech.game.level.worldGeneration.PerlineNoise2;
+import ch.realmtech.game.level.worldGeneration.PerlineNoise3;
 import com.artemis.PooledComponent;
 
 import java.nio.file.Path;
@@ -16,7 +15,9 @@ public class InfMetaDonneesComponent extends PooledComponent {
     public Path saveName;
 
     public InfMetaDonneesComponent set(long seed, float playerPositionX, float playerPositionY, String saveName) {
-        this.perlinNoise = new PerlinNoise(new Random(seed), WorldMap.WORLD_WITH, WorldMap.WORLD_HIGH, new PerlineNoise2(7, 0.6f, 0.005f));
+        Random rand = new Random(seed);
+        //new PerlineNoise2(7, 0.6f, 0.005f)
+        this.perlinNoise = new PerlinNoise(rand, new PerlineNoise3(rand));
         this.seed = seed;
         this.playerPositionX = playerPositionX;
         this.playerPositionY = playerPositionY;
