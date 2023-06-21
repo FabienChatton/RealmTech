@@ -10,19 +10,17 @@ import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
-import com.artemis.systems.IteratingSystem;
+import com.artemis.systems.DelayedIteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 @All(InfMapComponent.class)
-public class WorldMapSystem extends IteratingSystem {
+public class WorldMapSystem extends DelayedIteratingSystem {
     private final static String TAG = WorldMapSystem.class.getSimpleName();
     @Wire(name = "context")
     RealmTech context;
@@ -31,82 +29,71 @@ public class WorldMapSystem extends IteratingSystem {
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<PositionComponent> mPosition;
-    private final static int RENDER_DISTANCE = 5;
+    private final static int RENDER_DISTANCE = 6;
+    private int[] ancienneChunkPos = null;
+    private float delay = 0.01f;
 
-    @Override
     protected void process(int mapId) {
         int playerId = context.getEcsEngine().getPlayerId();
         InfMapComponent infMapComponent = mInfMap.get(mapId);
-        InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMapComponent.infMetaDonnees);
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
         int chunkPosX = getChunkX((int) positionPlayerComponent.x);
         int chunkPosY = getChunkY((int) positionPlayerComponent.y);
-        HashMap<Integer, HashMap<Integer, Integer>> chunkACharger = new HashMap<>();
-        // remplie la map qui représente tous les chunks dans
-        for (int i = -RENDER_DISTANCE + chunkPosX; i <= RENDER_DISTANCE + chunkPosX; i++) {
-            for (int j = -RENDER_DISTANCE + chunkPosY; j <= RENDER_DISTANCE + chunkPosY; j++) {
-                HashMap<Integer, Integer> chunkY;
-                if (chunkACharger.get(i) == null) {
-                    chunkY = new HashMap<>();
-                    chunkACharger.put(i, chunkY);
-                } else {
-                    chunkY = chunkACharger.get(i);
+        if (ancienneChunkPos == null || !(ancienneChunkPos[0] == chunkPosX && ancienneChunkPos[1] == chunkPosY)) {
+            List<Integer> chunkADamner = new LinkedList<>();
+
+            for (int i = 0; i < infMapComponent.infChunks.length; i++) {
+                if (!chunkEstDansLaRenderDistance(infMapComponent.infChunks[i], chunkPosX, chunkPosY)) {
+                    chunkADamner.add(infMapComponent.infChunks[i]);
                 }
-                chunkY.put(j, 0);
             }
-        }
-        // trouve les chunk à de charger
-        List<Integer> chunkADeCharger = new LinkedList<>();
-        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-            int chunkId = infMapComponent.infChunks[i];
-            InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-            if (!chunkEstDansLaRenderDistance(chunkId, chunkPosX, chunkPosY)) {
-                chunkADeCharger.add(chunkId);
-            }
-        }
-        // met les chunks à conserver
-        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-            int chunkId = infMapComponent.infChunks[i];
-            if (!chunkADeCharger.contains(chunkId)) {
-                InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-                chunkACharger.get(infChunkComponent.chunkPossX).put(infChunkComponent.chunkPossY, chunkId);
-            }
-        }
-        // ajoute les chunk manquant
-        for (int chunkX : chunkACharger.keySet()) {
-            for (int chunkY : chunkACharger.get(chunkX).keySet()) {
-                int chunkId = chunkACharger.get(chunkX).get(chunkY);
-                if (chunkId == 0) {
-                    chunkACharger.get(chunkX).put(chunkY, getOrGenerateChunk(mapId, chunkX, chunkY));
+            int indexDamner = 0;
+            for (int i = -RENDER_DISTANCE + chunkPosX; i <= RENDER_DISTANCE + chunkPosX; i++) {
+                for (int j = -RENDER_DISTANCE + chunkPosY; j <= RENDER_DISTANCE + chunkPosY; j++) {
+                    boolean trouve = false;
+                    for (int k = 0; k < infMapComponent.infChunks.length; k++) {
+                        InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[k]);
+                        if (infChunkComponent.chunkPossX == i && infChunkComponent.chunkPossY == j) {
+                            trouve = true;
+                            break;
+                        }
+                    }
+                    if (!trouve) {
+                        int newChunkId = getOrGenerateChunk(mapId, i, j);
+                        if (indexDamner < chunkADamner.size()) {
+                            Integer oldChunk = chunkADamner.get(indexDamner++);
+                            replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
+                            damneChunk(oldChunk);
+                        } else {
+                            infMapComponent.infChunks = ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
+                        }
+                        if (ancienneChunkPos != null) {
+                            return;
+                        }
+                    }
                 }
             }
         }
-        List<Integer> chunkFinal = new LinkedList<>();
-        for (int chunkX : chunkACharger.keySet()) {
-            for (int chunkY : chunkACharger.get(chunkX).keySet()) {
-                chunkFinal.add(chunkACharger.get(chunkX).get(chunkY));
-            }
+        if (ancienneChunkPos == null) {
+            ancienneChunkPos = new int[2];
         }
-        infMapComponent.infChunks = chunkFinal.stream().mapToInt(x -> x).toArray();
+        ancienneChunkPos[0] = chunkPosX;
+        ancienneChunkPos[1] = chunkPosY;
+    }
 
-
-//
-//
-//        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-//            InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
-//            if (!(infChunkComponent.chunkPossX == chunkPosX && infChunkComponent.chunkPossY == chunkPosY)) {
-//                int chunkId = getOrGenerateChunk(mapId, chunkPosX, chunkPosY);
-//                replaceChunk(mapId, infMapComponent.infChunks[i], chunkId);
-//            }
-//        }
-
+    private void damneChunk(int chunkId) {
+        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+        world.delete(chunkId);
+        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
+            world.delete(infChunkComponent.infCellsId[i]);
+        }
     }
 
     private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int chunkX = infChunkComponent.chunkPossX;
-        int chunkY = infChunkComponent.chunkPossY;
-        return Vector2.dst2(chunkX, chunkY, posX, posY) < RENDER_DISTANCE;
+        int dstX = Math.abs(posX - infChunkComponent.chunkPossX);
+        int dstY = Math.abs(posY - infChunkComponent.chunkPossY);
+        return dstX <= RENDER_DISTANCE && dstY <= RENDER_DISTANCE;
     }
 
     private int getOrGenerateChunk(int mapId, int chunkX, int chunkY) {
@@ -218,12 +205,11 @@ public class WorldMapSystem extends IteratingSystem {
         return (worldY < 0 ? worldY - WorldMap.CHUNK_SIZE : worldY) / WorldMap.CHUNK_SIZE;
     }
 
-    public int getCell(int mapdId, int worldPosX, int worldPosY) {
-        int chunk = getChunk(mapdId, worldPosX, worldPosY);
+    public int getCell(int[] chunks, int worldPosX, int worldPosY) {
+        int chunk = getChunk(chunks, worldPosX, worldPosY);
         int ret = -1;
         if (chunk != -1) {
             int[] cells = mChunk.get(chunk).infCellsId;
-//            int[] cells = world.getAspectSubscriptionManager().get(Aspect.all(InfCellComponent.class)).getEntities().getData();
             byte innerChunkX = getInnerChunkX(worldPosX);
             byte innerChunkY = getInnerChunkY(worldPosY);
             for (int i = 0; i < cells.length; i++) {
@@ -240,13 +226,12 @@ public class WorldMapSystem extends IteratingSystem {
     /**
      * @param worldPosX
      * @param worldPosY
-     * @return chunk id
+     * @return chunk id. -1 si pas trouvé
      */
-    public int getChunk(int mapId, int worldPosX, int worldPosY) {
+    public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
         int ret = -1;
         int chunkX = getChunkX(worldPosX);
         int chunkY = getChunkY(worldPosY);
-        int[] chunks = mInfMap.get(mapId).infChunks;
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
             if (infChunkComponent.chunkPossX == chunkX && infChunkComponent.chunkPossY == chunkY) {
@@ -257,8 +242,7 @@ public class WorldMapSystem extends IteratingSystem {
         return ret;
     }
 
-    private void replaceChunk(int mapId, int oldChunk, int newChunkId) {
-        int[] chunks = mInfMap.get(mapId).infChunks;
+    private void replaceChunk(int[] chunks, int oldChunk, int newChunkId) {
         for (int i = 0; i < chunks.length; i++) {
             if (chunks[i] == oldChunk) {
                 chunks[i] = newChunkId;
@@ -267,8 +251,7 @@ public class WorldMapSystem extends IteratingSystem {
         }
     }
 
-    private int[] ajouterChunkAMap(int mapId, int chunkId) {
-        int[] infChunks = mInfMap.get(mapId).infChunks;
+    private int[] ajouterChunkAMap(int[] infChunks, int chunkId) {
         int[] ret = new int[infChunks.length + 1];
         System.arraycopy(infChunks, 0, ret, 0, infChunks.length);
         ret[infChunks.length] = chunkId;
@@ -284,5 +267,21 @@ public class WorldMapSystem extends IteratingSystem {
             }
         }
         return ret;
+    }
+
+    @Override
+    protected float getRemainingDelay(int entityId) {
+        return delay;
+    }
+
+    @Override
+    protected void processDelta(int entityId, float accumulatedDelta) {
+        delay -= accumulatedDelta;
+    }
+
+    @Override
+    protected void processExpired(int mapId) {
+        process(mapId);
+        offerDelay(0.01f);
     }
 }

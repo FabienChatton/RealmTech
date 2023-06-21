@@ -5,7 +5,6 @@ import ch.realmtech.game.ecs.component.InfChunkComponent;
 import ch.realmtech.game.ecs.component.InfMapComponent;
 import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
 import ch.realmtech.game.level.cell.Cells;
-import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -115,10 +114,10 @@ public class SaveInfManager extends Manager {
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
         int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath);
         InfMetaDonneesComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
-        int chunkPosX = (int) (metaDonneesComponent.playerPositionX / WorldMap.CHUNK_SIZE);
-        int chunkPosY = (int) (metaDonneesComponent.playerPositionY / WorldMap.CHUNK_SIZE);
-        int chunkId = readSavedInfChunk(chunkPosX, chunkPosY, rootSaveDirPath);
-        infMapComponent.set(new int[]{chunkId}, infMetaDonneesId);
+        //int chunkPosX = (int) (metaDonneesComponent.playerPositionX / WorldMap.CHUNK_SIZE);
+        //int chunkPosY = (int) (metaDonneesComponent.playerPositionY / WorldMap.CHUNK_SIZE);
+        //int chunkId = readSavedInfChunk(chunkPosX, chunkPosY, rootSaveDirPath);
+        infMapComponent.set(new int[0], infMetaDonneesId);
         return worldId;
     }
 

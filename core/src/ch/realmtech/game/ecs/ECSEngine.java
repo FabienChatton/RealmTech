@@ -243,7 +243,7 @@ public final class ECSEngine {
      * @return l'id de la cellule ou -1 si pas trouvé.
      */
     public int getCell(float worldPosX, float worldPosY) {
-        return world.getSystem(WorldMapSystem.class).getCell(world.getSystem(TagManager.class).getEntityId("infMap") ,(int) worldPosX, (int) worldPosY);
+        return world.getSystem(WorldMapSystem.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks ,(int) worldPosX, (int) worldPosY);
     }
 
     public void playFootStep(PlayerFootStepSound footStep) {
