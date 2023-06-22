@@ -168,7 +168,11 @@ public class WorldMapSystem extends DelayedIteratingSystem {
      * @return La position Y dans le chunk.
      */
     public static byte getInnerChunkY(int worldY) {
-        return (byte) Math.abs(worldY % WorldMap.CHUNK_SIZE);
+        if (worldY < 0) {
+            return (byte) (worldY % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE);
+        } else {
+            return (byte) (worldY % WorldMap.CHUNK_SIZE);
+        }
     }
 
     /**
@@ -178,7 +182,11 @@ public class WorldMapSystem extends DelayedIteratingSystem {
      * @return La position X dans le chunk.
      */
     public static byte getInnerChunkX(int worldX) {
-        return (byte) Math.abs((worldX % WorldMap.CHUNK_SIZE));
+        if (worldX < 0) {
+            return (byte) (worldX % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE);
+        } else {
+            return (byte) (worldX % WorldMap.CHUNK_SIZE);
+        }
     }
 
     /**
