@@ -20,8 +20,12 @@ public class WorldMapRendererSystem extends IteratingSystem {
     private OrthogonalTiledMapRenderer mapRenderer;
 
     @Override
-    protected void process(int mapId) {
+    protected void begin() {
         context.getGameStage().getBatch().begin();
+    }
+
+    @Override
+    protected void process(int mapId) {
         InfMapComponent infMapComponent = mMap.get(mapId);
         for (int i = 0; i < infMapComponent.infChunks.length; i++) {
             int chunkId = infMapComponent.infChunks[i];
@@ -35,6 +39,10 @@ public class WorldMapRendererSystem extends IteratingSystem {
                 context.getGameStage().getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
             }
         }
+    }
+
+    @Override
+    protected void end() {
         context.getGameStage().getBatch().end();
     }
 }

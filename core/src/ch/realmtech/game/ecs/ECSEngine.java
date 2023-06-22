@@ -57,7 +57,8 @@ public final class ECSEngine {
                 .with(new UpdateBox2dWithTextureSystem())
                 .with(new WorldMapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
-                .with(new RendererTextureInGameSystem())
+                .with(new TextureRenderer())
+                .with(new PlayerTextureAnimated())
 
                 // ui
                 .with(new PlayerInventoryManager())
@@ -157,10 +158,30 @@ public final class ECSEngine {
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
 
-        // texture component
+//        // texture component
+//        TextureComponent textureComponent = world.edit(playerId).create(TextureComponent.class);
+//        final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
+//        textureComponent.set(texture);
+
+        // animation
         TextureComponent textureComponent = world.edit(playerId).create(TextureComponent.class);
-        final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
-        textureComponent.set(texture);
+        textureComponent.scale = 0.05f;
+        TextureAtlas.AtlasRegion textureFront0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-front-0");
+        TextureAtlas.AtlasRegion textureFront1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-front-1");
+        TextureAtlas.AtlasRegion textureFront2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-front-2");
+        playerComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
+        TextureAtlas.AtlasRegion textureLeft0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-left-0");
+        TextureAtlas.AtlasRegion textureLeft1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-left-1");
+        TextureAtlas.AtlasRegion textureLeft2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-left-2");
+        playerComponent.animationLeft = new TextureRegion[]{textureLeft0, textureLeft1, textureLeft2};
+        TextureAtlas.AtlasRegion textureBack0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-back-0");
+        TextureAtlas.AtlasRegion textureBack1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-back-1");
+        TextureAtlas.AtlasRegion textureBack2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-back-2");
+        playerComponent.animationBack = new TextureRegion[]{textureBack0, textureBack1, textureBack2};
+        TextureAtlas.AtlasRegion textureRight0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-right-0");
+        TextureAtlas.AtlasRegion textureRight1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-right-1");
+        TextureAtlas.AtlasRegion textureRight2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-right-2");
+        playerComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
 
         // default crafting table
         int defaultCraftingTable = world.create();

@@ -13,8 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 @All({PlayerComponent.class,
         MovementComponent.class,
         PositionComponent.class,
-        Box2dComponent.class,
-        TextureComponent.class})
+        Box2dComponent.class})
 public class PlayerMouvementSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
@@ -38,34 +37,61 @@ public class PlayerMouvementSystem extends IteratingSystem {
         xFactor = 0;
         yFactor = 0;
         if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
+            if (!playerComponent.moveUp) {
+                playerComponent.cooldown = 0;
+            }
+            playerComponent.moveUp = true;
             directionChange = true;
             yFactor = 1;
             if (cellId != -1) {
                 yFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
+        } else {
+            playerComponent.moveUp = false;
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
+            if (!playerComponent.moveLeft) {
+                playerComponent.cooldown = 0;
+            }
+            playerComponent.moveLeft = true;
             directionChange = true;
             xFactor = -1;
             if (cellId != -1) {
                 xFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
+
+        } else {
+            playerComponent.moveLeft = false;
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
+            if (!playerComponent.moveDown) {
+                playerComponent.cooldown = 0;
+            }
+            playerComponent.moveDown = true;
             directionChange = true;
             yFactor = -1;
             if (cellId != -1) {
                 yFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
+        } else {
+            playerComponent.moveDown = false;
         }
         if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
+            if (!playerComponent.moveRight) {
+                playerComponent.cooldown = 0;
+            }
+            playerComponent.moveRight = true;
             directionChange = true;
             xFactor = 1;
             if (cellId != -1) {
                 xFactor *= mCell.create(cellId).cellRegisterEntry.getCellBehavior().getSpeedEffect();
             }
+        } else {
+            playerComponent.moveRight = false;
         }
-
+        if (xFactor == 0 && yFactor == 0) {
+            playerComponent.cooldown = 0;
+        }
         ComponentMapper<ItemComponent> mInventory = world.getMapper(ItemComponent.class);
         int[][] inventory = world.getSystem(InventoryManager.class).getInventory(entityId);
         for (int i = 0; i < inventory.length; i++) {

@@ -11,6 +11,30 @@ pioche-01
 	bounds: 0, 34, 32, 32
 reimu
 	bounds: 0, 170, 64, 64
+reimu-back-0
+	bounds: 34, 31, 18, 24
+reimu-back-1
+	bounds: 34, 57, 18, 24
+reimu-back-2
+	bounds: 34, 83, 18, 24
+reimu-front-0
+	bounds: 34, 109, 18, 25
+reimu-front-1
+	bounds: 100, 209, 18, 25
+reimu-front-2
+	bounds: 66, 175, 18, 25
+reimu-left-0
+	bounds: 34, 6, 16, 23
+reimu-left-1
+	bounds: 54, 39, 17, 22
+reimu-left-2
+	bounds: 54, 63, 17, 22
+reimu-right-0
+	bounds: 54, 111, 16, 23
+reimu-right-1
+	bounds: 54, 87, 17, 22
+reimu-right-2
+	bounds: 86, 178, 17, 22
 sand-01
 	bounds: 0, 68, 32, 32
 sandales-01

@@ -31,7 +31,8 @@ public class WorldMapSystem extends DelayedIteratingSystem {
     private ComponentMapper<PositionComponent> mPosition;
     private final static int RENDER_DISTANCE = 6;
     private int[] ancienneChunkPos = null;
-    private float delay = 0.01f;
+    private final static float INITALE_DELAY = 0.005f;
+    private float delay = INITALE_DELAY;
 
     protected void process(int mapId) {
         int playerId = context.getEcsEngine().getPlayerId();
@@ -282,6 +283,6 @@ public class WorldMapSystem extends DelayedIteratingSystem {
     @Override
     protected void processExpired(int mapId) {
         process(mapId);
-        offerDelay(0.01f);
+        offerDelay(INITALE_DELAY);
     }
 }
