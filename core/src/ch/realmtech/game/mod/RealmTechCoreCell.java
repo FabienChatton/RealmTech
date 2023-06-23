@@ -14,12 +14,12 @@ public class RealmTechCoreCell {
     public final static String GRASS_CELL = "cell.grass";
     public final static String SAND_CELL = "cell.sand";
     public final static String WATER_CELL = "cell.water";
+    public final static String COPPER_ORE = "cell.copperOre";
 
     static void initCell(Registry<CellRegisterEntry> registry, RealmTech context) {
         registry.put(GRASS_CELL, new CellRegisterEntry(
                 context.getTextureAtlas().findRegion("grass-01"),
                 new CellBehavior.Builder(Layer.GROUND)
-                        .breakWith(ItemType.PELLE)
                         .playerWalkSound(context.getAssetManager().get(SoundManager.FOOT_STEP_GRASS_2), 1f)
                         .build()
         ));
@@ -27,7 +27,6 @@ public class RealmTechCoreCell {
         registry.put(SAND_CELL, new CellRegisterEntry(
                 context.getTextureAtlas().findRegion("sand-01"),
                 new CellBehavior.Builder(Layer.GROUND)
-                        .breakWith(ItemType.PELLE)
                         .playerWalkSound(context.getAssetManager().get(SoundManager.FOOT_STEP_SAND_1),0.25f)
                         .build()
         ));
@@ -39,5 +38,12 @@ public class RealmTechCoreCell {
                         .playerWalkSound(context.getAssetManager().get(SoundManager.FOOT_STEP_WATER_1), 0.25f)
                         .build()
         ));
+
+        registry.put(COPPER_ORE, new CellRegisterEntry(
+                context.getTextureAtlas().findRegion("copper-ore-1"),
+                new CellBehavior.Builder(Layer.GROUND_DECO)
+                        .breakWith(ItemType.PIOCHE)
+                        .build()
+                ));
     }
 }

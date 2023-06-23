@@ -61,7 +61,7 @@ public class SaveInfManager extends Manager {
         int metaDonneesId = world.create();
         InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
         InfMetaDonneesComponent infMetaDonneesComponent = world.edit(metaDonneesId).create(InfMetaDonneesComponent.class);
-        infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, name);
+        infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, name, world);
         infMapComponent.infMetaDonnees = metaDonneesId;
         return mapId;
     }
@@ -146,7 +146,7 @@ public class SaveInfManager extends Manager {
             float playerPosX = buffer.getFloat();
             float playerPosY = buffer.getFloat();
             int metaDonnesId = world.create();
-            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, playerPosX, playerPosY, saveName);
+            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, playerPosX, playerPosY, saveName, world);
             return metaDonnesId;
         }
     }

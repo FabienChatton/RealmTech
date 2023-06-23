@@ -4,8 +4,6 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
-import ch.realmtech.game.mod.RealmTechCoreCell;
-import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -15,9 +13,7 @@ import com.badlogic.gdx.Gdx;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @All(InfMapComponent.class)
 public class WorldMapSystem extends DelayedIteratingSystem {
@@ -135,30 +131,33 @@ public class WorldMapSystem extends DelayedIteratingSystem {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
         for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
-            cellsId.add(generateNewCell(infMapComponent.infMetaDonnees, chunkPosX, chunkPosY, i));
+            int[] cells = generateNewCell(infMapComponent.infMetaDonnees, chunkPosX, chunkPosY, i);
+            for (int j = 0; j < cells.length; j++) {
+                cellsId.add(cells[j]);
+            }
         }
-        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
+        InfChunkComponent infChunkComponent = world.edit(chunkId).create(InfChunkComponent.class);
+        infChunkComponent.set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
         return chunkId;
     }
 
-    private int generateNewCell(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
+    private int[] generateNewCell(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = getInnerChunkX(index);
         byte innerChunkY = getInnerChunkY(index);
         int worldX = getWorldPossX(chunkPosX, innerChunkX);
         int worldY = getWorldPossY(chunkPosY, innerChunkY);
         PerlinNoise perlinNoise = mMetaDonnees.get(metaDonnees).perlinNoise;
-        final CellRegisterEntry cellRegisterEntry;
-        float v = perlinNoise.get(worldX, worldY);
-        if (v > 0f && v < 0.5f) {
-            cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.GRASS_CELL);
-        } else if (v >= 0.5f) {
-            cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.SAND_CELL);
-        } else {
-            cellRegisterEntry = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(RealmTechCoreCell.WATER_CELL);
+        final CellRegisterEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
+        final int[] cellIds = new int[(int) Arrays.stream(cellRegisterEntries).filter(Objects::nonNull).count()];
+        for (int i = 0; i < cellRegisterEntries.length; i++) {
+            CellRegisterEntry cellRegisterEntry = cellRegisterEntries[i];
+            if (cellRegisterEntry != null) {
+                int cellId = world.create();
+                cellIds[i] = cellId;
+                world.edit(cellId).create(InfCellComponent.class).set(innerChunkX, innerChunkY, cellRegisterEntry);
+            }
         }
-        int cellId = world.create();
-        world.edit(cellId).create(InfCellComponent.class).set(innerChunkX, innerChunkY, cellRegisterEntry);
-        return cellId;
+        return cellIds;
     }
 
     /**
