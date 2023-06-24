@@ -16,10 +16,10 @@ public class InfRegistry<T extends InfEntry> {
         if (!name.matches("^[a-zA-Z]+$")) throw new IllegalArgumentException("le nom du registre doit contenir uniquement des lettres entre a et z en minuscule ou majuscule" + getID());
     }
 
-    public static <T extends InfEntry> InfRegistry<T> Create(String name) {
+    public static <T extends InfEntry> InfRegistry<T> create(String name) {
         return new InfRegistry<>(null, name);
     }
-    public static <T extends InfEntry> InfRegistry<T> Create(String name, InfRegistry<T> parent) {
+    public static <T extends InfEntry> InfRegistry<T> create(String name, InfRegistry<T> parent) {
         return new InfRegistry<>(parent, name);
     }
     public void add(String name, T registryEntry){

@@ -32,16 +32,16 @@ public class PerlinNoise {
     public CellRegisterEntry[] generateCell(int x, int y) {
         float ground = getGroundNoise(x, y);
         final CellRegisterEntry groundCellRegisterEntry;
-        if (ground > 0f && ground < 0.5f) {
+        if (ground < 0.5f) {
             groundCellRegisterEntry = RealmTechCoreCell.GRASS_CELL;
-        } else if (ground >= 0.5f) {
+        } else if (ground < 0.95f) {
             groundCellRegisterEntry = RealmTechCoreCell.SAND_CELL;
         } else {
             groundCellRegisterEntry = RealmTechCoreCell.WATER_CELL;
         }
         float groundDeco = getGroundDecoNoise(x, y);
         CellRegisterEntry groundDecoCellRegisterEntry = null;
-        if (groundDeco > 0.98f) {
+        if (groundDeco > 0.999f) {
             if (groundCellRegisterEntry == RealmTechCoreCell.GRASS_CELL || groundCellRegisterEntry == RealmTechCoreCell.SAND_CELL) {
                 groundDecoCellRegisterEntry = RealmTechCoreCell.COPPER_ORE;
             }

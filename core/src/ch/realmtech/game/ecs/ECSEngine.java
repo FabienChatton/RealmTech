@@ -188,7 +188,7 @@ public final class ECSEngine {
         int defaultResultInventory = world.create();
         CraftingComponent craftingComponent = world.edit(defaultCraftingTable).create(CraftingComponent.class);
         world.edit(defaultResultInventory).create(InventoryComponent.class).set(1,1, context.getTextureAtlas().findRegion("water-01"));
-        craftingComponent.set(RealmTechCoreMod.REALM_TECH_CORE_CRAFTING_RECIPE_ENTRY, defaultResultInventory);
+        craftingComponent.set(RealmTechCoreMod.CRAFT, defaultResultInventory);
         InventoryComponent craftingInventoryComponent = world.edit(defaultCraftingTable).create(InventoryComponent.class);
         craftingInventoryComponent.set(3, 3,context.getTextureAtlas().findRegion("water-01"));
         world.getSystem(TagManager.class).register("crafting", defaultCraftingTable);
