@@ -5,7 +5,6 @@ import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.game.registery.Registry;
-import ch.realmtech.game.registery.infRegistry.InfRegistry;
 
 import static ch.realmtech.game.level.cell.Cells.Layer;
 
@@ -37,14 +36,7 @@ public class RealmTechCoreCell {
     );
 
 
-    static void initCell(Registry<CellRegisterEntry> registry) {
-        registry.put("cell.grass", GRASS_CELL);
-        registry.put("cell.sand", SAND_CELL);
-        registry.put("cell.water", WATER_CELL);
-        registry.put("cell.copperOre", COPPER_ORE);
-    }
-
-    static void initCell (InfRegistry<CellRegisterEntry> registry) {
+    static void initCell (Registry<CellRegisterEntry> registry) {
         registry.add("grass", GRASS_CELL);
         registry.add("sand", SAND_CELL);
         registry.add("water", WATER_CELL);

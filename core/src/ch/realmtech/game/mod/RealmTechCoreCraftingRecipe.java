@@ -1,7 +1,7 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.game.registery.CraftingRecipeEntry;
-import ch.realmtech.game.registery.infRegistry.InfRegistryAnonyme;
+import ch.realmtech.game.registery.InfRegistryAnonyme;
 
 public class RealmTechCoreCraftingRecipe {
 

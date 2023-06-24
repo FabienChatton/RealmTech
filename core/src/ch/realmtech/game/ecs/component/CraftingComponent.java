@@ -1,7 +1,7 @@
 package ch.realmtech.game.ecs.component;
 
 import ch.realmtech.game.registery.CraftingRecipeEntry;
-import ch.realmtech.game.registery.infRegistry.InfRegistryAnonyme;
+import ch.realmtech.game.registery.InfRegistryAnonyme;
 import com.artemis.Component;
 import com.artemis.annotations.EntityId;
 import com.badlogic.gdx.utils.Array;

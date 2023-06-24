@@ -2,12 +2,11 @@ package ch.realmtech.game.registery;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.item.ItemBehavior;
-import ch.realmtech.game.registery.infRegistry.InfEntry;
 import ch.realmtech.helper.SetContext;
 import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class ItemRegisterEntry implements RegistryEntry, InfEntry, SetContext {
+public class ItemRegisterEntry implements Entry, SetContext {
     private Archetype archetype;
     private final TextureRegion textureRegion;
     private final ItemBehavior itemBehavior;

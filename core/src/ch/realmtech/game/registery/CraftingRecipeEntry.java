@@ -1,9 +1,7 @@
 package ch.realmtech.game.registery;
 
 
-import ch.realmtech.game.registery.infRegistry.InfEntry;
-
-public interface CraftingRecipeEntry extends RegistryEntry, InfEntry {
+public interface CraftingRecipeEntry extends Entry {
     /**
      * Donne en entrer un tableau à deux dimensions comme :
      * <pre>

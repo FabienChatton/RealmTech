@@ -3,12 +3,11 @@ package ch.realmtech.game.registery;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.game.registery.infRegistry.InfEntry;
 import ch.realmtech.helper.SetContext;
 import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class CellRegisterEntry implements SetContext, InfEntry, RegistryEntry {
+public class CellRegisterEntry implements SetContext, Entry {
     private Archetype archetype;
     private final TextureRegion textureRegion;
     private final CellBehavior cellBehavior;
