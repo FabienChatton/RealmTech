@@ -1,13 +1,15 @@
 package ch.realmtech.game.level.cell;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.PlayerFootStepSound;
+import ch.realmtech.helper.SetContext;
 import com.badlogic.gdx.audio.Sound;
 
 import static ch.realmtech.game.level.cell.Cells.Layer;
 
-public class CellBehavior {
-
+public class CellBehavior implements SetContext {
+    public static RealmTech context;
     private ItemType breakWith;
     private float speedEffect = 1;
     private PlayerFootStepSound playerFootStepSound;
@@ -56,6 +58,10 @@ public class CellBehavior {
 
         public Builder playerWalkSound(Sound soundEffect, float volume) {
             cellBehavior.playerFootStepSound = new PlayerFootStepSound(soundEffect, volume);
+            return this;
+        }
+        public Builder playerWalkSound(String soundEffectName, float volume) {
+            cellBehavior.playerFootStepSound = new PlayerFootStepSound(context.getAssetManager().get(soundEffectName, Sound.class), volume);
             return this;
         }
 

@@ -74,7 +74,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 try {
-                    ecsEngine.loadInfFile(file.toPath());
+                    context.loadInfFile(file.toPath());
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
                     throw new RuntimeException(e);

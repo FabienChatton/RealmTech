@@ -1,14 +1,18 @@
 package ch.realmtech.game.registery;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
+import ch.realmtech.game.registery.infRegistry.InfEntry;
+import ch.realmtech.helper.SetContext;
 import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class CellRegisterEntry implements RegistryEntry {
+public class CellRegisterEntry implements SetContext, InfEntry, RegistryEntry {
     private Archetype archetype;
     private final TextureRegion textureRegion;
     private final CellBehavior cellBehavior;
+    public static RealmTech context;
 
     /**
      * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
@@ -18,10 +22,10 @@ public class CellRegisterEntry implements RegistryEntry {
      */
     public static CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
         CellRegisterEntry ret = null;
-        for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
-            int keyHash = key.hashCode();
+        for (String id : RealmTechCoreMod.CELLS.getEnfantsId()) {
+            int keyHash = id.hashCode();
             if (keyHash == cellRegisterHash) {
-                ret = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(key);
+                ret = RealmTechCoreMod.CELLS.get(id).getEntry();
                 break;
             }
         }
@@ -29,22 +33,20 @@ public class CellRegisterEntry implements RegistryEntry {
     }
 
     public static CellRegisterEntry getCellModAndCellHash(byte cellRegisterHash) {
-        CellRegisterEntry ret = null;
-        for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
-            byte keyHash = (byte) key.hashCode();
+        for (String id : RealmTechCoreMod.CELLS.getEnfantsId()) {
+            byte keyHash = (byte) id.hashCode();
             if (keyHash == cellRegisterHash) {
-                ret = RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(key);
-                break;
+                return RealmTechCoreMod.CELLS.get(id).getEntry();
             }
         }
-        return ret;
+        throw new IllegalArgumentException("Aucun registre ne correspond au hash " + cellRegisterHash + ". La carte a été corrompue");
     }
 
     public static int getHash(CellRegisterEntry cellRegisterEntry) {
         int ret = -1;
-        for (String key : RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.keySet()) {
-            if (RealmTechCoreMod.REALM_TECH_CORE_CELL_REGISTRY.get(key) == cellRegisterEntry) {
-                ret = key.hashCode();
+        for (String id : RealmTechCoreMod.CELLS.getEnfantsId()) {
+            if (RealmTechCoreMod.CELLS.get(id).getEntry() == cellRegisterEntry) {
+                ret = id.hashCode();
                 break;
             }
         }
@@ -71,6 +73,11 @@ public class CellRegisterEntry implements RegistryEntry {
 
     public CellRegisterEntry(TextureRegion textureRegion, CellBehavior cellBehavior) {
         this.textureRegion = textureRegion;
+        this.cellBehavior = cellBehavior;
+    }
+
+    public CellRegisterEntry(String textureRegionName, CellBehavior cellBehavior) {
+        this.textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
         this.cellBehavior = cellBehavior;
     }
 }

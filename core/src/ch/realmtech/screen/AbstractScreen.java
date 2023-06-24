@@ -1,7 +1,6 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.ECSEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -21,7 +20,6 @@ public abstract class AbstractScreen implements Screen {
     protected final Stage uiStage;
     protected final OrthographicCamera uiCamera;
     protected final Skin skin;
-    protected final ECSEngine ecsEngine;
 
     public AbstractScreen(RealmTech context) {
         this.context = context;
@@ -35,7 +33,6 @@ public abstract class AbstractScreen implements Screen {
 
         this.uiTable = new Table();
         this.uiTable.setFillParent(true);
-        this.ecsEngine = context.getEcsEngine();
     }
 
     @Override

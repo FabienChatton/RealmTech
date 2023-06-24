@@ -40,3 +40,36 @@ Ce système de layer, peut varier dans les futures versions du protocole
 de sauvegarde du monde, mais pour le moment, ça marche comme ça.
 Le layer est sauvegardé dans le CelleBehavior.
 Le layer est utilisé pour poser la cellule sur le plateau
+
+
+### registre
+Les registres permettent de stocker tout le contenu que jeux va utiliser.
+Ainsi, il est plus facile d'ajouter du contenu.
+```mermaid
+classDiagram
+    direction BT
+    class InfRegistry~T extends InfEntry~ {
+        -InfRegistry~T~ parent
+        -List~InfRegistry~T~~ enfants
+        -String name
+        +getId()
+        +getEnfants()
+        +add(T entry)
+    }
+    
+    class InfRegistryEntry~T extends InfEntry~ {
+        T entry
+    }
+    
+    class InfEntry {
+        <<interface>>
+    }
+    class InfCellEntry {
+        
+    }
+    
+    InfCellEntry --|> InfEntry
+    InfRegistryEntry --|> InfRegistry
+    InfRegistry --* InfRegistry
+    InfRegistryEntry --* InfEntry
+```

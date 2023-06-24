@@ -2,7 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.system.SoundManager;
-import ch.realmtech.helper.HelperSetContext;
+import ch.realmtech.helper.SetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.EnumMap;
 
 public final class RealmTech extends Game{
@@ -67,7 +68,7 @@ public final class RealmTech extends Game{
     }
 
     private void initHealper() {
-        HelperSetContext.setContext(this);
+        SetContext.setContext(this);
     }
 
     @Override
@@ -151,6 +152,8 @@ public final class RealmTech extends Game{
     public void quiteAndSave() {
         try {
             ecsEngine.saveInfMap();
+            ecsEngine.dispose();
+            ecsEngine = new ECSEngine(this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -163,5 +166,13 @@ public final class RealmTech extends Game{
         if (screenCash.containsKey(ScreenType.GAME_SCREEN)) {
             screenCash.get(ScreenType.GAME_SCREEN).draw();
         }
+    }
+
+    public void process(float deltaTime) {
+        ecsEngine.process(deltaTime);
+    }
+
+    public void loadInfFile(Path path) throws IOException {
+        ecsEngine.loadInfFile(path);
     }
 }

@@ -4,7 +4,7 @@ import ch.realmtech.RealmTech;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 
-public final class PopupHelper implements HelperSetContext {
+public final class Popup implements SetContext {
 
     private static final GlyphLayout glyphLayout;
     static RealmTech context;

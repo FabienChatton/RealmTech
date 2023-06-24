@@ -196,7 +196,9 @@ public final class ECSEngine {
 
         return playerId;
     }
-
+    public void dispose() {
+        world.dispose();
+    }
     public Body createBox2dItem(int itemId, float worldX, float worldY, TextureRegion texture) {
         resetBodyDef();
         resetFixtureDef();

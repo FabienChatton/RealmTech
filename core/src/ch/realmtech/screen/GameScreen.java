@@ -3,7 +3,6 @@ package ch.realmtech.screen;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.mod.RealmTechCoreItem;
-import ch.realmtech.game.mod.RealmTechCoreMod;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
@@ -40,9 +39,9 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             Vector3 worldPosition = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             if (MathUtils.randomBoolean()) {
-                context.getEcsEngine().getItemManager().newItemOnGround(worldPosition.x, worldPosition.y, RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PELLE_ITEM));
+                context.getEcsEngine().getItemManager().newItemOnGround(worldPosition.x, worldPosition.y, RealmTechCoreItem.PELLE_ITEM);
             } else {
-                context.getEcsEngine().getItemManager().newItemOnGround(worldPosition.x, worldPosition.y, RealmTechCoreMod.REALM_TECH_CORE_ITEM_REGISTRY.get(RealmTechCoreItem.PIOCHE_ITEM));
+                context.getEcsEngine().getItemManager().newItemOnGround(worldPosition.x, worldPosition.y, RealmTechCoreItem.PIOCHE_ITEM);
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) context.getEcsEngine().togglePlayerInventoryWindow();
@@ -62,7 +61,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void draw() {
-        ecsEngine.process(Gdx.graphics.getDeltaTime());
+        context.process(Gdx.graphics.getDeltaTime());
         //box2DDebugRenderer.render(context.physicWorld, gameCamera.combined);
         uiStage.draw();
     }
