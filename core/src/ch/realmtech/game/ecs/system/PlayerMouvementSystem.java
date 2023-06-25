@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.input.InputMapper;
 import com.artemis.ComponentMapper;
@@ -32,8 +33,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
         MovementComponent movementComponent = mMouvement.get(entityId);
         PositionComponent positionComponent = mPosition.get(entityId);
         Box2dComponent box2dComponent = mBox2d.get(entityId);
-        //int cellId = context.getEcsEngine().getCellManager().getCell((int) positionComponent.x, (int) positionComponent.y, (byte) 0);
-        int cellId = context.getEcsEngine().getCell(positionComponent.x, positionComponent.y);
+        int cellId = context.getEcsEngine().getCell(positionComponent.x, positionComponent.y, Cells.Layer.GROUND.layer);
         xFactor = 0;
         yFactor = 0;
         if (cellId != -1) {

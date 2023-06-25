@@ -11,7 +11,7 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 @All(InfMapComponent.class)
-public class WorldMapRendererSystem extends IteratingSystem {
+public class MapRendererSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
     private ComponentMapper<InfMapComponent> mMap;
@@ -33,8 +33,8 @@ public class WorldMapRendererSystem extends IteratingSystem {
             for (int j = 0; j < infChunkComponent.infCellsId.length; j++) {
                 int cellId = infChunkComponent.infCellsId[j];
                 InfCellComponent infCellComponent = mCell.get(cellId);
-                int worldX = WorldMapSystem.getWorldPossX(infChunkComponent.chunkPossX, infCellComponent.posX);
-                int worldY = WorldMapSystem.getWorldPossY(infChunkComponent.chunkPossY, infCellComponent.posY);
+                int worldX = MapSystem.getWorldPoss(infChunkComponent.chunkPossX, infCellComponent.innerPosX);
+                int worldY = MapSystem.getWorldPoss(infChunkComponent.chunkPossY, infCellComponent.innerPosY);
                 TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion();
                 context.getGameStage().getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
             }

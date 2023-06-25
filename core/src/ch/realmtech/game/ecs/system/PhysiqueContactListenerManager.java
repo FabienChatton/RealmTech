@@ -10,8 +10,8 @@ import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 
-public class WorldContactListenerManager extends Manager implements ContactListener {
-    private final static String TAG = WorldContactListenerManager.class.getSimpleName();
+public class PhysiqueContactListenerManager extends Manager implements ContactListener {
+    private final static String TAG = PhysiqueContactListenerManager.class.getSimpleName();
     @Wire(name = "context")
     private RealmTech context;
 

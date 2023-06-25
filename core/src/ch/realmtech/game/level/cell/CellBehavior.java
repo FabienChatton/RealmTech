@@ -1,8 +1,13 @@
 package ch.realmtech.game.level.cell;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.InfCellComponent;
+import ch.realmtech.game.ecs.component.InfChunkComponent;
+import ch.realmtech.game.ecs.system.ItemManager;
+import ch.realmtech.game.ecs.system.MapSystem;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.PlayerFootStepSound;
+import ch.realmtech.game.mod.RealmTechCoreItem;
 import ch.realmtech.helper.SetContext;
 import com.badlogic.gdx.audio.Sound;
 
@@ -33,6 +38,23 @@ public class CellBehavior implements SetContext {
 
     public byte getLayer() {
         return layer;
+    }
+
+    public BreakCell getBreakCellEvent() {
+        return (world, chunkId, cellId, itemComponent, playerComponent) -> {
+            InfCellComponent cellComponent = world.getMapper(InfCellComponent.class).get(cellId);
+            InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
+            if (itemComponent != null && cellComponent != null && playerComponent != null) {
+                if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemComponent.itemRegisterEntry.getItemBehavior().getItemType()) {
+                    world.getSystem(ItemManager.class).newItemOnGround(
+                            MapSystem.getWorldPoss(infChunkComponent.chunkPossX, cellComponent.innerPosX),
+                            MapSystem.getWorldPoss(infChunkComponent.chunkPossY, cellComponent.innerPosY),
+                            RealmTechCoreItem.SANDALES_ITEM
+                    );
+                    world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
+                }
+            }
+        };
     }
 
     public static class Builder {

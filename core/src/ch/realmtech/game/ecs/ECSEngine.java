@@ -43,11 +43,11 @@ public final class ECSEngine {
                 .with(new TagManager())
                 .with(new ItemManager())
                 .with(new InventoryManager())
-                .with(new WorldContactListenerManager())
+                .with(new PhysiqueContactListenerManager())
                 .with(new SaveInfManager())
 
                 // system
-                .with(new WorldMapSystem())
+                .with(new MapSystem())
                 .with(new CraftingSystem())
                 .with(new ItemBeingPickAnimationSystem())
                 .with(new SoundManager())
@@ -55,7 +55,7 @@ public final class ECSEngine {
                 .with(new PlayerMouvementSystem())
                 .with(new PhysiqueWorldStepSystem())
                 .with(new UpdateBox2dWithTextureSystem())
-                .with(new WorldMapRendererSystem())
+                .with(new MapRendererSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new TextureRenderer())
                 .with(new PlayerTextureAnimated())
@@ -70,7 +70,7 @@ public final class ECSEngine {
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
         worldConfiguration.register(context.getTextureAtlas());
         world = new World(worldConfiguration);
-        physicWorld.setContactListener(world.getSystem(WorldContactListenerManager.class));
+        physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
     }
@@ -243,7 +243,7 @@ public final class ECSEngine {
     public void generateNewSave(String name) throws IOException {
         int mapId = world.getSystem(SaveInfManager.class).generateNewSave(name);
         InfMapComponent infMapComponent = world.getMapper(InfMapComponent.class).get(mapId);
-        int chunkId = world.getSystem(WorldMapSystem.class).generateNewChunk(mapId, 0, 0);
+        int chunkId = world.getSystem(MapSystem.class).generateNewChunk(mapId, 0, 0);
         infMapComponent.infChunks = new int[]{chunkId};
         mapRequirementBeforeShow(mapId);
         world.getSystem(SaveInfManager.class).saveInfMap(mapId);
@@ -255,18 +255,21 @@ public final class ECSEngine {
     }
 
     public void saveInfMap() throws IOException {
-        int mapId = world.getSystem(TagManager.class).getEntityId("infMap");
+        int mapId = getMapId();
         world.getSystem(SaveInfManager.class).saveInfMap(mapId);
     }
 
+    public int getMapId() {
+        return world.getSystem(TagManager.class).getEntityId("infMap");
+    }
+
+
     /**
      * Donne l'id de la cellule via ses cordonnées dans le monde.
-     * @param worldPosX
-     * @param worldPosY
      * @return l'id de la cellule ou -1 si pas trouvé.
      */
-    public int getCell(float worldPosX, float worldPosY) {
-        return world.getSystem(WorldMapSystem.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks ,(int) worldPosX, (int) worldPosY);
+    public int getCell(float worldPosX, float worldPosY, byte layer) {
+        return world.getSystem(MapSystem.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks ,(int) worldPosX, (int) worldPosY, layer);
     }
 
     public void playFootStep(PlayerFootStepSound footStep) {
