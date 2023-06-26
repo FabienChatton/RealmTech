@@ -20,7 +20,6 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
         // supprime ou place cellule sur la carte
         if (pointerMapper.isPressed) {
             Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            System.out.println(gameCoordinate);
             if (pointerMapper.pointer == 0) {
                 context.getEcsEngine().getWorld().getSystem(MapSystem.class).interagiePlayer(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y);
 //                if (pointerMapper.button == InputMapper.leftClick.button) {

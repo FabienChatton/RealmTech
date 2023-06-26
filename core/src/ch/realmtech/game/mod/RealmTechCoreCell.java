@@ -31,7 +31,7 @@ public class RealmTechCoreCell {
     public final static CellRegisterEntry COPPER_ORE = new CellRegisterEntry(
             "copper-ore-1",
             new CellBehavior.Builder(Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE)
+                    .breakWith(ItemType.PIOCHE, RealmTechCoreItem.SANDALES_ITEM)
                     .build()
     );
 

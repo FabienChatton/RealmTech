@@ -5,5 +5,5 @@ import ch.realmtech.game.ecs.component.PlayerComponent;
 import com.artemis.World;
 
 public interface BreakCell {
-    void breakCell(World world, int chunkId, int cellId, ItemComponent itemComponent, PlayerComponent payerComponent);
+    void breakCell(World world, int chunkId, int cellId, ItemComponent itemComponent, PlayerComponent playerComponent);
 }

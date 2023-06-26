@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.level.cell.BreakCell;
 import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
@@ -261,8 +262,6 @@ public class MapSystem extends DelayedIteratingSystem {
     }
 
     /**
-     * @param worldPosX
-     * @param worldPosY
      * @return chunk id. -1 si pas trouvé
      */
     public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
@@ -356,7 +355,10 @@ public class MapSystem extends DelayedIteratingSystem {
             int topCellId = getTopCell(chunk, innerX, innerY);
             if (topCellId != -1) {
                 InfCellComponent infCellComponent = mCell.get(topCellId);
-                infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent().breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId));
+                BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+                if (breakCellEvent != null) {
+                    breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId));
+                }
             }
         }
     }
