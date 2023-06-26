@@ -45,6 +45,8 @@ public class PerlinNoise {
             if (groundCellRegisterEntry == RealmTechCoreCell.GRASS_CELL || groundCellRegisterEntry == RealmTechCoreCell.SAND_CELL) {
                 groundDecoCellRegisterEntry = RealmTechCoreCell.COPPER_ORE;
             }
+        } else if (groundDeco > 0.998f && groundDeco < 0.999f) {
+            groundDecoCellRegisterEntry = RealmTechCoreCell.TREE_CELL;
         }
         return new CellRegisterEntry[]{groundCellRegisterEntry, groundDecoCellRegisterEntry};
     }

@@ -26,10 +26,16 @@ public class RealmTechCoreItem {
                     .setSpeedEffect(2)
                     .build()
     );
+    public final static ItemRegisterEntry BUCHE = new ItemRegisterEntry(
+            "buche-01",
+            new ItemBehavior.Builder()
+                    .build()
+    );
 
     public static void initItem(Registry<ItemRegisterEntry> registry) {
         registry.add("pioche", PIOCHE_ITEM);
         registry.add("pelle", PELLE_ITEM);
         registry.add("sandales", SANDALES_ITEM);
+        registry.add("buche", BUCHE);
     }
 }

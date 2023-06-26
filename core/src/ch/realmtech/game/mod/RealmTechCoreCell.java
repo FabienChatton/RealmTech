@@ -34,6 +34,12 @@ public class RealmTechCoreCell {
                     .breakWith(ItemType.PIOCHE, RealmTechCoreItem.SANDALES_ITEM)
                     .build()
     );
+    public final static CellRegisterEntry TREE_CELL = new CellRegisterEntry(
+            "tree-01",
+            new CellBehavior.Builder(Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, RealmTechCoreItem.BUCHE)
+                    .build()
+    );
 
 
     static void initCell (Registry<CellRegisterEntry> registry) {
@@ -41,5 +47,6 @@ public class RealmTechCoreCell {
         registry.add("sand", SAND_CELL);
         registry.add("water", WATER_CELL);
         registry.add("copperOre", COPPER_ORE);
+        registry.add("tree", TREE_CELL);
     }
 }
