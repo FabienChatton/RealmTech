@@ -68,15 +68,20 @@ public class CellBehavior implements SetContext {
             return this;
         }
 
+        public Builder dropNothing() {
+            cellBehavior.breakCellEvent = new BreakCellEvent().dropNothing();
+            return this;
+        }
+
         public Builder speedEffect(float speedEffect) {
             cellBehavior.speedEffect = speedEffect;
             return this;
         }
-
         public Builder playerWalkSound(Sound soundEffect, float volume) {
             cellBehavior.playerFootStepSound = new PlayerFootStepSound(soundEffect, volume);
             return this;
         }
+
         public Builder playerWalkSound(String soundEffectName, float volume) {
             cellBehavior.playerFootStepSound = new PlayerFootStepSound(context.getAssetManager().get(soundEffectName, Sound.class), volume);
             return this;
