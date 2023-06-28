@@ -43,7 +43,6 @@ public class PlayerTextureAnimated extends IteratingSystem {
         if (playerComponent.cooldown <= 0) {
             TextureComponent textureComponent = mTexture.get(entityId);
             updateAnimation(playerComponent, textureComponent);
-
             playerComponent.cooldown = playerComponent.laps;
         }
     }

@@ -5,6 +5,7 @@ import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.ecs.component.StoredItemComponent;
+import ch.realmtech.input.InputMapper;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -23,11 +24,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 public class PlayerInventoryManager extends BaseSystem {
+    private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<StoredItemComponent> mStoredItem;
+    private ComponentMapper<InventoryComponent> mInventory;
     private Stage inventoryStage;
     private Window inventoryWindow;
     private Table inventoryTable;
+    private Table craftingTable;
     private DragAndDrop dragAndDrop;
-    private ComponentMapper<InventoryComponent> mInventory;
     @Wire(name = "context")
     private RealmTech context;
 
@@ -47,6 +51,7 @@ public class PlayerInventoryManager extends BaseSystem {
         this.inventoryStage = new Stage(context.getUiStage().getViewport(), context.getUiStage().getBatch());
         this.inventoryWindow = new Window("Inventaire", context.getSkin());
         this.inventoryTable = new Table(context.getSkin());
+        this.craftingTable = new Table(context.getSkin());
         this.dragAndDrop = new DragAndDrop();
         dragAndDrop.setDragTime(0);
         inventoryWindow.add(inventoryTable);
@@ -63,11 +68,12 @@ public class PlayerInventoryManager extends BaseSystem {
             Gdx.input.setInputProcessor(context.getInputManager());
         } else {
             super.setEnabled(true);
+            InputMapper.reset();
             Gdx.input.setInputProcessor(inventoryStage);
             clearDisplayInventory();
-            setInventoryToDisplay(playerId);
-            setInventoryToDisplay(world.getSystem(TagManager.class).getEntityId("crafting"));
-            setInventoryToDisplay(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"));
+            displayInventory(playerId, inventoryTable);
+            displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable);
+            displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable);
         }
     }
 
@@ -76,27 +82,31 @@ public class PlayerInventoryManager extends BaseSystem {
         dragAndDrop.clear();
     }
 
-    public void setInventoryToDisplay(int entityId) {
-        Array<Table> inventoryTableToDisplay = getInventoryTableToDisplay(entityId);
-        for (int i = 0; i < inventoryTableToDisplay.size; i++) {
-            if (i % mInventory.get(entityId).numberOfSlotParRow == 0) {
+    /**
+     * Ajout les cases de l'inventaire dans le tableau passé en second paramètre.
+     * @param inventoryId L'id de l'inventaire.
+     * @param inventoryTable La table où l'ont souhait affiché l'inventaire.
+     */
+    public void displayInventory(int inventoryId, Table inventoryTable) {
+        Array<Table> cellsToDisplay = getCellsToDisplay(inventoryId);
+        for (int i = 0; i < cellsToDisplay.size; i++) {
+            if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
             }
-            inventoryTable.add(inventoryTableToDisplay.get(i)).padLeft(2f);
+            inventoryTable.add(cellsToDisplay.get(i)).padLeft(2f);
         }
     }
 
-    public Array<Table> getInventoryTableToDisplay(int entityId) {
-        ComponentMapper<ItemComponent> mItem = context.getEcsEngine().getWorld().getMapper(ItemComponent.class);
-        ComponentMapper<StoredItemComponent> mStoredItem = context.getEcsEngine().getWorld().getMapper(StoredItemComponent.class);
+    /**
+     * Crée les cellules de l'inventaire.
+     * @param IventoryId L'inventaire id.
+     * @return Une liste de table qui sont les cellules avec la texture.
+     */
+    public Array<Table> getCellsToDisplay(int IventoryId) {
         Array<Table> itemSlots = new Array<>();
-        InventoryComponent inventoryComponent = mInventory.get(entityId);
+        InventoryComponent inventoryComponent = mInventory.get(IventoryId);
         int[][] inventory = inventoryComponent.inventory;
-        int row = 0;
         for (int[] slotId : inventory) {
-            if (row % InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW == 0) {
-                inventoryTable.row().padBottom(2f);
-            }
             Table itemSlotTable = new Table(context.getSkin());
             itemSlotTable.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
             final Image imageItem;
@@ -108,7 +118,6 @@ public class PlayerInventoryManager extends BaseSystem {
             itemSlotTable.add(imageItem);
             itemSlots.add(itemSlotTable);
             addDragAndDrop(itemSlotTable, imageItem, slotId);
-            row++;
         }
         return itemSlots;
     }

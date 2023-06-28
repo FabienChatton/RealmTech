@@ -54,11 +54,12 @@ public final class ECSEngine {
                 .with(new PickUpOnGroundItemSystem())
                 .with(new PlayerMouvementSystem())
                 .with(new PhysiqueWorldStepSystem())
-                .with(new UpdateBox2dWithTextureSystem())
-                .with(new MapRendererSystem())
-                .with(new CameraFollowPlayerSystem())
-                .with(new TextureRenderer())
+                // render
                 .with(new PlayerTextureAnimated())
+                .with(new UpdateBox2dWithTextureSystem())
+                .with(new CameraFollowPlayerSystem())
+                .with(new MapRendererSystem())
+                .with(new TextureRenderer())
 
                 // ui
                 .with(new PlayerInventoryManager())

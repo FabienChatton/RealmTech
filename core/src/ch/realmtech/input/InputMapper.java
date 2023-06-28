@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Array;
+
 //TODO mettre la gestion des input dans l'ECS avec un composent singleton
 public final class InputMapper implements InputProcessor {
     private final RealmTech context;
@@ -40,8 +41,8 @@ public final class InputMapper implements InputProcessor {
         keysMappers.add(moveBack);
 
         // pointer
-        leftClick = new PointerMapper(0,0);
-        rightClick = new PointerMapper(0,1);
+        leftClick = new PointerMapper(0, 0);
+        rightClick = new PointerMapper(0, 1);
 
         pointerMappers.add(leftClick);
         pointerMappers.add(rightClick);
@@ -57,6 +58,13 @@ public final class InputMapper implements InputProcessor {
 
     public static InputMapper getInstance(RealmTech context) {
         return instance == null ? new InputMapper(context) : instance;
+    }
+
+    public static void reset() {
+        moveForward.isPressed = false;
+        moveLeft.isPressed = false;
+        moveRight.isPressed = false;
+        moveBack.isPressed = false;
     }
 
     public boolean isKeyPressed(int keycode) {
@@ -137,7 +145,7 @@ public final class InputMapper implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        scrollSignal.notifySubscribers(new float[]{amountX,amountY});
+        scrollSignal.notifySubscribers(new float[]{amountX, amountY});
         return false;
     }
 
@@ -150,6 +158,7 @@ public final class InputMapper implements InputProcessor {
             this.isPressed = false;
         }
     }
+
     public final static class PointerMapper {
         public int pointer;
         public int button;

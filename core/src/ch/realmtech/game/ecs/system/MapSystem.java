@@ -39,8 +39,8 @@ public class MapSystem extends DelayedIteratingSystem {
         int playerId = context.getEcsEngine().getPlayerId();
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
-        int chunkPosX = getChunkPoss((int) positionPlayerComponent.x);
-        int chunkPosY = getChunkPoss((int) positionPlayerComponent.y);
+        int chunkPosX = getChunkPos((int) positionPlayerComponent.x);
+        int chunkPosY = getChunkPos((int) positionPlayerComponent.y);
         if (ancienneChunkPos == null || !(ancienneChunkPos[0] == chunkPosX && ancienneChunkPos[1] == chunkPosY)) {
             List<Integer> chunkADamner = new LinkedList<>();
 
@@ -65,7 +65,13 @@ public class MapSystem extends DelayedIteratingSystem {
                         if (indexDamner < chunkADamner.size()) {
                             Integer oldChunk = chunkADamner.get(indexDamner++);
                             replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
-                            damneChunk(oldChunk);
+                            try {
+                                world.getSystem(SaveInfManager.class).saveInfChunk(oldChunk, mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName);
+                                damneChunk(oldChunk);
+                            } catch (IOException e) {
+                                InfChunkComponent infChunkComponent = mChunk.get(oldChunk);
+                                Gdx.app.error(TAG, String.format("Le chunk %d,%d n'a pas été sauvegardé correctement", infChunkComponent.chunkPossX, infChunkComponent.chunkPossY), e);
+                            }
                         } else {
                             infMapComponent.infChunks = ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
                         }
@@ -179,10 +185,10 @@ public class MapSystem extends DelayedIteratingSystem {
     }
 
     /**
-     * Récupère une position X dans un chunk via la position X du monde.
+     * Récupère une position dans un chunk via la position du monde.
      *
-     * @param world La position X dans le monde.
-     * @return La position X dans le chunk.
+     * @param world La position dans le monde.
+     * @return La position dans le chunk.
      */
     public static byte getInnerChunk(int world) {
         if (world < 0) {
@@ -204,7 +210,7 @@ public class MapSystem extends DelayedIteratingSystem {
         return (byte) Math.abs(index / WorldMap.CHUNK_SIZE);
     }
 
-    private static byte getInnerChunk(float gameCoordinate) {
+    public static byte getInnerChunk(float gameCoordinate) {
         if (gameCoordinate > -1 && gameCoordinate < 0) {
             return 15;
         } else {
@@ -212,15 +218,15 @@ public class MapSystem extends DelayedIteratingSystem {
         }
     }
 
-    public static int getChunkPoss(int worldPoss) {
+    public static int getChunkPos(int worldPoss) {
         return (worldPoss < 0 ? worldPoss - WorldMap.CHUNK_SIZE : worldPoss) / WorldMap.CHUNK_SIZE;
     }
 
-    public static int getChunkPoss(float gameCoordinate) {
+    public static int getChunkPos(float gameCoordinate) {
         if (gameCoordinate > -1 && gameCoordinate < 0) {
             return -1;
         } else {
-            return getChunkPoss((int) gameCoordinate);
+            return getChunkPos((int) gameCoordinate);
         }
     }
 
@@ -266,8 +272,8 @@ public class MapSystem extends DelayedIteratingSystem {
      */
     public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
         int ret = -1;
-        int chunkX = getChunkPoss(worldPosX);
-        int chunkY = getChunkPoss(worldPosY);
+        int chunkX = getChunkPos(worldPosX);
+        int chunkY = getChunkPos(worldPosY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
             if (infChunkComponent.chunkPossX == chunkX && infChunkComponent.chunkPossY == chunkY) {
@@ -280,8 +286,8 @@ public class MapSystem extends DelayedIteratingSystem {
 
     public int getChunk(int[] chunks, float gameCoordinateX, float gameCoordinateY) {
         int ret = -1;
-        int chunkX = getChunkPoss(gameCoordinateX);
-        int chunkY = getChunkPoss(gameCoordinateY);
+        int chunkX = getChunkPos(gameCoordinateX);
+        int chunkY = getChunkPos(gameCoordinateY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
             if (infChunkComponent.chunkPossX == chunkX && infChunkComponent.chunkPossY == chunkY) {
