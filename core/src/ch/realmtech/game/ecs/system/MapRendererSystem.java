@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 @All(InfMapComponent.class)
 public class MapRendererSystem extends IteratingSystem {
@@ -36,15 +38,15 @@ public class MapRendererSystem extends IteratingSystem {
         for (int i = 0; i < infMapComponent.infChunks.length; i++) {
             int chunkId = infMapComponent.infChunks[i];
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-            HashSet<InfCellComponent>[] arrayLayerCell = new HashSet[WorldMap.NUMBER_LAYER];
+            List<HashSet<InfCellComponent>> arrayLayerCell = new LinkedList<>();
+            for (int j = 0; j < WorldMap.NUMBER_LAYER; j++) {
+                arrayLayerCell.add(new HashSet<>());
+            }
             for (int j = 0; j < infChunkComponent.infCellsId.length; j++) {
                 int cellId = infChunkComponent.infCellsId[j];
                 InfCellComponent infCellComponent = mCell.get(cellId);
                 byte layer = infCellComponent.cellRegisterEntry.getCellBehavior().getLayer();
-                if (arrayLayerCell[layer] == null) {
-                    arrayLayerCell[layer] = new HashSet<>();
-                }
-                arrayLayerCell[layer].add(infCellComponent);
+                arrayLayerCell.get(layer).add(infCellComponent);
             }
 
             for (HashSet<InfCellComponent> infCellComponents : arrayLayerCell) {

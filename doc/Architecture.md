@@ -73,3 +73,10 @@ classDiagram
     InfRegistry --* InfRegistry
     InfRegistryEntry --* InfEntry
 ```
+
+## Inventaire
+Les inventaires permettent de stocker des items.
+Les inventaires sont un tableau de deux dimensions, représentant dans la
+première dimension, l'index de l'inventaire, et dans la deuxième,
+le nombre d'item (pas encore implémenté). L'inventaire peut être lié
+à un system de craft pour qu'il puisse réaliser les crafts possibles.

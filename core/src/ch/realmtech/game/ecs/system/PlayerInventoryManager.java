@@ -3,7 +3,6 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
-import ch.realmtech.game.ecs.component.PlayerComponent;
 import ch.realmtech.game.ecs.component.StoredItemComponent;
 import ch.realmtech.input.InputMapper;
 import com.artemis.BaseSystem;
@@ -71,10 +70,14 @@ public class PlayerInventoryManager extends BaseSystem {
             InputMapper.reset();
             Gdx.input.setInputProcessor(inventoryStage);
             clearDisplayInventory();
-            displayInventory(playerId, inventoryTable);
-            displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable);
-            displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable);
+            displayPlayerInventory();
         }
+    }
+
+    private void displayPlayerInventory() {
+        displayInventory(context.getEcsEngine().getPlayerId(), inventoryTable);
+        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable);
+        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable);
     }
 
     private void clearDisplayInventory() {
@@ -88,7 +91,7 @@ public class PlayerInventoryManager extends BaseSystem {
      * @param inventoryTable La table où l'ont souhait affiché l'inventaire.
      */
     public void displayInventory(int inventoryId, Table inventoryTable) {
-        Array<Table> cellsToDisplay = getCellsToDisplay(inventoryId);
+        Array<Table> cellsToDisplay = getItemSlotsToDisplay(inventoryId);
         for (int i = 0; i < cellsToDisplay.size; i++) {
             if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
@@ -98,13 +101,13 @@ public class PlayerInventoryManager extends BaseSystem {
     }
 
     /**
-     * Crée les cellules de l'inventaire.
-     * @param IventoryId L'inventaire id.
-     * @return Une liste de table qui sont les cellules avec la texture.
+     * Crées les items slots de l'inventaire.
+     * @param inventoryId L'inventaire id.
+     * @return Une liste de table qui sont les item slots
      */
-    public Array<Table> getCellsToDisplay(int IventoryId) {
+    public Array<Table> getItemSlotsToDisplay(int inventoryId) {
         Array<Table> itemSlots = new Array<>();
-        InventoryComponent inventoryComponent = mInventory.get(IventoryId);
+        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
         for (int[] slotId : inventory) {
             Table itemSlotTable = new Table(context.getSkin());
@@ -121,7 +124,6 @@ public class PlayerInventoryManager extends BaseSystem {
         }
         return itemSlots;
     }
-
     private void addDragAndDrop(Table itemSlotTable, Image imageItem, int[] itemId) {
         dragAndDrop.addTarget(new InventoryTarget(new InventoryItem(imageItem, itemSlotTable, itemId), dragAndDrop, this));
         dragAndDrop.addSource(new InventorySource(new InventoryItem(imageItem, itemSlotTable, itemId), dragAndDrop, this));
@@ -129,8 +131,8 @@ public class PlayerInventoryManager extends BaseSystem {
     static class InventoryItem {
         Image itemImage;
         Table slotTable;
-        int[] slotId;
 
+        int[] slotId;
         public InventoryItem(Image itemImage, Table slotTable, int[] slotId) {
             this.itemImage = itemImage;
             this.slotTable = slotTable;
@@ -140,6 +142,7 @@ public class PlayerInventoryManager extends BaseSystem {
     static class InventorySource extends Source {
         final InventoryItem inventoryItem;
         final DragAndDrop dragAndDrop;
+
         final PlayerInventoryManager manager;
 
         public InventorySource(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventoryManager manager) {
@@ -160,7 +163,6 @@ public class PlayerInventoryManager extends BaseSystem {
             manager.inventoryStage.addActor(inventoryItem.itemImage);
             return payload;
         }
-
         @Override
         public void dragStop(InputEvent event, float x, float y, int pointer, Payload payload, Target target) {
             super.dragStop(event, x, y, pointer, payload, target);
@@ -175,11 +177,12 @@ public class PlayerInventoryManager extends BaseSystem {
                 }
             }
             payload.getDragActor().remove();
-            // TODO faire quelque chose de plus propre pour rafraichir l'inventaire que de le fermer de de le réouvrir
-            manager.toggleInventoryWindow(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
-            manager.toggleInventoryWindow(manager.world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG));
+            manager.clearDisplayInventory();
+            manager.displayPlayerInventory();
         }
+
     }
+
     static class InventoryTarget extends Target {
         InventoryItem inventoryItem;
         final DragAndDrop dragAndDrop;
