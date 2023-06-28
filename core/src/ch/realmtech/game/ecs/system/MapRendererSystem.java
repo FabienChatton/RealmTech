@@ -52,8 +52,8 @@ public class MapRendererSystem extends IteratingSystem {
             for (HashSet<InfCellComponent> infCellComponents : arrayLayerCell) {
                 if (infCellComponents != null) {
                     for (InfCellComponent infCellComponent : infCellComponents) {
-                        int worldX = MapSystem.getWorldPoss(infChunkComponent.chunkPossX, infCellComponent.innerPosX);
-                        int worldY = MapSystem.getWorldPoss(infChunkComponent.chunkPossY, infCellComponent.innerPosY);
+                        int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX);
+                        int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY);
                         TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion();
                         context.getGameStage().getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
                     }

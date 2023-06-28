@@ -86,7 +86,7 @@ public class SaveInfManager extends Manager {
 
     public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {
         InfChunkComponent infChunkComponent = mChunk.get(infChunkId);
-        File chunksFile = getChunkFile(infChunkComponent.chunkPossX, infChunkComponent.chunkPossY, rootSaveDirPath);
+        File chunksFile = getChunkFile(infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, rootSaveDirPath);
         if (!chunksFile.exists()) {
             Files.createDirectories(chunksFile.toPath().getParent());
         }
@@ -205,10 +205,10 @@ public class SaveInfManager extends Manager {
         return new File(rootSaveDirPath + "/" + headerPath);
     }
 
-    private static File getChunkFile(int chunkPossX, int chunkPossY, Path rootSaveDirPath) throws IOException {
+    private static File getChunkFile(int chunkPosX, int chunkPosY, Path rootSaveDirPath) throws IOException {
         verifiePathLevelExiste(rootSaveDirPath);
         verifiePathChunkExiste(rootSaveDirPath);
-        String chunkFileName = String.format("%s,%s", chunkPossX, chunkPossY);
+        String chunkFileName = String.format("%s,%s", chunkPosX, chunkPosY);
         return new File(rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
     }
 

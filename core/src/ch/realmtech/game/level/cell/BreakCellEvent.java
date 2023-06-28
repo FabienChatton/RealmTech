@@ -16,8 +16,8 @@ public class BreakCellEvent {
                 if (itemComponent != null && cellComponent != null && playerComponent != null) {
                     if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemComponent.itemRegisterEntry.getItemBehavior().getItemType()) {
                         world.getSystem(ItemManager.class).newItemOnGround(
-                                MapSystem.getWorldPoss(infChunkComponent.chunkPossX, cellComponent.innerPosX),
-                                MapSystem.getWorldPoss(infChunkComponent.chunkPossY, cellComponent.innerPosY),
+                                MapSystem.getWorldPos(infChunkComponent.chunkPosX, cellComponent.innerPosX),
+                                MapSystem.getWorldPos(infChunkComponent.chunkPosY, cellComponent.innerPosY),
                                 itemRegisterEntry
                         );
                         world.getSystem(MapSystem.class).damneCell(chunkId, cellId);

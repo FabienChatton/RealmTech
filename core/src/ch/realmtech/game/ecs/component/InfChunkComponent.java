@@ -4,22 +4,22 @@ import com.artemis.PooledComponent;
 import com.artemis.annotations.EntityId;
 
 public class InfChunkComponent extends PooledComponent {
-    public int chunkPossX;
-    public int chunkPossY;
+    public int chunkPosX;
+    public int chunkPosY;
     @EntityId
     public int[] infCellsId;
 
-    public InfChunkComponent set(int chunkPossX, int chunkPossY, int[] infCellsId) {
-        this.chunkPossX = chunkPossX;
-        this.chunkPossY = chunkPossY;
+    public InfChunkComponent set(int chunkPosX, int chunkPosY, int[] infCellsId) {
+        this.chunkPosX = chunkPosX;
+        this.chunkPosY = chunkPosY;
         this.infCellsId = infCellsId;
         return this;
     }
 
     @Override
     protected void reset() {
-        chunkPossX = 0;
-        chunkPossY = 0;
+        chunkPosX = 0;
+        chunkPosY = 0;
         infCellsId = null;
     }
 }

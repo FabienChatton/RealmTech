@@ -55,7 +55,7 @@ public class MapSystem extends DelayedIteratingSystem {
                     boolean trouve = false;
                     for (int k = 0; k < infMapComponent.infChunks.length; k++) {
                         InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[k]);
-                        if (infChunkComponent.chunkPossX == i && infChunkComponent.chunkPossY == j) {
+                        if (infChunkComponent.chunkPosX == i && infChunkComponent.chunkPosY == j) {
                             trouve = true;
                             break;
                         }
@@ -70,7 +70,7 @@ public class MapSystem extends DelayedIteratingSystem {
                                 damneChunk(oldChunk);
                             } catch (IOException e) {
                                 InfChunkComponent infChunkComponent = mChunk.get(oldChunk);
-                                Gdx.app.error(TAG, String.format("Le chunk %d,%d n'a pas été sauvegardé correctement", infChunkComponent.chunkPossX, infChunkComponent.chunkPossY), e);
+                                Gdx.app.error(TAG, String.format("Le chunk %d,%d n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY), e);
                             }
                         } else {
                             infMapComponent.infChunks = ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
@@ -116,8 +116,8 @@ public class MapSystem extends DelayedIteratingSystem {
 
     private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int dstX = Math.abs(posX - infChunkComponent.chunkPossX);
-        int dstY = Math.abs(posY - infChunkComponent.chunkPossY);
+        int dstX = Math.abs(posX - infChunkComponent.chunkPosX);
+        int dstY = Math.abs(posY - infChunkComponent.chunkPosY);
         return dstX <= RENDER_DISTANCE && dstY <= RENDER_DISTANCE;
     }
 
@@ -141,8 +141,8 @@ public class MapSystem extends DelayedIteratingSystem {
         return chunkId;
     }
 
-    public static int getWorldPoss(int chunkPoss, int innerChunk) {
-        return chunkPoss * WorldMap.CHUNK_SIZE + innerChunk;
+    public static int getWorldPos(int chunkPos, int innerChunk) {
+        return chunkPos * WorldMap.CHUNK_SIZE + innerChunk;
     }
 
     /**
@@ -168,8 +168,8 @@ public class MapSystem extends DelayedIteratingSystem {
     private int[] generateNewCell(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = getInnerChunkX(index);
         byte innerChunkY = getInnerChunkY(index);
-        int worldX = getWorldPoss(chunkPosX, innerChunkX);
-        int worldY = getWorldPoss(chunkPosY, innerChunkY);
+        int worldX = getWorldPos(chunkPosX, innerChunkX);
+        int worldY = getWorldPos(chunkPosY, innerChunkY);
         PerlinNoise perlinNoise = mMetaDonnees.get(metaDonnees).perlinNoise;
         final CellRegisterEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
         final int[] cellIds = new int[(int) Arrays.stream(cellRegisterEntries).filter(Objects::nonNull).count()];
@@ -218,8 +218,8 @@ public class MapSystem extends DelayedIteratingSystem {
         }
     }
 
-    public static int getChunkPos(int worldPoss) {
-        return (worldPoss < 0 ? worldPoss - WorldMap.CHUNK_SIZE : worldPoss) / WorldMap.CHUNK_SIZE;
+    public static int getChunkPos(int worldPos) {
+        return (worldPos < 0 ? worldPos - WorldMap.CHUNK_SIZE : worldPos) / WorldMap.CHUNK_SIZE;
     }
 
     public static int getChunkPos(float gameCoordinate) {
@@ -276,7 +276,7 @@ public class MapSystem extends DelayedIteratingSystem {
         int chunkY = getChunkPos(worldPosY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
-            if (infChunkComponent.chunkPossX == chunkX && infChunkComponent.chunkPossY == chunkY) {
+            if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
                 ret = chunks[i];
                 break;
             }
@@ -290,7 +290,7 @@ public class MapSystem extends DelayedIteratingSystem {
         int chunkY = getChunkPos(gameCoordinateY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
-            if (infChunkComponent.chunkPossX == chunkX && infChunkComponent.chunkPossY == chunkY) {
+            if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
                 ret = chunks[i];
                 break;
             }

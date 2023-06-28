@@ -37,16 +37,16 @@ public class ItemManager extends Manager {
 
     /**
      * Permet de faire apparaitre un nouvel item sur la map.
-     * @param worldPossX La position X dans le monde du nouvel item.
-     * @param worldPossY La position Y dans le monde du nouvel item.
+     * @param worldPosX La position X dans le monde du nouvel item.
+     * @param worldPosY La position Y dans le monde du nouvel item.
      * @param itemRegisterEntry Le register qui permettra de créer l'item.
      */
-    public void newItemOnGround(float worldPossX, float worldPossY, ItemRegisterEntry itemRegisterEntry) {
+    public void newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = createNewItem(itemRegisterEntry, defaultItemGroundArchetype);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
         itemComponent.set(itemRegisterEntry);
         TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
-        setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(), worldPossX, worldPossY);
+        setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(), worldPosX, worldPosY);
         textureComponent.scale = RealmTech.UNITE_SCALE;
     }
 
@@ -68,13 +68,13 @@ public class ItemManager extends Manager {
         return itemId;
     }
 
-    public void setItemTexturePositionAndPhysicBody(int itemId, TextureRegion texture, float worldPossX, float worldPossY) {
+    public void setItemTexturePositionAndPhysicBody(int itemId, TextureRegion texture, float worldPosX, float worldPosY) {
         PositionComponent positionComponent = world.edit(itemId).create(PositionComponent.class);
-        positionComponent.set(worldPossX, worldPossY);
+        positionComponent.set(worldPosX, worldPosY);
         TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
         textureComponent.set(texture);
         Box2dComponent box2dComponent = world.edit(itemId).create(Box2dComponent.class);
-        Body itemBody = context.getEcsEngine().createBox2dItem(itemId, worldPossX, worldPossY, textureComponent.texture);
+        Body itemBody = context.getEcsEngine().createBox2dItem(itemId, worldPosX, worldPosY, textureComponent.texture);
         box2dComponent.set(
                 textureComponent.texture.getRegionWidth() / RealmTech.PPM,
                 textureComponent.texture.getRegionHeight() / RealmTech.PPM,
