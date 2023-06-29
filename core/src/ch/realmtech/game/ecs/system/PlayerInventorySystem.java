@@ -3,7 +3,9 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
+import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.game.ecs.component.StoredItemComponent;
+import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.input.InputMapper;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -22,10 +24,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
-public class PlayerInventoryManager extends BaseSystem {
+public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<StoredItemComponent> mStoredItem;
     private ComponentMapper<InventoryComponent> mInventory;
+    private ComponentMapper<ItemResultCraftComponent> mItemResultCraft;
     private Stage inventoryStage;
     private Window inventoryWindow;
     private Table inventoryTable;
@@ -69,8 +72,7 @@ public class PlayerInventoryManager extends BaseSystem {
             super.setEnabled(true);
             InputMapper.reset();
             Gdx.input.setInputProcessor(inventoryStage);
-            clearDisplayInventory();
-            displayPlayerInventory();
+            refreshPlayerInventory();
         }
     }
 
@@ -78,6 +80,29 @@ public class PlayerInventoryManager extends BaseSystem {
         displayInventory(context.getEcsEngine().getPlayerId(), inventoryTable);
         displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable);
         displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable);
+    }
+    public void refreshPlayerInventory() {
+        clearDisplayInventory();
+        displayPlayerInventory();
+    }
+
+    public void nouveauCraftDisponible(ItemRegisterEntry craftResult) {
+        if (!mItem.has(mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory[0][0])) {
+            int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult);
+            world.edit(itemResultId).create(ItemResultCraftComponent.class);
+            world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"));
+            refreshPlayerInventory();
+        }
+    }
+
+    public void aucunCraftDisponible() {
+        int[][] inventory = mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory;
+        int itemCraftResultId = inventory[0][0];
+        if (mItem.has(itemCraftResultId)) {
+            world.getSystem(InventoryManager.class).clearInventory(inventory);
+            world.delete(itemCraftResultId);
+            refreshPlayerInventory();
+        }
     }
 
     private void clearDisplayInventory() {
@@ -142,14 +167,13 @@ public class PlayerInventoryManager extends BaseSystem {
     static class InventorySource extends Source {
         final InventoryItem inventoryItem;
         final DragAndDrop dragAndDrop;
+        final PlayerInventorySystem playerInventorySystem;
 
-        final PlayerInventoryManager manager;
-
-        public InventorySource(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventoryManager manager) {
+        public InventorySource(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventorySystem playerInventorySystem) {
             super(inventoryItem.itemImage);
             this.inventoryItem = inventoryItem;
             this.dragAndDrop = dragAndDrop;
-            this.manager = manager;
+            this.playerInventorySystem = playerInventorySystem;
         }
 
         @Override
@@ -159,8 +183,7 @@ public class PlayerInventoryManager extends BaseSystem {
             payload.setObject(inventoryItem);
             payload.setDragActor(inventoryItem.itemImage);
             dragAndDrop.setDragActorPosition(inventoryItem.itemImage.getImageWidth() /2f, -inventoryItem.itemImage.getImageHeight()/2f);
-            inventoryItem.slotTable.add(new Image());
-            manager.inventoryStage.addActor(inventoryItem.itemImage);
+            playerInventorySystem.inventoryStage.addActor(inventoryItem.itemImage);
             return payload;
         }
         @Override
@@ -168,6 +191,11 @@ public class PlayerInventoryManager extends BaseSystem {
             super.dragStop(event, x, y, pointer, payload, target);
             InventoryItem inventoryItemSource = (InventoryItem) payload.getObject();
             InventoryTarget inventoryTarget = (InventoryTarget) target;
+            // si c'est le résultat d'un craft
+            if (playerInventorySystem.mItemResultCraft.has(inventoryItem.slotId[0])) {
+                playerInventorySystem.mItemResultCraft.get(inventoryItem.slotId[0]).pickEvent.pick(playerInventorySystem.world, playerInventorySystem.mInventory.get(playerInventorySystem.world.getSystem(TagManager.class).getEntityId("crafting")));
+                playerInventorySystem.world.edit(inventoryItem.slotId[0]).remove(ItemResultCraftComponent.class);
+            }
             if (inventoryTarget == null) {
 
             } else {
@@ -177,8 +205,7 @@ public class PlayerInventoryManager extends BaseSystem {
                 }
             }
             payload.getDragActor().remove();
-            manager.clearDisplayInventory();
-            manager.displayPlayerInventory();
+            playerInventorySystem.refreshPlayerInventory();
         }
 
     }
@@ -186,9 +213,9 @@ public class PlayerInventoryManager extends BaseSystem {
     static class InventoryTarget extends Target {
         InventoryItem inventoryItem;
         final DragAndDrop dragAndDrop;
-        final PlayerInventoryManager manager;
+        final PlayerInventorySystem manager;
 
-        public InventoryTarget(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventoryManager manager) {
+        public InventoryTarget(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventorySystem manager) {
             super(inventoryItem.itemImage);
             this.inventoryItem = inventoryItem;
             this.dragAndDrop = dragAndDrop;

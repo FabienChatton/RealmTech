@@ -15,8 +15,8 @@ public class InventoryManager extends Manager {
 
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
-    public void addItemToInventory(int itemId, int playerId) {
-        InventoryComponent inventoryComponent = mInventory.create(playerId);
+    public void addItemToInventory(int itemId, int entityId) {
+        InventoryComponent inventoryComponent = mInventory.get(entityId);
         for (int slotId = 0; slotId < inventoryComponent.inventory.length; slotId++) {
             int iCellId = inventoryComponent.inventory[slotId][0];
             if (iCellId == 0) {

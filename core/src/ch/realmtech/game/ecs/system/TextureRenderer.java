@@ -32,8 +32,8 @@ public class TextureRenderer extends IteratingSystem {
             PositionComponent positionComponent = mPosition.create(entityId);
             context.getGameStage().getBatch().draw(
                     textureComponent.texture,
-                    positionComponent.x + realWidth / 2f,
-                    positionComponent.y + realHeight / 2f,
+                    positionComponent.x,
+                    positionComponent.y,
                     realWidth,
                     realHeight
             );

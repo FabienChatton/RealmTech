@@ -48,7 +48,7 @@ public final class ECSEngine {
 
                 // system
                 .with(new MapSystem())
-                .with(new CraftingSystem())
+                .with(new CraftingPlayerSystem())
                 .with(new ItemBeingPickAnimationSystem())
                 .with(new SoundManager())
                 .with(new PickUpOnGroundItemSystem())
@@ -62,7 +62,7 @@ public final class ECSEngine {
                 .with(new TextureRenderer())
 
                 // ui
-                .with(new PlayerInventoryManager())
+                .with(new PlayerInventorySystem())
                 .with(new ItemBarManager())
                 .build();
         worldConfiguration.register("physicWorld", physicWorld);
@@ -232,7 +232,7 @@ public final class ECSEngine {
     }
 
     public void togglePlayerInventoryWindow() {
-        world.getSystem(PlayerInventoryManager.class).toggleInventoryWindow(getPlayerId());
+        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(getPlayerId());
         world.getSystem(SoundManager.class).playOpenInventory();
     }
 
