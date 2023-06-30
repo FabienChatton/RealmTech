@@ -12,7 +12,6 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,18 +37,18 @@ public class MapRendererSystem extends IteratingSystem {
         for (int i = 0; i < infMapComponent.infChunks.length; i++) {
             int chunkId = infMapComponent.infChunks[i];
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-            List<HashSet<InfCellComponent>> arrayLayerCell = new LinkedList<>();
+            List<LinkedList<InfCellComponent>> arrayLayerCell = new LinkedList<>();
             for (int j = 0; j < WorldMap.NUMBER_LAYER; j++) {
-                arrayLayerCell.add(new HashSet<>());
+                arrayLayerCell.add(new LinkedList<>());
             }
-            for (int j = 0; j < infChunkComponent.infCellsId.length; j++) {
+            for (int j = infChunkComponent.infCellsId.length -1; j >= 0; j--) {
                 int cellId = infChunkComponent.infCellsId[j];
                 InfCellComponent infCellComponent = mCell.get(cellId);
                 byte layer = infCellComponent.cellRegisterEntry.getCellBehavior().getLayer();
-                arrayLayerCell.get(layer).add(infCellComponent);
+                arrayLayerCell.get(layer).offer(infCellComponent);
             }
 
-            for (HashSet<InfCellComponent> infCellComponents : arrayLayerCell) {
+            for (List<InfCellComponent> infCellComponents : arrayLayerCell) {
                 if (infCellComponents != null) {
                     for (InfCellComponent infCellComponent : infCellComponents) {
                         int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX);
