@@ -1,26 +1,19 @@
 package ch.realmtech.game.mod;
 
+import ch.realmtech.game.craft.CraftPattern;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.InfRegistryAnonyme;
 
+import static ch.realmtech.game.craft.CraftPattern.CraftPatternArgs;
+
 public class RealmTechCoreCraftingRecipe {
 
-    public static void initCraftingRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
-        registry.add(itemRegisterEntries -> {
-            if (    itemRegisterEntries[0][0] == RealmTechCoreItem.PELLE_ITEM &&
-                    itemRegisterEntries[0][1] == RealmTechCoreItem.PELLE_ITEM) {
-                return RealmTechCoreItem.PIOCHE_ITEM;
-            } else {
-                return null;
-            }
-        });
-        registry.add(itemRegisterEntries -> {
-            if (    itemRegisterEntries[0][2] == RealmTechCoreItem.PELLE_ITEM &&
-                    itemRegisterEntries[2][2] == RealmTechCoreItem.PELLE_ITEM) {
-                return RealmTechCoreItem.SANDALES_ITEM;
-            } else {
-                return null;
-            }
-        });
+    public static void initCraftingRecipe(final InfRegistryAnonyme<CraftingRecipeEntry> registry) {
+        registry.add(new CraftPattern(RealmTechCoreItem.SANDALES_ITEM, new char[]{
+                'b', ' ', 'b',
+                ' ', ' ', ' ',
+                'a', ' ', 'a'
+        }, new CraftPatternArgs('a', RealmTechCoreItem.PELLE_ITEM),
+           new CraftPatternArgs('b', RealmTechCoreItem.BUCHE_ITEM)));
     }
 }

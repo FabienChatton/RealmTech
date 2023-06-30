@@ -3,16 +3,9 @@ package ch.realmtech.game.registery;
 
 public interface CraftingRecipeEntry extends Entry {
     /**
-     * Donne en entrer un tableau à deux dimensions comme :
-     * <pre>
-     *     [][][]
-     *     [][][]
-     *     [][][]
-     * </pre>
-     * qui représente l'inventaire du craft avec comme cellule les registres des items.
-     * Pour le moment la logic pour valider le craft dans la méthode à définir.
-     * @param itemRegisterEntries Un tableau d'items qui va passer le test pour savoir si le craft est valide
-     * @return le registre de l'item si le craft est réussie sinon null
+     * Permet de connaitre de craft avec des items en entre et un item en sortie.
+     * @param itemRegisterEntry L'inventaire du craft les items dans leur forme de registre.
+     * @return Le registre de l'item résultat du craft s'il est valide.
      */
-    ItemRegisterEntry craft(ItemRegisterEntry[][] itemRegisterEntries);
+    ItemRegisterEntry craft(final ItemRegisterEntry[] itemRegisterEntry);
 }

@@ -19,13 +19,10 @@ public class CraftingPlayerSystem extends IteratingSystem {
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         CraftingComponent craftingComponent = mCrafting.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
-        ItemRegisterEntry[][] itemRegister = new ItemRegisterEntry[inventoryComponent.numberOfSlotParRow][inventoryComponent.numberOfRow];
-        // permet de transformer l'inventaire du joueur (1d) en 2d
-        for (int slot = 0; slot < inventory.length; slot++) {
-            if (inventory[slot][0] == 0) continue;
-            ItemComponent itemComponent = mItem.get(inventory[slot][0]);
-            if (itemComponent != null) {
-                itemRegister[slot % inventoryComponent.numberOfSlotParRow][slot / inventoryComponent.numberOfRow] = itemComponent.itemRegisterEntry;
+        ItemRegisterEntry[] itemRegister = new ItemRegisterEntry[inventory.length];
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i][0] != 0) {
+                itemRegister[i] = mItem.get(inventory[i][0]).itemRegisterEntry;
             }
         }
         boolean nouveauCraft = false;
