@@ -20,6 +20,7 @@ public abstract class AbstractScreen implements Screen {
     protected final Stage uiStage;
     protected final OrthographicCamera uiCamera;
     protected final Skin skin;
+    protected ScreenType oldScreen;
 
     public AbstractScreen(RealmTech context) {
         this.context = context;
@@ -87,5 +88,9 @@ public abstract class AbstractScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    public final void setOldScreen(ScreenType oldScreen) {
+        this.oldScreen = oldScreen;
     }
 }

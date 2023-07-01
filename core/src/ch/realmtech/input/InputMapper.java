@@ -23,6 +23,7 @@ public final class InputMapper implements InputProcessor {
     private final Array<PointerMapper> pointerMappers;
     private final Observer<PointerMapper> pointerSignal;
     private final Observer<float[]> scrollSignal;
+    public final Observer<Integer> keysSignal;
     private static InputMapper instance;
 
     private InputMapper(RealmTech context) {
@@ -55,6 +56,9 @@ public final class InputMapper implements InputProcessor {
         // scroll signal
         scrollSignal = new Observer<>();
         scrollSignal.add(new GameCameraListener((OrthographicCamera) context.getGameStage().getCamera()));
+
+        // key signal
+        keysSignal = new Observer<>();
     }
 
     public static InputMapper getInstance(RealmTech context) {
@@ -86,6 +90,7 @@ public final class InputMapper implements InputProcessor {
                 ret = true;
             }
         }
+        keysSignal.notifySubscribers(keycode);
         return ret;
     }
 

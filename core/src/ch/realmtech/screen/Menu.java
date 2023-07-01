@@ -11,7 +11,11 @@ public class Menu extends AbstractScreen {
         super(context);
         TextButton selectionnerSauvegarde = new TextButton("Sélectionner une sauvegarde",skin);
         selectionnerSauvegarde.addListener(lancerLeJeu());
+        TextButton option = new TextButton("Options", skin);
+        option.addListener(openOption());
         uiTable.add(new Label("Bienvenue dans realmTech", skin));
+        uiTable.row();
+        uiTable.add(option);
         uiTable.row();
         uiTable.add(selectionnerSauvegarde);
     }
@@ -29,5 +33,12 @@ public class Menu extends AbstractScreen {
             }
         };
     }
-
+    private ClickListener openOption() {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.setScreen(ScreenType.OPTION);
+            }
+        };
+    }
 }

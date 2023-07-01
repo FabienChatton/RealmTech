@@ -15,6 +15,10 @@ public class GamePauseScreen extends AbstractScreen {
         resumeButton.addListener(resumeGame());
         uiTable.add(resumeButton);
         uiTable.row();
+        TextButton optionButton = new TextButton("Options", skin);
+        optionButton.addListener(openOption());
+        uiTable.add(optionButton);
+        uiTable.row();
         TextButton quiteAndSave = new TextButton("Sauvegarder et quitter",skin);
         quiteAndSave.addListener(quiteAndSave());
         uiTable.add(quiteAndSave);
@@ -31,6 +35,15 @@ public class GamePauseScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 context.quiteAndSave();
+            }
+        };
+    }
+
+    private ClickListener openOption() {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.setScreen(ScreenType.OPTION);
             }
         };
     }

@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.EnumMap;
+import java.util.Map;
 
 public final class RealmTech extends Game{
     public final static float WORLD_WIDTH = 16f;
@@ -105,6 +106,13 @@ public final class RealmTech extends Game{
 
     public void setScreen(final ScreenType screenType) {
         AbstractScreen screen = screenCash.get(screenType);
+        ScreenType oldScreenType = null;
+        for (Map.Entry<ScreenType, AbstractScreen> screenTypeAbstractScreenEntry : screenCash.entrySet()) {
+            if (screenTypeAbstractScreenEntry.getValue() == getScreen()) {
+                oldScreenType = screenTypeAbstractScreenEntry.getKey();
+                break;
+            }
+        }
         if (screen == null) {
             try {
                 screen = screenType.screenClass.getConstructor(RealmTech.class).newInstance(this);
@@ -115,6 +123,7 @@ public final class RealmTech extends Game{
                 Gdx.app.error(TAG, "La class " + screenType + " n'a pas pu etre cree", e);
             }
         }
+        screen.setOldScreen(oldScreenType);
         Gdx.app.debug(TAG, "Changement d'ecran vers " + screenType);
         super.setScreen(screen);
     }
