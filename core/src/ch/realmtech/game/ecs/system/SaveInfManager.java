@@ -35,12 +35,14 @@ public class SaveInfManager extends Manager {
         saveInfMap(mapId, infMetaDonneesComponent.saveName);
     }
 
-    public void saveInfMap(int mapId, Path saveName) throws IOException {
+    public void saveInfMap(int mapId, String saveName) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         if (infMapComponent != null) {
-            saveInfHeaderFile(infMapComponent.infMetaDonnees, saveName);
+            Path savePath = getSavePath(saveName);
+            saveInfHeaderFile(infMapComponent.infMetaDonnees, savePath);
+            creerHiearchieDUneSave(saveName);
             for (int infChunkId : infMapComponent.infChunks) {
-                saveInfChunk(infChunkId, saveName);
+                saveInfChunk(infChunkId, savePath);
             }
         }
     }
@@ -64,13 +66,13 @@ public class SaveInfManager extends Manager {
 
     public void saveInfHeaderFile(int infMetaDonneesId, Path rootSaveDirPath) throws IOException {
         InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
-        File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath, true);
+        File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath);
         metaDonneesFile.createNewFile();
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(metaDonneesFile)))) {
             outputStream.write("RealmTech".getBytes());
-            outputStream.write(rootSaveDirPath.getFileName().toString().getBytes().length);
-            outputStream.write(rootSaveDirPath.getFileName().toString().getBytes());
+            outputStream.write(infMetaDonneesComponent.saveName.getBytes().length);
+            outputStream.write(infMetaDonneesComponent.saveName.getBytes());
             outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
             outputStream.writeLong(System.currentTimeMillis());
             outputStream.writeLong(infMetaDonneesComponent.seed);
@@ -117,7 +119,7 @@ public class SaveInfManager extends Manager {
     }
 
     public int readInfMetaDonnees(Path rootSaveDirPath) throws IOException {
-        File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath, false);
+        File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath);
         try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(metaDonneesFile)))) {
             ByteBuffer buffer = ByteBuffer.wrap(inputStream.readAllBytes());
             byte[] realmTechMagic = new byte[9];
@@ -150,11 +152,11 @@ public class SaveInfManager extends Manager {
      *
      * @param chunkPosX
      * @param chunkPosY
-     * @param rootSaveDirPath
+     * @param saveName
      * @return donne l'id du nouveau chunk
      */
-    public int readSavedInfChunk(int chunkPosX, int chunkPosY, Path rootSaveDirPath) throws IOException {
-        File chunksFile = getChunkFile(chunkPosX, chunkPosY, rootSaveDirPath);
+    public int readSavedInfChunk(int chunkPosX, int chunkPosY, String saveName) throws IOException {
+        File chunksFile = getChunkFile(chunkPosX, chunkPosY, getSavePath(saveName));
         try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(chunksFile)))) {
             // Métadonnées
             ByteBuffer inputWrap = ByteBuffer.wrap(inputStream.readAllBytes());
@@ -183,41 +185,24 @@ public class SaveInfManager extends Manager {
 
     public static List<File> listSauvegardeInfinie() throws IOException {
         creerHiearchieRealmTechData();
-        File rootFile = Gdx.files.local(String.format("%s/%s", ROOT_PATH, ROOT_PATH_SAVES)).file();
+        File rootFile = getLocalPathSaveRoot().toFile();
         List<File> ret = new ArrayList<>();
         for (File file : rootFile.listFiles()) {
-            if (getMetaDonneesFile(file.toPath(), false).exists()) {
+            if (getMetaDonneesFile(file.toPath()).exists()) {
                 ret.add(file);
             }
         }
         return ret;
     }
 
-    private static File getMetaDonneesFile(Path rootSaveDirPath, boolean creerSiInexistant) throws IOException {
-        if (creerSiInexistant) verifiePathLevelExiste(rootSaveDirPath);
+    private static File getMetaDonneesFile(Path rootSaveDirPath) {
         String headerPath = ("level/header.rsh");
-        return new File(getLocalPathSaveRoot().toFile() + "/" + rootSaveDirPath + "/" + headerPath);
+        return Path.of(rootSaveDirPath.toFile().toString(), headerPath).toFile();
     }
 
     private static File getChunkFile(int chunkPosX, int chunkPosY, Path rootSaveDirPath) throws IOException {
-        verifiePathLevelExiste(rootSaveDirPath);
-        verifiePathChunkExiste(rootSaveDirPath);
         String chunkFileName = String.format("%s,%s", chunkPosX, chunkPosY);
-        return new File(getLocalPathSaveRoot().toFile() + "/" + rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
-    }
-
-    private static void verifiePathLevelExiste(Path rootSaveDirPath) throws IOException {
-        Path levelPath = Path.of(getLocalPathSaveRoot() + "/" + rootSaveDirPath.toString() + "/level");
-        if (!Files.exists(levelPath)) {
-            Files.createDirectory(levelPath);
-        }
-    }
-
-    private static void verifiePathChunkExiste(Path rootSaveDirPath) throws IOException {
-        Path levelChunkPath = Path.of(getLocalPathSaveRoot().toFile() + "/" + rootSaveDirPath.toString() + "/level/chunks");
-        if (!Files.exists(levelChunkPath)) {
-            Files.createDirectory(levelChunkPath);
-        }
+        return new File(rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
     }
     private static void creerHiearchieRealmTechData() throws IOException {
         File root = Gdx.files.local(ROOT_PATH).file();
@@ -243,7 +228,7 @@ public class SaveInfManager extends Manager {
         }
     }
 
-    private static Path getSavePath(String saveName) throws IOException{
+    public static Path getSavePath(String saveName) throws IOException{
         return Path.of(getLocalPathSaveRoot().toFile().toString(), saveName);
     }
 

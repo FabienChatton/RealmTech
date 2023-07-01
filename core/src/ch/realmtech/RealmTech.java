@@ -155,7 +155,7 @@ public final class RealmTech extends Game{
             ecsEngine.dispose();
             ecsEngine = new ECSEngine(this);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Gdx.app.error(TAG, "impossible de sauvegarder", e);
         } finally {
             setScreen(ScreenType.MENU);
             screenCash.remove(ScreenType.GAME_SCREEN);

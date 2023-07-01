@@ -238,8 +238,8 @@ public final class ECSEngine {
         world.getSystem(SoundManager.class).playOpenInventory();
     }
 
-    public void loadInfFile(Path path) throws IOException {
-        int mapId = world.getSystem(SaveInfManager.class).readInfMap(path);
+    public void loadInfFile(Path savePath) throws IOException {
+        int mapId = world.getSystem(SaveInfManager.class).readInfMap(savePath);
         mapRequirementBeforeShow(mapId);
     }
 
@@ -279,8 +279,8 @@ public final class ECSEngine {
         world.getSystem(SoundManager.class).playFootStep(footStep.playerFootStepSound(), footStep.volume());
     }
 
-    public int readSavedInfChunk(int chunkX, int chunkY, Path rootSaveDirPath) throws IOException {
-        return world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, rootSaveDirPath);
+    public int readSavedInfChunk(int chunkX, int chunkY, String saveName) throws IOException {
+        return world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, saveName);
     }
 
     public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {

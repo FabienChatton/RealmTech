@@ -66,7 +66,7 @@ public class MapSystem extends DelayedIteratingSystem {
                             Integer oldChunk = chunkADamner.get(indexDamner++);
                             replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
                             try {
-                                world.getSystem(SaveInfManager.class).saveInfChunk(oldChunk, mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName);
+                                world.getSystem(SaveInfManager.class).saveInfChunk(oldChunk, SaveInfManager.getSavePath(mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName));
                                 damneChunk(oldChunk);
                             } catch (IOException e) {
                                 InfChunkComponent infChunkComponent = mChunk.get(oldChunk);
@@ -129,7 +129,7 @@ public class MapSystem extends DelayedIteratingSystem {
         } catch (FileNotFoundException e) {
             chunkId = generateNewChunk(mapId, chunkX, chunkY);
             try {
-                context.getEcsEngine().saveInfChunk(chunkId, infMetaDonneesComponent.saveName);
+                context.getEcsEngine().saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
             } catch (IOException ex) {
                 Gdx.app.error(TAG, e.getMessage(), e);
                 throw new RuntimeException(ex);
