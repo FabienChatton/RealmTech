@@ -53,10 +53,10 @@ public class RealmTechDataCtrl {
     private static Option loadOptionFromFile(final Properties propertiesFile) throws IllegalArgumentException {
         if (propertiesFile.isEmpty()) throw new IllegalArgumentException("Le fichier de configuration est vide");
         final Option option = new Option();
-        option.keyMoveForward = new AtomicInteger(Integer.parseInt(propertiesFile.getProperty("keyMoveForward")));
-        option.keyMoveLeft = new AtomicInteger(Integer.parseInt(propertiesFile.getProperty("keyMoveLeft")));
-        option.keyMoveRight = new AtomicInteger(Integer.parseInt(propertiesFile.getProperty("keyMoveRight")));
-        option.keyMoveBack = new AtomicInteger(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
+        option.keyMoveForward.set(Integer.parseInt(propertiesFile.getProperty("keyMoveForward")));
+        option.keyMoveLeft.set(Integer.parseInt(propertiesFile.getProperty("keyMoveLeft")));
+        option.keyMoveRight.set(Integer.parseInt(propertiesFile.getProperty("keyMoveRight")));
+        option.keyMoveBack.set(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
         return option;
     }
 
@@ -69,10 +69,10 @@ public class RealmTechDataCtrl {
     }
 
     public final static class Option {
-        public AtomicInteger keyMoveForward = new AtomicInteger(Input.Keys.W);
-        public AtomicInteger keyMoveLeft = new AtomicInteger(Input.Keys.A);
-        public AtomicInteger keyMoveRight = new AtomicInteger(Input.Keys.D);
-        public AtomicInteger keyMoveBack = new AtomicInteger(Input.Keys.S);
+        public final AtomicInteger keyMoveForward = new AtomicInteger(Input.Keys.W);
+        public final AtomicInteger keyMoveLeft = new AtomicInteger(Input.Keys.A);
+        public final AtomicInteger keyMoveRight = new AtomicInteger(Input.Keys.D);
+        public final AtomicInteger keyMoveBack = new AtomicInteger(Input.Keys.S);
 
     }
     public static void creerHiearchieRealmTechData() throws IOException {
