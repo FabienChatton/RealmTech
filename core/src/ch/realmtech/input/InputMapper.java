@@ -4,10 +4,11 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.listener.GameCameraListener;
 import ch.realmtech.game.listener.GameWorldInputListener;
 import ch.realmtech.observer.Observer;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO mettre la gestion des input dans l'ECS avec un composent singleton
 public final class InputMapper implements InputProcessor {
@@ -30,10 +31,10 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveForward = new KeysMapper(Input.Keys.W);
-        moveLeft = new KeysMapper(Input.Keys.A);
-        moveRight = new KeysMapper(Input.Keys.D);
-        moveBack = new KeysMapper(Input.Keys.S);
+        moveForward = new KeysMapper(context.realmTechDataCtrl.option.keyMoveForward);
+        moveLeft = new KeysMapper(context.realmTechDataCtrl.option.keyMoveLeft);
+        moveRight = new KeysMapper(context.realmTechDataCtrl.option.keyMoveRight);
+        moveBack = new KeysMapper(context.realmTechDataCtrl.option.keyMoveBack);
 
         keysMappers.add(moveForward);
         keysMappers.add(moveLeft);
@@ -69,7 +70,7 @@ public final class InputMapper implements InputProcessor {
 
     public boolean isKeyPressed(int keycode) {
         for (KeysMapper keysMapper : keysMappers) {
-            if (keysMapper.key == keycode) {
+            if (keysMapper.key.get() == keycode) {
                 return keysMapper.isPressed;
             }
         }
@@ -80,7 +81,7 @@ public final class InputMapper implements InputProcessor {
     public boolean keyDown(final int keycode) {
         boolean ret = false;
         for (KeysMapper keysMapper : keysMappers) {
-            if (keysMapper.key == keycode) {
+            if (keysMapper.key.get() == keycode) {
                 keysMapper.isPressed = true;
                 ret = true;
             }
@@ -92,7 +93,7 @@ public final class InputMapper implements InputProcessor {
     public boolean keyUp(int keycode) {
         boolean ret = false;
         for (KeysMapper keysMapper : keysMappers) {
-            if (keysMapper.key == keycode) {
+            if (keysMapper.key.get() == keycode) {
                 keysMapper.isPressed = false;
                 ret = true;
             }
@@ -150,10 +151,10 @@ public final class InputMapper implements InputProcessor {
     }
 
     public final static class KeysMapper {
-        public int key;
+        public AtomicInteger key;
         public boolean isPressed;
 
-        public KeysMapper(int key) {
+        public KeysMapper(AtomicInteger key) {
             this.key = key;
             this.isPressed = false;
         }

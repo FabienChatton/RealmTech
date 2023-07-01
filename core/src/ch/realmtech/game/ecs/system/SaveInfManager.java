@@ -6,6 +6,7 @@ import ch.realmtech.game.ecs.component.InfMapComponent;
 import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
 import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.registery.CellRegisterEntry;
+import ch.realmtech.options.RealmTechDataCtrl;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.badlogic.gdx.Gdx;
@@ -21,8 +22,7 @@ import java.util.List;
 
 public class SaveInfManager extends Manager {
     private final static int SAVE_PROTOCOLE_VERSION = 7;
-    private final static String ROOT_PATH = "RealmTechData";
-    private final static String ROOT_PATH_SAVES = "saves";
+    public final static String ROOT_PATH_SAVES = "saves";
     private final static String TAG = SaveInfManager.class.getSimpleName();
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
@@ -184,7 +184,7 @@ public class SaveInfManager extends Manager {
     }
 
     public static List<File> listSauvegardeInfinie() throws IOException {
-        creerHiearchieRealmTechData();
+        RealmTechDataCtrl.creerHiearchieRealmTechData();
         File rootFile = getLocalPathSaveRoot().toFile();
         List<File> ret = new ArrayList<>();
         for (File file : rootFile.listFiles()) {
@@ -203,16 +203,6 @@ public class SaveInfManager extends Manager {
     private static File getChunkFile(int chunkPosX, int chunkPosY, Path rootSaveDirPath) throws IOException {
         String chunkFileName = String.format("%s,%s", chunkPosX, chunkPosY);
         return new File(rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
-    }
-    private static void creerHiearchieRealmTechData() throws IOException {
-        File root = Gdx.files.local(ROOT_PATH).file();
-        if (!root.exists()) {
-            Files.createDirectories(root.toPath());
-        }
-        File rootSave = Gdx.files.local(String.format("%s/%s", ROOT_PATH, ROOT_PATH_SAVES)).file();
-        if (!rootSave.exists()) {
-            Files.createDirectories(rootSave.toPath());
-        }
     }
 
     private static void creerHiearchieDUneSave(String saveName) throws IOException {
@@ -244,7 +234,7 @@ public class SaveInfManager extends Manager {
     }
 
     private static Path getLocalPathSaveRoot() throws IOException {
-        creerHiearchieRealmTechData();
-        return Gdx.files.local(String.format("%s/%s", ROOT_PATH, ROOT_PATH_SAVES)).file().toPath();
+        RealmTechDataCtrl.creerHiearchieRealmTechData();
+        return Gdx.files.local(String.format("%s/%s", RealmTechDataCtrl.ROOT_PATH, ROOT_PATH_SAVES)).file().toPath();
     }
 }

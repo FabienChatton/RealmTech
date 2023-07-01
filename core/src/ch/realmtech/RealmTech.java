@@ -4,6 +4,7 @@ import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.helper.SetContext;
 import ch.realmtech.input.InputMapper;
+import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import com.badlogic.gdx.Application;
@@ -40,10 +41,17 @@ public final class RealmTech extends Game{
 	private ECSEngine ecsEngine;
 
     private TextureAtlas textureAtlas;
+    public RealmTechDataCtrl realmTechDataCtrl;
 
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        try {
+            realmTechDataCtrl = new RealmTechDataCtrl();
+        } catch (IOException e) {
+            Gdx.app.error(TAG, "La hiérarchie des dossier n'a pas pu être créer correctement", e);
+            Gdx.app.exit();
+        }
         assetManager = new AssetManager();
         initSkin();
         initHealper();
@@ -140,6 +148,7 @@ public final class RealmTech extends Game{
         gameStage.dispose();
         uiStage.dispose();
         assetManager.dispose();
+        realmTechDataCtrl.saveConfig();
     }
 
     public TextureAtlas getTextureAtlas() {

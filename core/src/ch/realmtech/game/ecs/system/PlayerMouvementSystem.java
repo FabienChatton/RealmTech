@@ -38,7 +38,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
         yFactor = 0;
         if (cellId != -1) {
             InfCellComponent infCellComponent = mCell.get(cellId);
-            if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key)) {
+            if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key.get())) {
                 if (!playerComponent.moveUp) {
                     playerComponent.cooldown = 0;
                 }
@@ -49,7 +49,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             } else {
                 playerComponent.moveUp = false;
             }
-            if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key)) {
+            if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key.get())) {
                 if (!playerComponent.moveLeft) {
                     playerComponent.cooldown = 0;
                 }
@@ -60,7 +60,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             } else {
                 playerComponent.moveLeft = false;
             }
-            if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key)) {
+            if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key.get())) {
                 if (!playerComponent.moveDown) {
                     playerComponent.cooldown = 0;
                 }
@@ -71,7 +71,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             } else {
                 playerComponent.moveDown = false;
             }
-            if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key)) {
+            if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key.get())) {
                 if (!playerComponent.moveRight) {
                     playerComponent.cooldown = 0;
                 }
