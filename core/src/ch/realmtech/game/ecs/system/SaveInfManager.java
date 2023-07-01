@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +21,8 @@ import java.util.List;
 
 public class SaveInfManager extends Manager {
     private final static int SAVE_PROTOCOLE_VERSION = 7;
+    private final static String ROOT_PATH = "RealmTechData";
+    private final static String ROOT_PATH_SAVES = "saves";
     private final static String TAG = SaveInfManager.class.getSimpleName();
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
@@ -34,34 +35,29 @@ public class SaveInfManager extends Manager {
         saveInfMap(mapId, infMetaDonneesComponent.saveName);
     }
 
-    public void saveInfMap(int mapId, Path rootSaveDirPath) throws IOException {
+    public void saveInfMap(int mapId, Path saveName) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         if (infMapComponent != null) {
-            saveInfHeaderFile(infMapComponent.infMetaDonnees, rootSaveDirPath);
+            saveInfHeaderFile(infMapComponent.infMetaDonnees, saveName);
             for (int infChunkId : infMapComponent.infChunks) {
-                saveInfChunk(infChunkId, rootSaveDirPath);
+                saveInfChunk(infChunkId, saveName);
             }
         }
     }
 
     /**
      *
-     * @param name nom de la nouvelle sauvegarde
+     * @param saveName nom de la nouvelle sauvegarde
      * @return l'id un infMap
      * @throws IOException
      */
-    public int generateNewSave(String name) throws IOException {
-        File rootSaveDir = new File(Gdx.files.internal(".").file(), name);
-        try {
-            Files.createDirectory(rootSaveDir.toPath());
-        } catch (FileAlreadyExistsException ignored) {
-
-        }
+    public int generateNewSave(String saveName) throws IOException{
+        creerHiearchieDUneSave(saveName);
         int mapId = world.create();
         int metaDonneesId = world.create();
         InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
         InfMetaDonneesComponent infMetaDonneesComponent = world.edit(metaDonneesId).create(InfMetaDonneesComponent.class);
-        infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, name, world);
+        infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, saveName, world);
         infMapComponent.infMetaDonnees = metaDonneesId;
         return mapId;
     }
@@ -116,9 +112,6 @@ public class SaveInfManager extends Manager {
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
         int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath);
         InfMetaDonneesComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
-        //int chunkPosX = (int) (metaDonneesComponent.playerPositionX / WorldMap.CHUNK_SIZE);
-        //int chunkPosY = (int) (metaDonneesComponent.playerPositionY / WorldMap.CHUNK_SIZE);
-        //int chunkId = readSavedInfChunk(chunkPosX, chunkPosY, rootSaveDirPath);
         infMapComponent.set(new int[0], infMetaDonneesId);
         return worldId;
     }
@@ -189,7 +182,8 @@ public class SaveInfManager extends Manager {
     }
 
     public static List<File> listSauvegardeInfinie() throws IOException {
-        File rootFile = Gdx.files.internal(".").file();
+        creerHiearchieRealmTechData();
+        File rootFile = Gdx.files.local(String.format("%s/%s", ROOT_PATH, ROOT_PATH_SAVES)).file();
         List<File> ret = new ArrayList<>();
         for (File file : rootFile.listFiles()) {
             if (getMetaDonneesFile(file.toPath(), false).exists()) {
@@ -202,27 +196,70 @@ public class SaveInfManager extends Manager {
     private static File getMetaDonneesFile(Path rootSaveDirPath, boolean creerSiInexistant) throws IOException {
         if (creerSiInexistant) verifiePathLevelExiste(rootSaveDirPath);
         String headerPath = ("level/header.rsh");
-        return new File(rootSaveDirPath + "/" + headerPath);
+        return new File(getLocalPathSaveRoot().toFile() + "/" + rootSaveDirPath + "/" + headerPath);
     }
 
     private static File getChunkFile(int chunkPosX, int chunkPosY, Path rootSaveDirPath) throws IOException {
         verifiePathLevelExiste(rootSaveDirPath);
         verifiePathChunkExiste(rootSaveDirPath);
         String chunkFileName = String.format("%s,%s", chunkPosX, chunkPosY);
-        return new File(rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
+        return new File(getLocalPathSaveRoot().toFile() + "/" + rootSaveDirPath + "/" + String.format("level/chunks/%s.rcs", chunkFileName));
     }
 
     private static void verifiePathLevelExiste(Path rootSaveDirPath) throws IOException {
-        Path levelPath = Path.of(rootSaveDirPath.toString() + "/level");
+        Path levelPath = Path.of(getLocalPathSaveRoot() + "/" + rootSaveDirPath.toString() + "/level");
         if (!Files.exists(levelPath)) {
             Files.createDirectory(levelPath);
         }
     }
 
     private static void verifiePathChunkExiste(Path rootSaveDirPath) throws IOException {
-        Path levelChunkPath = Path.of(rootSaveDirPath.toString() + "/level/chunks");
+        Path levelChunkPath = Path.of(getLocalPathSaveRoot().toFile() + "/" + rootSaveDirPath.toString() + "/level/chunks");
         if (!Files.exists(levelChunkPath)) {
             Files.createDirectory(levelChunkPath);
         }
+    }
+    private static void creerHiearchieRealmTechData() throws IOException {
+        File root = Gdx.files.local(ROOT_PATH).file();
+        if (!root.exists()) {
+            Files.createDirectories(root.toPath());
+        }
+        File rootSave = Gdx.files.local(String.format("%s/%s", ROOT_PATH, ROOT_PATH_SAVES)).file();
+        if (!rootSave.exists()) {
+            Files.createDirectories(rootSave.toPath());
+        }
+    }
+
+    private static void creerHiearchieDUneSave(String saveName) throws IOException {
+        Path savePath = getSavePath(saveName);
+        creerHiearchieLevel(savePath);
+        creerHiearchieChunk(savePath);
+    }
+
+    private static void creerHiearchieLevel(Path pathSave) throws IOException {
+        Path pathLevel = Path.of(pathSave.toFile().toString(), "level");
+        if (pathLevel.toFile().exists()) {
+            Files.createDirectories(pathLevel);
+        }
+    }
+
+    private static Path getSavePath(String saveName) throws IOException{
+        return Path.of(getLocalPathSaveRoot().toFile().toString(), saveName);
+    }
+
+    private static Path getLevelPath(Path savePath) throws IOException {
+        return Path.of(savePath.toFile().toString(), "level");
+    }
+
+    private static void creerHiearchieChunk(Path savePath) throws IOException {
+        Path chunkPath = Path.of(getLevelPath(savePath).toFile().toString(), "chunks");
+        if (!chunkPath.toFile().exists()) {
+            Files.createDirectories(chunkPath);
+        }
+    }
+
+    private static Path getLocalPathSaveRoot() throws IOException {
+        creerHiearchieRealmTechData();
+        return Gdx.files.local(String.format("%s/%s", ROOT_PATH, ROOT_PATH_SAVES)).file().toPath();
     }
 }

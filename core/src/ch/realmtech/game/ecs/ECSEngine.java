@@ -199,6 +199,8 @@ public final class ECSEngine {
     }
     public void dispose() {
         world.dispose();
+        physicWorld.dispose();
+        System.gc();
     }
     public Body createBox2dItem(int itemId, float worldX, float worldY, TextureRegion texture) {
         resetBodyDef();

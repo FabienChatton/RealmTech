@@ -101,7 +101,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                     context.getEcsEngine().generateNewSave(nomNouvelleCarte.getText());
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    Gdx.app.error(TAG, "impossible de creer la nouvelle carte " + nomNouvelleCarte.getText(), e);
                 }
 //                if (nomNouvelleCarte.getText().isEmpty()) {
 //                    uiStage.addActor(PopupHelper.popupErreur("Le nom de la carte ne doit pas être vide"));
