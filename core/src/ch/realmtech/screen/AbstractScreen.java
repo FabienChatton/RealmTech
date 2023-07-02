@@ -2,6 +2,7 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -52,6 +53,9 @@ public abstract class AbstractScreen implements Screen {
     public void update(final float delta) {
         gameStage.act(delta);
         uiStage.act(delta);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F10)) {
+            uiStage.setDebugAll(!uiStage.isDebugAll());
+        }
     }
 
     public void clearScreen(){

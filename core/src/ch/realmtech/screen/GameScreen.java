@@ -59,9 +59,6 @@ public class GameScreen extends AbstractScreen {
                 context.getEcsEngine().getItemManager().newItemOnGround(worldPosition.x, worldPosition.y, RealmTechCoreItem.PIOCHE_ITEM);
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
-            uiStage.setDebugAll(!uiStage.isDebugAll());
-        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             if (uiTable.getChildren().contains(debugTable, true)) {
                 uiTable.clear();
@@ -69,7 +66,10 @@ public class GameScreen extends AbstractScreen {
                 uiTable.add(debugTable).expand().left().top();
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) context.getEcsEngine().togglePlayerInventoryWindow();
+        // open inventory
+        if (Gdx.input.isKeyJustPressed(context.getRealmTechDataCtrl().option.openInventory.get())) {
+            context.getEcsEngine().togglePlayerInventoryWindow();
+        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 0);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 1);

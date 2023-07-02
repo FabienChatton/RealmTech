@@ -5,37 +5,62 @@ import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class OptionsScreen extends AbstractScreen {
+    private final static String TAG = OptionsScreen.class.getSimpleName();
+    private final Table optionTable;
+
     public OptionsScreen(RealmTech context) {
         super(context);
+        optionTable = new Table(skin);
+    }
 
-        Table optionTable = new Table(skin);
+    @Override
+    public void show() {
+        super.show();
         optionTable.setFillParent(true);
 
-        TextButton backButton = new TextButton("back", skin);
+        final TextButton backButton = new TextButton("back", skin);
         backButton.addListener(back());
+        final TextButton resetOptionButton = new TextButton("reset options", skin);
+        resetOptionButton.addListener(resetOption());
+        resetOptionButton.setColor(Color.RED);
 
-        optionTable.add(newKeysBind("keyMoveForward", context.realmTechDataCtrl.option.keyMoveForward)).row();
-        optionTable.add(newKeysBind("keyMoveLeft", context.realmTechDataCtrl.option.keyMoveLeft)).row();
-        optionTable.add(newKeysBind("keyMoveRight", context.realmTechDataCtrl.option.keyMoveRight)).row();
-        optionTable.add(newKeysBind("keyMoveBack", context.realmTechDataCtrl.option.keyMoveBack)).row();
-        optionTable.add(backButton);
+        optionTable.add(new Label("keyMoveForward", skin)).left();
+        optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveForward)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(new Label("keyMoveLeft", skin)).left();
+        optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveLeft)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(new Label("keyMoveRight", skin)).left();
+        optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveRight)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(new Label("keyMoveBack", skin)).left();
+        optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveBack)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(new Label("openInventory", skin)).left();
+        optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.openInventory)).padLeft(10f).padBottom(10f).row();
+
+        optionTable.add(resetOptionButton).left();
+        optionTable.add(backButton).right();
 
         ScrollPane scrollPane = new ScrollPane(optionTable, skin);
         uiTable.add(scrollPane);
     }
 
-    private HorizontalGroup newKeysBind(CharSequence leadingText, AtomicInteger atomicInteger) {
-        final HorizontalGroup horizontalGroup = new HorizontalGroup();
-        horizontalGroup.addActor(new Label(leadingText, skin));
+    @Override
+    public void hide() {
+        super.hide();
+        optionTable.clear();
+    }
+
+    private TextButton newKeysBind(AtomicInteger atomicInteger) {
         final TextButton field = new TextButton(Input.Keys.toString(atomicInteger.get()), skin);
-        horizontalGroup.addActor(field);
         field.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -53,7 +78,7 @@ public class OptionsScreen extends AbstractScreen {
                 context.getInputManager().keysSignal.add(nextKey);
             }
         });
-        return horizontalGroup;
+        return field;
     }
 
     private ClickListener back() {
@@ -62,6 +87,17 @@ public class OptionsScreen extends AbstractScreen {
             public void clicked(InputEvent event, float x, float y) {
                 context.setScreen(oldScreen);
                 InputMapper.reset();
+            }
+        };
+    }
+
+    private ClickListener resetOption() {
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.getRealmTechDataCtrl().option.setDefaultOption();
+                hide();
+                show();
             }
         };
     }

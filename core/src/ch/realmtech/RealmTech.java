@@ -42,7 +42,7 @@ public final class RealmTech extends Game{
 	private ECSEngine ecsEngine;
 
     private TextureAtlas textureAtlas;
-    public RealmTechDataCtrl realmTechDataCtrl;
+    private RealmTechDataCtrl realmTechDataCtrl;
 
     @Override
     public void create() {
@@ -192,5 +192,9 @@ public final class RealmTech extends Game{
 
     public void loadInfFile(Path path) throws IOException {
         ecsEngine.loadInfFile(path);
+    }
+
+    public RealmTechDataCtrl getRealmTechDataCtrl() {
+        return realmTechDataCtrl;
     }
 }

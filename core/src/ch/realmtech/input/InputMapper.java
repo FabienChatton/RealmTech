@@ -17,6 +17,7 @@ public final class InputMapper implements InputProcessor {
     public static KeysMapper moveLeft;
     public static KeysMapper moveRight;
     public static KeysMapper moveBack;
+    public static KeysMapper openInventory;
     public static PointerMapper leftClick;
     public static PointerMapper rightClick;
     private final Array<KeysMapper> keysMappers;
@@ -32,15 +33,17 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveForward = new KeysMapper(context.realmTechDataCtrl.option.keyMoveForward);
-        moveLeft = new KeysMapper(context.realmTechDataCtrl.option.keyMoveLeft);
-        moveRight = new KeysMapper(context.realmTechDataCtrl.option.keyMoveRight);
-        moveBack = new KeysMapper(context.realmTechDataCtrl.option.keyMoveBack);
+        moveForward = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveForward);
+        moveLeft = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveLeft);
+        moveRight = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveRight);
+        moveBack = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveBack);
+        openInventory = new KeysMapper(context.getRealmTechDataCtrl().option.openInventory);
 
         keysMappers.add(moveForward);
         keysMappers.add(moveLeft);
         keysMappers.add(moveRight);
         keysMappers.add(moveBack);
+        keysMappers.add(openInventory);
 
         // pointer
         leftClick = new PointerMapper(0, 0);
@@ -72,7 +75,7 @@ public final class InputMapper implements InputProcessor {
         moveBack.isPressed = false;
     }
 
-    public boolean isKeyPressed(int keycode) {
+    public boolean isKeyPressed(final int keycode) {
         for (KeysMapper keysMapper : keysMappers) {
             if (keysMapper.key.get() == keycode) {
                 return keysMapper.isPressed;

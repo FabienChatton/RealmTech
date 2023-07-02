@@ -40,7 +40,6 @@ public class PlayerInventorySystem extends BaseSystem {
     @Override
     protected void processSystem() {
         inventoryStage.draw();
-        //inventoryStage.setDebugAll(true);
     }
     /*
     inventoryStage

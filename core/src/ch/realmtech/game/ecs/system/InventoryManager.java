@@ -25,7 +25,6 @@ public class InventoryManager extends Manager {
             }
         }
     }
-
     public void dropItemFromPlayerInventory(int itemId, int playerId, float worldPositionX, float worldPositionY) {
 //        InventoryComponent inventoryComponent = mInventory.create(playerId);
 //        inventoryComponent.inventory.removeValue(itemId);
@@ -37,6 +36,7 @@ public class InventoryManager extends Manager {
 //        );
 //        world.getSystem(SoundManager.class).playItemDrop();
     }
+
     public int[][] getInventory(int entityId) {
         return mInventory.get(entityId).inventory;
     }

@@ -44,19 +44,25 @@ public class RealmTechDataCtrl {
         propertiesFile.put("keyMoveLeft", option.keyMoveLeft.toString());
         propertiesFile.put("keyMoveRight", option.keyMoveRight.toString());
         propertiesFile.put("keyMoveBack", option.keyMoveBack.toString());
-        try (OutputStream outputStream = new FileOutputStream(Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).file())) {
+        propertiesFile.put("openInventory", option.openInventory.toString());
+        try (OutputStream outputStream = new FileOutputStream(getOptionFile())) {
             propertiesFile.store(outputStream, "le fichier de configuration de RealmTech");
             outputStream.flush();
         }
     }
 
     private static Option loadOptionFromFile(final Properties propertiesFile) throws IllegalArgumentException {
-        if (propertiesFile.isEmpty()) throw new IllegalArgumentException("Le fichier de configuration est vide");
+        if (propertiesFile.size() != Option.class.getFields().length) {
+            final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Il manque des champs de le fichier de configuration");
+            Gdx.app.log(TAG, illegalArgumentException.getMessage(), illegalArgumentException);
+            throw illegalArgumentException;
+        }
         final Option option = new Option();
         option.keyMoveForward.set(Integer.parseInt(propertiesFile.getProperty("keyMoveForward")));
         option.keyMoveLeft.set(Integer.parseInt(propertiesFile.getProperty("keyMoveLeft")));
         option.keyMoveRight.set(Integer.parseInt(propertiesFile.getProperty("keyMoveRight")));
         option.keyMoveBack.set(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
+        option.openInventory.set(Integer.parseInt(propertiesFile.getProperty("openInventory")));
         return option;
     }
 
@@ -68,12 +74,27 @@ public class RealmTechDataCtrl {
         }
     }
 
+    /**
+     * Ce qui est déclaré sont les options par défaut. Elles sont modifier une fois la lecture du fichier de configuration
+     */
     public final static class Option {
-        public final AtomicInteger keyMoveForward = new AtomicInteger(Input.Keys.W);
-        public final AtomicInteger keyMoveLeft = new AtomicInteger(Input.Keys.A);
-        public final AtomicInteger keyMoveRight = new AtomicInteger(Input.Keys.D);
-        public final AtomicInteger keyMoveBack = new AtomicInteger(Input.Keys.S);
+        public final AtomicInteger keyMoveForward = new AtomicInteger();
+        public final AtomicInteger keyMoveLeft = new AtomicInteger();
+        public final AtomicInteger keyMoveRight = new AtomicInteger();
+        public final AtomicInteger keyMoveBack = new AtomicInteger();
+        public final AtomicInteger openInventory = new AtomicInteger();
 
+        {
+            setDefaultOption();
+        }
+
+        public void setDefaultOption() {
+            keyMoveForward.set(Input.Keys.W);
+            keyMoveLeft.set(Input.Keys.A);
+            keyMoveRight.set(Input.Keys.D);
+            keyMoveBack.set(Input.Keys.S);
+            openInventory.set(Input.Keys.E);
+        }
     }
     public static void creerHiearchieRealmTechData() throws IOException {
         File root = Gdx.files.local(ROOT_PATH).file();
@@ -88,10 +109,13 @@ public class RealmTechDataCtrl {
         if (!rootProperties.exists()) {
             Files.createDirectories(rootProperties.toPath());
         }
-        File optionFile = Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).file();
+        File optionFile = getOptionFile();
         if (!optionFile.exists()) {
-            final boolean newFile = optionFile.createNewFile();
-            if (!newFile) throw new IOException("Le fichier " + optionFile.toPath().toFile() + " n'a pas pu être créer");
+            Files.createFile(optionFile.toPath());
         }
+    }
+
+    private static File getOptionFile() {
+        return Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).file();
     }
 }
