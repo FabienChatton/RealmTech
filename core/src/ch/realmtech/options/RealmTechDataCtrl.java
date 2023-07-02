@@ -36,6 +36,7 @@ public class RealmTechDataCtrl {
     private static Option creerDefaultOption(final Properties propertiesFile) throws IOException {
         final Option option = new Option();
         saveOptionFile(propertiesFile, option);
+        Gdx.app.log(TAG, "fichier de configuration créé avec success");
         return option;
     }
 
