@@ -15,6 +15,7 @@ qu'on peut posse n'importe où pour créer ses propres bâtiments.
 ### cmd
 ```shell
 git clone https://github.com/FabienChatton/realmTech
+cd realmTech
 .\gradlew desktop:run
 ```
 Cette méthode stock le fichier RealmTechData dans le dossier assets ce
