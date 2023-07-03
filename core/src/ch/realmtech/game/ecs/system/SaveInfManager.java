@@ -54,6 +54,7 @@ public class SaveInfManager extends Manager {
      * @throws IOException
      */
     public int generateNewSave(String saveName) throws IOException{
+        if (saveName == null || saveName.isBlank()) throw new IllegalArgumentException("le nom de la sauvegarde ne peut pas être null ou vide");
         creerHiearchieDUneSave(saveName);
         int mapId = world.create();
         int metaDonneesId = world.create();

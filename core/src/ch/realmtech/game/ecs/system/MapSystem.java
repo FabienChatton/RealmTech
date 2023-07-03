@@ -16,7 +16,10 @@ import com.badlogic.gdx.Gdx;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @All(InfMapComponent.class)
 public class MapSystem extends DelayedIteratingSystem {
@@ -30,7 +33,6 @@ public class MapSystem extends DelayedIteratingSystem {
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PlayerComponent> mPlayer;
-    private final static int RENDER_DISTANCE = 6;
     private int[] ancienneChunkPos = null;
     private final static float INITALE_DELAY = 0.005f;
     private float delay = INITALE_DELAY;
@@ -42,43 +44,34 @@ public class MapSystem extends DelayedIteratingSystem {
         int chunkPosX = getChunkPos((int) positionPlayerComponent.x);
         int chunkPosY = getChunkPos((int) positionPlayerComponent.y);
         if (ancienneChunkPos == null || !(ancienneChunkPos[0] == chunkPosX && ancienneChunkPos[1] == chunkPosY)) {
-            List<Integer> chunkADamner = new LinkedList<>();
+            List<Integer> chunkADamner = new ArrayList<>(2 * context.getRealmTechDataCtrl().option.renderDistance.get() + 1);
 
-            for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-                if (!chunkEstDansLaRenderDistance(infMapComponent.infChunks[i], chunkPosX, chunkPosY)) {
-                    chunkADamner.add(infMapComponent.infChunks[i]);
-                }
-            }
+            trouveChunkADamner(infMapComponent, chunkPosX, chunkPosY, chunkADamner);
             int indexDamner = 0;
-            for (int i = -RENDER_DISTANCE + chunkPosX; i <= RENDER_DISTANCE + chunkPosX; i++) {
-                for (int j = -RENDER_DISTANCE + chunkPosY; j <= RENDER_DISTANCE + chunkPosY; j++) {
-                    boolean trouve = false;
-                    for (int k = 0; k < infMapComponent.infChunks.length; k++) {
-                        InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[k]);
-                        if (infChunkComponent.chunkPosX == i && infChunkComponent.chunkPosY == j) {
-                            trouve = true;
-                            break;
-                        }
-                    }
-                    if (!trouve) {
+            for (int i = -context.getRealmTechDataCtrl().option.renderDistance.get() + chunkPosX; i <= context.getRealmTechDataCtrl().option.renderDistance.get() + chunkPosX; i++) {
+                for (int j = -context.getRealmTechDataCtrl().option.renderDistance.get() + chunkPosY; j <= context.getRealmTechDataCtrl().option.renderDistance.get() + chunkPosY; j++) {
+                    final boolean changement = chunkSansChangement(infMapComponent, i, j);
+                    if (changement) {
                         int newChunkId = getOrGenerateChunk(mapId, i, j);
                         if (indexDamner < chunkADamner.size()) {
                             Integer oldChunk = chunkADamner.get(indexDamner++);
                             replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
-                            try {
-                                world.getSystem(SaveInfManager.class).saveInfChunk(oldChunk, SaveInfManager.getSavePath(mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName));
-                                damneChunk(oldChunk);
-                            } catch (IOException e) {
-                                InfChunkComponent infChunkComponent = mChunk.get(oldChunk);
-                                Gdx.app.error(TAG, String.format("Le chunk %d,%d n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY), e);
-                            }
+                            damneChunk(oldChunk, infMapComponent);
                         } else {
                             infMapComponent.infChunks = ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
                         }
-                        if (ancienneChunkPos != null) {
-                            return;
-                        }
                     }
+                    // la limite d'update de chunk pour ce process est atteint
+                    if (indexDamner >= context.getRealmTechDataCtrl().option.chunkParUpdate.get()) {
+                        return;
+                    }
+                }
+            }
+            if (indexDamner < chunkADamner.size()) {
+                for (int i = indexDamner; i < chunkADamner.size(); i++) {
+                    final int chunkId = chunkADamner.get(i);
+                    damneChunk(chunkId, infMapComponent);
+                    infMapComponent.infChunks = supprimerChunkAMap(mapId, chunkId);
                 }
             }
         }
@@ -89,8 +82,36 @@ public class MapSystem extends DelayedIteratingSystem {
         ancienneChunkPos[1] = chunkPosY;
     }
 
-    private void damneChunk(int chunkId) {
+    /**
+     * Permet de savoir si le chunk n'a pas besoin d'être changé
+     */
+    private boolean chunkSansChangement(InfMapComponent infMapComponent, int i, int j) {
+        boolean trouve = false;
+        for (int k = 0; k < infMapComponent.infChunks.length; k++) {
+            InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[k]);
+            if (infChunkComponent.chunkPosX == i && infChunkComponent.chunkPosY == j) {
+                trouve = true;
+                break;
+            }
+        }
+        return !trouve;
+    }
+
+    private void trouveChunkADamner(InfMapComponent infMapComponent, int chunkPosX, int chunkPosY, List<Integer> chunkADamner) {
+        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
+            if (!chunkEstDansLaRenderDistance(infMapComponent.infChunks[i], chunkPosX, chunkPosY)) {
+                chunkADamner.add(infMapComponent.infChunks[i]);
+            }
+        }
+    }
+
+    private void damneChunk(int chunkId, InfMapComponent infMapComponent) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+        try {
+            world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName));
+        } catch (IOException e) {
+            Gdx.app.error(TAG, String.format("Le chunk %d,%d n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY), e);
+        }
         world.delete(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
             world.delete(infChunkComponent.infCellsId[i]);
@@ -118,7 +139,7 @@ public class MapSystem extends DelayedIteratingSystem {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int dstX = Math.abs(posX - infChunkComponent.chunkPosX);
         int dstY = Math.abs(posY - infChunkComponent.chunkPosY);
-        return dstX <= RENDER_DISTANCE && dstY <= RENDER_DISTANCE;
+        return dstX <= context.getRealmTechDataCtrl().option.renderDistance.get() && dstY <= context.getRealmTechDataCtrl().option.renderDistance.get();
     }
 
     private int getOrGenerateChunk(int mapId, int chunkX, int chunkY) {

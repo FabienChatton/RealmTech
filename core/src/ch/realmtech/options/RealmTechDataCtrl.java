@@ -46,6 +46,8 @@ public class RealmTechDataCtrl {
         propertiesFile.put("keyMoveRight", option.keyMoveRight.toString());
         propertiesFile.put("keyMoveBack", option.keyMoveBack.toString());
         propertiesFile.put("openInventory", option.openInventory.toString());
+        propertiesFile.put("renderDistance", option.renderDistance.toString());
+        propertiesFile.put("chunkParUpdate", option.chunkParUpdate.toString());
         try (OutputStream outputStream = new FileOutputStream(getOptionFile())) {
             propertiesFile.store(outputStream, "le fichier de configuration de RealmTech");
             outputStream.flush();
@@ -53,7 +55,7 @@ public class RealmTechDataCtrl {
     }
 
     private static Option loadOptionFromFile(final Properties propertiesFile) throws IllegalArgumentException {
-        if (propertiesFile.size() != Option.class.getFields().length) {
+        if (propertiesFile.size() == 0) {
             final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Il manque des champs de le fichier de configuration");
             Gdx.app.log(TAG, illegalArgumentException.getMessage(), illegalArgumentException);
             throw illegalArgumentException;
@@ -64,6 +66,8 @@ public class RealmTechDataCtrl {
         option.keyMoveRight.set(Integer.parseInt(propertiesFile.getProperty("keyMoveRight")));
         option.keyMoveBack.set(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
         option.openInventory.set(Integer.parseInt(propertiesFile.getProperty("openInventory")));
+        option.renderDistance.set(Integer.parseInt(propertiesFile.getProperty("renderDistance")));
+        option.chunkParUpdate.set(Integer.parseInt(propertiesFile.getProperty("chunkParUpdate")));
         return option;
     }
 
@@ -79,11 +83,15 @@ public class RealmTechDataCtrl {
      * Ce qui est déclaré sont les options par défaut. Elles sont modifier une fois la lecture du fichier de configuration
      */
     public final static class Option {
+        public final static int RENDER_DISTANCE_MIN = 1;
+        public final static int RENDER_DISTANCE_MAX = 16;
         public final AtomicInteger keyMoveForward = new AtomicInteger();
         public final AtomicInteger keyMoveLeft = new AtomicInteger();
         public final AtomicInteger keyMoveRight = new AtomicInteger();
         public final AtomicInteger keyMoveBack = new AtomicInteger();
         public final AtomicInteger openInventory = new AtomicInteger();
+        public final AtomicInteger renderDistance = new AtomicInteger();
+        public final AtomicInteger chunkParUpdate = new AtomicInteger();
 
         {
             setDefaultOption();
@@ -95,6 +103,8 @@ public class RealmTechDataCtrl {
             keyMoveRight.set(Input.Keys.D);
             keyMoveBack.set(Input.Keys.S);
             openInventory.set(Input.Keys.E);
+            renderDistance.set(6);
+            chunkParUpdate.set(3);
         }
     }
     public static void creerHiearchieRealmTechData() throws IOException {
