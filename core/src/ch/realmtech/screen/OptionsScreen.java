@@ -3,6 +3,8 @@ package ch.realmtech.screen;
 import ch.realmtech.RealmTech;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
+import ch.realmtech.options.BooleanRun;
+import ch.realmtech.options.IntegerRun;
 import ch.realmtech.options.RealmTechDataCtrl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -35,26 +37,39 @@ public class OptionsScreen extends AbstractScreen {
         resetOptionButton.addListener(resetOption());
         resetOptionButton.setColor(Color.RED);
 
+        // keyMoveForward
         optionTable.add(new Label("keyMoveForward", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveForward)).padLeft(10f).padBottom(10f).row();
+        // keyMoveLeft
         optionTable.add(new Label("keyMoveLeft", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveLeft)).padLeft(10f).padBottom(10f).row();
+        // keyMoveRight
         optionTable.add(new Label("keyMoveRight", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveRight)).padLeft(10f).padBottom(10f).row();
+        // keyMoveBack
         optionTable.add(new Label("keyMoveBack", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveBack)).padLeft(10f).padBottom(10f).row();
+        // openInventory
         optionTable.add(new Label("openInventory", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.openInventory)).padLeft(10f).padBottom(10f).row();
+        // renderDistance
         optionTable.add(new Label("renderDistance", skin)).left();
-        newSliderRenderDistance(optionTable); // s'ajoute lui-même dans le tableau
+        newSlider(optionTable, RealmTechDataCtrl.Option.RENDER_DISTANCE_MIN, RealmTechDataCtrl.Option.RENDER_DISTANCE_MAX, 1, false, skin, context.getRealmTechDataCtrl().option.renderDistance);
+        // chunkUpdate
         optionTable.add(new Label("chunkUpdate", skin)).left();
-        newSliderNumberChunkParUpdate(optionTable);
-
+        newSlider(optionTable, 1, 10, 1, false, skin, context.getRealmTechDataCtrl().option.chunkParUpdate);
+        // full screen
         optionTable.add(new Label("fullScreen", skin)).left();
-        CheckBox checkBoxFullScreen = new CheckBox(null, skin);
-        checkBoxFullScreen.addListener(fullScreen(checkBoxFullScreen));
-        optionTable.add(checkBoxFullScreen).padLeft(10f).padBottom(10f).row();
+        newBooleanRun(optionTable, context.getRealmTechDataCtrl().option.fullScreen);
+        // vsync
+        optionTable.add(new Label("vsync", skin)).left();
+        newBooleanRun(optionTable, context.getRealmTechDataCtrl().option.vsync);
+        // fps
+        optionTable.add(new Label("fps", skin)).left();
+        newSlider(optionTable, 0, 300, 5, false, skin, context.getRealmTechDataCtrl().option.fps);
 
+
+        //reset button
         optionTable.add(resetOptionButton).left();
         optionTable.add(backButton).right();
 
@@ -89,46 +104,46 @@ public class OptionsScreen extends AbstractScreen {
         });
         return field;
     }
-
-    private void newSliderRenderDistance(Table table) {
-        final Slider slider = new Slider(RealmTechDataCtrl.Option.RENDER_DISTANCE_MIN, RealmTechDataCtrl.Option.RENDER_DISTANCE_MAX, 1, false, skin);
-        slider.setValue(context.getRealmTechDataCtrl().option.renderDistance.intValue());
-        final Label labelRenderDistanceNumber = new Label(String.valueOf((int) slider.getValue()), skin);
+    private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, AtomicInteger atomicIntegerOption) {
+        final Slider slider = new Slider(min, max, stepSize, vertical, skin);
+        slider.setValue(atomicIntegerOption.get());
+        final Label label = new Label(String.valueOf((int) slider.getValue()), skin);
         slider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                context.getRealmTechDataCtrl().option.renderDistance.set((int) slider.getValue());
-                labelRenderDistanceNumber.setText(String.format("%d", (int) slider.getValue()));
+                atomicIntegerOption.set((int) slider.getValue());
+                label.setText((int) slider.getValue());
             }
         });
         table.add(slider).left();
-        table.add(labelRenderDistanceNumber).padLeft(10f).padBottom(10f).row();
+        table.add(label).padLeft(10f).padBottom(10f).row();
     }
 
-    private void newSliderNumberChunkParUpdate(Table table) {
-        final Slider slider = new Slider(1, 10, 1, false, skin);
-        slider.setValue(context.getRealmTechDataCtrl().option.chunkParUpdate.intValue());
-        final Label labelNumberChunkParUpdate = new Label(String.valueOf((int) slider.getValue()), skin);
+    private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, IntegerRun integerRun) {
+        final Slider slider = new Slider(min, max, stepSize, vertical, skin);
+        slider.setValue(integerRun.get());
+        final Label label = new Label(String.valueOf((int) slider.getValue()), skin);
         slider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                context.getRealmTechDataCtrl().option.chunkParUpdate.set((int) slider.getValue());
-                labelNumberChunkParUpdate.setText(String.format("%d", (int) slider.getValue()));
+                integerRun.set((int) slider.getValue());
+                label.setText((int) slider.getValue());
             }
         });
-
         table.add(slider).left();
-        table.add(labelNumberChunkParUpdate).padLeft(10f).padBottom(10f).row();
+        table.add(label).padLeft(10f).padBottom(10f).row();
     }
 
-    private ClickListener fullScreen(CheckBox checkBox) {
-        checkBox.setChecked(context.getRealmTechDataCtrl().option.fullScreen.get());
-        return new ClickListener() {
+    private void newBooleanRun(Table table, BooleanRun booleanRun) {
+        CheckBox checkBox = new CheckBox(null, skin);
+        checkBox.setChecked(booleanRun.get());
+        checkBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                context.getRealmTechDataCtrl().option.fullScreen.set(checkBox.isChecked());
+                booleanRun.set(checkBox.isChecked());
             }
-        };
+        });
+        table.add(checkBox).padLeft(10f).padBottom(10f).row();
     }
 
 

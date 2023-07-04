@@ -49,7 +49,9 @@ public class RealmTechDataCtrl {
         propertiesFile.put("openInventory", option.openInventory.toString());
         propertiesFile.put("renderDistance", option.renderDistance.toString());
         propertiesFile.put("chunkParUpdate", option.chunkParUpdate.toString());
-        propertiesFile.put("fullScreen", Boolean.toString(option.fullScreen.get()));
+        propertiesFile.put("fullScreen", option.fullScreen.toString());
+        propertiesFile.put("fps", option.fps.toString());
+        propertiesFile.put("vsync", option.vsync.toString());
         try (OutputStream outputStream = new FileOutputStream(getOptionFile())) {
             propertiesFile.store(outputStream, "le fichier de configuration de RealmTech");
             outputStream.flush();
@@ -71,6 +73,8 @@ public class RealmTechDataCtrl {
         option.renderDistance.set(Integer.parseInt(propertiesFile.getProperty("renderDistance")));
         option.chunkParUpdate.set(Integer.parseInt(propertiesFile.getProperty("chunkParUpdate")));
         option.fullScreen.set(Boolean.parseBoolean(propertiesFile.getProperty("fullScreen")));
+        option.fps.set(Integer.parseInt(propertiesFile.getProperty("fps")));
+        option.vsync.set(Boolean.parseBoolean(propertiesFile.getProperty("vsync")));
         return option;
     }
 
@@ -95,7 +99,9 @@ public class RealmTechDataCtrl {
         public final AtomicInteger openInventory = new AtomicInteger();
         public final AtomicInteger renderDistance = new AtomicInteger();
         public final AtomicInteger chunkParUpdate = new AtomicInteger();
-        public final FullScreenOption fullScreen = new FullScreenOption();
+        public final BooleanRun fullScreen = new BooleanRun(bool -> {if (bool) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode()); else Gdx.graphics.setWindowedMode(RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);});
+        public final IntegerRun fps = new IntegerRun(fps -> Gdx.graphics.setForegroundFPS(fps));
+        public final BooleanRun vsync = new BooleanRun(bool -> Gdx.graphics.setVSync(bool));
 
         {
             setDefaultOption();
@@ -110,6 +116,8 @@ public class RealmTechDataCtrl {
             renderDistance.set(6);
             chunkParUpdate.set(3);
             fullScreen.set(false);
+            fps.set(60);
+            vsync.set(true);
         }
     }
     public static void creerHiearchieRealmTechData() throws IOException {
@@ -133,25 +141,5 @@ public class RealmTechDataCtrl {
 
     private static File getOptionFile() {
         return Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).file();
-    }
-    public static class FullScreenOption  {
-        private boolean value;
-
-        public FullScreenOption() {
-            value = false;
-        }
-
-        public boolean get() {
-            return value;
-        }
-
-        public void set(boolean value) {
-            this.value = value;
-            if (value) {
-                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-            } else {
-                Gdx.graphics.setWindowedMode(RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
-            }
-        }
     }
 }
