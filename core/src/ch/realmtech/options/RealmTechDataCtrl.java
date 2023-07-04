@@ -1,5 +1,6 @@
 package ch.realmtech.options;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -48,6 +49,7 @@ public class RealmTechDataCtrl {
         propertiesFile.put("openInventory", option.openInventory.toString());
         propertiesFile.put("renderDistance", option.renderDistance.toString());
         propertiesFile.put("chunkParUpdate", option.chunkParUpdate.toString());
+        propertiesFile.put("fullScreen", Boolean.toString(option.fullScreen.get()));
         try (OutputStream outputStream = new FileOutputStream(getOptionFile())) {
             propertiesFile.store(outputStream, "le fichier de configuration de RealmTech");
             outputStream.flush();
@@ -68,6 +70,7 @@ public class RealmTechDataCtrl {
         option.openInventory.set(Integer.parseInt(propertiesFile.getProperty("openInventory")));
         option.renderDistance.set(Integer.parseInt(propertiesFile.getProperty("renderDistance")));
         option.chunkParUpdate.set(Integer.parseInt(propertiesFile.getProperty("chunkParUpdate")));
+        option.fullScreen.set(Boolean.parseBoolean(propertiesFile.getProperty("fullScreen")));
         return option;
     }
 
@@ -92,6 +95,7 @@ public class RealmTechDataCtrl {
         public final AtomicInteger openInventory = new AtomicInteger();
         public final AtomicInteger renderDistance = new AtomicInteger();
         public final AtomicInteger chunkParUpdate = new AtomicInteger();
+        public final FullScreenOption fullScreen = new FullScreenOption();
 
         {
             setDefaultOption();
@@ -105,6 +109,7 @@ public class RealmTechDataCtrl {
             openInventory.set(Input.Keys.E);
             renderDistance.set(6);
             chunkParUpdate.set(3);
+            fullScreen.set(false);
         }
     }
     public static void creerHiearchieRealmTechData() throws IOException {
@@ -128,5 +133,25 @@ public class RealmTechDataCtrl {
 
     private static File getOptionFile() {
         return Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).file();
+    }
+    public static class FullScreenOption  {
+        private boolean value;
+
+        public FullScreenOption() {
+            value = false;
+        }
+
+        public boolean get() {
+            return value;
+        }
+
+        public void set(boolean value) {
+            this.value = value;
+            if (value) {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            } else {
+                Gdx.graphics.setWindowedMode(RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
+            }
+        }
     }
 }

@@ -50,6 +50,11 @@ public class OptionsScreen extends AbstractScreen {
         optionTable.add(new Label("chunkUpdate", skin)).left();
         newSliderNumberChunkParUpdate(optionTable);
 
+        optionTable.add(new Label("fullScreen", skin)).left();
+        CheckBox checkBoxFullScreen = new CheckBox(null, skin);
+        checkBoxFullScreen.addListener(fullScreen(checkBoxFullScreen));
+        optionTable.add(checkBoxFullScreen).padLeft(10f).padBottom(10f).row();
+
         optionTable.add(resetOptionButton).left();
         optionTable.add(backButton).right();
 
@@ -114,6 +119,16 @@ public class OptionsScreen extends AbstractScreen {
 
         table.add(slider).left();
         table.add(labelNumberChunkParUpdate).padLeft(10f).padBottom(10f).row();
+    }
+
+    private ClickListener fullScreen(CheckBox checkBox) {
+        checkBox.setChecked(context.getRealmTechDataCtrl().option.fullScreen.get());
+        return new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.getRealmTechDataCtrl().option.fullScreen.set(checkBox.isChecked());
+            }
+        };
     }
 
 
