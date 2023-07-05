@@ -14,15 +14,15 @@ import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Source;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Arrays;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -36,6 +36,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private DragAndDrop dragAndDrop;
     @Wire(name = "context")
     private RealmTech context;
+    private Skin skin;
 
     @Override
     protected void processSystem() {
@@ -54,10 +55,11 @@ public class PlayerInventorySystem extends BaseSystem {
         this.inventoryTable = new Table(context.getSkin());
         this.craftingTable = new Table(context.getSkin());
         this.dragAndDrop = new DragAndDrop();
+        this.skin = context.getSkin();
         dragAndDrop.setDragTime(0);
         inventoryWindow.add(inventoryTable);
-        float with = inventoryStage.getWidth() * 0.5f;
-        float height = inventoryStage.getHeight() * 0.5f;
+        float with = inventoryStage.getWidth() * 0.6f;
+        float height = inventoryStage.getHeight() * 0.6f;
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) /2 ,(inventoryStage.getHeight() - height ) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
@@ -133,18 +135,23 @@ public class PlayerInventorySystem extends BaseSystem {
         Array<Table> itemSlots = new Array<>();
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
-        for (int[] slotId : inventory) {
+        for (int[] stack : inventory) {
             Table itemSlotTable = new Table(context.getSkin());
             itemSlotTable.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
             final Image imageItem;
-            if (slotId[0] != 0) {
-                imageItem = new Image(mItem.get(slotId[0]).itemRegisterEntry.getTextureRegion());
+            final Label itemCount;
+            if (stack[0] != 0) {
+                imageItem = new Image(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion());
+                final long count = Arrays.stream(stack).filter(value -> value != 0).count();
+                itemCount = new Label(Long.toString(count), skin);
             } else {
                 imageItem = new Image(inventoryComponent.backgroundTexture);
+                itemCount = new Label(null, skin);
             }
             itemSlotTable.add(imageItem);
+            itemSlotTable.add(itemCount);
             itemSlots.add(itemSlotTable);
-            addDragAndDrop(itemSlotTable, imageItem, slotId);
+            addDragAndDrop(itemSlotTable, imageItem, stack);
         }
         return itemSlots;
     }
@@ -196,12 +203,17 @@ public class PlayerInventorySystem extends BaseSystem {
                 playerInventorySystem.world.edit(inventoryItem.slotId[0]).remove(ItemResultCraftComponent.class);
             }
             if (inventoryTarget == null) {
-
+                System.out.println("je devrais être drop");
             } else {
-                if (inventoryTarget.inventoryItem.slotId[0] == 0) {
-                    inventoryTarget.inventoryItem.slotId[0] = inventoryItemSource.slotId[0];
-                    inventoryItemSource.slotId[0] = 0;
+                if (playerInventorySystem.world.getSystem(InventoryManager.class).moveStackToStack(inventoryItemSource.slotId, inventoryTarget.inventoryItem.slotId)) {
+                    System.out.println("deplace");
+                } else {
+                    System.out.println("pas déplace");
                 }
+//                if (inventoryTarget.inventoryItem.slotId[0] == 0) {
+//                    inventoryTarget.inventoryItem.slotId[0] = inventoryItemSource.slotId[0];
+//                    inventoryItemSource.slotId[0] = 0;
+//                }
             }
             payload.getDragActor().remove();
             playerInventorySystem.refreshPlayerInventory();
