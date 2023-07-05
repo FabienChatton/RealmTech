@@ -49,7 +49,10 @@ public class ItemBarManager extends BaseSystem {
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
             Table table = inventoryTableToDisplay.get(i);
             if (j == slotSelected) {
-                table.addActor(new Image(new TextureRegionDrawable(context.getTextureAtlas().findRegion("inventory-01"))));
+                final Image selectedSlot = new Image(new TextureRegionDrawable(context.getTextureAtlas().findRegion("inventory-01")));
+                selectedSlot.setScale(1.05f);
+                selectedSlot.moveBy(-1, -1);
+                table.addActor(selectedSlot);
                 if (getSelectItem() != 0) {
                     table.getChildren().reverse();
                 }
