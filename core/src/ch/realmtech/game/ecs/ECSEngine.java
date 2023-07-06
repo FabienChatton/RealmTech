@@ -234,7 +234,7 @@ public final class ECSEngine {
     }
 
     public void togglePlayerInventoryWindow() {
-        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(getPlayerId());
+        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(/*getPlayerId()*/);
         world.getSystem(SoundManager.class).playOpenInventory();
     }
 

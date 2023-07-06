@@ -5,9 +5,9 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
 
-public class CraftPattern implements CraftingRecipeEntry {
-    final ItemRegisterEntry[] craftPattern;
-    final ItemRegisterEntry itemResult;
+public final class CraftPattern implements CraftingRecipeEntry {
+    private final ItemRegisterEntry[] craftPattern;
+    private final ItemRegisterEntry itemResult;
 
     public CraftPattern(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
         if (args == null || args.length == 0) throw new IllegalArgumentException("Il manque l'argument du craft");
@@ -19,7 +19,7 @@ public class CraftPattern implements CraftingRecipeEntry {
         }
     }
 
-    ItemRegisterEntry trouveRegistreItemViaSymbole(CraftPatternArgs[] args, char symbole) {
+    private ItemRegisterEntry trouveRegistreItemViaSymbole(CraftPatternArgs[] args, char symbole) {
         for (int i = 0; i < args.length; i++) {
             if (args[i].getSymbole() == symbole) {
                 return args[i].getItem();

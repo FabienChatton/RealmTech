@@ -1,6 +1,9 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.clickAndDrop.ClickActorAndSlot;
+import ch.realmtech.game.clickAndDrop.ClickAndDrop;
+import ch.realmtech.game.clickAndDrop.ClickAndDropEvent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
@@ -13,17 +16,11 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Source;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Target;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.Arrays;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -34,10 +31,10 @@ public class PlayerInventorySystem extends BaseSystem {
     private Window inventoryWindow;
     private Table inventoryTable;
     private Table craftingTable;
-    private DragAndDrop dragAndDrop;
     @Wire(name = "context")
     private RealmTech context;
     private Skin skin;
+    private ClickAndDrop clickAndDrop;
 
     @Override
     protected void processSystem() {
@@ -55,20 +52,20 @@ public class PlayerInventorySystem extends BaseSystem {
         this.inventoryWindow = new Window("Inventaire", context.getSkin());
         this.inventoryTable = new Table(context.getSkin());
         this.craftingTable = new Table(context.getSkin());
-        this.dragAndDrop = new DragAndDrop();
         this.skin = context.getSkin();
-        dragAndDrop.setDragTime(0);
         inventoryWindow.add(inventoryTable);
         float with = inventoryStage.getWidth() * 0.5f;
         float height = inventoryStage.getHeight() * 0.5f;
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) /2 ,(inventoryStage.getHeight() - height ) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
+        this.clickAndDrop = new ClickAndDrop(context);
     }
 
-    public void toggleInventoryWindow(int playerId){
+    public void toggleInventoryWindow(){
         if (isEnabled()) {
             super.setEnabled(false);
+            clickAndDrop.clear();
             Gdx.input.setInputProcessor(context.getInputManager());
         } else {
             super.setEnabled(true);
@@ -109,7 +106,6 @@ public class PlayerInventorySystem extends BaseSystem {
 
     private void clearDisplayInventory() {
         inventoryTable.clear();
-        dragAndDrop.clear();
     }
 
     /**
@@ -144,8 +140,8 @@ public class PlayerInventorySystem extends BaseSystem {
             final Label itemCount;
             if (stack[0] != 0) {
                 imageItem = new Image(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion());
-                final long count = Arrays.stream(stack).filter(value -> value != 0).count();
-                itemCount = new Label(Long.toString(count), skin);
+                itemCount = new Label(Integer.toString(InventoryManager.tailleStack(stack)), skin);
+                addClickAndDropSrc(imageTable, stack);
             } else {
                 imageItem = new Image(inventoryComponent.backgroundTexture);
                 itemCount = new Label(null, skin);
@@ -157,91 +153,38 @@ public class PlayerInventorySystem extends BaseSystem {
 
             itemSlotTable.add(imageTable);
             itemSlots.add(itemSlotTable);
-            addDragAndDrop(itemSlotTable, imageTable, stack);
+
+            addClickAndDropDst(imageTable, stack);
         }
         return itemSlots;
     }
-    private void addDragAndDrop(Table itemSlotTable, Actor imageItem, int[] itemId) {
-        dragAndDrop.addTarget(new InventoryTarget(new InventoryItem(imageItem, itemSlotTable, itemId), dragAndDrop, this));
-        dragAndDrop.addSource(new InventorySource(new InventoryItem(imageItem, itemSlotTable, itemId), dragAndDrop, this));
-    }
-    static class InventoryItem {
-        Actor itemImage;
-        Table slotTable;
+    private void addClickAndDropSrc(Actor imageItem, int[] stack) {
+        imageItem.setTouchable(Touchable.enabled);
 
-        int[] slotId;
-        public InventoryItem(Actor itemImage, Table slotTable, int[] slotId) {
-            this.itemImage = itemImage;
-            this.slotTable = slotTable;
-            this.slotId = slotId;
-        }
-    }
-    static class InventorySource extends Source {
-        final InventoryItem inventoryItem;
-        final DragAndDrop dragAndDrop;
-        final PlayerInventorySystem playerInventorySystem;
-
-        public InventorySource(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventorySystem playerInventorySystem) {
-            super(inventoryItem.itemImage);
-            this.inventoryItem = inventoryItem;
-            this.dragAndDrop = dragAndDrop;
-            this.playerInventorySystem = playerInventorySystem;
-        }
-
-        @Override
-        public Payload dragStart(InputEvent event, float x, float y, int pointer) {
-            if (inventoryItem.slotId[0] == 0) return null;
-            Payload payload = new Payload();
-            payload.setObject(inventoryItem);
-            payload.setDragActor(inventoryItem.itemImage);
-            dragAndDrop.setDragActorPosition(inventoryItem.itemImage.getWidth() /2f, -inventoryItem.itemImage.getHeight() / 2f);
-            playerInventorySystem.inventoryStage.addActor(inventoryItem.itemImage);
-            return payload;
-        }
-        @Override
-        public void dragStop(InputEvent event, float x, float y, int pointer, Payload payload, Target target) {
-            super.dragStop(event, x, y, pointer, payload, target);
-            InventoryItem inventoryItemSource = (InventoryItem) payload.getObject();
-            InventoryTarget inventoryTarget = (InventoryTarget) target;
-            // si c'est le résultat d'un craft
-            if (playerInventorySystem.mItemResultCraft.has(inventoryItem.slotId[0])) {
-                playerInventorySystem.mItemResultCraft.get(inventoryItem.slotId[0]).pickEvent.pick(playerInventorySystem.world, playerInventorySystem.mInventory.get(playerInventorySystem.world.getSystem(TagManager.class).getEntityId("crafting")));
-                playerInventorySystem.world.edit(inventoryItem.slotId[0]).remove(ItemResultCraftComponent.class);
+        clickAndDrop.addSource(new ClickActorAndSlot(imageItem, stack), new ClickAndDropEvent() {
+            @Override
+            public boolean clickStart(ClickActorAndSlot clickActorAndSlot) {
+                return true;
             }
-            if (inventoryTarget == null) {
-                System.out.println("je devrais être drop");
-            } else {
-                if (playerInventorySystem.world.getSystem(InventoryManager.class).moveStackToStack(inventoryItemSource.slotId, inventoryTarget.inventoryItem.slotId)) {
-                    System.out.println("deplace");
-                } else {
-                    System.out.println("pas déplace");
+
+            @Override
+            public boolean clickStop(ClickActorAndSlot actorSrc, ClickActorAndSlot actorDst) {
+                boolean ret;
+                if (actorDst != null) {
+                    ret = world.getSystem(InventoryManager.class).moveStackToStack(actorSrc.stack, actorDst.stack);
+                    refreshPlayerInventory();
+                    if (mItemResultCraft.has(actorDst.stack[0])) {
+                        mItemResultCraft.get(actorDst.stack[0]).pickEvent.pick(world, mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting")));
+                        world.edit(actorDst.stack[0]).remove(ItemResultCraftComponent.class);
+                    }
+                    return ret;
                 }
+                return false;
             }
-            payload.getDragActor().remove();
-            playerInventorySystem.refreshPlayerInventory();
-        }
-
+        });
     }
 
-    static class InventoryTarget extends Target {
-        InventoryItem inventoryItem;
-        final DragAndDrop dragAndDrop;
-        final PlayerInventorySystem manager;
-
-        public InventoryTarget(InventoryItem inventoryItem, DragAndDrop dragAndDrop, PlayerInventorySystem manager) {
-            super(inventoryItem.itemImage);
-            this.inventoryItem = inventoryItem;
-            this.dragAndDrop = dragAndDrop;
-            this.manager = manager;
-        }
-
-        @Override
-        public boolean drag(Source source, Payload payload, float x, float y, int pointer) {
-            return true;
-        }
-
-        @Override
-        public void drop(Source source, Payload payload, float x, float y, int pointer) {
-        }
+    public void addClickAndDropDst(Actor imageItem, int[] stack) {
+        clickAndDrop.addTarget(new ClickActorAndSlot(imageItem, stack));
     }
 }

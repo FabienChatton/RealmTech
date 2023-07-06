@@ -157,10 +157,10 @@ fichier de configuration ou les sauvegarde des mondes.
 ```text
 |-- RealmTechData
     |-- saves
-        |-- $sauvegarde 1
-        |-- $sauvegarde 2
-        |-- $sauvegarde 3
-        ...
+    |   |-- $sauvegarde 1
+    |   |-- $sauvegarde 2
+    |   |-- $sauvegarde 3
+    |   ...
     |-- properties
         |-- options.cfg
 ```

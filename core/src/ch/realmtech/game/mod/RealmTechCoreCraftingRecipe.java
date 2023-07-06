@@ -10,10 +10,9 @@ public class RealmTechCoreCraftingRecipe {
 
     public static void initCraftingRecipe(final InfRegistryAnonyme<CraftingRecipeEntry> registry) {
         registry.add(new CraftPattern(RealmTechCoreItem.SANDALES_ITEM, new char[]{
-                'b', ' ', 'b',
+                'b', ' ', ' ',
                 ' ', ' ', ' ',
-                'a', ' ', 'a'
-        }, new CraftPatternArgs('a', RealmTechCoreItem.PELLE_ITEM),
-           new CraftPatternArgs('b', RealmTechCoreItem.BUCHE_ITEM)));
+                ' ', ' ', ' '
+        }, new CraftPatternArgs('b', RealmTechCoreItem.BUCHE_ITEM)));
     }
 }

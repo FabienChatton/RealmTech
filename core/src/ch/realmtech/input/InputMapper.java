@@ -22,9 +22,10 @@ public final class InputMapper implements InputProcessor {
     public static PointerMapper rightClick;
     private final Array<KeysMapper> keysMappers;
     private final Array<PointerMapper> pointerMappers;
-    private final Observer<PointerMapper> pointerSignal;
+    public final Observer<PointerMapper> pointerSignal;
     private final Observer<float[]> scrollSignal;
     public final Observer<Integer> keysSignal;
+    public final Observer<int[]> mouseMove;
     private static InputMapper instance;
 
     private InputMapper(RealmTech context) {
@@ -62,6 +63,9 @@ public final class InputMapper implements InputProcessor {
 
         // key signal
         keysSignal = new Observer<>();
+
+        // mouse move
+        mouseMove = new Observer<>();
     }
 
     public static InputMapper getInstance(RealmTech context) {
@@ -149,6 +153,7 @@ public final class InputMapper implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        mouseMove.notifySubscribers(new int[]{screenX, screenY});
         return false;
     }
 

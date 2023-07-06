@@ -98,7 +98,7 @@ public class InventoryManager extends Manager {
      * @param stack la stack à compter.
      * @return la taille de la stack avec des emplacements remplie.
      */
-    public int tailleStack(int[] stack) {
+    public static int tailleStack(int[] stack) {
         int count = 0;
         for (int i = 0; i < stack.length; i++) {
             if (stack[i] != 0) {
