@@ -34,6 +34,16 @@ public class InventoryManager extends Manager {
         return false;
     }
 
+    public boolean moveStackToStackNumber(int[] stackSrc, int[] stackDst, int nombre) {
+        for (int i = 0, j = tailleStack(stackSrc) - 1; i < nombre && j >= 0; i++, j--) {
+            if (!addItemToStack(stackDst, stackSrc[j])) {
+                return false;
+            }
+            stackSrc[j] = 0;
+        }
+        return true;
+    }
+
     public boolean addItemToStack(int[] stack, int itemId) {
         // pas d'item dans le stack alors ajout
         if (stack[0] == 0) {
@@ -125,9 +135,13 @@ public class InventoryManager extends Manager {
         return mInventory.get(entityId).inventory;
     }
 
-    public void clearInventory(int[][] inventory) {
-        for (int[] ints : inventory) {
-            Arrays.fill(ints, 0);
+    public static void clearInventory(int[][] inventory) {
+        for (int[] stack : inventory) {
+            clearStack(stack);
         }
+    }
+
+    public static void clearStack(int[] stack) {
+        Arrays.fill(stack, 0);
     }
 }

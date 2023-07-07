@@ -16,8 +16,8 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -98,7 +98,7 @@ public class PlayerInventorySystem extends BaseSystem {
         int[][] inventory = mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory;
         int itemCraftResultId = inventory[0][0];
         if (mItem.has(itemCraftResultId)) {
-            world.getSystem(InventoryManager.class).clearInventory(inventory);
+            InventoryManager.clearInventory(inventory);
             world.delete(itemCraftResultId);
             refreshPlayerInventory();
         }
@@ -106,6 +106,7 @@ public class PlayerInventorySystem extends BaseSystem {
 
     private void clearDisplayInventory() {
         inventoryTable.clear();
+        clickAndDrop.clear();
     }
 
     /**
@@ -114,7 +115,7 @@ public class PlayerInventorySystem extends BaseSystem {
      * @param inventoryTable La table où l'ont souhait affiché l'inventaire.
      */
     public void displayInventory(int inventoryId, Table inventoryTable) {
-        Array<Table> cellsToDisplay = getItemSlotsToDisplay(inventoryId);
+        Array<Table> cellsToDisplay = getItemSlotsToDisplay(inventoryId, true);
         for (int i = 0; i < cellsToDisplay.size; i++) {
             if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
@@ -125,66 +126,101 @@ public class PlayerInventorySystem extends BaseSystem {
 
     /**
      * Crées les items slots de l'inventaire.
-     * @param inventoryId L'inventaire id.
+     *
+     * @param inventoryId     L'inventaire id.
+     * @param addClickAndDrop
      * @return Une liste de table qui sont les item slots
      */
-    public Array<Table> getItemSlotsToDisplay(int inventoryId) {
+    public Array<Table> getItemSlotsToDisplay(int inventoryId, boolean addClickAndDrop) {
         Array<Table> itemSlots = new Array<>();
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
         for (int[] stack : inventory) {
             Table itemSlotTable = new Table(context.getSkin());
             itemSlotTable.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
-            final Table imageTable = new Table();
-            final Image imageItem;
-            final Label itemCount;
+            final Table imageTable;
             if (stack[0] != 0) {
-                imageItem = new Image(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion());
-                itemCount = new Label(Integer.toString(InventoryManager.tailleStack(stack)), skin);
-                addClickAndDropSrc(imageTable, stack);
+                imageTable = itemAvecCount(stack, InventoryManager.tailleStack(stack));
+                if (addClickAndDrop){
+                    addClickAndDropSrc(imageTable, stack);
+                }
             } else {
-                imageItem = new Image(inventoryComponent.backgroundTexture);
-                itemCount = new Label(null, skin);
+                imageTable = itemAvecCount(stack, 0);
             }
-            itemCount.setFontScale(0.5f);
-            imageTable.add(imageItem);
-            imageTable.addActor(itemCount);
-            itemCount.moveBy(0, imageItem.getHeight() / 2 - 10);
-
             itemSlotTable.add(imageTable);
             itemSlots.add(itemSlotTable);
-
-            addClickAndDropDst(imageTable, stack);
+            if (addClickAndDrop) {
+                addClickAndDropDst(imageTable, stack);
+            }
         }
         return itemSlots;
     }
     private void addClickAndDropSrc(Actor imageItem, int[] stack) {
-        imageItem.setTouchable(Touchable.enabled);
-
         clickAndDrop.addSource(new ClickActorAndSlot(imageItem, stack), new ClickAndDropEvent() {
             @Override
-            public boolean clickStart(ClickActorAndSlot clickActorAndSlot) {
-                return true;
+            public Actor clickStart(ClickActorAndSlot clickActorAndSlot, int[] stackActive, InputEvent event) {
+                Actor ret = null;
+                if (event.getButton() == 1) {
+                    int nombreADeplacer;
+                    if (InventoryManager.tailleStack(stack) == 1) {
+                        nombreADeplacer = 1;
+                    } else {
+                        nombreADeplacer = InventoryManager.tailleStack(stack) / 2;
+                    }
+                    // click droit, déplace la moitié du stack
+                    ret = itemAvecCount(stack, nombreADeplacer);
+                    context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStackNumber(stack, stackActive, nombreADeplacer);
+                } else {
+                    // déplace toute la stack
+                    ret = itemAvecCount(stack, InventoryManager.tailleStack(stack));
+                    context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStack(stack, stackActive);
+                }
+                return ret;
             }
 
             @Override
-            public boolean clickStop(ClickActorAndSlot actorSrc, ClickActorAndSlot actorDst) {
-                boolean ret;
-                if (actorDst != null) {
-                    ret = world.getSystem(InventoryManager.class).moveStackToStack(actorSrc.stack, actorDst.stack);
-                    refreshPlayerInventory();
-                    if (mItemResultCraft.has(actorDst.stack[0])) {
-                        mItemResultCraft.get(actorDst.stack[0]).pickEvent.pick(world, mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting")));
-                        world.edit(actorDst.stack[0]).remove(ItemResultCraftComponent.class);
+            public Actor clickStop(ClickActorAndSlot clickActorAndSlotSrc, int[] stackActive, ClickActorAndSlot clickActorAndSlotDst, int button) {
+                Actor ret = null;
+                if (clickActorAndSlotDst != null) {
+                    if (button == 0) {
+                        world.getSystem(InventoryManager.class).moveStackToStack(stackActive, clickActorAndSlotDst.stack);
+                        ret = null;
+                    } else {
+                        world.getSystem(InventoryManager.class).moveStackToStackNumber(stackActive, clickActorAndSlotDst.stack, 1);
+                        final int count = InventoryManager.tailleStack(stackActive);
+                        if (count > 0) {
+                            ret = itemAvecCount(stackActive, count);
+                        } else {
+                            ret = null;
+                        }
                     }
-                    return ret;
+                    if (mItemResultCraft.has(clickActorAndSlotDst.stack[0])) {
+                        mItemResultCraft.get(clickActorAndSlotDst.stack[0]).pickEvent.pick(world, mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting")));
+                        world.edit(clickActorAndSlotDst.stack[0]).remove(ItemResultCraftComponent.class);
+                    }
+
                 }
-                return false;
+                return ret;
             }
         });
     }
 
     public void addClickAndDropDst(Actor imageItem, int[] stack) {
         clickAndDrop.addTarget(new ClickActorAndSlot(imageItem, stack));
+    }
+
+    private Table itemAvecCount(int[] stack, int count) {
+        Table imageTable = new Table(skin);
+        Image imageItem;
+        Label itemCount;
+        if (mItem.has(stack[0])) {
+            imageItem = new Image(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion());
+            itemCount = new Label(Integer.toString(count), skin);
+            itemCount.setFontScale(0.5f);
+            imageTable.add(imageItem);
+            imageTable.addActor(itemCount);
+            itemCount.moveBy(0, imageItem.getHeight() / 2 - 10);
+        }
+        return imageTable;
     }
 }
