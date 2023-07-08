@@ -1,5 +1,6 @@
 package ch.realmtech;
 
+import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.helper.SetContext;
@@ -40,6 +41,7 @@ public final class RealmTech extends Game{
     private Stage uiStage;
     private Skin skin;
 	private ECSEngine ecsEngine;
+    private Discord discord;
 
     private TextureAtlas textureAtlas;
     private RealmTechDataCtrl realmTechDataCtrl;
@@ -59,6 +61,8 @@ public final class RealmTech extends Game{
         initMap();
         initSound();
         Box2D.init();
+        discord = new Discord();
+        discord.init();
         gameStage = new Stage(
                 new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
@@ -158,6 +162,7 @@ public final class RealmTech extends Game{
         uiStage.dispose();
         assetManager.dispose();
         realmTechDataCtrl.saveConfig();
+        discord.stop();
     }
 
     public TextureAtlas getTextureAtlas() {

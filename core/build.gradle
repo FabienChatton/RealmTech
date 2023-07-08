@@ -2,6 +2,7 @@ sourceCompatibility = 17
 dependencies {
     implementation 'junit:junit:4.13.1'
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    implementation 'club.minnced:java-discord-rpc:2.0.1'
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

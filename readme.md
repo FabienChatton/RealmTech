@@ -3,7 +3,7 @@
 ## Introduction
 
 Un petit jeu qui s'inspire de Factorio (dans la partie 2d de la carte)
-et de Gregtech (pour la ménanique de progression des tier). L'un
+et de Gregtech (pour la mécanique de progression des tier). L'un
 des buts premiers RealmTech est de changer la mécanique de progression
 de Factorio pour qu'elle soit moins dans la production massive
 de fiole, mais dans l'évolution progressive des matériaux pour accéder
@@ -50,7 +50,7 @@ Et importé la configuration dans le dossier .run
 
 ### alpha
 
-1. [ ] raccourcie clavier custom
+1. [ ] raccourci clavier custom
 2. [ ] machine multi cellules
 3. [ ] refonte machine tier (vapeur, lv, mv...)
 4. [ ] infrastructure, convoyer/pipe
