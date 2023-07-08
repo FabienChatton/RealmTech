@@ -18,7 +18,7 @@ public final class ClickAndDrop implements InputProcessor {
     private ClickActorAndSlot source;
 
     /** l'acteur affiché */
-    private Actor actorAffiche;
+    private ImageItemTable actorAffiche;
 
     /** l'event de l'acteur*/
     private ClickAndDropEvent clickAndDropEvent;
@@ -50,6 +50,7 @@ public final class ClickAndDrop implements InputProcessor {
                         // pour faire bouge l'item avec la souris
                         Gdx.input.setInputProcessor(ClickAndDrop.this);
                         stage.addActor(actorAffiche);
+                        ClickAndDrop.this.mouseMoved(Gdx.input.getX(), Gdx.input.getY());
                     }
                 }
                 return true;
@@ -77,7 +78,7 @@ public final class ClickAndDrop implements InputProcessor {
     }
 
     public void resetStack() {
-        context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStack(stackActive, source.stack);
+        context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStack(stackActive, source.getStack());
     }
 
     public void clearTarges() {
@@ -102,7 +103,9 @@ public final class ClickAndDrop implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         final Vector3 uproject = actorAffiche.getStage().getCamera().unproject(new Vector3(screenX, screenY, 0));
-        final Actor actorDst = source.actor.getStage().hit(uproject.x, uproject.y, false);
+        final Stage stage = source.actor.getStage();
+        actorAffiche.getImage().remove();
+        final Actor actorDst = stage.hit(uproject.x, uproject.y, false);
         ClickActorAndSlot clickActorAndSlot = null;
         if (actorDst != null) {
             for (ClickActorAndSlot target : targets) {
@@ -117,16 +120,17 @@ public final class ClickAndDrop implements InputProcessor {
             }
         }
         // stop le click
-        final Actor actor = clickAndDropEvent.clickStop(source, stackActive, clickActorAndSlot, button);
-        if (actor == null) {
+        final ImageItemTable imageItemTable = clickAndDropEvent.clickStop(source, stackActive, clickActorAndSlot, button);
+        if (imageItemTable == null) {
             Gdx.input.setInputProcessor(source.actor.getStage());
             context.getEcsEngine().getWorld().getSystem(PlayerInventorySystem.class).refreshPlayerInventory();
         } else {
-            actorAffiche.getStage().addActor(actor);
+            actorAffiche.getStage().addActor(imageItemTable);
             actorAffiche.remove();
-            actorAffiche = actor;
+            actorAffiche = imageItemTable;
         }
-        return false;
+        ClickAndDrop.this.mouseMoved(Gdx.input.getX(), Gdx.input.getY());
+        return true;
     }
 
     @Override
@@ -143,7 +147,10 @@ public final class ClickAndDrop implements InputProcessor {
     public boolean mouseMoved(int screenX, int screenY) {
         if (actorAffiche != null) {
             final Vector3 uproject = actorAffiche.getStage().getCamera().unproject(new Vector3(screenX, screenY, 0));
-            actorAffiche.setPosition(uproject.x - actorAffiche.getWidth() / 2, uproject.y - actorAffiche.getHeight() / 2);
+            actorAffiche.setPosition(uproject.x, uproject.y);
+            context.getUiStage().getBatch().begin();
+            actorAffiche.getImage().getDrawable().draw(context.getUiStage().getBatch(), screenX, screenY, actorAffiche.getWidth(), actorAffiche.getHeight());
+            context.getUiStage().getBatch().end();
         }
         return true;
     }
