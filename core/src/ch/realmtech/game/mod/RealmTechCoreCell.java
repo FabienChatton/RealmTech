@@ -37,7 +37,7 @@ public class RealmTechCoreCell {
     public final static CellRegisterEntry TREE_CELL = new CellRegisterEntry(
             "tree-02",
             new CellBehavior.Builder(Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, RealmTechCoreItem.BUCHE_ITEM)
+                    .breakWith(ItemType.RIEN, RealmTechCoreItem.BUCHE_ITEM)
                     .build()
     );
 

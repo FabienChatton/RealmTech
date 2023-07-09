@@ -49,7 +49,8 @@ public final class CraftPattern implements CraftingRecipeEntry {
         char symbole;
         ItemRegisterEntry item;
 
-        public CraftPatternArgs(char symbole, ItemRegisterEntry item) {
+        public CraftPatternArgs(char symbole, ItemRegisterEntry item) throws IllegalArgumentException {
+            if (symbole == ' ') throw new IllegalArgumentException("le symbole ' ' ne peut pas être utilisé");
             this.symbole = symbole;
             this.item = item;
         }

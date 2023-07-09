@@ -2,25 +2,27 @@ texture.png
 	size: 128, 256
 	repeat: none
 buche-01
-	bounds: 66, 224, 32, 32
-copper-ore-1
-	bounds: 34, 158, 32, 32
-grass-01
-	bounds: 34, 22, 32, 32
-inventory-01
 	bounds: 0, 92, 32, 32
+copper-ore-1
+	bounds: 34, 90, 32, 32
+grass-01
+	bounds: 68, 129, 32, 32
+inventory-01
+	bounds: 0, 58, 32, 32
 pelle-01
-	bounds: 68, 163, 32, 32
+	bounds: 68, 95, 32, 32
 pioche-01
-	bounds: 34, 56, 32, 32
+	bounds: 68, 163, 32, 32
+plank-01
+	bounds: 66, 224, 32, 32
 reimu
 	bounds: 0, 192, 64, 64
 reimu-back-0
-	bounds: 68, 85, 18, 24
+	bounds: 68, 17, 18, 24
 reimu-back-1
-	bounds: 68, 111, 18, 24
+	bounds: 68, 43, 18, 24
 reimu-back-2
-	bounds: 68, 137, 18, 24
+	bounds: 68, 69, 18, 24
 reimu-front-0
 	bounds: 66, 197, 18, 25
 reimu-front-1
@@ -28,24 +30,26 @@ reimu-front-1
 reimu-front-2
 	bounds: 86, 197, 18, 25
 reimu-left-0
-	bounds: 68, 60, 16, 23
+	bounds: 88, 70, 16, 23
 reimu-left-1
-	bounds: 88, 115, 17, 22
+	bounds: 106, 207, 17, 22
 reimu-left-2
-	bounds: 88, 139, 17, 22
+	bounds: 88, 21, 17, 22
 reimu-right-0
-	bounds: 68, 35, 16, 23
+	bounds: 88, 45, 16, 23
 reimu-right-1
 	bounds: 0, 0, 17, 22
 reimu-right-2
-	bounds: 88, 91, 17, 22
+	bounds: 106, 183, 17, 22
 sand-01
-	bounds: 34, 90, 32, 32
+	bounds: 34, 22, 32, 32
 sandales-01
+	bounds: 34, 56, 32, 32
+stick-01
 	bounds: 34, 124, 32, 32
 tree-01
-	bounds: 0, 24, 32, 32
+	bounds: 34, 158, 32, 32
 tree-02
 	bounds: 0, 126, 32, 64
 water-01
-	bounds: 0, 58, 32, 32
+	bounds: 0, 24, 32, 32

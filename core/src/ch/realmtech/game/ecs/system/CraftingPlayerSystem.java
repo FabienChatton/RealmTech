@@ -33,6 +33,7 @@ public class CraftingPlayerSystem extends IteratingSystem {
             final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister);
             if (craftResult.isPresent()) {
                 world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get());
+                nouveauCraft = true;
                 break;
             }
         }

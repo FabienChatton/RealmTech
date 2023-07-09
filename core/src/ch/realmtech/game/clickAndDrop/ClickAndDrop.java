@@ -149,7 +149,9 @@ public final class ClickAndDrop implements InputProcessor {
             final Vector3 uproject = actorAffiche.getStage().getCamera().unproject(new Vector3(screenX, screenY, 0));
             actorAffiche.setPosition(uproject.x, uproject.y);
             context.getUiStage().getBatch().begin();
-            actorAffiche.getImage().getDrawable().draw(context.getUiStage().getBatch(), screenX, screenY, actorAffiche.getWidth(), actorAffiche.getHeight());
+            if (actorAffiche.getImage() != null) {
+                actorAffiche.getImage().getDrawable().draw(context.getUiStage().getBatch(), screenX, screenY, actorAffiche.getWidth(), actorAffiche.getHeight());
+            }
             context.getUiStage().getBatch().end();
         }
         return true;

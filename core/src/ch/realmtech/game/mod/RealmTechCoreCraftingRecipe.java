@@ -9,10 +9,22 @@ import static ch.realmtech.game.craft.CraftPattern.CraftPatternArgs;
 public class RealmTechCoreCraftingRecipe {
 
     public static void initCraftingRecipe(final InfRegistryAnonyme<CraftingRecipeEntry> registry) {
-        registry.add(new CraftPattern(RealmTechCoreItem.SANDALES_ITEM, 2, new char[]{
-                'b', ' ', ' ',
+        registry.add(new CraftPattern(RealmTechCoreItem.SANDALES_ITEM, 2, new char[] {
+                ' ', 'a', ' ',
                 ' ', ' ', ' ',
                 ' ', ' ', ' '
-        }, new CraftPatternArgs('b', RealmTechCoreItem.BUCHE_ITEM)));
+        }, new CraftPatternArgs('a', RealmTechCoreItem.PLANCHE_ITEM)));
+
+        registry.add(new CraftPattern(RealmTechCoreItem.PLANCHE_ITEM, 4, new char[] {
+                'a', ' ', ' ',
+                ' ', ' ', ' ',
+                ' ', ' ', ' '
+        }, new CraftPatternArgs('a', RealmTechCoreItem.BUCHE_ITEM)));
+
+        registry.add(new CraftPattern(RealmTechCoreItem.STICK_ITEM, 4, new char[] {
+                'a', ' ', ' ',
+                'a', ' ', ' ',
+                ' ', ' ', ' '
+        }, new CraftPatternArgs('a', RealmTechCoreItem.PLANCHE_ITEM)));
     }
 }

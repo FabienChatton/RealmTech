@@ -70,7 +70,6 @@ public class PlayerInventorySystem extends BaseSystem {
         } else {
             super.setEnabled(true);
             InputMapper.reset();
-            Gdx.input.setInputProcessor(inventoryStage);
             refreshPlayerInventory();
         }
     }
@@ -83,6 +82,7 @@ public class PlayerInventorySystem extends BaseSystem {
     public void refreshPlayerInventory() {
         clearDisplayInventory();
         displayPlayerInventory();
+        Gdx.input.setInputProcessor(inventoryStage);
     }
 
     public void nouveauCraftDisponible(CraftResult craftResult) {
@@ -99,11 +99,8 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public void aucunCraftDisponible() {
         int[][] inventory = mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory;
-        int itemCraftResultId = inventory[0][0];
-        if (!world.getMapper(ItemComponent.class).has(itemCraftResultId) && itemCraftResultId != 0) {
-            InventoryManager.clearInventory(inventory);
-            world.delete(itemCraftResultId);
-            refreshPlayerInventory();
+        if (inventory[0][0] != 0) {
+            world.getSystem(InventoryManager.class).removeInventory(inventory);
         }
     }
 

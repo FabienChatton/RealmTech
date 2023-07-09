@@ -31,11 +31,23 @@ public class RealmTechCoreItem {
             new ItemBehavior.Builder()
                     .build()
     );
+    public final static ItemRegisterEntry PLANCHE_ITEM = new ItemRegisterEntry(
+            "plank-01",
+            new ItemBehavior.Builder()
+                    .build()
+    );
+    public final static ItemRegisterEntry STICK_ITEM = new ItemRegisterEntry(
+            "stick-01",
+            new ItemBehavior.Builder()
+                    .build()
+    );
 
     public static void initItem(Registry<ItemRegisterEntry> registry) {
         registry.add("pioche", PIOCHE_ITEM);
         registry.add("pelle", PELLE_ITEM);
         registry.add("sandales", SANDALES_ITEM);
         registry.add("buche", BUCHE_ITEM);
+        registry.add("planche", PLANCHE_ITEM);
+        registry.add("stick", STICK_ITEM);
     }
 }
