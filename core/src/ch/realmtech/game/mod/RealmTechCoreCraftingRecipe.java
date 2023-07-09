@@ -9,7 +9,7 @@ import static ch.realmtech.game.craft.CraftPattern.CraftPatternArgs;
 public class RealmTechCoreCraftingRecipe {
 
     public static void initCraftingRecipe(final InfRegistryAnonyme<CraftingRecipeEntry> registry) {
-        registry.add(new CraftPattern(RealmTechCoreItem.SANDALES_ITEM, new char[]{
+        registry.add(new CraftPattern(RealmTechCoreItem.SANDALES_ITEM, 2, new char[]{
                 'b', ' ', ' ',
                 ' ', ' ', ' ',
                 ' ', ' ', ' '
