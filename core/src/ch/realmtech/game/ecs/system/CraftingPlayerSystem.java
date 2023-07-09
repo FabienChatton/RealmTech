@@ -1,5 +1,6 @@
 package ch.realmtech.game.ecs.system;
 
+import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.ecs.component.CraftingComponent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
@@ -8,6 +9,8 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
+
+import java.util.Optional;
 
 @All({InventoryComponent.class, CraftingComponent.class})
 public class CraftingPlayerSystem extends IteratingSystem {
@@ -27,10 +30,9 @@ public class CraftingPlayerSystem extends IteratingSystem {
         }
         boolean nouveauCraft = false;
         for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
-            ItemRegisterEntry craftResult = craftingRecipeEntry.craft(itemRegister);
-            if (craftResult != null) {
-                world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult);
-                nouveauCraft = true;
+            final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister);
+            if (craftResult.isPresent()) {
+                world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get());
                 break;
             }
         }

@@ -61,7 +61,7 @@ public final class RealmTech extends Game{
         initMap();
         initSound();
         Box2D.init();
-        discord = new Discord();
+        discord = new Discord(Thread.currentThread());
         discord.init();
         gameStage = new Stage(
                 new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT,

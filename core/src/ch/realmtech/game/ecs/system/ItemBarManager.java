@@ -44,7 +44,7 @@ public class ItemBarManager extends BaseSystem {
     public void displayPlayerItemBar() {
         itemBar.clear();
         int player = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
-        Array<Table> inventoryTableToDisplay = world.getSystem(PlayerInventorySystem.class).createItemSlotsToDisplay(player, false);
+        Array<Table> inventoryTableToDisplay = world.getSystem(PlayerInventorySystem.class).createItemSlotsToDisplay(player, false, false);
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
             Table table = inventoryTableToDisplay.get(i);

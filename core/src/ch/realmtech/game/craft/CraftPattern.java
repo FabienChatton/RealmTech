@@ -4,10 +4,12 @@ import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public final class CraftPattern implements CraftingRecipeEntry {
     private final ItemRegisterEntry[] craftPattern;
     private final ItemRegisterEntry itemResult;
+    private int nombre;
 
     public CraftPattern(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
         if (args == null || args.length == 0) throw new IllegalArgumentException("Il manque l'argument du craft");
@@ -17,6 +19,12 @@ public final class CraftPattern implements CraftingRecipeEntry {
         for (int i = 0; i < pattern.length; i++) {
             craftPattern[i] = trouveRegistreItemViaSymbole(args, pattern[i]);
         }
+        nombre = 1;
+    }
+
+    public CraftPattern(ItemRegisterEntry itemResult, int nombre, char[] pattern, CraftPatternArgs... args) {
+        this(itemResult, pattern, args);
+        this.nombre = nombre;
     }
 
     private ItemRegisterEntry trouveRegistreItemViaSymbole(CraftPatternArgs[] args, char symbole) {
@@ -29,8 +37,12 @@ public final class CraftPattern implements CraftingRecipeEntry {
     }
 
     @Override
-    public ItemRegisterEntry craft(ItemRegisterEntry[] itemRegisterEntry) {
-        return Arrays.equals(itemRegisterEntry, craftPattern) ? itemResult : null;
+    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry) {
+        if (Arrays.equals(itemRegisterEntry, craftPattern)) {
+            return Optional.of(new CraftResult(itemResult, nombre));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static class CraftPatternArgs {

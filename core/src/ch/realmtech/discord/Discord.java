@@ -5,8 +5,14 @@ import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 
 public class Discord {
+    private final Thread mainThread;
     private Thread discordThread;
     private boolean discordThreadRunning;
+
+    public Discord(Thread mainThread) {
+        this.mainThread = mainThread;
+    }
+
     public void init() {
         DiscordRPC lib = DiscordRPC.INSTANCE;
 
@@ -22,7 +28,7 @@ public class Discord {
         lib.Discord_UpdatePresence(presence);
         // in a worker thread
         discordThread = new Thread(() -> {
-            while (discordThreadRunning) {
+            while (discordThreadRunning && mainThread.isAlive()) {
                 lib.Discord_RunCallbacks();
                 try {
                     Thread.sleep(2000);

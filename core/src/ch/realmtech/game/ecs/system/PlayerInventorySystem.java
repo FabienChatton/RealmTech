@@ -5,11 +5,11 @@ import ch.realmtech.game.clickAndDrop.ClickActorAndSlot;
 import ch.realmtech.game.clickAndDrop.ClickAndDrop;
 import ch.realmtech.game.clickAndDrop.ClickAndDropEvent;
 import ch.realmtech.game.clickAndDrop.ImageItemTable;
+import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.game.ecs.component.StoredItemComponent;
-import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.input.InputMapper;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -60,7 +60,6 @@ public class PlayerInventorySystem extends BaseSystem {
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
         this.clickAndDrop = new ClickAndDrop(context);
-        inventoryStage.setDebugAll(true);
     }
 
     public void toggleInventoryWindow(){
@@ -77,20 +76,23 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     private void displayPlayerInventory() {
-        displayInventory(context.getEcsEngine().getPlayerId(), inventoryTable);
-        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable);
-        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable);
+        displayInventory(context.getEcsEngine().getPlayerId(), inventoryTable, true, true);
+        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable, true, true);
+        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable, true, false);
     }
     public void refreshPlayerInventory() {
         clearDisplayInventory();
         displayPlayerInventory();
     }
 
-    public void nouveauCraftDisponible(ItemRegisterEntry craftResult) {
-        if (!mItem.has(mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory[0][0])) {
-            int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult);
-            world.edit(itemResultId).create(ItemResultCraftComponent.class);
-            world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"));
+    public void nouveauCraftDisponible(CraftResult craftResult) {
+        final int[][] inventory = mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory;
+        if (!mItem.has(inventory[0][0])) {
+            for (int i = 0; i < craftResult.nombre(); i++) {
+                int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
+                world.edit(itemResultId).create(ItemResultCraftComponent.class);
+                world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"));
+            }
             refreshPlayerInventory();
         }
     }
@@ -98,7 +100,7 @@ public class PlayerInventorySystem extends BaseSystem {
     public void aucunCraftDisponible() {
         int[][] inventory = mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory;
         int itemCraftResultId = inventory[0][0];
-        if (mItem.has(itemCraftResultId)) {
+        if (!world.getMapper(ItemComponent.class).has(itemCraftResultId) && itemCraftResultId != 0) {
             InventoryManager.clearInventory(inventory);
             world.delete(itemCraftResultId);
             refreshPlayerInventory();
@@ -112,11 +114,14 @@ public class PlayerInventorySystem extends BaseSystem {
 
     /**
      * Ajout les cases de l'inventaire dans le tableau passé en second paramètre.
-     * @param inventoryId L'id de l'inventaire.
-     * @param inventoryTable La table où l'ont souhait affiché l'inventaire.
+     *
+     * @param inventoryId     L'id de l'inventaire.
+     * @param inventoryTable  La table où l'ont souhait affiché l'inventaire.
+     * @param clickAndDropSrc
+     * @param clickAndDropDst
      */
-    public void displayInventory(int inventoryId, Table inventoryTable) {
-        Array<Table> cellsToDisplay = createItemSlotsToDisplay(inventoryId, true);
+    public void displayInventory(int inventoryId, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst) {
+        Array<Table> cellsToDisplay = createItemSlotsToDisplay(inventoryId, clickAndDropSrc, clickAndDropDst);
         for (int i = 0; i < cellsToDisplay.size; i++) {
             if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
@@ -128,11 +133,12 @@ public class PlayerInventorySystem extends BaseSystem {
     /**
      * Crées les items slots de l'inventaire.
      *
-     * @param inventoryId     L'inventaire id.
-     * @param addClickAndDrop
+     * @param inventoryId        L'inventaire id.
+     * @param clickAndDropSrc
+     * @param clickAndDropDst
      * @return Une liste de table qui sont les item slots
      */
-    public Array<Table> createItemSlotsToDisplay(int inventoryId, boolean addClickAndDrop) {
+    public Array<Table> createItemSlotsToDisplay(int inventoryId, boolean clickAndDropSrc, boolean clickAndDropDst) {
         Array<Table> itemSlots = new Array<>();
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
@@ -142,7 +148,7 @@ public class PlayerInventorySystem extends BaseSystem {
             final ImageItemTable imageTable;
             if (stack[0] != 0) {
                 imageTable = itemAvecCount(stack, InventoryManager.tailleStack(stack));
-                if (addClickAndDrop){
+                if (clickAndDropSrc){
                     addClickAndDropSrc(imageTable, stack);
                 }
             } else {
@@ -150,7 +156,7 @@ public class PlayerInventorySystem extends BaseSystem {
             }
             itemSlotTable.add(imageTable);
             itemSlots.add(itemSlotTable);
-            if (addClickAndDrop) {
+            if (clickAndDropDst) {
                 addClickAndDropDst(imageTable);
             }
         }
@@ -162,13 +168,8 @@ public class PlayerInventorySystem extends BaseSystem {
             @Override
             public ImageItemTable clickStart(ClickActorAndSlot clickActorAndSlot, int[] stackActive, InputEvent event) {
                 ImageItemTable ret = null;
-                if (event.getButton() == 1) {
-                    int nombreADeplacer;
-                    if (InventoryManager.tailleStack(stack) == 1) {
-                        nombreADeplacer = 1;
-                    } else {
-                        nombreADeplacer = InventoryManager.tailleStack(stack) / 2;
-                    }
+                if (event.getButton() == 1 && InventoryManager.tailleStack(stack) != 1) {
+                    int nombreADeplacer = InventoryManager.tailleStack(stack) / 2;
                     // click droit, déplace la moitié du stack
                     ret = itemAvecCount(stack, nombreADeplacer);
                     context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStackNumber(stack, stackActive, nombreADeplacer);
@@ -183,6 +184,10 @@ public class PlayerInventorySystem extends BaseSystem {
                     context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStack(stack, stackActive);
                     clickActorAndSlot.actor.image.moveBy(Integer.MAX_VALUE, Integer.MAX_VALUE);
                     clickActorAndSlot.actor.countLabel.moveBy(Integer.MAX_VALUE, Integer.MAX_VALUE);
+                }
+                if (mItemResultCraft.has(stackActive[0])) {
+                    mItemResultCraft.get(stackActive[0]).pickEvent.pick(world, mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting")));
+                    world.edit(stackActive[0]).remove(ItemResultCraftComponent.class);
                 }
                 return ret;
             }
@@ -208,10 +213,7 @@ public class PlayerInventorySystem extends BaseSystem {
                             ret = null;
                         }
                     }
-                    if (mItemResultCraft.has(clickActorAndSlotDst.getStack()[0])) {
-                        mItemResultCraft.get(clickActorAndSlotDst.getStack()[0]).pickEvent.pick(world, mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting")));
-                        world.edit(clickActorAndSlotDst.getStack()[0]).remove(ItemResultCraftComponent.class);
-                    }
+
 
                 }
                 return ret;
