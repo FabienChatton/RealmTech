@@ -6,10 +6,10 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 import java.util.Arrays;
 import java.util.Optional;
 
-public final class CraftPattern implements CraftingRecipeEntry {
-    private final ItemRegisterEntry[] craftPattern;
-    private final ItemRegisterEntry itemResult;
-    private int nombre;
+public class CraftPattern implements CraftingRecipeEntry {
+    protected final ItemRegisterEntry[] craftPattern;
+    protected final ItemRegisterEntry itemResult;
+    protected int nombre;
 
     public CraftPattern(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
         if (args == null || args.length == 0) throw new IllegalArgumentException("Il manque l'argument du craft");

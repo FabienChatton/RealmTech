@@ -1,6 +1,7 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.game.craft.CraftPattern;
+import ch.realmtech.game.craft.CraftPatternShapeless;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.InfRegistryAnonyme;
 
@@ -15,16 +16,13 @@ public class RealmTechCoreCraftingRecipe {
                 ' ', ' ', ' '
         }, new CraftPatternArgs('a', RealmTechCoreItem.PLANCHE_ITEM)));
 
-        registry.add(new CraftPattern(RealmTechCoreItem.PLANCHE_ITEM, 4, new char[] {
-                'a', ' ', ' ',
-                ' ', ' ', ' ',
-                ' ', ' ', ' '
+        registry.add(new CraftPatternShapeless(RealmTechCoreItem.PLANCHE_ITEM, 4, new char[] {
+                'a'
         }, new CraftPatternArgs('a', RealmTechCoreItem.BUCHE_ITEM)));
 
         registry.add(new CraftPattern(RealmTechCoreItem.STICK_ITEM, 4, new char[] {
-                'a', ' ', ' ',
-                'a', ' ', ' ',
-                ' ', ' ', ' '
+                'a', ' ',
+                'a', ' '
         }, new CraftPatternArgs('a', RealmTechCoreItem.PLANCHE_ITEM)));
     }
 }
