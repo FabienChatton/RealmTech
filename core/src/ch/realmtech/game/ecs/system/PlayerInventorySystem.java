@@ -234,4 +234,8 @@ public class PlayerInventorySystem extends BaseSystem {
         }
         return imageItemTable;
     }
+
+    public boolean isClickAndDrop() {
+        return clickAndDrop.isClickAndDrop();
+    }
 }

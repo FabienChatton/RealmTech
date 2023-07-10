@@ -161,4 +161,7 @@ public final class ClickAndDrop implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+    public boolean isClickAndDrop() {
+        return actorAffiche != null;
+    }
 }

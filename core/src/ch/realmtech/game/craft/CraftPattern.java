@@ -12,19 +12,19 @@ public class CraftPattern implements CraftingRecipeEntry {
     protected int nombre;
 
     public CraftPattern(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
+        this(itemResult, 1, pattern, args);
+    }
+
+    public CraftPattern(ItemRegisterEntry itemResult, int nombre, char[] pattern, CraftPatternArgs... args) {
         if (args == null || args.length == 0) throw new IllegalArgumentException("Il manque l'argument du craft");
+        if (nombre <= 0 ) throw new IllegalArgumentException("Le nombre de résultat ne peut pas être nul ou négatif");
+        this.nombre = nombre;
         this.itemResult = itemResult;
         int taillePattern = pattern.length;
         craftPattern = new ItemRegisterEntry[taillePattern];
         for (int i = 0; i < pattern.length; i++) {
             craftPattern[i] = trouveRegistreItemViaSymbole(args, pattern[i]);
         }
-        nombre = 1;
-    }
-
-    public CraftPattern(ItemRegisterEntry itemResult, int nombre, char[] pattern, CraftPatternArgs... args) {
-        this(itemResult, pattern, args);
-        this.nombre = nombre;
     }
 
     private ItemRegisterEntry trouveRegistreItemViaSymbole(CraftPatternArgs[] args, char symbole) {
