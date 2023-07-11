@@ -1,4 +1,4 @@
-package ch.realmtech.game.clickAndDrop.clickAndDrop2;
+package ch.realmtech.game.clickAndDrop;
 
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 

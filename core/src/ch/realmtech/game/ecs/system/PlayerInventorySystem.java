@@ -1,12 +1,8 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.clickAndDrop.ClickActorAndSlot;
-import ch.realmtech.game.clickAndDrop.ClickAndDrop;
-import ch.realmtech.game.clickAndDrop.ClickAndDropEvent;
-import ch.realmtech.game.clickAndDrop.ImageItemTable;
-import ch.realmtech.game.clickAndDrop.clickAndDrop2.ClickAndDrop2;
-import ch.realmtech.game.clickAndDrop.clickAndDrop2.ClickAndDropActor;
+import ch.realmtech.game.clickAndDrop.ClickAndDrop2;
+import ch.realmtech.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
@@ -18,10 +14,11 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
@@ -37,7 +34,6 @@ public class PlayerInventorySystem extends BaseSystem {
     @Wire(name = "context")
     private RealmTech context;
     private Skin skin;
-    private ClickAndDrop clickAndDrop;
     private ClickAndDrop2 clickAndDrop2;
 
     @Override
@@ -64,16 +60,13 @@ public class PlayerInventorySystem extends BaseSystem {
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) /2 ,(inventoryStage.getHeight() - height ) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
-        this.clickAndDrop = new ClickAndDrop(context);
         this.clickAndDrop2 = new ClickAndDrop2(inventoryStage, world);
-        //inventoryStage.setDebugAll(true);
         inventoryWindow.setTouchable(Touchable.disabled);
     }
 
     public void toggleInventoryWindow(){
         if (isEnabled()) {
             super.setEnabled(false);
-            clickAndDrop.clear();
             Gdx.input.setInputProcessor(context.getInputManager());
         } else {
             super.setEnabled(true);
@@ -114,7 +107,6 @@ public class PlayerInventorySystem extends BaseSystem {
 
     private void clearDisplayInventory() {
         inventoryTable.clear();
-        clickAndDrop.clear();
     }
 
     /**
@@ -126,13 +118,6 @@ public class PlayerInventorySystem extends BaseSystem {
      * @param clickAndDropDst
      */
     public void displayInventory(int inventoryId, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst) {
-//        Array<Table> cellsToDisplay = createItemSlotsToDisplay(inventoryId, clickAndDropSrc, clickAndDropDst);
-//        for (int i = 0; i < cellsToDisplay.size; i++) {
-//            if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
-//                inventoryTable.row().padBottom(2f);
-//            }
-//            inventoryTable.add(cellsToDisplay.get(i)).padLeft(2f);
-//        }
         Array<Table> tableImages = createItemSlotsToDisplay(inventoryId);
         for (int i = 0; i < tableImages.size; i++) {
             if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
@@ -149,8 +134,6 @@ public class PlayerInventorySystem extends BaseSystem {
         for (int[] stack : inventory) {
             final Table tableImage = new Table();
             tableImage.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
-            tableImage.setWidth(inventoryComponent.backgroundTexture.getRegionWidth());
-            tableImage.setHeight(inventoryComponent.backgroundTexture.getRegionHeight());
             final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(stack, mItem, tableImage);
             clickAndDropActor.setWidth(inventoryComponent.backgroundTexture.getRegionWidth());
             clickAndDropActor.setHeight(inventoryComponent.backgroundTexture.getRegionHeight());
@@ -161,80 +144,5 @@ public class PlayerInventorySystem extends BaseSystem {
             tableImages.add(tableImage);
         }
         return tableImages;
-    }
-    
-    private void addClickAndDropSrc(ImageItemTable imageItem, int[] stack) {
-        clickAndDrop.addSource(new ClickActorAndSlot(imageItem), new ClickAndDropEvent() {
-            @Override
-            public ImageItemTable clickStart(ClickActorAndSlot clickActorAndSlot, int[] stackActive, InputEvent event) {
-                ImageItemTable ret = null;
-                if (event.getButton() == 1 && InventoryManager.tailleStack(stack) != 1) {
-                    int nombreADeplacer = InventoryManager.tailleStack(stack) / 2;
-                    // click droit, déplace la moitié du stack
-                    ret = itemAvecCount(stack, nombreADeplacer);
-                    context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStackNumber(stack, stackActive, nombreADeplacer);
-                    final ImageItemTable imageItemTable = itemAvecCount(clickActorAndSlot.getStack(), InventoryManager.tailleStack(clickActorAndSlot.getStack()));
-                    clickActorAndSlot.actor.setImage(imageItemTable.getImage());
-                    clickActorAndSlot.actor.getImage().moveBy(imageItemTable.getImage().getWidth() / 2, imageItemTable.getImage().getHeight() / 2);
-                    clickActorAndSlot.actor.setCountLabel(imageItemTable.getCountLabel());
-                    clickActorAndSlot.actor.getCountLabel().moveBy(imageItemTable.getImage().getWidth() / 2, -7);
-                } else {
-                    // déplace toute la stack
-                    ret = itemAvecCount(stack, InventoryManager.tailleStack(stack));
-                    context.getEcsEngine().getWorld().getSystem(InventoryManager.class).moveStackToStack(stack, stackActive);
-                    clickActorAndSlot.actor.image.moveBy(Integer.MAX_VALUE, Integer.MAX_VALUE);
-                    clickActorAndSlot.actor.countLabel.moveBy(Integer.MAX_VALUE, Integer.MAX_VALUE);
-                }
-                if (mItemResultCraft.has(stackActive[0])) {
-                    mItemResultCraft.get(stackActive[0]).pickEvent.pick(world, mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting")));
-                    world.edit(stackActive[0]).remove(ItemResultCraftComponent.class);
-                }
-                return ret;
-            }
-
-            @Override
-            public ImageItemTable clickStop(ClickActorAndSlot clickActorAndSlotSrc, int[] stackActive, ClickActorAndSlot clickActorAndSlotDst, int button) {
-                ImageItemTable ret = null;
-                if (clickActorAndSlotDst != null) {
-                    if (button == 0) {
-                        world.getSystem(InventoryManager.class).moveStackToStack(stackActive, clickActorAndSlotDst.getStack());
-                        ret = null;
-                    } else {
-                        world.getSystem(InventoryManager.class).moveStackToStackNumber(stackActive, clickActorAndSlotDst.getStack(), 1);
-                        final int count = InventoryManager.tailleStack(stackActive);
-                        if (count > 0) {
-                            ret = itemAvecCount(stackActive, count);
-                            final ImageItemTable imageItemTable = itemAvecCount(clickActorAndSlotDst.getStack(), InventoryManager.tailleStack(clickActorAndSlotDst.getStack()));
-                            clickActorAndSlotDst.actor.setImage(imageItemTable.getImage());
-                            clickActorAndSlotDst.actor.getImage().moveBy(imageItemTable.getImage().getWidth() / 2, imageItemTable.getImage().getHeight() / 2);
-                            clickActorAndSlotDst.actor.setCountLabel(imageItemTable.getCountLabel());
-                            clickActorAndSlotDst.actor.getCountLabel().moveBy(imageItemTable.getImage().getWidth() / 2, -7);
-                        } else {
-                            ret = null;
-                        }
-                    }
-
-
-                }
-                return ret;
-            }
-        });
-    }
-
-    public void addClickAndDropDst(ImageItemTable imageItem) {
-        clickAndDrop.addTarget(new ClickActorAndSlot(imageItem));
-    }
-
-    private ImageItemTable itemAvecCount(int[] stack, int count) {
-        ImageItemTable imageItemTable = new ImageItemTable(skin, stack);
-        Image imageItem;
-        Label itemCount;
-        if (mItem.has(stack[0])) {
-            imageItem = new Image(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion());
-            itemCount = new Label(Integer.toString(count), skin);
-            imageItemTable.setImage(imageItem);
-            imageItemTable.setCountLabel(itemCount);
-        }
-        return imageItemTable;
     }
 }

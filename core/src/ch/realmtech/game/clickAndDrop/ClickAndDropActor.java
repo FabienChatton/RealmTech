@@ -1,4 +1,4 @@
-package ch.realmtech.game.clickAndDrop.clickAndDrop2;
+package ch.realmtech.game.clickAndDrop;
 
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.system.InventoryManager;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
-public class ClickAndDropActor extends Actor{
+public class ClickAndDropActor extends Actor {
     private final int[] stack;
     private final BitmapFont bitmapFont;
     private final ComponentMapper<ItemComponent> mItem;
