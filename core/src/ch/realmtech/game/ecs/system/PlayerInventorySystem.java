@@ -107,6 +107,7 @@ public class PlayerInventorySystem extends BaseSystem {
 
     private void clearDisplayInventory() {
         inventoryTable.clear();
+        clickAndDrop2.clearActor();
     }
 
     /**

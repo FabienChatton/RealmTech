@@ -12,11 +12,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.Array;
 
 public class ClickAndDrop2 {
     private final Stage stage;
     private final World world;
     private final ClickAndDropActor clickAndDropActor;
+    private final Array<ClickAndDropActor> actors;
 
     public ClickAndDrop2(Stage stage, World world) {
         clickAndDropActor = new ClickAndDropActor(new int[InventoryComponent.DEFAULT_STACK_LIMITE], world.getMapper(ItemComponent.class), null) {
@@ -26,6 +29,7 @@ public class ClickAndDrop2 {
                 if (clickAndDropActor.getStack()[0] == 0) {
                     clickAndDropActor.setWidth(0);
                     clickAndDropActor.setHeight(0);
+                    clickAndDropActor.setZIndex(100);
                 }
             }
         };
@@ -37,8 +41,10 @@ public class ClickAndDrop2 {
             }
         });
         stage.addActor(clickAndDropActor);
+        clickAndDropActor.setTouchable(Touchable.disabled);
         this.stage = stage;
         this.world = world;
+        this.actors = new Array<>(50);
     }
 
     public void addSource(final ClickAndDropActor clickAndDropActorSrc) {
@@ -75,6 +81,7 @@ public class ClickAndDrop2 {
             }
         };
         clickAndDropActorSrc.addCaptureListener(listener);
+        actors.add(clickAndDropActorSrc);
     }
 
     public void addDestination(ClickAndDropActor clickAndDropActorDst) {
@@ -93,5 +100,12 @@ public class ClickAndDrop2 {
             }
         };
         clickAndDropActorDst.addCaptureListener(listener);
+    }
+
+    public void clearActor() {
+        for (ClickAndDropActor actor : actors) {
+            stage.getActors().removeValue(actor, true);
+        }
+        actors.clear();
     }
 }
