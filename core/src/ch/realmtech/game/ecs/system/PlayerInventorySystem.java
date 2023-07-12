@@ -15,9 +15,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
@@ -124,7 +122,7 @@ public class PlayerInventorySystem extends BaseSystem {
      * @param clickAndDropDst
      */
     public void displayInventory(int inventoryId, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst) {
-        Array<Table> tableImages = createItemSlotsToDisplay(inventoryId, clickAndDropSrc, clickAndDropDst);
+        Array<Table> tableImages = createItemSlotsToDisplay(inventoryId, inventoryStage, clickAndDropSrc, clickAndDropDst);
         for (int i = 0; i < tableImages.size; i++) {
             if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
@@ -133,7 +131,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(int inventoryId, boolean clickAndDropSrc, boolean clickAndDropDst) {
+    public Array<Table> createItemSlotsToDisplay(int inventoryId, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst) {
         final Array<Table> tableImages = new Array<>();
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
@@ -145,10 +143,26 @@ public class PlayerInventorySystem extends BaseSystem {
             clickAndDropActor.setHeight(inventoryComponent.backgroundTexture.getRegionHeight());
             if (clickAndDropSrc) clickAndDrop2.addSource(clickAndDropActor);
             if (clickAndDropDst) clickAndDrop2.addDestination(clickAndDropActor);
-            inventoryStage.addActor(clickAndDropActor);
-            inventoryStage.addActor(tableImage);
+            stage.addActor(clickAndDropActor);
+            stage.addActor(tableImage);
             tableImages.add(tableImage);
         }
         return tableImages;
+    }
+
+    public Table createItemSlotToDisplay(int[] stack, InventoryComponent inventoryComponent) {
+        Image image = new Image();
+        Label label = new Label(null, skin);
+        if (mItem.has(stack[0])) {
+            image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion()));
+            label.setText(Integer.toString(InventoryManager.tailleStack(stack)));
+        }
+        Table table = new Table();
+        table.add(image);
+        table.addActor(label);
+        table.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
+        label.setFontScale(0.5f);
+        label.moveBy(0, inventoryComponent.backgroundTexture.getRegionHeight() - 7);
+        return table;
     }
 }
