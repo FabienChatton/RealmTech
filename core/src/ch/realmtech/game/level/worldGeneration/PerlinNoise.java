@@ -43,10 +43,10 @@ public class PerlinNoise {
         CellRegisterEntry groundDecoCellRegisterEntry = null;
         if (groundDeco > 0.999f) {
             if (groundCellRegisterEntry == RealmTechCoreCell.GRASS_CELL || groundCellRegisterEntry == RealmTechCoreCell.SAND_CELL) {
-                groundDecoCellRegisterEntry = RealmTechCoreCell.COPPER_ORE;
+                groundDecoCellRegisterEntry = RealmTechCoreCell.TREE_CELL;
             }
         } else if (groundDeco > 0.998f && groundDeco < 0.999f) {
-            groundDecoCellRegisterEntry = RealmTechCoreCell.TREE_CELL;
+            groundDecoCellRegisterEntry = RealmTechCoreCell.COPPER_ORE;
         }
         return new CellRegisterEntry[]{groundCellRegisterEntry, groundDecoCellRegisterEntry};
     }

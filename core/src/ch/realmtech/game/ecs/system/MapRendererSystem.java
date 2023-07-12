@@ -12,7 +12,7 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @All(InfMapComponent.class)
@@ -34,23 +34,27 @@ public class MapRendererSystem extends IteratingSystem {
     @Override
     protected void process(int mapId) {
         InfMapComponent infMapComponent = mMap.get(mapId);
+        List<List<List<InfCellComponent>>> chunks = new ArrayList<>();
         for (int i = 0; i < infMapComponent.infChunks.length; i++) {
             int chunkId = infMapComponent.infChunks[i];
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-            List<LinkedList<InfCellComponent>> arrayLayerCell = new LinkedList<>();
+            List<List<InfCellComponent>> arrayLayerCell = new ArrayList<>();
             for (int j = 0; j < WorldMap.NUMBER_LAYER; j++) {
-                arrayLayerCell.add(new LinkedList<>());
+                arrayLayerCell.add(new ArrayList<>());
             }
             for (int j = infChunkComponent.infCellsId.length -1; j >= 0; j--) {
                 int cellId = infChunkComponent.infCellsId[j];
                 InfCellComponent infCellComponent = mCell.get(cellId);
                 byte layer = infCellComponent.cellRegisterEntry.getCellBehavior().getLayer();
-                arrayLayerCell.get(layer).offer(infCellComponent);
+                arrayLayerCell.get(layer).add(infCellComponent);
             }
-
-            for (List<InfCellComponent> infCellComponents : arrayLayerCell) {
+            chunks.add(arrayLayerCell);
+        }
+        for (int i = chunks.size() - 1; i >= 0; i--) {
+            for (List<InfCellComponent> infCellComponents : chunks.get(i)) {
                 if (infCellComponents != null) {
                     for (InfCellComponent infCellComponent : infCellComponents) {
+                        InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
                         int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX);
                         int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY);
                         TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion();
