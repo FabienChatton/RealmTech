@@ -15,7 +15,6 @@ import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -50,7 +49,13 @@ public class PlayerInventorySystem extends BaseSystem {
     protected void initialize() {
         super.initialize();
         this.inventoryStage = new Stage(context.getUiStage().getViewport(), context.getUiStage().getBatch());
-        this.inventoryWindow = new Window("Inventaire", context.getSkin());
+        this.inventoryWindow = new Window("Inventaire", context.getSkin()) {
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                setZIndex(0);
+            }
+        };
         this.inventoryTable = new Table(context.getSkin());
         this.craftingTable = new Table(context.getSkin());
         this.skin = context.getSkin();
@@ -61,7 +66,7 @@ public class PlayerInventorySystem extends BaseSystem {
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
         this.clickAndDrop2 = new ClickAndDrop2(inventoryStage, world);
-        inventoryWindow.setTouchable(Touchable.disabled);
+        //inventoryWindow.setTouchable(Touchable.disabled);
     }
 
     public void toggleInventoryWindow(){
@@ -119,7 +124,7 @@ public class PlayerInventorySystem extends BaseSystem {
      * @param clickAndDropDst
      */
     public void displayInventory(int inventoryId, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst) {
-        Array<Table> tableImages = createItemSlotsToDisplay(inventoryId);
+        Array<Table> tableImages = createItemSlotsToDisplay(inventoryId, clickAndDropSrc, clickAndDropDst);
         for (int i = 0; i < tableImages.size; i++) {
             if (i % mInventory.get(inventoryId).numberOfSlotParRow == 0) {
                 inventoryTable.row().padBottom(2f);
@@ -128,7 +133,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(int inventoryId) {
+    public Array<Table> createItemSlotsToDisplay(int inventoryId, boolean clickAndDropSrc, boolean clickAndDropDst) {
         final Array<Table> tableImages = new Array<>();
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
@@ -138,8 +143,8 @@ public class PlayerInventorySystem extends BaseSystem {
             final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(stack, mItem, tableImage);
             clickAndDropActor.setWidth(inventoryComponent.backgroundTexture.getRegionWidth());
             clickAndDropActor.setHeight(inventoryComponent.backgroundTexture.getRegionHeight());
-            clickAndDrop2.addSource(clickAndDropActor);
-            clickAndDrop2.addDestination(clickAndDropActor);
+            if (clickAndDropSrc) clickAndDrop2.addSource(clickAndDropActor);
+            if (clickAndDropDst) clickAndDrop2.addDestination(clickAndDropActor);
             inventoryStage.addActor(clickAndDropActor);
             inventoryStage.addActor(tableImage);
             tableImages.add(tableImage);

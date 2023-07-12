@@ -29,7 +29,7 @@ public class ClickAndDrop2 {
                 if (clickAndDropActor.getStack()[0] == 0) {
                     clickAndDropActor.setWidth(0);
                     clickAndDropActor.setHeight(0);
-                    clickAndDropActor.setZIndex(100);
+                    clickAndDropActor.setZIndex(200);
                 }
             }
         };

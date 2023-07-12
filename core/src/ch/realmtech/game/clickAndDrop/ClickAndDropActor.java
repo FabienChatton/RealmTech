@@ -6,6 +6,7 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
@@ -35,7 +36,11 @@ public class ClickAndDropActor extends Actor {
             }
         }
         if (tableImage != null) {
-            setPosition(tableImage.getX() + 358, tableImage.getY() + 155); // TODO trouver un fois à quoi correspondent ces valeurs magiques
+            final Vector2 vector2 = tableImage.localToStageCoordinates(new Vector2(tableImage.getX(), tableImage.getY()));
+            final float x = vector2.x - tableImage.getX();
+            final float y = vector2.y - tableImage.getY();
+            setPosition(x, y);
+            setZIndex(1);
         }
     }
 
