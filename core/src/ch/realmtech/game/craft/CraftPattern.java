@@ -4,6 +4,8 @@ import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class CraftPattern implements CraftingRecipeEntry {
@@ -43,6 +45,10 @@ public class CraftPattern implements CraftingRecipeEntry {
         } else {
             return Optional.empty();
         }
+    }
+    @Override
+    public List<ItemRegisterEntry> getRequireItem() {
+        return Arrays.stream(craftPattern).filter(Objects::nonNull).toList();
     }
 
     public static class CraftPatternArgs {

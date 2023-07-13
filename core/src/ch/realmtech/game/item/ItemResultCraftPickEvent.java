@@ -8,6 +8,6 @@ public interface ItemResultCraftPickEvent {
     void pick(final World world, final InventoryComponent inventoryComponent);
 
     static ItemResultCraftPickEvent clearCraftingInventory() {
-        return (world, inventoryComponent) -> world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
+        return (world, inventoryComponent) -> world.getSystem(InventoryManager.class).removeAllOneItem(inventoryComponent.inventory);
     }
 }

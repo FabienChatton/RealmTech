@@ -8,6 +8,7 @@ import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.game.ecs.component.StoredItemComponent;
+import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.input.InputMapper;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -89,12 +90,13 @@ public class PlayerInventorySystem extends BaseSystem {
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
-    public void nouveauCraftDisponible(CraftResult craftResult) {
+    public void nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry) {
         final int[][] inventory = mInventory.get(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory")).inventory;
         if (!mItem.has(inventory[0][0])) {
             for (int i = 0; i < craftResult.nombre(); i++) {
                 int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
-                world.edit(itemResultId).create(ItemResultCraftComponent.class);
+                final ItemResultCraftComponent itemResultCraftComponent = world.edit(itemResultId).create(ItemResultCraftComponent.class);
+                itemResultCraftComponent.craftingRecipeEntry = craftingRecipeEntry;
                 world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"));
             }
             refreshPlayerInventory();

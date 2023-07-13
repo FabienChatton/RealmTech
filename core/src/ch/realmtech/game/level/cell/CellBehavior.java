@@ -14,7 +14,7 @@ public class CellBehavior implements SetContext {
     private ItemType breakWith;
     private float speedEffect = 1;
     private PlayerFootStepSound playerFootStepSound;
-    private byte layer;
+    private final byte layer;
     private BreakCell breakCellEvent;
 
     private CellBehavior(byte layer) {

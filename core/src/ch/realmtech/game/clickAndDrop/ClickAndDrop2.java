@@ -55,7 +55,8 @@ public class ClickAndDrop2 {
                     if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
                         final ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
                         if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
-                            mItemResult.get(clickAndDropActorSrc.getStack()[0]).pickEvent.pick(world, world.getMapper(InventoryComponent.class).get(world.getSystem(TagManager.class).getEntityId("crafting")));
+                            final ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
+                            itemResultCraftComponent.pickEvent.pick(world, world.getMapper(InventoryComponent.class).get(world.getSystem(TagManager.class).getEntityId("crafting")));
                             for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
                                 world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
                             }

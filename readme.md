@@ -11,7 +11,7 @@ de fiole, mais dans l'évolution progressive des matériaux pour accéder
 une plus grande liberté de construction avec des blocs décoratifs
 qu'on peut posse n'importe où pour créer ses propres bâtiments.
 
-## Joueur au jeu
+## Jouer au jeu
 ### cmd
 ```shell
 git clone https://github.com/FabienChatton/realmTech

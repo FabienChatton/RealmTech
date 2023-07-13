@@ -5,6 +5,7 @@ import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,6 +28,11 @@ public class CraftPatternShapeless implements CraftingRecipeEntry {
     @Override
     public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry) {
         return craftNonNull(Arrays.stream(itemRegisterEntry).filter(Objects::nonNull).toArray(ItemRegisterEntry[]::new));
+    }
+
+    @Override
+    public List<ItemRegisterEntry> getRequireItem() {
+        return Arrays.stream(itemRequire).filter(Objects::nonNull).toList();
     }
 
     private Optional<CraftResult> craftNonNull(ItemRegisterEntry[] itemRegisterEntry) {

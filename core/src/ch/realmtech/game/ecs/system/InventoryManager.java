@@ -158,4 +158,17 @@ public class InventoryManager extends Manager {
         }
         clearStack(stack);
     }
+
+    public void removeOneItem(int[] stack) {
+        int taille = tailleStack(stack);
+        if (taille == 0) return;
+        world.delete(stack[taille - 1]);
+        stack[taille - 1] = 0;
+    }
+
+    public void removeAllOneItem(int[][] inventory) {
+        for (int i = 0; i < inventory.length; i++) {
+            removeOneItem(inventory[i]);
+        }
+    }
 }
