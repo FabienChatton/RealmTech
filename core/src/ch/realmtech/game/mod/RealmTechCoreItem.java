@@ -7,7 +7,10 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.game.registery.Registry;
 
 public class RealmTechCoreItem {
-
+    public final static ItemRegisterEntry NO_ITEM = new ItemRegisterEntry(
+            "default-texture",
+            new ItemBehavior.Builder().build()
+    );
     public final static ItemRegisterEntry PIOCHE_ITEM = new ItemRegisterEntry(
             "pioche-01",
             new ItemBehavior.Builder()

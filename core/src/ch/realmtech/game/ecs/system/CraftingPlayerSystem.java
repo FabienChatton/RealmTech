@@ -10,6 +10,8 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 @All({InventoryComponent.class, CraftingComponent.class})
@@ -29,12 +31,14 @@ public class CraftingPlayerSystem extends IteratingSystem {
             }
         }
         boolean nouveauCraft = false;
-        for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
-            final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister);
-            if (craftResult.isPresent()) {
-                world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get(), craftingRecipeEntry);
-                nouveauCraft = true;
-                break;
+        if (Arrays.stream(itemRegister).anyMatch(Objects::nonNull)) {
+            for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
+                final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister);
+                if (craftResult.isPresent()) {
+                    world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get(), craftingRecipeEntry);
+                    nouveauCraft = true;
+                    break;
+                }
             }
         }
         if (!nouveauCraft) {

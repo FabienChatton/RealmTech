@@ -22,11 +22,6 @@ public class ItemBehavior {
         return speedEffect;
     }
 
-    @Override
-    public String toString() {
-        return itemType.toString();
-    }
-
     public static class Builder {
         private final ItemBehavior itemBehavior = new ItemBehavior();
 
