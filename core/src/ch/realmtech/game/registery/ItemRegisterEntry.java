@@ -39,4 +39,9 @@ public class ItemRegisterEntry implements Entry, SetContext {
         this.textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
         this.itemBehavior = itemBehavior;
     }
+
+    @Override
+    public String toString() {
+        return textureRegion.toString();
+    }
 }

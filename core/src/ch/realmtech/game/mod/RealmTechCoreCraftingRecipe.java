@@ -19,8 +19,9 @@ public class RealmTechCoreCraftingRecipe {
 
         registry.add(new CraftPatternShapeless(RealmTechCoreItem.PLANCHE_ITEM, 4, RealmTechCoreItem.BUCHE_ITEM));
 
-        registry.add(new CraftPatternShape(RealmTechCoreItem.STICK_ITEM, 4, new char[] {
-                'a', 'a', '\n'
+        registry.add(new CraftPatternShape(RealmTechCoreItem.STICK_ITEM, 4, new char[][] {
+                new char[] {'a'},
+                new char[] {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreItem.PLANCHE_ITEM)));
     }
 }

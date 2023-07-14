@@ -12,7 +12,7 @@ import java.util.Optional;
 public class CraftPattern implements CraftingRecipeEntry {
     protected final ItemRegisterEntry[] craftPattern;
     protected final ItemRegisterEntry itemResult;
-    protected int nombre;
+    protected final int nombre;
 
     public CraftPattern(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
         this(itemResult, 1, pattern, args);
@@ -23,14 +23,19 @@ public class CraftPattern implements CraftingRecipeEntry {
         if (nombre <= 0 ) throw new IllegalArgumentException("Le nombre de résultat ne peut pas être nul ou négatif");
         this.nombre = nombre;
         this.itemResult = itemResult;
-        int taillePattern = pattern.length;
-        craftPattern = new ItemRegisterEntry[taillePattern];
+        craftPattern = getCraftPatternFromArgs(pattern, args);
+    }
+
+    protected static ItemRegisterEntry[] getCraftPatternFromArgs(char[] pattern, CraftPatternArgs[] args) {
+        final ItemRegisterEntry[] craftPattern;
+        craftPattern = new ItemRegisterEntry[pattern.length];
         for (int i = 0; i < pattern.length; i++) {
             craftPattern[i] = trouveRegistreItemViaSymbole(args, pattern[i]);
         }
+        return craftPattern;
     }
 
-    protected ItemRegisterEntry trouveRegistreItemViaSymbole(CraftPatternArgs[] args, char symbole) {
+    protected static ItemRegisterEntry trouveRegistreItemViaSymbole(CraftPatternArgs[] args, char symbole) {
         for (int i = 0; i < args.length; i++) {
             if (args[i].getSymbole() == symbole) {
                 return args[i].getItem();
