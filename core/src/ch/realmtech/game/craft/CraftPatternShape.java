@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static ch.realmtech.game.craft.CraftPattern.CraftPatternArgs;
-import static ch.realmtech.game.craft.CraftPattern.getCraftPatternFromArgs;
+import static ch.realmtech.game.craft.CraftPatternFix.CraftPatternArgs;
+import static ch.realmtech.game.craft.CraftPatternFix.getCraftPatternFromArgs;
 
 public class CraftPatternShape implements CraftingRecipeEntry {
     protected final ItemRegisterEntry itemResult;
@@ -64,8 +64,8 @@ public class CraftPatternShape implements CraftingRecipeEntry {
         }
         ItemRegisterEntry[][] itemRegisterEntries2d = getItemRegisterEntries2d(taille2d, taille2d, pureItemRegisterEntry);
         try {
-            loop:
             for (int ih = 0; ih < itemRegisterEntries2d.length; ih++) {
+                loop:
                 for (int il = 0; il < itemRegisterEntries2d[ih].length; il++) {
                     for (int l = 0; l < craftPattern2d.length; l++) {
                         for (int h = 0; h < craftPattern2d[l].length; h++) {
@@ -74,11 +74,11 @@ public class CraftPatternShape implements CraftingRecipeEntry {
                             }
                         }
                     }
+                    return Optional.of(new CraftResult(itemResult, nombre));
                 }
-                return Optional.of(new CraftResult(itemResult, nombre));
             }
         } catch (IndexOutOfBoundsException e) {
-
+            return Optional.empty();
         }
         return Optional.empty();
     }

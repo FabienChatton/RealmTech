@@ -9,16 +9,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CraftPattern implements CraftingRecipeEntry {
+public class CraftPatternFix implements CraftingRecipeEntry {
     protected final ItemRegisterEntry[] craftPattern;
     protected final ItemRegisterEntry itemResult;
     protected final int nombre;
 
-    public CraftPattern(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
+    public CraftPatternFix(ItemRegisterEntry itemResult, char[] pattern, CraftPatternArgs... args) {
         this(itemResult, 1, pattern, args);
     }
 
-    public CraftPattern(ItemRegisterEntry itemResult, int nombre, char[] pattern, CraftPatternArgs... args) {
+    public CraftPatternFix(ItemRegisterEntry itemResult, int nombre, char[] pattern, CraftPatternArgs... args) {
         if (args == null || args.length == 0) throw new IllegalArgumentException("Il manque l'argument du craft");
         if (nombre <= 0 ) throw new IllegalArgumentException("Le nombre de résultat ne peut pas être nul ou négatif");
         this.nombre = nombre;
