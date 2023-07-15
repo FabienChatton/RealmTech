@@ -1,6 +1,6 @@
 package ch.realmtech.game.craft;
 
-import ch.realmtech.game.mod.RealmTechCoreItem;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
@@ -57,7 +57,7 @@ public class CraftPatternShape implements CraftingRecipeEntry {
         ItemRegisterEntry[] pureItemRegisterEntry = new ItemRegisterEntry[itemRegisterEntry.length];
         for (int i = 0; i < itemRegisterEntry.length; i++) {
             if (itemRegisterEntry[i] == null) {
-                pureItemRegisterEntry[i] = RealmTechCoreItem.NO_ITEM;
+                pureItemRegisterEntry[i] = RealmTechCoreMod.NO_ITEM;
             } else {
                 pureItemRegisterEntry[i] = itemRegisterEntry[i];
             }

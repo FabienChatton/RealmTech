@@ -1,6 +1,6 @@
 package ch.realmtech.game.level.worldGeneration;
 
-import ch.realmtech.game.mod.RealmTechCoreCell;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.World;
 
@@ -33,20 +33,20 @@ public class PerlinNoise {
         float ground = getGroundNoise(x, y);
         final CellRegisterEntry groundCellRegisterEntry;
         if (ground < 0.5f) {
-            groundCellRegisterEntry = RealmTechCoreCell.GRASS_CELL;
+            groundCellRegisterEntry = RealmTechCoreMod.GRASS_CELL;
         } else if (ground < 0.95f) {
-            groundCellRegisterEntry = RealmTechCoreCell.SAND_CELL;
+            groundCellRegisterEntry = RealmTechCoreMod.SAND_CELL;
         } else {
-            groundCellRegisterEntry = RealmTechCoreCell.WATER_CELL;
+            groundCellRegisterEntry = RealmTechCoreMod.WATER_CELL;
         }
         float groundDeco = getGroundDecoNoise(x, y);
         CellRegisterEntry groundDecoCellRegisterEntry = null;
         if (groundDeco > 0.999f) {
-            if (groundCellRegisterEntry == RealmTechCoreCell.GRASS_CELL || groundCellRegisterEntry == RealmTechCoreCell.SAND_CELL) {
-                groundDecoCellRegisterEntry = RealmTechCoreCell.TREE_CELL;
+            if (groundCellRegisterEntry == RealmTechCoreMod.GRASS_CELL || groundCellRegisterEntry == RealmTechCoreMod.SAND_CELL) {
+                groundDecoCellRegisterEntry = RealmTechCoreMod.TREE_CELL;
             }
         } else if (groundDeco > 0.998f && groundDeco < 0.999f) {
-            groundDecoCellRegisterEntry = RealmTechCoreCell.COPPER_ORE;
+            groundDecoCellRegisterEntry = RealmTechCoreMod.COPPER_ORE;
         }
         return new CellRegisterEntry[]{groundCellRegisterEntry, groundDecoCellRegisterEntry};
     }

@@ -2,20 +2,22 @@ texture.png
 	size: 128, 256
 	repeat: none
 buche-01
-	bounds: 0, 92, 32, 32
-copper-ore-1
+	bounds: 0, 58, 32, 32
+copper-ore-02
 	bounds: 34, 90, 32, 32
 default-texture
 	bounds: 34, 22, 32, 32
 grass-01
 	bounds: 68, 95, 32, 32
 inventory-01
-	bounds: 0, 58, 32, 32
+	bounds: 0, 24, 32, 32
 pelle-01
 	bounds: 68, 61, 32, 32
 pioche-01
 	bounds: 68, 129, 32, 32
-plank-01
+plank-02
+	bounds: 34, 124, 32, 32
+plank-cell-01
 	bounds: 66, 224, 32, 32
 reimu
 	bounds: 0, 192, 64, 64
@@ -47,11 +49,9 @@ sand-01
 	bounds: 68, 163, 32, 32
 sandales-01
 	bounds: 34, 56, 32, 32
-stick-01
-	bounds: 34, 124, 32, 32
-tree-01
-	bounds: 34, 158, 32, 32
+stick-02
+	bounds: 0, 92, 32, 32
 tree-02
 	bounds: 0, 126, 32, 64
 water-01
-	bounds: 0, 24, 32, 32
+	bounds: 34, 158, 32, 32

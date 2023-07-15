@@ -5,6 +5,7 @@ import ch.realmtech.game.ecs.component.InfChunkComponent;
 import ch.realmtech.game.ecs.component.InfMapComponent;
 import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
 import ch.realmtech.game.level.cell.Cells;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.options.RealmTechDataCtrl;
 import com.artemis.ComponentMapper;
@@ -55,6 +56,7 @@ public class SaveInfManager extends Manager {
      */
     public int generateNewSave(String saveName) throws IOException{
         if (saveName == null || saveName.isBlank()) throw new IllegalArgumentException("le nom de la sauvegarde ne peut pas être null ou vide");
+        if (!saveName.matches("^[a-zA-Z]+$")) throw new IllegalArgumentException("le nom du la sauvegarde doit contenir uniquement des lettres entre a et z en minuscule ou majuscule ");
         creerHiearchieDUneSave(saveName);
         int mapId = world.create();
         int metaDonneesId = world.create();
@@ -99,6 +101,9 @@ public class SaveInfManager extends Manager {
             for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
                 InfCellComponent infCellComponent = mCell.get(infChunkComponent.infCellsId[i]);
                 if (infCellComponent != null) {
+                    if (infCellComponent.cellRegisterEntry == RealmTechCoreMod.PLANCHE_CELL_ITEM.cellRegisterEntry()) {
+                        System.out.println(((byte)CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry)));
+                    }
                     outputStream.write((byte) CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
                     outputStream.write(Cells.getInnerChunkPos(infCellComponent.innerPosX, infCellComponent.innerPosY));
                 }

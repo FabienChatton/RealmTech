@@ -3,8 +3,9 @@ package ch.realmtech.game.level.cell;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.PlayerFootStepSound;
-import ch.realmtech.game.registery.ItemRegisterEntry;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.helper.SetContext;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 import static ch.realmtech.game.level.cell.Cells.Layer;
@@ -57,14 +58,14 @@ public class CellBehavior implements SetContext {
             return this;
         }
 
-        public Builder breakWith(ItemType itemType, ItemRegisterEntry dropItemOnBreak) {
+        public Builder breakWith(ItemType itemType, String itemRegistryName) {
             breakWith(itemType);
-            dropOnBreak(dropItemOnBreak);
+            dropOnBreak(itemRegistryName);
             return this;
         }
 
-        public Builder dropOnBreak(ItemRegisterEntry itemDrop) {
-            cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(itemDrop);
+        public Builder dropOnBreak(String itemRegistryName) {
+            Gdx.app.postRunnable(() -> cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(itemRegistryName).getEntry()));
             return this;
         }
 

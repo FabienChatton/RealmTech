@@ -1,9 +1,14 @@
 package ch.realmtech.game.item;
 
+import ch.realmtech.game.mod.RealmTechCoreMod;
+import ch.realmtech.game.registery.CellRegisterEntry;
+import com.badlogic.gdx.Gdx;
+
 public class ItemBehavior {
     private int attackDommage;
     private ItemType itemType;
     private float speedEffect;
+    private CellRegisterEntry placeCell;
 
     private ItemBehavior() {
         attackDommage = 1;
@@ -22,6 +27,10 @@ public class ItemBehavior {
         return speedEffect;
     }
 
+    public CellRegisterEntry getPlaceCell() {
+        return placeCell;
+    }
+
     public static class Builder {
         private final ItemBehavior itemBehavior = new ItemBehavior();
 
@@ -36,6 +45,11 @@ public class ItemBehavior {
         }
         public Builder setSpeedEffect(float speedEffect) {
             itemBehavior.speedEffect = speedEffect;
+            return this;
+        }
+
+        public Builder placeCell(String cellRegistryName) {
+            Gdx.app.postRunnable(() -> itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry());
             return this;
         }
 

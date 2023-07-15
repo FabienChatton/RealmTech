@@ -32,8 +32,6 @@ public class BreakCellEvent {
     }
 
     public BreakCell dropNothing() {
-        return (world, chunkId, cellId, itemComponent, playerComponent) -> {
-            world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
-        };
+        return (world, chunkId, cellId, itemComponent, playerComponent) -> world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
     }
 }

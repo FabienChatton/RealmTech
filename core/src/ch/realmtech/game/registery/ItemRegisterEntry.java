@@ -37,6 +37,7 @@ public class ItemRegisterEntry implements Entry, SetContext {
 
     public ItemRegisterEntry(String textureRegionName, ItemBehavior itemBehavior) {
         this.textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
+        if (this.textureRegion == null) throw new IllegalArgumentException("vous n'avez pas mit une texture valide");
         this.itemBehavior = itemBehavior;
     }
 

@@ -7,7 +7,7 @@ import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 import ch.realmtech.game.registery.CellRegisterEntry;
-import ch.realmtech.input.InputMapper;
+import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -176,7 +176,7 @@ public class MapSystem extends DelayedIteratingSystem {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
         for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
-            int[] cells = generateNewCell(infMapComponent.infMetaDonnees, chunkPosX, chunkPosY, i);
+            int[] cells = generateNewCells(infMapComponent.infMetaDonnees, chunkPosX, chunkPosY, i);
             for (int j = 0; j < cells.length; j++) {
                 cellsId.add(cells[j]);
             }
@@ -186,7 +186,7 @@ public class MapSystem extends DelayedIteratingSystem {
         return chunkId;
     }
 
-    private int[] generateNewCell(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
+    private int[] generateNewCells(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = getInnerChunkX(index);
         byte innerChunkY = getInnerChunkY(index);
         int worldX = getWorldPos(chunkPosX, innerChunkX);
@@ -203,6 +203,15 @@ public class MapSystem extends DelayedIteratingSystem {
             }
         }
         return cellIds;
+    }
+
+    private void newCellInChunk(InfChunkComponent infChunkComponent, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
+        int cellId = world.create();
+        world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
+        int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
+        System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
+        newCellsArray[newCellsArray.length - 1] = cellId;
+        infChunkComponent.infCellsId = newCellsArray;
     }
 
     /**
@@ -373,19 +382,28 @@ public class MapSystem extends DelayedIteratingSystem {
         return ret;
     }
 
-    public void interagiePlayer(int playerId, int button, int[] chunks, float gameCoordinateX, float gameCoordinateY) {
-        if (button == InputMapper.leftClick.button) {
-            // détruit la cellule
-            byte innerX = getInnerChunk(gameCoordinateX);
-            byte innerY = getInnerChunk(gameCoordinateY);
-            int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
-            int topCellId = getTopCell(chunk, innerX, innerY);
-            if (topCellId != -1) {
-                InfCellComponent infCellComponent = mCell.get(topCellId);
-                BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
-                if (breakCellEvent != null) {
-                    breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId));
-                }
+    public void breakTopCell(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY) {
+        final byte innerX = getInnerChunk(gameCoordinateX);
+        final byte innerY = getInnerChunk(gameCoordinateY);
+        final int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
+        final int topCellId = getTopCell(chunk, innerX, innerY);
+        if (topCellId != -1) {
+            final InfCellComponent infCellComponent = mCell.get(topCellId);
+            final BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+            if (breakCellEvent != null) {
+                breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId));
+            }
+        }
+    }
+
+    public void placeItemToBloc(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY, int selectedItem) {
+        if (selectedItem > 0) {
+            final ItemRegisterEntry selectedItemEntry = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()).itemRegisterEntry;
+            if (selectedItemEntry.getItemBehavior().getPlaceCell() != null) {
+                final byte innerX = getInnerChunk(gameCoordinateX);
+                final byte innerY = getInnerChunk(gameCoordinateY);
+                final int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
+                newCellInChunk(mChunk.get(chunk), selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
             }
         }
     }

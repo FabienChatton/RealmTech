@@ -1,6 +1,6 @@
 package ch.realmtech.game.craft;
 
-import ch.realmtech.game.mod.RealmTechCoreItem;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
@@ -41,12 +41,12 @@ public class CraftPatternFix implements CraftingRecipeEntry {
                 return args[i].getItem();
             }
         }
-        return RealmTechCoreItem.NO_ITEM;
+        return RealmTechCoreMod.NO_ITEM;
     }
 
     @Override
     public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry) {
-        if (Arrays.equals(itemRegisterEntry, Arrays.stream(craftPattern).map(entry -> entry == RealmTechCoreItem.NO_ITEM ? null : entry).toArray())) {
+        if (Arrays.equals(itemRegisterEntry, Arrays.stream(craftPattern).map(entry -> entry == RealmTechCoreMod.NO_ITEM ? null : entry).toArray())) {
             return Optional.of(new CraftResult(itemResult, nombre));
         } else {
             return Optional.empty();
