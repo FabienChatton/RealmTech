@@ -20,6 +20,7 @@ public class ClickAndDrop2 {
     private final World world;
     private final ClickAndDropActor clickAndDropActor;
     private final Array<ClickAndDropActor> actors;
+    private final Array<ClickAndDropActor> destinations;
 
     public ClickAndDrop2(Stage stage, World world) {
         clickAndDropActor = new ClickAndDropActor(new int[InventoryComponent.DEFAULT_STACK_LIMITE], world.getMapper(ItemComponent.class), null) {
@@ -45,13 +46,14 @@ public class ClickAndDrop2 {
         this.stage = stage;
         this.world = world;
         this.actors = new Array<>(50);
+        this.destinations = new Array<>(50);
     }
 
     public void addSource(final ClickAndDropActor clickAndDropActorSrc) {
         final ClickAndDropListener listener = new ClickAndDropListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (InventoryManager.tailleStack(clickAndDropActor.getStack()) == 0) {
+                if (InventoryManager.tailleStack(clickAndDropActor.getStack()) == 0 || !destinations.contains(clickAndDropActorSrc, true)) {
                     if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
                         final ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
                         if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
@@ -101,6 +103,7 @@ public class ClickAndDrop2 {
             }
         };
         clickAndDropActorDst.addCaptureListener(listener);
+        destinations.add(clickAndDropActorDst);
     }
 
     public void clearActor() {
@@ -108,5 +111,6 @@ public class ClickAndDrop2 {
             stage.getActors().removeValue(actor, true);
         }
         actors.clear();
+        destinations.clear();
     }
 }

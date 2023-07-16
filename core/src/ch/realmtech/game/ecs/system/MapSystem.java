@@ -403,8 +403,10 @@ public class MapSystem extends DelayedIteratingSystem {
                 final byte innerX = getInnerChunk(gameCoordinateX);
                 final byte innerY = getInnerChunk(gameCoordinateY);
                 final int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
-                newCellInChunk(mChunk.get(chunk), selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
-                return true;
+                if (getCell(chunk, innerX, innerY, selectedItemEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) == -1) {
+                    newCellInChunk(mChunk.get(chunk), selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
+                    return true;
+                }
             }
         }
         return false;
