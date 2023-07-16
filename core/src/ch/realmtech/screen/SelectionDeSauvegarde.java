@@ -2,6 +2,7 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
+import ch.realmtech.helper.Popup;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -77,7 +78,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                     context.loadInfFile(file.toPath());
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    uiStage.addActor(Popup.popupErreur(e.getMessage()));
                 }
             }
         };
@@ -101,18 +102,8 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                     context.getEcsEngine().generateNewSave(nomNouvelleCarte.getText());
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException | IllegalArgumentException e) {
-                    Gdx.app.error(TAG, "impossible de creer la nouvelle carte " + nomNouvelleCarte.getText(), e);
+                    uiStage.addActor(Popup.popupErreur(e.getMessage()));
                 }
-//                if (nomNouvelleCarte.getText().isEmpty()) {
-//                    uiStage.addActor(PopupHelper.popupErreur("Le nom de la carte ne doit pas être vide"));
-//                    return;
-//                }
-//                try {
-//                    context.newSaveInitWorld(nomNouvelleCarte.getText());
-//                    context.generateNewWorld();
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
             }
         };
     }

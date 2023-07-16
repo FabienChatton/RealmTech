@@ -6,6 +6,7 @@ import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
+import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -285,5 +286,9 @@ public final class ECSEngine {
 
     public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {
         world.getSystem(SaveInfManager.class).saveInfChunk(infChunkId, rootSaveDirPath);
+    }
+
+    public <T extends BaseSystem> T getSystem(Class<T> type) {
+        return world.getSystem(type);
     }
 }

@@ -396,7 +396,7 @@ public class MapSystem extends DelayedIteratingSystem {
         }
     }
 
-    public void placeItemToBloc(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY, int selectedItem) {
+    public boolean placeItemToBloc(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY, int selectedItem) {
         if (selectedItem > 0) {
             final ItemRegisterEntry selectedItemEntry = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()).itemRegisterEntry;
             if (selectedItemEntry.getItemBehavior().getPlaceCell() != null) {
@@ -404,7 +404,9 @@ public class MapSystem extends DelayedIteratingSystem {
                 final byte innerY = getInnerChunk(gameCoordinateY);
                 final int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
                 newCellInChunk(mChunk.get(chunk), selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
+                return true;
             }
         }
+        return false;
     }
 }

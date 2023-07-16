@@ -5,7 +5,6 @@ import ch.realmtech.game.ecs.component.InfChunkComponent;
 import ch.realmtech.game.ecs.component.InfMapComponent;
 import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
 import ch.realmtech.game.level.cell.Cells;
-import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.options.RealmTechDataCtrl;
 import com.artemis.ComponentMapper;
@@ -22,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SaveInfManager extends Manager {
-    private final static int SAVE_PROTOCOLE_VERSION = 7;
+    private final static int SAVE_PROTOCOLE_VERSION = 8;
     public final static String ROOT_PATH_SAVES = "saves";
     private final static String TAG = SaveInfManager.class.getSimpleName();
     private ComponentMapper<InfMapComponent> mInfMap;
@@ -56,7 +55,7 @@ public class SaveInfManager extends Manager {
      */
     public int generateNewSave(String saveName) throws IOException{
         if (saveName == null || saveName.isBlank()) throw new IllegalArgumentException("le nom de la sauvegarde ne peut pas être null ou vide");
-        if (!saveName.matches("^[a-zA-Z]+$")) throw new IllegalArgumentException("le nom du la sauvegarde doit contenir uniquement des lettres entre a et z en minuscule ou majuscule ");
+        if (saveName.contains("/")) throw new IllegalArgumentException("le nom du la sauvegarde ne peut pas contenir de \"/\"");
         creerHiearchieDUneSave(saveName);
         int mapId = world.create();
         int metaDonneesId = world.create();
@@ -101,10 +100,7 @@ public class SaveInfManager extends Manager {
             for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
                 InfCellComponent infCellComponent = mCell.get(infChunkComponent.infCellsId[i]);
                 if (infCellComponent != null) {
-                    if (infCellComponent.cellRegisterEntry == RealmTechCoreMod.PLANCHE_CELL_ITEM.cellRegisterEntry()) {
-                        System.out.println(((byte)CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry)));
-                    }
-                    outputStream.write((byte) CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
+                    outputStream.writeInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
                     outputStream.write(Cells.getInnerChunkPos(infCellComponent.innerPosX, infCellComponent.innerPosY));
                 }
             }
@@ -172,14 +168,13 @@ public class SaveInfManager extends Manager {
             }
             // Header
             short nombreDeCellule = inputWrap.getShort();
-
             // Body
             int[] cellulesId = new int[nombreDeCellule];
             int chunkId = world.create();
             world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId);
             for (int i = 0; i < cellulesId.length; i++) {
                 cellulesId[i] = world.create();
-                byte hashRegistry = inputWrap.get();
+                int hashRegistry = inputWrap.getInt();
                 byte pos = inputWrap.get();
                 byte posX = Cells.getInnerChunkPosX(pos);
                 byte posY = Cells.getInnerChunkPosY(pos);

@@ -8,6 +8,7 @@ import ch.realmtech.input.InputMapper;
 import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
+import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -201,5 +202,8 @@ public final class RealmTech extends Game{
 
     public RealmTechDataCtrl getRealmTechDataCtrl() {
         return realmTechDataCtrl;
+    }
+    public <T extends BaseSystem> T getSystem(Class<T> type) {
+        return ecsEngine.getSystem(type);
     }
 }

@@ -46,4 +46,10 @@ public class Registry<T extends Entry> {
     public List<String> getEnfantsId() {
         return enfants.stream().map(Registry::getID).collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return "name: " + name + " " +
+                "hash(byte): " + (CellRegisterEntry.hashString(getID()));
+    }
 }

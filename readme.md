@@ -166,7 +166,7 @@ fichier de configuration ou les sauvegarde des mondes.
 ```
 
 ## Protocole de sauvegarde de RealmTech
-### version 7
+### version 8
 
 Le layer d'une cellule représente sa position dans la hauteur. C'est la
 cellule avec le plus grand layer qui sera affiché. Le layer ne peut
@@ -214,7 +214,7 @@ Header
     - nombre de cellule que contient le chunk, short
 Body
     pour chaque cellule :
-        - hash du cellRegisterEntry mini, byte
+        - hash du cellRegisterEntry, int
         - position dans le chunk, byte
 ```
 Pour récupérer le hash du registre pour la cellule qui est un int,

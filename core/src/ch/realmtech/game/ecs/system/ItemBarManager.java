@@ -98,6 +98,10 @@ public class ItemBarManager extends BaseSystem {
     }
 
     public int getSelectItem() {
-        return getItemBarItems()[slotSelected][0];
+        return getSelectStack()[0];
+    }
+
+    public int[] getSelectStack() {
+        return getItemBarItems()[slotSelected];
     }
 }

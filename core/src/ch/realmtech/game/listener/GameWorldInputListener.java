@@ -2,6 +2,7 @@ package ch.realmtech.game.listener;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InfMapComponent;
+import ch.realmtech.game.ecs.system.InventoryManager;
 import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.ecs.system.MapSystem;
 import ch.realmtech.input.InputMapper;
@@ -24,16 +25,13 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
             if (pointerMapper.isPressed) {
                 Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
                 if (pointerMapper.pointer == 0) {
-                    context.getEcsEngine().getWorld().getSystem(MapSystem.class).breakTopCell(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y);
-//                if (pointerMapper.button == InputMapper.leftClick.button) {
-//                    int topCell = context.getEcsEngine().getTopCell((int) gameCoordinate.x, (int) gameCoordinate.y);
-//                    if (topCell != -1) {
-//                        InfCellComponent infCellComponent = context.getEcsEngine().getWorld().getMapper(InfCellComponent.class).get(topCell);
-//                    }
-//                }
+                    if (pointerMapper.button == InputMapper.leftClick.button) {
+                        context.getSystem(MapSystem.class).breakTopCell(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y);
+                    }
                     if (pointerMapper.button == InputMapper.rightClick.button) {
-                        //throw new RuntimeException("à implémenté");
-                        context.getEcsEngine().getWorld().getSystem(MapSystem.class).placeItemToBloc(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y, context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).getSelectItem());
+                        if (context.getSystem(MapSystem.class).placeItemToBloc(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y, context.getSystem(ItemBarManager.class).getSelectItem())) {
+                            context.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());
+                        }
                     }
                 }
             }
