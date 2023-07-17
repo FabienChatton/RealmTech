@@ -102,7 +102,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     //<editor-fold desc="registre des Cell/item">
     public final static CellItemRegisterEntry PLANCHE_CELL_ITEM = registerCellItem("planche", new CellRegisterEntry(
             "plank-cell-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            new CellBehavior.Builder(Cells.Layer.BUILD)
                     .breakWith(ItemType.RIEN)
                     .dropOnBreak("realmtech.planche")
                     .build()

@@ -79,6 +79,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException e) {
                     uiStage.addActor(Popup.popupErreur(e.getMessage()));
+                    context.getEcsEngine().clearAllEntity();
                 }
             }
         };

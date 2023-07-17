@@ -6,11 +6,9 @@ import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
-import com.artemis.BaseSystem;
-import com.artemis.World;
-import com.artemis.WorldConfiguration;
-import com.artemis.WorldConfigurationBuilder;
+import com.artemis.*;
 import com.artemis.managers.TagManager;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -202,6 +200,13 @@ public final class ECSEngine {
         world.dispose();
         physicWorld.dispose();
         System.gc();
+    }
+
+    public void clearAllEntity() {
+        final IntBag entities = world.getAspectSubscriptionManager().get(Aspect.all()).getEntities();
+        for (int entity : entities.getData()) {
+            world.delete(entity);
+        }
     }
     public Body createBox2dItem(int itemId, float worldX, float worldY, TextureRegion texture) {
         resetBodyDef();
