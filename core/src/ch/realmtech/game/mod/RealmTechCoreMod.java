@@ -112,6 +112,17 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .placeCell("realmtech.planche")
                     .build()
     ));
+    public final static CellItemRegisterEntry CRAFTING_TABLE = registerCellItem("craftingTable", new CellRegisterEntry(
+       "table-craft-01",
+            new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.RIEN, "realmtech.craftingTable")
+                    .build()
+    ), new ItemRegisterEntry(
+            "table-craft-01",
+            new ItemBehavior.Builder()
+                    .placeCell("realmtech.craftingTable")
+                    .build()
+    ));
     //</editor-fold>
 
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {

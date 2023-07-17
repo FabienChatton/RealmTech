@@ -20,8 +20,13 @@ public class RealmTechCoreCraftingRecipe {
         registry.add(new CraftPatternShapeless(RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry(), 4, RealmTechCoreMod.BUCHE_ITEM));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.STICK_ITEM, 4, new char[][]{
-                new char[]{'a'},
-                new char[]{'a'}
+                new char[]{'a', ' '},
+                new char[]{'a', ' '}
+        }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
+
+        registry.add(new CraftPatternShape(RealmTechCoreMod.CRAFTING_TABLE.itemRegisterEntry(), new char[][] {
+                new char[]{'a','a'},
+                new char[]{'a','a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
     }
 }

@@ -58,14 +58,14 @@ public class CellBehavior implements SetContext {
             return this;
         }
 
-        public Builder breakWith(ItemType itemType, String itemRegistryName) {
+        public Builder breakWith(ItemType itemType, String dropItemRegistryName) {
             breakWith(itemType);
-            dropOnBreak(itemRegistryName);
+            dropOnBreak(dropItemRegistryName);
             return this;
         }
 
-        public Builder dropOnBreak(String itemRegistryName) {
-            Gdx.app.postRunnable(() -> cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(itemRegistryName).getEntry()));
+        public Builder dropOnBreak(String dropItemRegistryName) {
+            Gdx.app.postRunnable(() -> cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry()));
             return this;
         }
 
