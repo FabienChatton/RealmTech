@@ -1,6 +1,7 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.game.item.ItemBehavior;
 import ch.realmtech.game.item.ItemType;
@@ -113,7 +114,8 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .build()
     ));
     public final static CellItemRegisterEntry CRAFTING_TABLE = registerCellItem("craftingTable", new CellRegisterEntry(
-       "table-craft-01",
+            entityEdit -> entityEdit.create(InventoryComponent.class).set(3, 3, "water-01"),
+            "table-craft-01",
             new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.RIEN, "realmtech.craftingTable")
                     .build()

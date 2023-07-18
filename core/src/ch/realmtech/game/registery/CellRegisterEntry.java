@@ -4,16 +4,17 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.helper.SetContext;
-import com.artemis.Archetype;
+import com.artemis.EntityEdit;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CellRegisterEntry implements SetContext, Entry {
-    private Archetype archetype;
     private final TextureRegion textureRegion;
     private final CellBehavior cellBehavior;
     public static RealmTech context;
+    private Consumer<EntityEdit> editEntity;
 
 //    /**
 //     * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
@@ -67,23 +68,17 @@ public class CellRegisterEntry implements SetContext, Entry {
         return cellBehavior;
     }
 
-    public Archetype getArchetype() {
-        return archetype;
-    }
-
-    public CellRegisterEntry(Archetype archetype, TextureRegion textureRegion, CellBehavior cellBehavior) {
-        this.archetype = archetype;
-        this.textureRegion = textureRegion;
-        this.cellBehavior = cellBehavior;
-    }
-
-    public CellRegisterEntry(TextureRegion textureRegion, CellBehavior cellBehavior) {
-        this.textureRegion = textureRegion;
-        this.cellBehavior = cellBehavior;
+    public Consumer<EntityEdit> getEditEntity() {
+        return editEntity;
     }
 
     public CellRegisterEntry(String textureRegionName, CellBehavior cellBehavior) {
         this.textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
         this.cellBehavior = cellBehavior;
+    }
+
+    public CellRegisterEntry(Consumer<EntityEdit> editEntity, String textureRegionName, CellBehavior cellBehavior) {
+        this(textureRegionName, cellBehavior);
+        this.editEntity = editEntity;
     }
 }

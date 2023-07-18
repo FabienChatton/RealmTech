@@ -152,7 +152,7 @@ public final class ECSEngine {
 
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, context.getTextureAtlas().findRegion("water-01"));
+        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, "water-01");
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -187,10 +187,10 @@ public final class ECSEngine {
         int defaultCraftingTable = world.create();
         int defaultResultInventory = world.create();
         CraftingComponent craftingComponent = world.edit(defaultCraftingTable).create(CraftingComponent.class);
-        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1,1, context.getTextureAtlas().findRegion("water-01"));
+        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, "water-01");
         craftingComponent.set(RealmTechCoreMod.CRAFT, defaultResultInventory);
         InventoryComponent craftingInventoryComponent = world.edit(defaultCraftingTable).create(InventoryComponent.class);
-        craftingInventoryComponent.set(2, 2,context.getTextureAtlas().findRegion("water-01"));
+        craftingInventoryComponent.set(2, 2, "water-01");
         world.getSystem(TagManager.class).register("crafting", defaultCraftingTable);
         world.getSystem(TagManager.class).register("crafting-result-inventory", defaultResultInventory);
 

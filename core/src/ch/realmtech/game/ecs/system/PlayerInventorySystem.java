@@ -15,6 +15,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -139,10 +140,11 @@ public class PlayerInventorySystem extends BaseSystem {
         int[][] inventory = inventoryComponent.inventory;
         for (int[] stack : inventory) {
             final Table tableImage = new Table();
-            tableImage.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
+            final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
+            tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
             final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(stack, mItem, tableImage);
-            clickAndDropActor.setWidth(inventoryComponent.backgroundTexture.getRegionWidth());
-            clickAndDropActor.setHeight(inventoryComponent.backgroundTexture.getRegionHeight());
+            clickAndDropActor.setWidth(backGroundTextureRegion.getRegionWidth());
+            clickAndDropActor.setHeight(backGroundTextureRegion.getRegionHeight());
             if (clickAndDropSrc) clickAndDrop2.addSource(clickAndDropActor);
             if (clickAndDropDst) clickAndDrop2.addDestination(clickAndDropActor);
             stage.addActor(clickAndDropActor);
@@ -155,6 +157,7 @@ public class PlayerInventorySystem extends BaseSystem {
     public Table createItemSlotToDisplay(int[] stack, InventoryComponent inventoryComponent) {
         Image image = new Image();
         Label label = new Label(null, skin);
+        final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
         if (mItem.has(stack[0])) {
             image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion()));
             label.setText(Integer.toString(InventoryManager.tailleStack(stack)));
@@ -162,9 +165,9 @@ public class PlayerInventorySystem extends BaseSystem {
         Table table = new Table();
         table.add(image);
         table.addActor(label);
-        table.setBackground(new TextureRegionDrawable(inventoryComponent.backgroundTexture));
+        table.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
         label.setFontScale(0.5f);
-        label.moveBy(0, inventoryComponent.backgroundTexture.getRegionHeight() - 7);
+        label.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
     }
 }
