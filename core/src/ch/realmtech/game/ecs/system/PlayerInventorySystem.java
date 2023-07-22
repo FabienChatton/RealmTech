@@ -34,6 +34,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private RealmTech context;
     private Skin skin;
     private ClickAndDrop2 clickAndDrop2;
+    private int targetInventoryComponent;
 
     @Override
     protected void processSystem() {
@@ -77,6 +78,7 @@ public class PlayerInventorySystem extends BaseSystem {
             super.setEnabled(true);
             InputMapper.reset();
             refreshPlayerInventory();
+            targetInventoryComponent = -1;
         }
     }
 
@@ -84,6 +86,9 @@ public class PlayerInventorySystem extends BaseSystem {
         displayInventory(context.getEcsEngine().getPlayerId(), inventoryTable, true, true);
         displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable, true, true);
         displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable, true, false);
+        if (targetInventoryComponent != -1) {
+            displayInventory(targetInventoryComponent, inventoryTable, true, true);
+        }
     }
     public void refreshPlayerInventory() {
         clearDisplayInventory();
@@ -169,5 +174,9 @@ public class PlayerInventorySystem extends BaseSystem {
         label.setFontScale(0.5f);
         label.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
+    }
+
+    public void setTargetInventoryComponent(int targetInventoryComponent) {
+        this.targetInventoryComponent = targetInventoryComponent;
     }
 }

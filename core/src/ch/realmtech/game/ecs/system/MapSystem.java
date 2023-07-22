@@ -420,7 +420,8 @@ public class MapSystem extends DelayedIteratingSystem {
         final int chunk = getChunk(infChunks, x, y);
         final int topCell = getTopCell(chunk, getInnerChunk(x), getInnerChunk(y));
         if (mInventory.has(topCell)) {
-            final InventoryComponent inventoryComponent = mInventory.get(topCell);
+            context.getSystem(PlayerInventorySystem.class).setTargetInventoryComponent(topCell);
+            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow();
         } else {
             if (context.getSystem(MapSystem.class).placeItemToBloc(context.getEcsEngine().getPlayerId(), button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, x, y, context.getSystem(ItemBarManager.class).getSelectItem())) {
                 context.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());
