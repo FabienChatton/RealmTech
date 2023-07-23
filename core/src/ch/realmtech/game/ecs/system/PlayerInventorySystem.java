@@ -28,8 +28,9 @@ public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemResultCraftComponent> mItemResultCraft;
     private Stage inventoryStage;
     private Window inventoryWindow;
-    private Table inventoryTable;
-    private Table craftingTable;
+    private Table inventoryPlayerTable;
+    private Table inventoryCraftingTable;
+    private Table inventoryCraftResultTable;
     @Wire(name = "context")
     private RealmTech context;
     private Skin skin;
@@ -57,17 +58,19 @@ public class PlayerInventorySystem extends BaseSystem {
                 setZIndex(0);
             }
         };
-        this.inventoryTable = new Table(context.getSkin());
-        this.craftingTable = new Table(context.getSkin());
         this.skin = context.getSkin();
-        inventoryWindow.add(inventoryTable);
+        this.inventoryCraftingTable = new Table(context.getSkin());
+        this.inventoryCraftResultTable = new Table(context.getSkin());
+        this.inventoryPlayerTable = new Table(context.getSkin());
+        inventoryWindow.add(inventoryCraftingTable).right();
+        inventoryWindow.add(inventoryCraftResultTable).row();
+        inventoryWindow.add(inventoryPlayerTable);
         float with = inventoryStage.getWidth() * 0.5f;
         float height = inventoryStage.getHeight() * 0.5f;
-        inventoryWindow.setBounds((inventoryStage.getWidth() - with) /2 ,(inventoryStage.getHeight() - height ) / 2, with, height);
+        inventoryWindow.setBounds((inventoryStage.getWidth() - with) / 2, (inventoryStage.getHeight() - height) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
         this.clickAndDrop2 = new ClickAndDrop2(inventoryStage, world);
-        //inventoryWindow.setTouchable(Touchable.disabled);
     }
 
     public void toggleInventoryWindow(){
@@ -83,11 +86,11 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     private void displayPlayerInventory() {
-        displayInventory(context.getEcsEngine().getPlayerId(), inventoryTable, true, true);
-        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryTable, true, true);
-        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryTable, true, false);
-        if (targetInventoryComponent != -1) {
-            displayInventory(targetInventoryComponent, inventoryTable, true, true);
+        displayInventory(context.getEcsEngine().getPlayerId(), inventoryPlayerTable, true, true);
+        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting"), inventoryCraftingTable, true, true);
+        displayInventory(world.getSystem(TagManager.class).getEntityId("crafting-result-inventory"), inventoryCraftResultTable, true, false);
+        if (targetInventoryComponent != -1 && mInventory.has(targetInventoryComponent)) {
+            displayInventory(targetInventoryComponent, inventoryPlayerTable, true, true);
         }
     }
     public void refreshPlayerInventory() {
@@ -117,7 +120,9 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     private void clearDisplayInventory() {
-        inventoryTable.clear();
+        inventoryPlayerTable.clear();
+        inventoryCraftingTable.clear();
+        inventoryCraftResultTable.clear();
         clickAndDrop2.clearActor();
     }
 
