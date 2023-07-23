@@ -34,6 +34,7 @@ public class MapSystem extends DelayedIteratingSystem {
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;
+    private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private int[] ancienneChunkPos = null;
     private final static float INITALE_DELAY = 0.005f;
     private float delay = INITALE_DELAY;
@@ -202,7 +203,7 @@ public class MapSystem extends DelayedIteratingSystem {
                 cellIds[i] = cellId;
                 world.edit(cellId).create(InfCellComponent.class).set(innerChunkX, innerChunkY, cellRegisterEntry);
                 if (cellRegisterEntry.getEditEntity() != null)
-                    cellRegisterEntry.getEditEntity().accept(world.edit(cellId));
+                    cellRegisterEntry.getEditEntity().accept(world, cellId);
             }
         }
         return cellIds;
@@ -211,7 +212,7 @@ public class MapSystem extends DelayedIteratingSystem {
     private void newCellInChunk(InfChunkComponent infChunkComponent, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
         int cellId = world.create();
         world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
-        if (cellRegisterEntry.getEditEntity() != null) cellRegisterEntry.getEditEntity().accept(world.edit(cellId));
+        if (cellRegisterEntry.getEditEntity() != null) cellRegisterEntry.getEditEntity().accept(world, cellId);
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
         System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
         newCellsArray[newCellsArray.length - 1] = cellId;
@@ -419,9 +420,12 @@ public class MapSystem extends DelayedIteratingSystem {
     public void interagieClickDroit(int playerId, int button, int[] infChunks, float x, float y, int selectItem) {
         final int chunk = getChunk(infChunks, x, y);
         final int topCell = getTopCell(chunk, getInnerChunk(x), getInnerChunk(y));
-        if (mInventory.has(topCell)) {
-            context.getSystem(PlayerInventorySystem.class).setTargetInventoryComponent(topCell);
-            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow();
+        if (mCraftingTable.has(topCell)) {
+            CraftingTableComponent craftingTableComponent = mCraftingTable.get(topCell);
+            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayCraftingInventoryArgs(
+                    mInventory.get(context.getEcsEngine().getPlayerId()),
+                    mInventory.get(craftingTableComponent.craftingInventory),
+                    mInventory.get(craftingTableComponent.craftingResultInventory)));
         } else {
             if (context.getSystem(MapSystem.class).placeItemToBloc(context.getEcsEngine().getPlayerId(), button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, x, y, context.getSystem(ItemBarManager.class).getSelectItem())) {
                 context.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());

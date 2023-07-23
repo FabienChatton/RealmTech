@@ -182,7 +182,7 @@ public class SaveInfManager extends Manager {
                 final CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(hashRegistry);
                 world.edit(cellulesId[i]).create(InfCellComponent.class).set(posX, posY, cellRegisterEntry);
                 if (cellRegisterEntry.getEditEntity() != null)
-                    cellRegisterEntry.getEditEntity().accept(world.edit(cellId));
+                    cellRegisterEntry.getEditEntity().accept(world, cellId);
             }
             return chunkId;
         }

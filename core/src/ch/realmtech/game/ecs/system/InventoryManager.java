@@ -18,14 +18,18 @@ public class InventoryManager extends Manager {
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
 
+    public boolean addItemToInventory(int itemId, int entityId) {
+        return addItemToInventory(itemId, mInventory.get(entityId));
+    }
+
     /**
      * Parcourt l'inventaire à la recherche d'un emplacement disponible pour ajouter l'item
-     * @param itemId l'item souhaité a ajouter.
-     * @param entityId L'entité où l'item sera ajouté.
+     *
+     * @param itemId             l'item souhaité a ajouter.
+     * @param inventoryComponent L'entité où l'item sera ajouté.
      * @return vrai si l'item a été ajouté avec success.
      */
-    public boolean addItemToInventory(int itemId, int entityId) {
-        final InventoryComponent inventoryComponent = mInventory.get(entityId);
+    public boolean addItemToInventory(int itemId, InventoryComponent inventoryComponent) {
         for (int i = 0; i < inventoryComponent.inventory.length; i++) {
             if (addItemToStack(inventoryComponent.inventory[i], itemId)) {
                 return true;

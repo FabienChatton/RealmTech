@@ -186,14 +186,10 @@ public final class ECSEngine {
         // default crafting table
         int defaultCraftingTable = world.create();
         int defaultResultInventory = world.create();
-        CraftingComponent craftingComponent = world.edit(defaultCraftingTable).create(CraftingComponent.class);
+        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory);
+        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, "water-01");
         world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, "water-01");
-        craftingComponent.set(RealmTechCoreMod.CRAFT, defaultResultInventory);
-        InventoryComponent craftingInventoryComponent = world.edit(defaultCraftingTable).create(InventoryComponent.class);
-        craftingInventoryComponent.set(2, 2, "water-01");
-        world.getSystem(TagManager.class).register("crafting", defaultCraftingTable);
-        world.getSystem(TagManager.class).register("crafting-result-inventory", defaultResultInventory);
-
+        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
         return playerId;
     }
     public void dispose() {
@@ -240,7 +236,7 @@ public final class ECSEngine {
     }
 
     public void togglePlayerInventoryWindow() {
-        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow();
+        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayerArgs());
         world.getSystem(SoundManager.class).playOpenInventory();
     }
 

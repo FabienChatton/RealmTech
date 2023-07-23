@@ -4,35 +4,21 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.helper.SetContext;
-import com.artemis.EntityEdit;
+import com.artemis.World;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class CellRegisterEntry implements SetContext, Entry {
     private final TextureRegion textureRegion;
     private final CellBehavior cellBehavior;
     public static RealmTech context;
-    private Consumer<EntityEdit> editEntity;
+    /**
+     * Permet de modifier le monde quand la cellule se créer, comme puis lui ajouter des composants
+     */
+    private BiConsumer<World, Integer> editEntity;
 
-//    /**
-//     * Trouve un registre via le hash le nom de son mod + le nom de la cellule.
-//     *
-//     * @param cellRegisterHash La hash de clé (mod + nom cellule) que l'ont souhait connaitre le registre.
-//     * @return Le registre qui correspond au hash sinon null
-//     */
-//    public static CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
-//        CellRegisterEntry ret = null;
-//        for (String id : RealmTechCoreMod.CELLS.getEnfantsId()) {
-//            int keyHash = id.hashCode();
-//            if (keyHash == cellRegisterHash) {
-//                ret = RealmTechCoreMod.CELLS.get(id).getEntry();
-//                break;
-//            }
-//        }
-//        return ret;
-//    }
 
     public static CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
         final List<String> enfantsId = RealmTechCoreMod.CELLS.getEnfantsId();
@@ -68,7 +54,7 @@ public class CellRegisterEntry implements SetContext, Entry {
         return cellBehavior;
     }
 
-    public Consumer<EntityEdit> getEditEntity() {
+    public BiConsumer<World, Integer> getEditEntity() {
         return editEntity;
     }
 
@@ -77,7 +63,7 @@ public class CellRegisterEntry implements SetContext, Entry {
         this.cellBehavior = cellBehavior;
     }
 
-    public CellRegisterEntry(Consumer<EntityEdit> editEntity, String textureRegionName, CellBehavior cellBehavior) {
+    public CellRegisterEntry(BiConsumer<World, Integer> editEntity, String textureRegionName, CellBehavior cellBehavior) {
         this(textureRegionName, cellBehavior);
         this.editEntity = editEntity;
     }
