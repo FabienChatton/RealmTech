@@ -109,16 +109,11 @@ public class PlayerInventorySystem extends BaseSystem {
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
-    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry) {
-        final int[][] inventory;
-        try {
-            inventory = getCurrentCraftResultInventory().inventory;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory) {
+        final int[][] inventory = resultInventory.inventory;
         if (!mItem.has(inventory[0][0])) {
             if (mItem.get(inventory[0][0]) != null && mItem.get(inventory[0][0]).itemRegisterEntry == craftResult.itemRegisterEntry()) {
-                return false; // il y a déjà le craft dans le résultat
+                //return false; // il y a déjà le craft dans le résultat
             }
             for (int i = 0; i < craftResult.nombre(); i++) {
                 int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
@@ -126,18 +121,15 @@ public class PlayerInventorySystem extends BaseSystem {
                 itemResultCraftComponent.craftingRecipeEntry = craftingRecipeEntry;
                 world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, getCurrentCraftResultInventory());
             }
-            refreshInventory(currentInventoryArgs);
+            if (isEnabled()) {
+                refreshInventory(currentInventoryArgs);
+            }
         }
         return true;
     }
 
-    public void aucunCraftDisponible() {
-        int[][] inventory;
-        try {
-            inventory = getCurrentCraftResultInventory().inventory;
-        } catch (NoSuchElementException e) {
-            return;
-        }
+    public void aucunCraftDisponible(InventoryComponent inventoryComponent) {
+        int[][] inventory = inventoryComponent.inventory;
         if (inventory[0][0] != 0) {
             world.getSystem(InventoryManager.class).removeInventory(inventory);
         }

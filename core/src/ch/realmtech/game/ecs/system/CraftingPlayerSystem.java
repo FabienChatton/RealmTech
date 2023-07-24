@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.ecs.component.CraftingComponent;
+import ch.realmtech.game.ecs.component.CraftingTableComponent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
@@ -14,15 +15,19 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-@All({InventoryComponent.class, CraftingComponent.class})
+@All(CraftingTableComponent.class)
 public class CraftingPlayerSystem extends IteratingSystem {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<CraftingComponent> mCrafting;
+    private ComponentMapper<CraftingTableComponent> mCraftingTable;
+
     @Override
-    protected void process(int inventoryId) {
-        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-        CraftingComponent craftingComponent = mCrafting.get(inventoryId);
+    protected void process(int craftingTableId) {
+        CraftingTableComponent craftingTableComponent = mCraftingTable.get(craftingTableId);
+        InventoryComponent inventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
+        CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
+        InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
         int[][] inventory = inventoryComponent.inventory;
         ItemRegisterEntry[] itemRegister = new ItemRegisterEntry[inventory.length];
         for (int i = 0; i < inventory.length; i++) {
@@ -35,13 +40,13 @@ public class CraftingPlayerSystem extends IteratingSystem {
             for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
                 final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister);
                 if (craftResult.isPresent()) {
-                    nouveauCraft = world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get(), craftingRecipeEntry);
+                    nouveauCraft = world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get(), craftingRecipeEntry, inventoryResultComponent);
                     break;
                 }
             }
         }
         if (!nouveauCraft) {
-            world.getSystem(PlayerInventorySystem.class).aucunCraftDisponible();
+            world.getSystem(PlayerInventorySystem.class).aucunCraftDisponible(inventoryResultComponent);
         }
     }
 }
