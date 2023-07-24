@@ -89,17 +89,17 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public DisplayInventoryArgs[] getDisplayInventoryPlayerArgs() {
         return new DisplayInventoryArgs[]{
-                new DisplayInventoryArgs(mInventory.get(context.getEcsEngine().getPlayerId()), inventoryPlayerTable, true, true, false),
-                new DisplayInventoryArgs(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingInventory), inventoryCraftingTable, true, true, false),
-                new DisplayInventoryArgs(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingResultInventory), inventoryCraftResultTable, true, false, true)
+                new DisplayInventoryArgs(mInventory.get(context.getEcsEngine().getPlayerId()), inventoryPlayerTable, true, true, false, false),
+                new DisplayInventoryArgs(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingInventory), inventoryCraftingTable, true, true, true, false),
+                new DisplayInventoryArgs(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingResultInventory), inventoryCraftResultTable, true, false, false, true)
         };
     }
 
     public DisplayInventoryArgs[] getDisplayCraftingInventoryArgs(InventoryComponent playerInventory, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
         return new DisplayInventoryArgs[]{
-                new DisplayInventoryArgs(playerInventory, inventoryPlayerTable, true, true, false),
-                new DisplayInventoryArgs(inventoryCraft, inventoryCraftingTable, true, true, false),
-                new DisplayInventoryArgs(inventoryResult, inventoryCraftResultTable, true, false, true)
+                new DisplayInventoryArgs(playerInventory, inventoryPlayerTable, true, true, false, false),
+                new DisplayInventoryArgs(inventoryCraft, inventoryCraftingTable, true, true, true, false),
+                new DisplayInventoryArgs(inventoryResult, inventoryCraftResultTable, true, false, false, true)
         };
     }
 
@@ -205,6 +205,17 @@ public class PlayerInventorySystem extends BaseSystem {
         }
         return Arrays.stream(currentInventoryArgs)
                 .filter(DisplayInventoryArgs::isCraftResult)
+                .findFirst()
+                .orElseThrow()
+                .inventoryComponent();
+    }
+
+    public InventoryComponent getCurrentCraftingInventory() throws NoSuchElementException {
+        if (currentInventoryArgs == null) {
+            throw new NoSuchElementException();
+        }
+        return Arrays.stream(currentInventoryArgs)
+                .filter(DisplayInventoryArgs::isCrafting)
                 .findFirst()
                 .orElseThrow()
                 .inventoryComponent();

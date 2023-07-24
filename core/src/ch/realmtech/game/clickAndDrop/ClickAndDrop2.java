@@ -4,9 +4,9 @@ import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.game.ecs.system.InventoryManager;
+import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -58,7 +58,7 @@ public class ClickAndDrop2 {
                         final ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
                         if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
                             final ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
-                            itemResultCraftComponent.pickEvent.pick(world, world.getMapper(InventoryComponent.class).get(world.getSystem(TagManager.class).getEntityId("crafting")));
+                            itemResultCraftComponent.pickEvent.pick(world, world.getSystem(PlayerInventorySystem.class).getCurrentCraftingInventory());
                             for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
                                 world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
                             }
