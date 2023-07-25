@@ -6,6 +6,7 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static ch.realmtech.game.craft.CraftPatternFix.CraftPatternArgs;
@@ -74,11 +75,19 @@ public class CraftPatternShape implements CraftingRecipeEntry {
                             }
                         }
                     }
-                    return Optional.of(new CraftResult(itemResult, nombre));
+                    for (int l = 0; l < craftPattern2d.length; l++) {
+                        for (int h = 0; h < craftPattern2d[l].length; h++) {
+                            itemRegisterEntries2d[il + l][ih + h] = RealmTechCoreMod.NO_ITEM;
+                        }
+                    }
+                    if (Arrays.stream(itemRegisterEntries2d).flatMap(Arrays::stream).noneMatch(e -> e != RealmTechCoreMod.NO_ITEM)) {
+                        return Optional.of(new CraftResult(itemResult, nombre));
+                    } else {
+                        throw new NoSuchElementException();
+                    }
                 }
             }
-        } catch (IndexOutOfBoundsException e) {
-            return Optional.empty();
+        } catch (IndexOutOfBoundsException | NoSuchElementException ignored) {
         }
         return Optional.empty();
     }
