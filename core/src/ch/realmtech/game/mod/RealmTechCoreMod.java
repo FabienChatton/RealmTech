@@ -134,6 +134,19 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .placeCell("realmtech.craftingTable")
                     .build()
     ));
+
+    public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
+            (world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, "water-01"),
+            "chest-01",
+            new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.RIEN, "realmtech.chest")
+                    .build()
+    ), new ItemRegisterEntry(
+            "chest-01",
+            new ItemBehavior.Builder()
+                    .placeCell("realmtech.chest")
+                    .build()
+    ));
     //</editor-fold>
 
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {

@@ -420,7 +420,10 @@ public class MapSystem extends DelayedIteratingSystem {
     public void interagieClickDroit(int playerId, int button, int[] infChunks, float x, float y, int selectItem) {
         final int chunk = getChunk(infChunks, x, y);
         final int topCell = getTopCell(chunk, getInnerChunk(x), getInnerChunk(y));
-        if (mCraftingTable.has(topCell)) {
+        if (mInventory.has(topCell)) {
+            InventoryComponent inventoryComponent = mInventory.get(topCell);
+            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayInventory(inventoryComponent));
+        } else if (mCraftingTable.has(topCell)) {
             CraftingTableComponent craftingTableComponent = mCraftingTable.get(topCell);
             context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayCraftingInventoryArgs(
                     mInventory.get(context.getEcsEngine().getPlayerId()),

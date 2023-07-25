@@ -1,59 +1,61 @@
 texture.png
-	size: 128, 256
+	size: 256, 256
 	repeat: none
 buche-01
-	bounds: 0, 58, 32, 32
-copper-ore-02
-	bounds: 34, 90, 32, 32
-default-texture
-	bounds: 34, 22, 32, 32
-grass-01
-	bounds: 68, 95, 32, 32
-inventory-01
+	bounds: 100, 224, 32, 32
+chest-01
 	bounds: 0, 24, 32, 32
-pelle-01
-	bounds: 68, 61, 32, 32
-pioche-01
-	bounds: 68, 129, 32, 32
-plank-02
+copper-ore-02
+	bounds: 202, 224, 32, 32
+default-texture
 	bounds: 34, 124, 32, 32
+grass-01
+	bounds: 34, 22, 32, 32
+inventory-01
+	bounds: 0, 58, 32, 32
+pelle-01
+	bounds: 86, 190, 32, 32
+pioche-01
+	bounds: 34, 56, 32, 32
+plank-02
+	bounds: 168, 224, 32, 32
 plank-cell-01
 	bounds: 66, 224, 32, 32
 reimu
 	bounds: 0, 192, 64, 64
 reimu-back-0
-	bounds: 102, 145, 18, 24
+	bounds: 214, 198, 18, 24
 reimu-back-1
-	bounds: 102, 171, 18, 24
+	bounds: 194, 198, 18, 24
 reimu-back-2
-	bounds: 106, 205, 18, 24
+	bounds: 174, 198, 18, 24
 reimu-front-0
 	bounds: 66, 197, 18, 25
 reimu-front-1
-	bounds: 100, 231, 18, 25
+	bounds: 236, 231, 18, 25
 reimu-front-2
-	bounds: 86, 197, 18, 25
+	bounds: 154, 197, 18, 25
 reimu-left-0
-	bounds: 102, 120, 16, 23
+	bounds: 68, 172, 16, 23
 reimu-left-1
-	bounds: 102, 47, 17, 22
+	bounds: 105, 166, 17, 22
 reimu-left-2
-	bounds: 102, 71, 17, 22
+	bounds: 86, 166, 17, 22
 reimu-right-0
-	bounds: 102, 95, 16, 23
+	bounds: 68, 147, 16, 23
 reimu-right-1
 	bounds: 0, 0, 17, 22
 reimu-right-2
-	bounds: 102, 23, 17, 22
+	bounds: 124, 166, 17, 22
 sand-01
-	bounds: 68, 163, 32, 32
+	bounds: 34, 90, 32, 32
 sandales-01
-	bounds: 34, 56, 32, 32
+	bounds: 34, 158, 32, 32
 stick-02
 	bounds: 0, 92, 32, 32
 table-craft-01
-	bounds: 68, 27, 32, 32
+	bounds: 120, 190, 32, 32
 tree-02
 	bounds: 0, 126, 32, 64
 water-01
-	bounds: 34, 158, 32, 32
+	bounds: 134, 224, 32, 32

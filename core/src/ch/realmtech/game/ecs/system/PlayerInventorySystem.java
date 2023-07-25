@@ -103,6 +103,13 @@ public class PlayerInventorySystem extends BaseSystem {
         };
     }
 
+    public DisplayInventoryArgs[] getDisplayInventory(InventoryComponent inventoryComponent) {
+        return new DisplayInventoryArgs[]{
+                new DisplayInventoryArgs(mInventory.get(context.getEcsEngine().getPlayerId()), inventoryPlayerTable, true, true, false, false),
+                new DisplayInventoryArgs(inventoryComponent, inventoryCraftingTable, true, true, false, false)
+        };
+    }
+
     public void refreshInventory(DisplayInventoryArgs[] displayInventoryArgs) {
         clearDisplayInventory();
         displayInventory(displayInventoryArgs);
