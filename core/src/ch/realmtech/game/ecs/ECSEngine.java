@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -155,7 +156,9 @@ public final class ECSEngine {
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
         inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, "water-01");
         try {
-            inventoryComponent.inventory = world.getSystem(SaveInfManager.class).getPlayerSaveInventory();
+            inventoryComponent.inventory = world.getSystem(SaveInfManager.class).getPlayerSaveInventory(getMapId());
+        } catch (FileNotFoundException ignored) {
+
         } catch (IOException e) {
             Gdx.app.error(TAG, "l'inventaire du joueur n'a pas pu être récupérer de la présente sauvegarde", e);
         }
@@ -265,8 +268,8 @@ public final class ECSEngine {
     }
 
     public void mapRequirementBeforeShow(int mapId) {
-        createPlayer();
         world.getSystem(TagManager.class).register("infMap", mapId);
+        createPlayer();
     }
 
     public void saveInfMap() throws IOException {
@@ -301,7 +304,8 @@ public final class ECSEngine {
 
     public void savePlayerInventory() throws IOException {
         InventoryComponent playerInventory = getPlayerEntity().getComponent(InventoryComponent.class);
-        world.getSystem(SaveInfManager.class).savePlayerInventory(playerInventory);
+        int mapId = getMapId();
+        world.getSystem(SaveInfManager.class).savePlayerInventory(playerInventory, mapId);
     }
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {

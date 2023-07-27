@@ -199,8 +199,8 @@ public class SaveInfManager extends Manager {
         return ret;
     }
 
-    public void savePlayerInventory(InventoryComponent playerInventory) throws IOException {
-        File playerSaveInventoryFile = getPlayerSaveInventoryFile();
+    public void savePlayerInventory(InventoryComponent playerInventory, int mapId) throws IOException {
+        File playerSaveInventoryFile = getPlayerSaveInventoryFile(mMetaDonnees.get(mInfMap.get(mapId).infMetaDonnees).saveName);
         try (DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(playerSaveInventoryFile)))) {
             // métadonnées
             outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
@@ -218,9 +218,9 @@ public class SaveInfManager extends Manager {
         }
     }
 
-    public int[][] getPlayerSaveInventory() throws IOException {
+    public int[][] getPlayerSaveInventory(int mapId) throws IOException {
         int[][] inventory = new int[InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW][InventoryComponent.DEFAULT_STACK_LIMITE];
-        File playerSaveInventoryFile = getPlayerSaveInventoryFile();
+        File playerSaveInventoryFile = getPlayerSaveInventoryFile(mMetaDonnees.get(mInfMap.get(mapId).infMetaDonnees).saveName);
         try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(playerSaveInventoryFile)))) {
             ByteBuffer byteBuffer = ByteBuffer.wrap(inputStream.readAllBytes());
             int version = byteBuffer.getInt();
@@ -265,7 +265,7 @@ public class SaveInfManager extends Manager {
     }
 
     public static Path getSavePath(String saveName) throws IOException{
-        return Path.of(getLocalPathSaveRoot().toFile().toString(), saveName);
+        return new File(getLocalPathSaveRoot().toFile(), saveName).toPath();
     }
 
     private static Path getLevelPath(Path savePath) throws IOException {
@@ -284,9 +284,9 @@ public class SaveInfManager extends Manager {
         return Gdx.files.local(String.format("%s/%s", RealmTechDataCtrl.ROOT_PATH, ROOT_PATH_SAVES)).file().toPath();
     }
 
-    private static File getPlayerSaveInventoryFile() throws IOException {
+    private static File getPlayerSaveInventoryFile(String saveName) throws IOException {
         RealmTechDataCtrl.creerHiearchieRealmTechData();
         // psi -> playerSaveInventory
-        return Gdx.files.local(String.format("%s/%s", RealmTechDataCtrl.ROOT_PATH, "playerInventory.pis")).file();
+        return Path.of(getSavePath(saveName).toFile().toString(), "playerInventory.pis").toFile();
     }
 }
