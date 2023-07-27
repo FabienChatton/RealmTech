@@ -2,6 +2,7 @@ package ch.realmtech.game.registery;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.item.ItemBehavior;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.helper.SetContext;
 import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -44,5 +45,27 @@ public class ItemRegisterEntry implements Entry, SetContext {
     @Override
     public String toString() {
         return textureRegion.toString();
+    }
+
+    public static int getHash(ItemRegisterEntry itemRegisterEntry) {
+        return RealmTechCoreMod.ITEMS.getEnfants().stream()
+                .filter(itemRegisterEntryRegistryEntry -> itemRegisterEntryRegistryEntry.getEntry() == itemRegisterEntry)
+                .findFirst()
+                .orElseThrow()
+                .getID()
+                .hashCode();
+    }
+
+    public int getHash() {
+        return getHash(this);
+    }
+
+
+    public static ItemRegisterEntry getItemByHash(int itemModIdHash) {
+        return RealmTechCoreMod.ITEMS.getEnfants().stream()
+                .filter(itemRegisterEntryRegistryEntry -> itemRegisterEntryRegistryEntry.getID().hashCode() == itemModIdHash)
+                .findFirst()
+                .orElseThrow()
+                .getEntry();
     }
 }

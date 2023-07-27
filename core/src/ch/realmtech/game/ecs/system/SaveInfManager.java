@@ -1,11 +1,9 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.InfCellComponent;
-import ch.realmtech.game.ecs.component.InfChunkComponent;
-import ch.realmtech.game.ecs.component.InfMapComponent;
-import ch.realmtech.game.ecs.component.InfMetaDonneesComponent;
+import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.registery.CellRegisterEntry;
+import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.options.RealmTechDataCtrl;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -28,6 +26,7 @@ public class SaveInfManager extends Manager {
     private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<ItemComponent> mItem;
 
     public void saveInfMap(int mapId) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
@@ -200,6 +199,48 @@ public class SaveInfManager extends Manager {
         return ret;
     }
 
+    public void savePlayerInventory(InventoryComponent playerInventory) throws IOException {
+        File playerSaveInventoryFile = getPlayerSaveInventoryFile();
+        try (DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(playerSaveInventoryFile)))) {
+            // métadonnées
+            outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
+            // header
+            outputStream.writeByte((byte) Arrays.stream(playerInventory.inventory).filter(stack -> stack[0] != 0).count());
+            // body
+            for (int i = 0; i < playerInventory.inventory.length; i++) {
+                if (playerInventory.inventory[i][0] != 0) {
+                    int[] stack = playerInventory.inventory[i];
+                    outputStream.writeInt(mItem.get(stack[0]).itemRegisterEntry.getHash());
+                    outputStream.writeByte(InventoryManager.tailleStack(stack));
+                    outputStream.writeByte(i);
+                }
+            }
+        }
+    }
+
+    public int[][] getPlayerSaveInventory() throws IOException {
+        int[][] inventory = new int[InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW][InventoryComponent.DEFAULT_STACK_LIMITE];
+        File playerSaveInventoryFile = getPlayerSaveInventoryFile();
+        try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(playerSaveInventoryFile)))) {
+            ByteBuffer byteBuffer = ByteBuffer.wrap(inputStream.readAllBytes());
+            int version = byteBuffer.getInt();
+            byte nombreSlot = byteBuffer.get();
+            for (int i = 0; i < nombreSlot; i++) {
+                int hashModIdItem = byteBuffer.getInt();
+                byte nombre = byteBuffer.get();
+                byte index = byteBuffer.get();
+                ItemRegisterEntry itemRegisterEntry = ItemRegisterEntry.getItemByHash(hashModIdItem);
+                int[] stack = inventory[index];
+                for (int j = 0; j < nombre; j++) {
+                    int nouvelItemId = world.getSystem(ItemManager.class).newItemInventory(itemRegisterEntry);
+                    stack[j] = nouvelItemId;
+                }
+            }
+        }
+
+        return inventory;
+    }
+
     private static File getMetaDonneesFile(Path rootSaveDirPath) {
         String headerPath = ("level/header.rsh");
         return Path.of(rootSaveDirPath.toFile().toString(), headerPath).toFile();
@@ -241,5 +282,11 @@ public class SaveInfManager extends Manager {
     private static Path getLocalPathSaveRoot() throws IOException {
         RealmTechDataCtrl.creerHiearchieRealmTechData();
         return Gdx.files.local(String.format("%s/%s", RealmTechDataCtrl.ROOT_PATH, ROOT_PATH_SAVES)).file().toPath();
+    }
+
+    private static File getPlayerSaveInventoryFile() throws IOException {
+        RealmTechDataCtrl.creerHiearchieRealmTechData();
+        // psi -> playerSaveInventory
+        return Gdx.files.local(String.format("%s/%s", RealmTechDataCtrl.ROOT_PATH, "playerInventory.pis")).file();
     }
 }

@@ -180,6 +180,7 @@ pas être négatif.
 ### Hiérarchie dossier
 ```text
 |-- $nomDeLaSauvegarde
+    |-- playerInventory.psi
     |-- level
         |-- header.rsh
         |-- chunks
@@ -217,7 +218,23 @@ Body
         - hash du cellRegisterEntry, int
         - position dans le chunk, byte
 ```
+
 Pour récupérer le hash du registre pour la cellule qui est un int,
 il faut cast le int en byte, cella va faire des overflow et c'est
 tout à fait normal.
 
+#### Fichier .psi
+
+Le fichier contient l'inventaire du joueur
+
+```text
+Métadonnées
+    - version du protocole, int
+Header
+    - nombre de slot contenant un item enregistré, byte
+Body
+    pour chaque slot :
+        - hash item mod id, int
+        - nombre d'item dans le stack, byte
+        - index du slot dans l'inventaire, byte
+```

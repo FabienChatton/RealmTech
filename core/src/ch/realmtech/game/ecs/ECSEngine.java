@@ -9,6 +9,7 @@ import ch.realmtech.game.mod.RealmTechCorePlugin;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -153,6 +154,11 @@ public final class ECSEngine {
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
         inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, "water-01");
+        try {
+            inventoryComponent.inventory = world.getSystem(SaveInfManager.class).getPlayerSaveInventory();
+        } catch (IOException e) {
+            Gdx.app.error(TAG, "l'inventaire du joueur n'a pas pu être récupérer de la présente sauvegarde", e);
+        }
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -226,6 +232,10 @@ public final class ECSEngine {
         return world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
     }
 
+    public Entity getPlayerEntity() {
+        return world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG);
+    }
+
 
     public World getWorld() {
         return world;
@@ -287,6 +297,11 @@ public final class ECSEngine {
 
     public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {
         world.getSystem(SaveInfManager.class).saveInfChunk(infChunkId, rootSaveDirPath);
+    }
+
+    public void savePlayerInventory() throws IOException {
+        InventoryComponent playerInventory = getPlayerEntity().getComponent(InventoryComponent.class);
+        world.getSystem(SaveInfManager.class).savePlayerInventory(playerInventory);
     }
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {

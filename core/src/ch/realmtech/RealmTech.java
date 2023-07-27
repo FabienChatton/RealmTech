@@ -176,6 +176,7 @@ public final class RealmTech extends Game{
     public void quiteAndSave() {
         try {
             ecsEngine.saveInfMap();
+            ecsEngine.savePlayerInventory();
             ecsEngine.dispose();
             ecsEngine = new ECSEngine(this);
         } catch (IOException e) {
