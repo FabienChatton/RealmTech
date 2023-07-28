@@ -172,16 +172,12 @@ public class SaveInfManager extends Manager {
             int chunkId = world.create();
             world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId);
             for (int i = 0; i < cellulesId.length; i++) {
-                final int cellId = world.create();
-                cellulesId[i] = cellId;
                 int hashRegistry = inputWrap.getInt();
                 byte pos = inputWrap.get();
                 byte posX = Cells.getInnerChunkPosX(pos);
                 byte posY = Cells.getInnerChunkPosY(pos);
                 final CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(hashRegistry);
-                world.edit(cellulesId[i]).create(InfCellComponent.class).set(posX, posY, cellRegisterEntry);
-                if (cellRegisterEntry.getEditEntity() != null)
-                    cellRegisterEntry.getEditEntity().accept(world, cellId);
+                cellulesId[i] = world.getSystem(MapSystem.class).newCell(posX, posY, cellRegisterEntry);
             }
             return chunkId;
         }

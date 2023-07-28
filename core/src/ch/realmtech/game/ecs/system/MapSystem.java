@@ -188,6 +188,15 @@ public class MapSystem extends DelayedIteratingSystem {
         return chunkId;
     }
 
+    public int newCell(byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
+        int cellId = world.create();
+        world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
+        if (cellRegisterEntry.getEditEntity() != null) {
+            cellRegisterEntry.getEditEntity().accept(world, cellId);
+        }
+        return cellId;
+    }
+
     private int[] generateNewCells(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = getInnerChunkX(index);
         byte innerChunkY = getInnerChunkY(index);
@@ -199,20 +208,14 @@ public class MapSystem extends DelayedIteratingSystem {
         for (int i = 0; i < cellRegisterEntries.length; i++) {
             CellRegisterEntry cellRegisterEntry = cellRegisterEntries[i];
             if (cellRegisterEntry != null) {
-                int cellId = world.create();
-                cellIds[i] = cellId;
-                world.edit(cellId).create(InfCellComponent.class).set(innerChunkX, innerChunkY, cellRegisterEntry);
-                if (cellRegisterEntry.getEditEntity() != null)
-                    cellRegisterEntry.getEditEntity().accept(world, cellId);
+                cellIds[i] = newCell(innerChunkX, innerChunkY, cellRegisterEntry);
             }
         }
         return cellIds;
     }
 
     private void newCellInChunk(InfChunkComponent infChunkComponent, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
-        int cellId = world.create();
-        world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
-        if (cellRegisterEntry.getEditEntity() != null) cellRegisterEntry.getEditEntity().accept(world, cellId);
+        int cellId = newCell(innerX, innerY, cellRegisterEntry);
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
         System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
         newCellsArray[newCellsArray.length - 1] = cellId;
