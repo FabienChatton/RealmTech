@@ -7,6 +7,8 @@ import ch.realmtech.helper.SetContext;
 import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import java.util.NoSuchElementException;
+
 public class ItemRegisterEntry implements Entry, SetContext {
     private Archetype archetype;
     private final TextureRegion textureRegion;
@@ -65,7 +67,7 @@ public class ItemRegisterEntry implements Entry, SetContext {
         return RealmTechCoreMod.ITEMS.getEnfants().stream()
                 .filter(itemRegisterEntryRegistryEntry -> itemRegisterEntryRegistryEntry.getID().hashCode() == itemModIdHash)
                 .findFirst()
-                .orElseThrow()
+                .orElseThrow(() -> new NoSuchElementException("On dirait qu'un item est présente dans la sauvegarde mais dans le jeu. La sauvegarde n'a pas pu être chargé. Hash de l'item en question \"" + itemModIdHash + "\""))
                 .getEntry();
     }
 }
