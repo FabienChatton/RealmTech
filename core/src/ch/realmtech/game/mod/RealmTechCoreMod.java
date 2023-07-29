@@ -58,7 +58,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
             "tree-02",
             new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.RIEN, "realmtech.buche")
+                    .breakWith(ItemType.TOUS, "realmtech.buche")
                     .build()
     ));
     //</editor-fold>
@@ -106,7 +106,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static CellItemRegisterEntry PLANCHE_CELL_ITEM = registerCellItem("planche", new CellRegisterEntry(
             "plank-cell-01",
             new CellBehavior.Builder(Cells.Layer.BUILD)
-                    .breakWith(ItemType.RIEN)
+                    .breakWith(ItemType.TOUS)
                     .dropOnBreak("realmtech.planche")
                     .build()
     ), new ItemRegisterEntry(
@@ -126,7 +126,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             },
             "table-craft-01",
             new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
-                    .breakWith(ItemType.RIEN, "realmtech.craftingTable")
+                    .breakWith(ItemType.TOUS, "realmtech.craftingTable")
                     .build()
     ), new ItemRegisterEntry(
             "table-craft-01",
@@ -139,7 +139,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             (world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, "water-01"),
             "chest-01",
             new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
-                    .breakWith(ItemType.RIEN, "realmtech.chest")
+                    .breakWith(ItemType.TOUS, "realmtech.chest")
                     .build()
     ), new ItemRegisterEntry(
             "chest-01",
