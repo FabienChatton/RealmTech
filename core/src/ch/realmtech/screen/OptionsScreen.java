@@ -77,6 +77,14 @@ public class OptionsScreen extends AbstractScreen {
 
         ScrollPane scrollPane = new ScrollPane(optionTable, skin);
         uiTable.add(scrollPane).expand().fill().center();
+        scrollPane.debugAll();
+        InputEvent defaultClick = new InputEvent();
+        defaultClick.setStage(scrollPane.getStage());
+        defaultClick.setStageX(scrollPane.getMaxX());
+        defaultClick.setStageY(scrollPane.getMaxY());
+        defaultClick.setType(InputEvent.Type.touchDown);
+        defaultClick.setButton(Input.Buttons.LEFT);
+        scrollPane.fire(defaultClick);
     }
 
     @Override
