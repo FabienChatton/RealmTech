@@ -29,7 +29,6 @@ public class OptionsScreen extends AbstractScreen {
     @Override
     public void show() {
         super.show();
-        optionTable.setFillParent(true);
 
         final TextButton backButton = new TextButton("back", skin);
         backButton.addListener(back());
@@ -49,6 +48,9 @@ public class OptionsScreen extends AbstractScreen {
         // keyMoveBack
         optionTable.add(new Label("keyMoveBack", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyMoveBack)).padLeft(10f).padBottom(10f).row();
+        // keyDropItem
+        optionTable.add(new Label("keyDropItem", skin)).left();
+        optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.keyDropItem)).padLeft(10f).padBottom(10f).row();
         // openInventory
         optionTable.add(new Label("openInventory", skin)).left();
         optionTable.add(newKeysBind(context.getRealmTechDataCtrl().option.openInventory)).padLeft(10f).padBottom(10f).row();
@@ -74,13 +76,19 @@ public class OptionsScreen extends AbstractScreen {
         optionTable.add(backButton).right();
 
         ScrollPane scrollPane = new ScrollPane(optionTable, skin);
-        uiTable.add(scrollPane);
+        uiTable.add(scrollPane).expand().fill().center();
     }
 
     @Override
     public void hide() {
         super.hide();
         optionTable.clear();
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+
     }
 
     private TextButton newKeysBind(AtomicInteger atomicInteger) {

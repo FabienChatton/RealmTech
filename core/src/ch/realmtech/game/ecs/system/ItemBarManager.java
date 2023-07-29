@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InventoryComponent;
+import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.PlayerComponent;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -22,6 +23,7 @@ public class ItemBarManager extends BaseSystem {
     @Wire(name = "context")
     private RealmTech context;
     private ComponentMapper<InventoryComponent> mInventory;
+    private ComponentMapper<ItemComponent> mItem;
 
     @Override
     protected void processSystem() {
@@ -99,6 +101,10 @@ public class ItemBarManager extends BaseSystem {
 
     public int getSelectItem() {
         return getSelectStack()[0];
+    }
+
+    public ItemComponent getSelectItemComponent() {
+        return mItem.get(getSelectItem());
     }
 
     public int[] getSelectStack() {

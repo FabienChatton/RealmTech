@@ -308,6 +308,10 @@ public final class ECSEngine {
         world.getSystem(SaveInfManager.class).savePlayerInventory(playerInventory, mapId);
     }
 
+    public void dropCurentPlayerItem() {
+        world.getSystem(ItemManager.class).dropCurentPlayerItem();
+    }
+
     public <T extends BaseSystem> T getSystem(Class<T> type) {
         return world.getSystem(type);
     }

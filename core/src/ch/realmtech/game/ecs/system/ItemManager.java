@@ -10,7 +10,9 @@ import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public class ItemManager extends Manager {
@@ -86,5 +88,18 @@ public class ItemManager extends Manager {
         world.edit(itemId).remove(Box2dComponent.class);
         world.edit(itemId).remove(PositionComponent.class);
         world.getSystem(InventoryManager.class).addItemToInventory(itemId, playerId);
+    }
+
+    public boolean dropCurentPlayerItem() {
+        ItemComponent itemComponent = world.getSystem(ItemBarManager.class).getSelectItemComponent();
+        if (itemComponent != null) {
+            world.getSystem(InventoryManager.class).removeOneItem(world.getSystem(ItemBarManager.class).getSelectStack());
+            Vector3 gameCoo = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            world.getSystem(ItemManager.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
+            world.getSystem(SoundManager.class).playItemDrop();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
