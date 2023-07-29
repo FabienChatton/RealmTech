@@ -64,21 +64,31 @@ public class RealmTechCoreMod extends ModInitializerManager {
     //</editor-fold>
 
 
-
-
     //<editor-fold desc="registre des items">
-    public final static ItemRegisterEntry NO_ITEM = registerItem("noitem",new ItemRegisterEntry(
+    public final static ItemRegisterEntry NO_ITEM = registerItem("noitem", new ItemRegisterEntry(
             "default-texture",
             new ItemBehavior.Builder().build()
     ));
-    public final static ItemRegisterEntry PIOCHE_ITEM = registerItem("pioche", new ItemRegisterEntry(
-            "pioche-01",
+    public final static ItemRegisterEntry PIOCHE_BOIS_ITEM = registerItem("piocheBois", new ItemRegisterEntry(
+            "pioche-bois-01",
             new ItemBehavior.Builder()
                     .setItemType(ItemType.PIOCHE)
                     .build()
     ));
-    public final static ItemRegisterEntry PELLE_ITEM = registerItem("pelle", new ItemRegisterEntry(
-            "pelle-01",
+    public final static ItemRegisterEntry PIOCHE_STONE_ITEM = registerItem("piocheStone", new ItemRegisterEntry(
+            "pioche-stone-01",
+            new ItemBehavior.Builder()
+                    .setItemType(ItemType.PIOCHE)
+                    .build()
+    ));
+    public final static ItemRegisterEntry PELLE_BOIS_ITEM = registerItem("pelleBois", new ItemRegisterEntry(
+            "pelle-bois-01",
+            new ItemBehavior.Builder()
+                    .setItemType(ItemType.PELLE)
+                    .build()
+    ));
+    public final static ItemRegisterEntry PELLE_STONE_ITEM = registerItem("pelleStone", new ItemRegisterEntry(
+            "pelle-stone-01",
             new ItemBehavior.Builder()
                     .setItemType(ItemType.PELLE)
                     .build()
