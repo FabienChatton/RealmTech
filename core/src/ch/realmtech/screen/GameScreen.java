@@ -36,7 +36,7 @@ public class GameScreen extends AbstractScreen {
         debugTable.add(gameCoo).left().row();
         debugTable.add(chunkPos).left().row();
         debugTable.add(innerChunk).left().row();
-        blurShader = new BlurShader();
+        blurShader = new BlurShader(context.getGameStage().getBatch());
     }
 
     @Override
