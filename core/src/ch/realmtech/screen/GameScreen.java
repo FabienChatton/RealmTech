@@ -3,6 +3,7 @@ package ch.realmtech.screen;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.ecs.system.MapSystem;
+import ch.realmtech.shader.BlurShader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -20,6 +21,7 @@ public class GameScreen extends AbstractScreen {
     private final Label gameCoo;
     private final Label chunkPos;
     private final Label innerChunk;
+    private BlurShader blurShader;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -34,6 +36,7 @@ public class GameScreen extends AbstractScreen {
         debugTable.add(gameCoo).left().row();
         debugTable.add(chunkPos).left().row();
         debugTable.add(innerChunk).left().row();
+        blurShader = new BlurShader();
     }
 
     @Override
@@ -91,9 +94,13 @@ public class GameScreen extends AbstractScreen {
         innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapSystem.getInnerChunk(gameCamera.position.x), MapSystem.getInnerChunk(gameCamera.position.y)));
     }
 
+    private float time;
     @Override
     public void draw() {
         context.process(Gdx.graphics.getDeltaTime());
+        gameStage.getBatch().setShader(blurShader.shaderProgram);
+        time += Gdx.graphics.getDeltaTime();
+        blurShader.shaderProgram.bind();
         uiStage.draw();
         if (uiStage.isDebugAll()) {
             box2DDebugRenderer.render(context.getEcsEngine().physicWorld, gameCamera.combined);
