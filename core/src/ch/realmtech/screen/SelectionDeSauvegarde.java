@@ -3,21 +3,21 @@ package ch.realmtech.screen;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
 import ch.realmtech.helper.Popup;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 public class SelectionDeSauvegarde extends AbstractScreen {
     private final static String TAG = SelectionDeSauvegarde.class.getSimpleName();
-    private VerticalGroup listeDesSauvegarde;
+    private Table listeDesSauvegarde;
     private ScrollPane listeDesSauvegardeScrollPane;
 
-    public SelectionDeSauvegarde(RealmTech context) throws IOException {
+    public SelectionDeSauvegarde(RealmTech context) {
         super(context);
     }
 
@@ -27,38 +27,26 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         uiTable.clear();
         uiTable.add(new Label("Sélectionner une sauvegarde", skin));
         uiTable.row();
-        listeDesSauvegarde = new VerticalGroup();
-//        ImmutableBag<File> tousLesSauvegarde = context.getEcsEngine().getSystem(SaveManager.class).getTousLesSauvegarde();
-//        for (final File file : tousLesSauvegarde) {
-//            Table table = new Table(skin);
-//            TextButton loadSaveButton = new TextButton(file.getName().split("\\.")[0], skin);
-//            String version = null;
-//            try {
-//                version = String.valueOf(ByteBuffer.wrap(Files.readAllBytes(file.toPath()), 9, Integer.BYTES).getInt());
-//            } catch (Exception e) {
-//                continue;
-//            }
-//            TextButton supprimerSave = new TextButton("supprimer", skin);
-//            supprimerSave.addListener(supprimerSave(file));
-//            loadSaveButton.row();
-//            loadSaveButton.addListener(loadSaveButton(file));
-//            table.add(loadSaveButton);
-////            table.row();
-////            loadSaveButton.add(new Label("rtsV : " + version + "",skin));
-//            table.add(supprimerSave);
-//            listeDesSauvegarde.addActor(table);
-//        }
+        listeDesSauvegarde = new Table(context.getSkin());
         try {
             List<File> files = SaveInfManager.listSauvegardeInfinie();
             for (File file : files) {
                 Table fichierTable = new Table(skin);
-                listeDesSauvegarde.addActor(fichierTable);
+                // button lancer la sauvegarde
                 TextButton buttonFichier = new TextButton(file.getName(), skin);
                 buttonFichier.addListener(loadSaveButton(file));
-                fichierTable.add(buttonFichier);
+                fichierTable.add(buttonFichier).left();
+
+                // button supprimer la sauvegarde
+                TextButton buttonSupprimer = new TextButton("X", skin);
+                buttonSupprimer.addListener(supprimerSave(file));
+                fichierTable.add(buttonSupprimer).right();
+                listeDesSauvegarde.add(fichierTable).expand().fill();
+                listeDesSauvegarde.row();
+
             }
         } catch (IOException e) {
-            Gdx.app.error(TAG, e.getMessage(), e);
+            Popup.popupErreur(context, e.getMessage(), uiStage);
         }
         listeDesSauvegardeScrollPane = new ScrollPane(listeDesSauvegarde);
         uiTable.add(listeDesSauvegardeScrollPane);
@@ -89,10 +77,25 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                file.delete();
-                show();
+                Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
+                    try {
+                        supprimerDossier(file);
+                    } catch (IOException e) {
+                        Popup.popupErreur(context, e.getMessage(), uiStage);
+                    }
+                    show();
+                });
             }
         };
+    }
+
+    private void supprimerDossier(File file) throws IOException {
+        if (file.isDirectory()) {
+            for (File listFile : file.listFiles()) {
+                supprimerDossier(listFile);
+            }
+        }
+        Files.delete(file.toPath());
     }
 
     private ClickListener nouvelleCarte(TextField nomNouvelleCarte) {
