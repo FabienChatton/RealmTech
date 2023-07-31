@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RealmTechDataCtrl {
@@ -53,6 +54,7 @@ public class RealmTechDataCtrl {
         propertiesFile.put("fullScreen", option.fullScreen.toString());
         propertiesFile.put("fps", option.fps.toString());
         propertiesFile.put("vsync", option.vsync.toString());
+        propertiesFile.put("inventoryBlur", option.inventoryBlur.toString());
         try (OutputStream outputStream = new FileOutputStream(getOptionFile())) {
             propertiesFile.store(outputStream, "le fichier de configuration de RealmTech");
             outputStream.flush();
@@ -77,6 +79,7 @@ public class RealmTechDataCtrl {
         option.fullScreen.set(Boolean.parseBoolean(propertiesFile.getProperty("fullScreen")));
         option.fps.set(Integer.parseInt(propertiesFile.getProperty("fps")));
         option.vsync.set(Boolean.parseBoolean(propertiesFile.getProperty("vsync")));
+        option.inventoryBlur.set(Boolean.parseBoolean(propertiesFile.getProperty("inventoryBlur")));
         return option;
     }
 
@@ -91,7 +94,7 @@ public class RealmTechDataCtrl {
     /**
      * Ce qui est déclaré sont les options par défaut. Elles sont modifier une fois la lecture du fichier de configuration
      */
-    public final static class Option {
+    public static final class Option {
         public final static int RENDER_DISTANCE_MIN = 1;
         public final static int RENDER_DISTANCE_MAX = 16;
         public final AtomicInteger keyMoveForward = new AtomicInteger();
@@ -108,6 +111,7 @@ public class RealmTechDataCtrl {
         });
         public final IntegerRun fps = new IntegerRun(fps -> Gdx.graphics.setForegroundFPS(fps));
         public final BooleanRun vsync = new BooleanRun(bool -> Gdx.graphics.setVSync(bool));
+        public final AtomicBoolean inventoryBlur = new AtomicBoolean();
 
         {
             setDefaultOption();
@@ -125,6 +129,7 @@ public class RealmTechDataCtrl {
             fullScreen.set(false);
             fps.set(60);
             vsync.set(true);
+            inventoryBlur.set(true);
         }
     }
     public static void creerHiearchieRealmTechData() throws IOException {

@@ -5,7 +5,7 @@ import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
-
+// supprimer cette interface pour y mettre des visiteurs
 public interface SetContext {
     static void setContext(RealmTech context) {
         Popup.context = context;

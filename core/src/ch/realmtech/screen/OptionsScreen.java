@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class OptionsScreen extends AbstractScreen {
@@ -69,7 +70,8 @@ public class OptionsScreen extends AbstractScreen {
         // fps
         optionTable.add(new Label("fps", skin)).left();
         newSlider(optionTable, 0, 300, 5, false, skin, context.getRealmTechDataCtrl().option.fps);
-
+        optionTable.add(new Label("inventoryBlur", skin)).left();
+        newBoolean(optionTable, context.getRealmTechDataCtrl().option.inventoryBlur);
 
         //reset button
         optionTable.add(resetOptionButton).left();
@@ -77,7 +79,6 @@ public class OptionsScreen extends AbstractScreen {
 
         ScrollPane scrollPane = new ScrollPane(optionTable, skin);
         uiTable.add(scrollPane).expand().fill().center();
-        scrollPane.debugAll();
         InputEvent defaultClick = new InputEvent();
         defaultClick.setStage(scrollPane.getStage());
         defaultClick.setStageX(scrollPane.getMaxX());
@@ -90,13 +91,13 @@ public class OptionsScreen extends AbstractScreen {
     @Override
     public void hide() {
         super.hide();
+        uiTable.clear();
         optionTable.clear();
     }
 
     @Override
     public void resume() {
         super.resume();
-
     }
 
     private TextButton newKeysBind(AtomicInteger atomicInteger) {
@@ -148,6 +149,18 @@ public class OptionsScreen extends AbstractScreen {
         });
         table.add(slider).left();
         table.add(label).padLeft(10f).padBottom(10f).row();
+    }
+
+    private void newBoolean(Table table, AtomicBoolean atomicBoolean) {
+        CheckBox checkBox = new CheckBox(null, skin);
+        checkBox.setChecked(atomicBoolean.get());
+        checkBox.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                atomicBoolean.set(checkBox.isChecked());
+            }
+        });
+        table.add(checkBox).padLeft(10f).padBottom(10f).row();
     }
 
     private void newBooleanRun(Table table, BooleanRun booleanRun) {

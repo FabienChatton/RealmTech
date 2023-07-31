@@ -88,6 +88,7 @@ public final class RealmTech extends Game{
     @Override
     public void render() {
         screen.render(Gdx.graphics.getDeltaTime());
+
     }
 
     private void initSkin() {
