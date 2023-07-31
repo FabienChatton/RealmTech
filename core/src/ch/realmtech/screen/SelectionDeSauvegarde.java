@@ -10,15 +10,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectionDeSauvegarde extends AbstractScreen {
     private final static String TAG = SelectionDeSauvegarde.class.getSimpleName();
     private Table listeDesSauvegarde;
     private ScrollPane listeDesSauvegardeScrollPane;
+    private List<File> listSauvegarde;
 
     public SelectionDeSauvegarde(RealmTech context) {
         super(context);
+        listSauvegarde = new ArrayList<>();
     }
 
     @Override
@@ -29,8 +32,8 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         uiTable.row();
         listeDesSauvegarde = new Table(context.getSkin());
         try {
-            List<File> files = SaveInfManager.listSauvegardeInfinie();
-            for (File file : files) {
+            listSauvegarde = SaveInfManager.listSauvegardeInfinie();
+            for (File file : listSauvegarde) {
                 Table fichierTable = new Table(skin);
                 // button lancer la sauvegarde
                 TextButton buttonFichier = new TextButton(file.getName(), skin);
@@ -55,7 +58,15 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         uiTable.add(nomNouvelleCarte);
         TextButton nouvelleCarteButton = new TextButton("générer nouvelle carte", skin);
         nouvelleCarteButton.addListener(nouvelleCarte(nomNouvelleCarte));
-        uiTable.add(nouvelleCarteButton);
+        uiTable.add(nouvelleCarteButton).row();
+        TextButton backButton = new TextButton("back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                context.setScreen(ScreenType.MENU);
+            }
+        });
+        uiTable.add(backButton);
     }
 
     private ClickListener loadSaveButton(final File file) {
@@ -102,6 +113,10 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (listSauvegarde.stream().map(File::getName).anyMatch(sauvegardeName -> sauvegardeName.equalsIgnoreCase(nomNouvelleCarte.getText()))) {
+                    Popup.popupErreur(context, "Une sauvegarde au même nom existe déjà. Veilliez choisir un autre nom", uiStage);
+                    return;
+                }
                 try {
                     context.getEcsEngine().generateNewSave(nomNouvelleCarte.getText());
                     context.setScreen(ScreenType.GAME_SCREEN);
