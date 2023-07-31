@@ -78,7 +78,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                     context.loadInfFile(file.toPath());
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (Exception e) {
-                    Popup.popupErreur(e.getMessage(), uiStage);
+                    Popup.popupErreur(context, e.getMessage(), uiStage);
                     context.getEcsEngine().clearAllEntity();
                 }
             }
@@ -103,7 +103,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                     context.getEcsEngine().generateNewSave(nomNouvelleCarte.getText());
                     context.setScreen(ScreenType.GAME_SCREEN);
                 } catch (IOException | IllegalArgumentException e) {
-                    Popup.popupErreur(e.getMessage(), uiStage);
+                    Popup.popupErreur(context, e.getMessage(), uiStage);
                 }
             }
         };

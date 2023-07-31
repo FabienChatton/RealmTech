@@ -1,5 +1,6 @@
 package ch.realmtech.game.clickAndDrop;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.system.InventoryManager;
 import ch.realmtech.game.registery.ItemRegisterEntry;
@@ -17,12 +18,14 @@ public class ClickAndDropActor extends Actor {
     private final ComponentMapper<ItemComponent> mItem;
     @Null
     private final Table tableImage;
+    private final RealmTech context;
 
-    public ClickAndDropActor(int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage) {
+    public ClickAndDropActor(RealmTech context, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage) {
         this.stack = stack;
         this.mItem = mItem;
         bitmapFont = new BitmapFont();
         this.tableImage = tableImage;
+        this.context = context;
     }
 
     @Override
@@ -31,8 +34,8 @@ public class ClickAndDropActor extends Actor {
         if (stack[0] != 0) {
             if (getWidth() == 0) {
                 final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
-                setWidth(itemRegisterEntry.getTextureRegion().getRegionWidth());
-                setHeight(itemRegisterEntry.getTextureRegion().getRegionHeight());
+                setWidth(itemRegisterEntry.getTextureRegion(context).getRegionWidth());
+                setHeight(itemRegisterEntry.getTextureRegion(context).getRegionHeight());
             }
         }
         if (tableImage != null) {
@@ -48,8 +51,8 @@ public class ClickAndDropActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         if (stack[0] != 0) {
             final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
-            batch.draw(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(), getX(), getY());
-            bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion().getRegionHeight());
+            batch.draw(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context), getX(), getY());
+            bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context).getRegionHeight());
         }
     }
 

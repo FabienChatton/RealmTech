@@ -1,5 +1,6 @@
 package ch.realmtech.game.clickAndDrop;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
@@ -22,8 +23,8 @@ public class ClickAndDrop2 {
     private final Array<ClickAndDropActor> actors;
     private final Array<ClickAndDropActor> destinations;
 
-    public ClickAndDrop2(Stage stage, World world) {
-        clickAndDropActor = new ClickAndDropActor(new int[InventoryComponent.DEFAULT_STACK_LIMITE], world.getMapper(ItemComponent.class), null) {
+    public ClickAndDrop2(RealmTech context, Stage stage, World world) {
+        clickAndDropActor = new ClickAndDropActor(context, new int[InventoryComponent.DEFAULT_STACK_LIMITE], world.getMapper(ItemComponent.class), null) {
             @Override
             public void act(float delta) {
                 super.act(delta);

@@ -8,17 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
-public final class Popup implements SetContext {
+public final class Popup {
     private static final GlyphLayout glyphLayout;
-    static RealmTech context;
 
     static {
         glyphLayout = new GlyphLayout();
     }
 
-    public static void popupErreur(String message, Stage stage) {
+    public static void popupErreur(RealmTech context, String message, Stage stage) {
         String erreur = "Erreur";
-        float width = Math.min(getWidht(message), Gdx.graphics.getWidth() - 20);
+        float width = Math.min(getWidht(context, message), Gdx.graphics.getWidth() - 20);
         Label label = new Label(message, context.getSkin());
         label.setWrap(true);
         Dialog popupErreur = new Dialog(erreur, context.getSkin());
@@ -32,12 +31,7 @@ public final class Popup implements SetContext {
         stage.addActor(popupErreur);
     }
 
-    private static float getHeight(String message) {
-        glyphLayout.setText(context.getSkin().getFont("helvetica"), message);
-        return glyphLayout.height + 10;
-    }
-
-    private static float getWidht(String message) {
+    private static float getWidht(RealmTech context, String message) {
         glyphLayout.setText(context.getSkin().getFont("helvetica"), message);
         return glyphLayout.width + 10;
     }

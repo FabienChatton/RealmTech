@@ -3,23 +3,30 @@ package ch.realmtech.game.registery;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.item.ItemBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.helper.SetContext;
+import ch.realmtech.helper.Lazy;
 import com.artemis.Archetype;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.NoSuchElementException;
 
-public class ItemRegisterEntry implements Entry, SetContext {
+public class ItemRegisterEntry implements Entry {
     private Archetype archetype;
-    private final TextureRegion textureRegion;
+    @Lazy(champSource = "textureRegionName")
+    private TextureRegion textureRegion;
+    private String textureRegionName;
     private final ItemBehavior itemBehavior;
-    public static RealmTech context;
 
     public Archetype getArchetype() {
         return archetype;
     }
 
-    public TextureRegion getTextureRegion() {
+    public TextureRegion getTextureRegion(RealmTech context) {
+        if (textureRegion == null) {
+            textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
+            if (this.textureRegion == null) {
+                throw new IllegalArgumentException("vous n'avez pas mit une texture valide. Cette texture n'est pas été trouvé dans l'atlas \"" + textureRegionName + "\"");
+            }
+        }
         return textureRegion;
     }
 
@@ -39,8 +46,7 @@ public class ItemRegisterEntry implements Entry, SetContext {
     }
 
     public ItemRegisterEntry(String textureRegionName, ItemBehavior itemBehavior) {
-        this.textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
-        if (this.textureRegion == null) throw new IllegalArgumentException("vous n'avez pas mit une texture valide");
+        this.textureRegionName = textureRegionName;
         this.itemBehavior = itemBehavior;
     }
 

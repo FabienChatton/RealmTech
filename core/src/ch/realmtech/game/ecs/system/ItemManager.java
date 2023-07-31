@@ -48,7 +48,7 @@ public class ItemManager extends Manager {
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
         itemComponent.set(itemRegisterEntry);
         TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
-        setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(), worldPosX, worldPosY);
+        setItemTexturePositionAndPhysicBody(itemId, textureComponent.texture = itemRegisterEntry.getTextureRegion(context), worldPosX, worldPosY);
         textureComponent.scale = RealmTech.UNITE_SCALE;
     }
 

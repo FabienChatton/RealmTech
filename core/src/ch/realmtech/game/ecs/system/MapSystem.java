@@ -190,7 +190,7 @@ public class MapSystem extends DelayedIteratingSystem {
 
     public int newCell(byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
         int cellId = world.create();
-        world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
+        world.edit(cellId).create(InfCellComponent.class).set(context, innerX, innerY, cellRegisterEntry);
         if (cellRegisterEntry.getEditEntity() != null) {
             cellRegisterEntry.getEditEntity().accept(world, cellId);
         }

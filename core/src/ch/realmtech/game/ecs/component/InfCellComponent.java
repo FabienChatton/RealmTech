@@ -1,5 +1,6 @@
 package ch.realmtech.game.ecs.component;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
@@ -13,15 +14,15 @@ public class InfCellComponent extends PooledComponent {
     public StaticTiledMapTile tile;
     public CellRegisterEntry cellRegisterEntry;
 
-    public InfCellComponent set (byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry) {
+    public InfCellComponent set(RealmTech context, byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry) {
         this.innerPosX = innerPosX;
         this.innerPosY = innerPosY;
         this.cellRegisterEntry = cellRegisterEntry;
-        if (cell != null && tile != null){
-            tile.setTextureRegion(cellRegisterEntry.getTextureRegion());
+        if (cell != null && tile != null) {
+            tile.setTextureRegion(cellRegisterEntry.getTextureRegion(context));
         } else {
             cell = new Cell();
-            tile = new StaticTiledMapTile(cellRegisterEntry.getTextureRegion());
+            tile = new StaticTiledMapTile(cellRegisterEntry.getTextureRegion(context));
             cell.setTile(tile);
         }
         return this;

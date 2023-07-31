@@ -74,7 +74,7 @@ public class PlayerInventorySystem extends BaseSystem {
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) / 2, (inventoryStage.getHeight() - height) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
-        this.clickAndDrop2 = new ClickAndDrop2(inventoryStage, world);
+        this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world);
         blurShader = new BlurShader();
     }
 
@@ -184,7 +184,7 @@ public class PlayerInventorySystem extends BaseSystem {
             final Table tableImage = new Table();
             final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
             tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
-            final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(stack, mItem, tableImage);
+            final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage);
             clickAndDropActor.setWidth(backGroundTextureRegion.getRegionWidth());
             clickAndDropActor.setHeight(backGroundTextureRegion.getRegionHeight());
             if (clickAndDropSrc) clickAndDrop2.addSource(clickAndDropActor);
@@ -201,7 +201,7 @@ public class PlayerInventorySystem extends BaseSystem {
         Label label = new Label(null, skin);
         final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
         if (mItem.has(stack[0])) {
-            image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion()));
+            image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context)));
             label.setText(Integer.toString(InventoryManager.tailleStack(stack)));
         }
         Table table = new Table();

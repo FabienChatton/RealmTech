@@ -3,7 +3,6 @@ package ch.realmtech;
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.system.SoundManager;
-import ch.realmtech.helper.SetContext;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
@@ -58,7 +57,6 @@ public final class RealmTech extends Game{
         }
         assetManager = new AssetManager();
         initSkin();
-        initHealper();
         initMap();
         initSound();
         Box2D.init();
@@ -79,10 +77,6 @@ public final class RealmTech extends Game{
     public void loadingFinish() {
         ecsEngine = new ECSEngine(this);
         setScreen(ScreenType.MENU);
-    }
-
-    private void initHealper() {
-        SetContext.setContext(this);
     }
 
     @Override

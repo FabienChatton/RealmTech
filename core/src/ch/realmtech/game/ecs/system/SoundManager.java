@@ -51,10 +51,10 @@ public class SoundManager extends Manager {
         assetManager.load(CELL_BREAK2, Sound.class);
     }
 
-    public void playFootStep(Sound playerWalkSound, float volume) {
+    public void playFootStep(String playerWalkSound, float volume) {
         if (System.currentTimeMillis() - soundLoop.get("footStep") >= 300) {
             soundLoop.put("footStep", System.currentTimeMillis());
-            playerWalkSound.play(soundVolume * volume);
+            context.getAssetManager().get(playerWalkSound, Sound.class).play(soundVolume * volume);
         }
     }
 

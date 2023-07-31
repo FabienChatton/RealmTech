@@ -3,17 +3,18 @@ package ch.realmtech.game.registery;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.helper.SetContext;
+import ch.realmtech.helper.Lazy;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class CellRegisterEntry implements SetContext, Entry {
-    private final TextureRegion textureRegion;
+public class CellRegisterEntry implements Entry {
+    @Lazy(champSource = "textureRegionName")
+    private TextureRegion textureRegion;
+    private final String textureRegionName;
     private final CellBehavior cellBehavior;
-    public static RealmTech context;
     /**
      * Permet de modifier le monde quand la cellule se créer, comme puis lui ajouter des composants
      */
@@ -46,7 +47,10 @@ public class CellRegisterEntry implements SetContext, Entry {
         return s.hashCode();
     }
 
-    public TextureRegion getTextureRegion() {
+    public TextureRegion getTextureRegion(RealmTech context) {
+        if (textureRegion == null) {
+            textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
+        }
         return textureRegion;
     }
 
@@ -59,7 +63,7 @@ public class CellRegisterEntry implements SetContext, Entry {
     }
 
     public CellRegisterEntry(String textureRegionName, CellBehavior cellBehavior) {
-        this.textureRegion = context.getTextureAtlas().findRegion(textureRegionName);
+        this.textureRegionName = textureRegionName;
         this.cellBehavior = cellBehavior;
     }
 
