@@ -26,13 +26,18 @@ public class BreakCellEvent {
                                 itemRegisterEntry
                         );
                         world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
+                        return true;
                     }
                 }
             }
+            return false;
         };
     }
 
     public BreakCell dropNothing() {
-        return (world, chunkId, cellId, itemComponent, playerComponent) -> world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
+        return (world, chunkId, cellId, itemComponent, playerComponent) -> {
+            world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
+            return true;
+        };
     }
 }

@@ -399,8 +399,9 @@ public class MapSystem extends DelayedIteratingSystem {
             final InfCellComponent infCellComponent = mCell.get(topCellId);
             final BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
             if (breakCellEvent != null) {
-                breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId));
-                world.getSystem(SoundManager.class).playCellBreak();
+                if (breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId))) {
+                    world.getSystem(SoundManager.class).playCellBreak();
+                }
             }
         }
     }
