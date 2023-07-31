@@ -5,12 +5,16 @@ import java.util.Random;
 
 public class PerlineNoise3 implements GetNoise {
     public final SimplexNoise simplexNoiseGround;
-    public final SimplexNoise simplexNoiseGroundDeco;
+    public final SimplexNoise simplexNoiseCopper;
+    public final SimplexNoise simplexNoiseTree;
+
     public PerlineNoise3(long seed) {
         simplexNoiseGround = new SimplexNoise();
         simplexNoiseGround.setRand(new Random(seed));
-        simplexNoiseGroundDeco = new SimplexNoise();
-        simplexNoiseGroundDeco.setRand(new Random(seed + 5431087549274l));
+        simplexNoiseCopper = new SimplexNoise();
+        simplexNoiseCopper.setRand(new Random(seed + 5431087549274L));
+        simplexNoiseTree = new SimplexNoise();
+        simplexNoiseTree.setRand(new Random(seed + 7312421L));
     }
 
 

@@ -22,11 +22,11 @@ public class PerlinNoise {
 
 
     public float getGroundNoise(int x, int y) {
-       return perlinNoise.getNoise(x, y, OCTAVE, ROUGHNESS, SCALE, perlinNoise.simplexNoiseGround);
+        return perlinNoise.getNoise(x, y, OCTAVE, ROUGHNESS, SCALE, perlinNoise.simplexNoiseGround);
     }
 
-    public float getGroundDecoNoise(int x, int y) {
-        return perlinNoise.getNoise(x, y, 20, ROUGHNESS, SCALE, perlinNoise.simplexNoiseGroundDeco);
+    public float getCopperNoise(int x, int y) {
+        return perlinNoise.getNoise(x, y, OCTAVE, ROUGHNESS, SCALE, perlinNoise.simplexNoiseCopper);
     }
 
     public CellRegisterEntry[] generateCell(int x, int y) {
@@ -39,14 +39,17 @@ public class PerlinNoise {
         } else {
             groundCellRegisterEntry = RealmTechCoreMod.WATER_CELL;
         }
-        float groundDeco = getGroundDecoNoise(x, y);
+        float copperNoise = getCopperNoise(x, y);
         CellRegisterEntry groundDecoCellRegisterEntry = null;
-        if (groundDeco > 0.999f) {
-            if (groundCellRegisterEntry == RealmTechCoreMod.GRASS_CELL || groundCellRegisterEntry == RealmTechCoreMod.SAND_CELL) {
+
+        if (groundCellRegisterEntry != RealmTechCoreMod.WATER_CELL) {
+            if (copperNoise > 0.998f) {
+                groundDecoCellRegisterEntry = RealmTechCoreMod.COPPER_ORE;
+            }
+            float treeNoise = perlinNoise.getNoise(x, y, OCTAVE, ROUGHNESS, SCALE, perlinNoise.simplexNoiseTree);
+            if (treeNoise > 0.5f) {
                 groundDecoCellRegisterEntry = RealmTechCoreMod.TREE_CELL;
             }
-        } else if (groundDeco > 0.998f && groundDeco < 0.999f) {
-            groundDecoCellRegisterEntry = RealmTechCoreMod.COPPER_ORE;
         }
         return new CellRegisterEntry[]{groundCellRegisterEntry, groundDecoCellRegisterEntry};
     }
