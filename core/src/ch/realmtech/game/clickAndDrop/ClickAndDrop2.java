@@ -55,13 +55,15 @@ public class ClickAndDrop2 {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (InventoryManager.tailleStack(clickAndDropActor.getStack()) == 0 || !destinations.contains(clickAndDropActorSrc, true)) {
-                    if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
-                        final ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
-                        if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
-                            final ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
-                            itemResultCraftComponent.pickEvent.pick(world, world.getSystem(PlayerInventorySystem.class).getCurrentCraftingInventory());
-                            for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
-                                world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
+                    ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
+                    if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
+                        if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
+                            if (world.getSystem(InventoryManager.class).canMouveStack(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack())) {
+                                ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
+                                itemResultCraftComponent.pickEvent.pick(world, world.getSystem(PlayerInventorySystem.class).getCurrentCraftingInventory());
+                                for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
+                                    world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
+                                }
                             }
                         }
                     }
@@ -70,7 +72,7 @@ public class ClickAndDrop2 {
                     } else if (button == Input.Buttons.RIGHT) {
                         int nombreADeplacer;
                         if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) == 1) {
-                             nombreADeplacer = 1;
+                            nombreADeplacer = 1;
                         } else {
                             nombreADeplacer = InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) / 2;
                         }

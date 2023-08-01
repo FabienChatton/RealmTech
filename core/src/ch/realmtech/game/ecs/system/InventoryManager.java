@@ -123,17 +123,6 @@ public class InventoryManager extends Manager {
         }
         return count;
     }
-    public void dropItemFromPlayerInventory(int itemId, int playerId, float worldPositionX, float worldPositionY) {
-//        InventoryComponent inventoryComponent = mInventory.create(playerId);
-//        inventoryComponent.inventory.removeValue(itemId);
-//        world.getSystem(ItemManager.class).setItemTexturePositionAndPhysicBody(
-//                itemId,
-//                mTexture.create(itemId).texture,
-//                worldPositionX,
-//                worldPositionY
-//        );
-//        world.getSystem(SoundManager.class).playItemDrop();
-    }
 
     public int[][] getInventory(int entityId) {
         return mInventory.get(entityId).inventory;
@@ -174,5 +163,20 @@ public class InventoryManager extends Manager {
         for (int i = 0; i < inventory.length; i++) {
             removeOneItem(inventory[i]);
         }
+    }
+
+    /**
+     * Pour que le stack puisse être déplacé, il faut que le stack src ne soit pas vide et que les items dans le stack source et
+     * le stack dst soit du même registre.
+     *
+     * @param src
+     * @param dst
+     */
+    public boolean canMouveStack(int[] src, int[] dst) {
+        if (src[0] == 0) return false;
+        if (dst[0] == 0) return true;
+        ItemComponent itemComponentSrc = mItem.get(src[0]);
+        ItemComponent itemComponentDst = mItem.get(dst[0]);
+        return itemComponentSrc.itemRegisterEntry == itemComponentDst.itemRegisterEntry;
     }
 }
