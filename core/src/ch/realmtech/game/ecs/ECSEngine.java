@@ -55,6 +55,7 @@ public final class ECSEngine {
                 .with(new PickUpOnGroundItemSystem())
                 .with(new PlayerMouvementSystem())
                 .with(new PhysiqueWorldStepSystem())
+                .with(new Box2dFrotementSystem())
                 // render
                 .with(new PlayerTextureAnimated())
                 .with(new UpdateBox2dWithTextureSystem())
