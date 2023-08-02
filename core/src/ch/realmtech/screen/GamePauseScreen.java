@@ -1,6 +1,9 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.input.InputMapper;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -19,9 +22,17 @@ public class GamePauseScreen extends AbstractScreen {
         optionButton.addListener(openOption());
         uiTable.add(optionButton);
         uiTable.row();
-        TextButton quiteAndSave = new TextButton("Sauvegarder et quitter",skin);
+        TextButton quiteAndSave = new TextButton("Sauvegarder et quitter", skin);
         quiteAndSave.addListener(quiteAndSave());
         uiTable.add(quiteAndSave);
+    }
+
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            context.setScreen(ScreenType.GAME_SCREEN);
+        }
     }
 
     @Override
@@ -30,8 +41,14 @@ public class GamePauseScreen extends AbstractScreen {
         super.draw();
     }
 
+    @Override
+    public void show() {
+        super.show();
+        InputMapper.reset();
+    }
+
     private ClickListener quiteAndSave() {
-        return new ClickListener(){
+        return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 context.quiteAndSave();

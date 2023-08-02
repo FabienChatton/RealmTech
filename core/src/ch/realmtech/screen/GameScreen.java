@@ -3,6 +3,7 @@ package ch.realmtech.screen;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.ecs.system.MapSystem;
+import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -46,6 +47,7 @@ public class GameScreen extends AbstractScreen {
     public void update(float delta) {
         super.update(delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
             context.setScreen(ScreenType.GAME_PAUSE);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {

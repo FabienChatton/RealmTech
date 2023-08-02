@@ -78,12 +78,20 @@ public class PlayerInventorySystem extends BaseSystem {
         blurShader = new BlurShader();
     }
 
-    public void toggleInventoryWindow(DisplayInventoryArgs[] displayInventoryArgs) {
+    public boolean closePlayerInventory() {
         if (isEnabled()) {
             super.setEnabled(false);
             Gdx.input.setInputProcessor(context.getInputManager());
             context.getGameStage().getBatch().setShader(null);
+            world.getSystem(SoundManager.class).playOpenInventory();
+            return true;
         } else {
+            return false;
+        }
+    }
+
+    public boolean openPlayerInventory(DisplayInventoryArgs[] displayInventoryArgs) {
+        if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();
             currentInventoryArgs = displayInventoryArgs;
@@ -91,6 +99,18 @@ public class PlayerInventorySystem extends BaseSystem {
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(blurShader.shaderProgram);
             }
+            world.getSystem(SoundManager.class).playOpenInventory();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void toggleInventoryWindow(DisplayInventoryArgs[] displayInventoryArgs) {
+        if (isEnabled()) {
+            closePlayerInventory();
+        } else {
+            openPlayerInventory(displayInventoryArgs);
         }
     }
 

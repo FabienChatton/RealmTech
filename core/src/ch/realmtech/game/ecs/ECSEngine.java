@@ -251,7 +251,6 @@ public final class ECSEngine {
 
     public void togglePlayerInventoryWindow() {
         world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayerArgs());
-        world.getSystem(SoundManager.class).playOpenInventory();
     }
 
     public void loadInfFile(Path savePath) throws IOException {
