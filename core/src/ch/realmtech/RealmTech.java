@@ -82,7 +82,6 @@ public final class RealmTech extends Game{
     @Override
     public void render() {
         screen.render(Gdx.graphics.getDeltaTime());
-
     }
 
     private void initSkin() {
@@ -97,7 +96,7 @@ public final class RealmTech extends Game{
     private void initMap() {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
         assetManager.load("texture/atlas/texture.atlas", TextureAtlas.class);
-        Gdx.app.debug(TAG, "Map test chargé");
+        Gdx.app.debug(TAG, "atlas chargé");
     }
 
     private void initSound() {

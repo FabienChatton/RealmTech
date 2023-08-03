@@ -1,65 +1,67 @@
 texture.png
-	size: 256, 256
+	size: 512, 256
 	repeat: none
 buche-01
-	bounds: 134, 224, 32, 32
+	bounds: 202, 125, 32, 32
 chest-01
-	bounds: 202, 224, 32, 32
+	bounds: 304, 125, 32, 32
 copper-ore-02
-	bounds: 34, 90, 32, 32
+	bounds: 406, 125, 32, 32
 default-texture
-	bounds: 34, 22, 32, 32
+	bounds: 34, 59, 32, 32
 grass-01
-	bounds: 120, 190, 32, 32
+	bounds: 474, 125, 32, 32
 inventory-01
-	bounds: 0, 24, 32, 32
+	bounds: 236, 125, 32, 32
+logo-RealmTech
+	bounds: 0, 159, 496, 92
 pelle-bois-01
-	bounds: 0, 92, 32, 32
+	bounds: 100, 125, 32, 32
 pelle-stone-01
-	bounds: 34, 158, 32, 32
+	bounds: 338, 125, 32, 32
 pioche-bois-01
-	bounds: 0, 58, 32, 32
+	bounds: 168, 125, 32, 32
 pioche-stone-01
-	bounds: 154, 190, 32, 32
+	bounds: 86, 91, 32, 32
 plank-02
-	bounds: 34, 124, 32, 32
+	bounds: 372, 125, 32, 32
 plank-cell-01
-	bounds: 66, 224, 32, 32
+	bounds: 66, 125, 32, 32
 reimu
-	bounds: 0, 192, 64, 64
+	bounds: 0, 93, 64, 64
 reimu-back-0
-	bounds: 68, 67, 18, 24
+	bounds: 214, 99, 18, 24
 reimu-back-1
-	bounds: 68, 93, 18, 24
+	bounds: 194, 99, 18, 24
 reimu-back-2
-	bounds: 68, 119, 18, 24
+	bounds: 174, 99, 18, 24
 reimu-front-0
-	bounds: 66, 197, 18, 25
+	bounds: 0, 0, 18, 25
 reimu-front-1
-	bounds: 236, 231, 18, 25
+	bounds: 66, 98, 18, 25
 reimu-front-2
-	bounds: 68, 145, 18, 25
+	bounds: 154, 98, 18, 25
 reimu-left-0
-	bounds: 68, 172, 16, 23
+	bounds: 68, 73, 16, 23
 reimu-left-1
-	bounds: 68, 19, 17, 22
+	bounds: 86, 67, 17, 22
 reimu-left-2
-	bounds: 68, 43, 17, 22
+	bounds: 253, 101, 17, 22
 reimu-right-0
-	bounds: 222, 199, 16, 23
+	bounds: 68, 48, 16, 23
 reimu-right-1
-	bounds: 0, 0, 17, 22
+	bounds: 234, 101, 17, 22
 reimu-right-2
-	bounds: 222, 175, 17, 22
+	bounds: 272, 101, 17, 22
 sand-01
-	bounds: 86, 190, 32, 32
+	bounds: 34, 25, 32, 32
 sandales-01
-	bounds: 34, 56, 32, 32
+	bounds: 440, 125, 32, 32
 stick-02
-	bounds: 100, 224, 32, 32
+	bounds: 134, 125, 32, 32
 table-craft-01
-	bounds: 188, 190, 32, 32
+	bounds: 120, 91, 32, 32
 tree-02
-	bounds: 0, 126, 32, 64
+	bounds: 0, 27, 32, 64
 water-01
-	bounds: 168, 224, 32, 32
+	bounds: 270, 125, 32, 32
