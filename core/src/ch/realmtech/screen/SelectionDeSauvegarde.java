@@ -2,7 +2,9 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
+import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -27,8 +29,9 @@ public class SelectionDeSauvegarde extends AbstractScreen {
     @Override
     public void show() {
         super.show();
+        uiTable.setFillParent(true);
         uiTable.clear();
-        uiTable.add(new Label("Sélectionner une sauvegarde", skin));
+        uiTable.add(new Label("Sélectionner une sauvegarde", skin)).top();
         uiTable.row();
         listeDesSauvegarde = new Table(context.getSkin());
         try {
@@ -38,66 +41,63 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                 // button lancer la sauvegarde
                 TextButton buttonFichier = new TextButton(file.getName(), skin);
                 buttonFichier.addListener(loadSaveButton(file));
-                fichierTable.add(buttonFichier).left();
+                fichierTable.add(buttonFichier).expand();
 
                 // button supprimer la sauvegarde
                 TextButton buttonSupprimer = new TextButton("X", skin);
                 buttonSupprimer.addListener(supprimerSave(file));
-                fichierTable.add(buttonSupprimer).right();
-                listeDesSauvegarde.add(fichierTable).expand().fill();
-                listeDesSauvegarde.row();
+                fichierTable.add(buttonSupprimer);
+                listeDesSauvegarde.add(fichierTable).width(200f).row();
 
             }
         } catch (IOException e) {
             Popup.popupErreur(context, e.getMessage(), uiStage);
         }
         listeDesSauvegardeScrollPane = new ScrollPane(listeDesSauvegarde);
-        uiTable.add(listeDesSauvegardeScrollPane);
+        uiTable.add(listeDesSauvegardeScrollPane).expand().top();
         uiTable.row();
-        TextField nomNouvelleCarte = new TextField("", skin);
-        uiTable.add(nomNouvelleCarte);
+        Table nouvelleCarteTable = new Table(skin);
+        TextField nouvelleCarteTextField = new TextField("", skin);
+        nouvelleCarteTable.add(nouvelleCarteTextField).width(200f).padRight(10f);
         TextButton nouvelleCarteButton = new TextButton("générer nouvelle carte", skin);
-        nouvelleCarteButton.addListener(nouvelleCarte(nomNouvelleCarte));
-        uiTable.add(nouvelleCarteButton).row();
+        nouvelleCarteButton.addListener(nouvelleCarte(nouvelleCarteTextField));
+        nouvelleCarteTable.add(nouvelleCarteButton);
+        uiTable.add(nouvelleCarteTable).row();
         TextButton backButton = new TextButton("back", skin);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                context.setScreen(ScreenType.MENU);
-            }
-        });
+        backButton.addListener(new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
         uiTable.add(backButton);
+        InputEvent defaultClick = new InputEvent();
+        defaultClick.setStage(listeDesSauvegardeScrollPane.getStage());
+        defaultClick.setStageX(listeDesSauvegardeScrollPane.getMaxX());
+        defaultClick.setStageY(listeDesSauvegardeScrollPane.getMaxY());
+        defaultClick.setType(InputEvent.Type.touchDown);
+        defaultClick.setButton(Input.Buttons.LEFT);
+        listeDesSauvegardeScrollPane.fire(defaultClick);
     }
 
     private ClickListener loadSaveButton(final File file) {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                try {
-                    context.loadInfFile(file.toPath());
-                    context.setScreen(ScreenType.GAME_SCREEN);
-                } catch (Exception e) {
-                    Popup.popupErreur(context, e.getMessage(), uiStage);
-                    context.getEcsEngine().clearAllEntity();
-                }
+        return new OnClick((event, x, y) -> {
+            try {
+                context.loadInfFile(file.toPath());
+                context.setScreen(ScreenType.GAME_SCREEN);
+            } catch (Exception e) {
+                Popup.popupErreur(context, e.getMessage(), uiStage);
+                context.getEcsEngine().clearAllEntity();
             }
-        };
+        });
     }
 
     private ClickListener supprimerSave(File file) {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
-                    try {
-                        supprimerDossier(file);
-                    } catch (IOException e) {
-                        Popup.popupErreur(context, e.getMessage(), uiStage);
-                    }
-                    show();
-                });
-            }
-        };
+        return new OnClick((event, x, y) -> {
+            Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
+                try {
+                    supprimerDossier(file);
+                } catch (IOException e) {
+                    Popup.popupErreur(context, e.getMessage(), uiStage);
+                }
+                show();
+            });
+        });
     }
 
     private void supprimerDossier(File file) throws IOException {
