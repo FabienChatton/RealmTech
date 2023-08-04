@@ -51,7 +51,6 @@ public final class ECSEngine {
                 .with(new MapSystem())
                 .with(new CraftingPlayerSystem())
                 .with(new ItemBeingPickAnimationSystem())
-                .with(new SoundManager())
                 .with(new PickUpOnGroundItemSystem())
                 .with(new PlayerMouvementSystem())
                 .with(new PhysiqueWorldStepSystem())
@@ -291,7 +290,7 @@ public final class ECSEngine {
     }
 
     public void playFootStep(PlayerFootStepSound footStep) {
-        world.getSystem(SoundManager.class).playFootStep(footStep.playerFootStepSound(), footStep.volume());
+        context.getSoundManager().playFootStep(footStep.playerFootStepSound(), footStep.volume());
     }
 
     public int readSavedInfChunk(int chunkX, int chunkY, String saveName) throws IOException {

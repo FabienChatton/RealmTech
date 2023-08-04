@@ -1,17 +1,15 @@
-package ch.realmtech.game.ecs.system;
+package ch.realmtech.sound;
 
 import ch.realmtech.RealmTech;
-import com.artemis.Manager;
-import com.artemis.annotations.Wire;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 
 import java.util.HashMap;
 
-public class SoundManager extends Manager {
-    @Wire(name = "context")
-    RealmTech context;
+public class SoundManager {
+
+    private final RealmTech context;
 
     public final static String OPEN_INVENTORY = "sound/effects/inventory/cloth-inventory.wav";
     public final static String FOOT_STEP_GRASS_1 = "sound/effects/level/foot-step/sfx_step_grass_l.mp3";
@@ -22,17 +20,19 @@ public class SoundManager extends Manager {
     public final static String ITEM_DROP = "sound/effects/inventory/pop3.ogg";
     public final static String CELL_BREAK1 = "sound/effects/level/break/click_sound_1.mp3";
     public final static String CELL_BREAK2 = "sound/effects/level/break/click_sound_5.mp3";
+    public final static String CLICK_CLICK = "sound/effects/menu/click-click-mono.wav";
+    public final static String CLICK_OVER = "sound/effects/menu/menu1.wav";
     public float soundVolume = 1f;
     private HashMap<String, Long> soundLoop;
     private AssetManager assetManager;
 
-    @Override
-    protected void initialize() {
-        super.initialize();
+    public SoundManager(RealmTech context) {
+        this.context = context;
         assetManager = context.getAssetManager();
         soundLoop = new HashMap<>();
         soundLoop.put("footStep", System.currentTimeMillis());
         soundLoop.put("cellBreak", System.currentTimeMillis());
+        soundLoop.put("clickOver", System.currentTimeMillis());
     }
 
     public void playOpenInventory() {
@@ -49,6 +49,8 @@ public class SoundManager extends Manager {
         assetManager.load(ITEM_DROP, Sound.class);
         assetManager.load(CELL_BREAK1, Sound.class);
         assetManager.load(CELL_BREAK2, Sound.class);
+        assetManager.load(CLICK_CLICK, Sound.class);
+        assetManager.load(CLICK_OVER, Sound.class);
     }
 
     public void playFootStep(String playerWalkSound, float volume) {
@@ -64,6 +66,17 @@ public class SoundManager extends Manager {
 
     public void playItemDrop() {
         assetManager.get(ITEM_DROP, Sound.class).play(soundVolume);
+    }
+
+    public void playClickMenu() {
+        assetManager.get(CLICK_CLICK, Sound.class).play();
+    }
+
+    public void playClickOverMenu() {
+        if (System.currentTimeMillis() - soundLoop.get("clickOver") >= 0) {
+            soundLoop.put("clickOver", System.currentTimeMillis());
+            assetManager.get(CLICK_OVER, Sound.class).play();
+        }
     }
 
     public boolean playCellBreak() {

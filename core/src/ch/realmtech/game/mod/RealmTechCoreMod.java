@@ -4,12 +4,12 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.CraftingComponent;
 import ch.realmtech.game.ecs.component.CraftingTableComponent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
-import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.game.item.ItemBehavior;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.registery.*;
+import ch.realmtech.sound.SoundManager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 

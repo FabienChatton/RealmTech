@@ -49,7 +49,7 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
                     int itemId = (int) fixtureB.getBody().getUserData();
                     Gdx.app.debug(TAG, "le joueur (" + playerId + ") a touche l'item (" + itemId + ")");
                     world.getSystem(ItemManager.class).playerPickUpItem(itemId, playerId);
-                    world.getSystem(SoundManager.class).playItemPickUp();
+                    context.getSoundManager().playItemPickUp();
                     Gdx.app.postRunnable(() -> {
                         try {
                             world.edit(itemId).remove(ItemBeingPickComponent.class);

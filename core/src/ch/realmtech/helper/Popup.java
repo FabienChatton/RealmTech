@@ -3,14 +3,12 @@ package ch.realmtech.helper;
 import ch.realmtech.RealmTech;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public final class Popup {
     private static final GlyphLayout glyphLayout;
@@ -26,7 +24,7 @@ public final class Popup {
         label.setWrap(true);
         Dialog popupErreur = new Dialog(erreur, context.getSkin());
         popupErreur.getContentTable().add(label).width(width);
-        popupErreur.button("ok");
+        popupErreur.button(ButtonsMenu.textButton(context, "ok"));
         popupErreur.key(Input.Keys.ESCAPE, true);
         popupErreur.setWidth(width);
         popupErreur.setHeight(150 + (message.length()));
@@ -42,16 +40,11 @@ public final class Popup {
         label.setWrap(true);
         Dialog popupConfirmation = new Dialog(confirmation, context.getSkin());
         popupConfirmation.getContentTable().add(label).width(width);
-        Button okButton = new TextButton("ok", context.getSkin());
-        okButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                okRunnable.run();
-            }
-        });
+        TextButton okButton = ButtonsMenu.textButton(context, "oui", new OnClick((event, x, y) -> okRunnable.run()));
         popupConfirmation.button(okButton);
-        popupConfirmation.button("annule");
+        TextButton nonButton = ButtonsMenu.textButton(context, "non");
+        nonButton.setColor(Color.RED);
+        popupConfirmation.button(nonButton);
         popupConfirmation.setWidth(width);
         popupConfirmation.setHeight(150 + (message.length()));
         popupConfirmation.setResizable(true);

@@ -400,7 +400,7 @@ public class MapSystem extends DelayedIteratingSystem {
             final BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
             if (breakCellEvent != null) {
                 if (breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId))) {
-                    world.getSystem(SoundManager.class).playCellBreak();
+                    context.getSoundManager().playCellBreak();
                 }
             }
         }

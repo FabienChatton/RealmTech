@@ -2,11 +2,11 @@ package ch.realmtech;
 
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
-import ch.realmtech.game.ecs.system.SoundManager;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
+import ch.realmtech.sound.SoundManager;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -45,6 +45,7 @@ public final class RealmTech extends Game{
 
     private TextureAtlas textureAtlas;
     private RealmTechDataCtrl realmTechDataCtrl;
+    private SoundManager soundManager;
 
     @Override
     public void create() {
@@ -60,6 +61,7 @@ public final class RealmTech extends Game{
         initMap();
         initSound();
         Box2D.init();
+        soundManager = new SoundManager(this);
         discord = new Discord(Thread.currentThread());
         discord.init();
         gameStage = new Stage(
@@ -198,6 +200,11 @@ public final class RealmTech extends Game{
     public RealmTechDataCtrl getRealmTechDataCtrl() {
         return realmTechDataCtrl;
     }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
     public <T extends BaseSystem> T getSystem(Class<T> type) {
         return ecsEngine.getSystem(type);
     }

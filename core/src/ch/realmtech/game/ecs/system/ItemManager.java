@@ -96,7 +96,7 @@ public class ItemManager extends Manager {
             world.getSystem(InventoryManager.class).removeOneItem(world.getSystem(ItemBarManager.class).getSelectStack());
             Vector3 gameCoo = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             world.getSystem(ItemManager.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
-            world.getSystem(SoundManager.class).playItemDrop();
+            context.getSoundManager().playItemDrop();
             return true;
         } else {
             return false;

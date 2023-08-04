@@ -83,7 +83,7 @@ public class PlayerInventorySystem extends BaseSystem {
             super.setEnabled(false);
             Gdx.input.setInputProcessor(context.getInputManager());
             context.getGameStage().getBatch().setShader(null);
-            world.getSystem(SoundManager.class).playOpenInventory();
+            context.getSoundManager().playOpenInventory();
             return true;
         } else {
             return false;
@@ -99,7 +99,7 @@ public class PlayerInventorySystem extends BaseSystem {
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(blurShader.shaderProgram);
             }
-            world.getSystem(SoundManager.class).playOpenInventory();
+            context.getSoundManager().playOpenInventory();
             return true;
         } else {
             return false;
