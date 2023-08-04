@@ -31,6 +31,7 @@ public final class Popup {
         popupErreur.setResizable(true);
         popupErreur.setPosition(stage.getViewport().getScreenWidth() / 2f - popupErreur.getWidth() / 2f, stage.getViewport().getScreenHeight() / 2f - popupErreur.getHeight() / 2f);
         stage.addActor(popupErreur);
+        context.getSoundManager().playDeny();
     }
 
     public static void popupConfirmation(RealmTech context, String message, Stage stage, Runnable okRunnable) {
@@ -50,6 +51,7 @@ public final class Popup {
         popupConfirmation.setResizable(true);
         popupConfirmation.setPosition(stage.getViewport().getScreenWidth() / 2f - popupConfirmation.getWidth() / 2f, stage.getViewport().getScreenHeight() / 2f - popupConfirmation.getHeight() / 2f);
         stage.addActor(popupConfirmation);
+        context.getSoundManager().playBlip();
     }
 
     private static float getWidht(RealmTech context, String message) {

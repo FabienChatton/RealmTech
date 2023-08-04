@@ -2,9 +2,11 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
+import ch.realmtech.helper.ButtonsMenu;
 import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -39,13 +41,20 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             for (File file : listSauvegarde) {
                 Table fichierTable = new Table(skin);
                 // button lancer la sauvegarde
-                TextButton buttonFichier = new TextButton(file.getName(), skin);
+                TextButton buttonFichier = ButtonsMenu.textButton(context, file.getName());
                 buttonFichier.addListener(loadSaveButton(file));
                 fichierTable.add(buttonFichier).expand();
 
                 // button supprimer la sauvegarde
-                TextButton buttonSupprimer = new TextButton("X", skin);
-                buttonSupprimer.addListener(supprimerSave(file));
+                TextButton buttonSupprimer = ButtonsMenu.textButton(context, "X", new OnClick((event, x, y) -> Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
+                    try {
+                        supprimerDossier(file);
+                    } catch (IOException e) {
+                        Popup.popupErreur(context, e.getMessage(), uiStage);
+                    }
+                    show();
+                })));
+                buttonSupprimer.setColor(Color.RED);
                 fichierTable.add(buttonSupprimer);
                 listeDesSauvegarde.add(fichierTable).width(200f).row();
 
@@ -56,15 +65,26 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         listeDesSauvegardeScrollPane = new ScrollPane(listeDesSauvegarde);
         uiTable.add(listeDesSauvegardeScrollPane).expand().top();
         uiTable.row();
+
         Table nouvelleCarteTable = new Table(skin);
         TextField nouvelleCarteTextField = new TextField("", skin);
         nouvelleCarteTable.add(nouvelleCarteTextField).width(200f).padRight(10f);
-        TextButton nouvelleCarteButton = new TextButton("générer nouvelle carte", skin);
-        nouvelleCarteButton.addListener(nouvelleCarte(nouvelleCarteTextField));
+        TextButton nouvelleCarteButton = ButtonsMenu.textButton(context, "générer nouvelle carte", new OnClick((event, x, y) -> {
+            if (listSauvegarde.stream().map(File::getName).anyMatch(sauvegardeName -> sauvegardeName.equalsIgnoreCase(nouvelleCarteTextField.getText()))) {
+                Popup.popupErreur(context, "Une sauvegarde au même nom existe déjà. Veilliez choisir un autre nom", uiStage);
+                return;
+            }
+            try {
+                context.getEcsEngine().generateNewSave(nouvelleCarteTextField.getText());
+                context.setScreen(ScreenType.GAME_SCREEN);
+            } catch (IOException | IllegalArgumentException e) {
+                Popup.popupErreur(context, e.getMessage(), uiStage);
+            }
+        }));
         nouvelleCarteTable.add(nouvelleCarteButton);
         uiTable.add(nouvelleCarteTable).row();
-        TextButton backButton = new TextButton("back", skin);
-        backButton.addListener(new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
+
+        TextButton backButton = ButtonsMenu.textButton(context, "back", new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
         uiTable.add(backButton);
         InputEvent defaultClick = new InputEvent();
         defaultClick.setStage(listeDesSauvegardeScrollPane.getStage());

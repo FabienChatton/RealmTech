@@ -12,7 +12,7 @@ public class ButtonsMenu {
         textButton.getLabel().addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (fromActor != null) {
+                if (!event.isStopped()) {
                     super.enter(event, x, y, pointer, fromActor);
                     context.getSoundManager().playClickOverMenu();
                 }
@@ -23,12 +23,13 @@ public class ButtonsMenu {
 
     public static TextButton textButton(RealmTech context, String text, OnClick onClick) {
         TextButton textButton = textButton(context, text);
-        textButton.getLabel().addListener(new ClickListener() {
+        textButton.getLabel().addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 onClick.clicked(event, x, y);
                 context.getSoundManager().playClickMenu();
+                event.stop();
             }
         });
         return textButton;

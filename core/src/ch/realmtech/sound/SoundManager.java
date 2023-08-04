@@ -22,6 +22,8 @@ public class SoundManager {
     public final static String CELL_BREAK2 = "sound/effects/level/break/click_sound_5.mp3";
     public final static String CLICK_CLICK = "sound/effects/menu/click-click-mono.wav";
     public final static String CLICK_OVER = "sound/effects/menu/menu1.wav";
+    public final static String BLIP = "sound/effects/menu/blip1.wav";
+    public final static String DENY = "sound/effects/menu/launch_deny1.wav";
     public float soundVolume = 1f;
     private HashMap<String, Long> soundLoop;
     private AssetManager assetManager;
@@ -51,6 +53,8 @@ public class SoundManager {
         assetManager.load(CELL_BREAK2, Sound.class);
         assetManager.load(CLICK_CLICK, Sound.class);
         assetManager.load(CLICK_OVER, Sound.class);
+        assetManager.load(BLIP, Sound.class);
+        assetManager.load(DENY, Sound.class);
     }
 
     public void playFootStep(String playerWalkSound, float volume) {
@@ -70,6 +74,14 @@ public class SoundManager {
 
     public void playClickMenu() {
         assetManager.get(CLICK_CLICK, Sound.class).play();
+    }
+
+    public void playBlip() {
+        assetManager.get(BLIP, Sound.class).play();
+    }
+
+    public void playDeny() {
+        assetManager.get(DENY, Sound.class).play();
     }
 
     public void playClickOverMenu() {
