@@ -1,6 +1,9 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.helper.ButtonsMenu.SliderMenu;
+import ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
+import ch.realmtech.helper.OnClick;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.observer.Subcriber;
 import ch.realmtech.options.BooleanRun;
@@ -18,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static ch.realmtech.helper.ButtonsMenu.CheckBoxMenu;
+
 public class OptionsScreen extends AbstractScreen {
     private final static String TAG = OptionsScreen.class.getSimpleName();
     private final Table optionTable;
@@ -31,10 +36,15 @@ public class OptionsScreen extends AbstractScreen {
     public void show() {
         super.show();
 
-        final TextButton backButton = new TextButton("back", skin);
-        backButton.addListener(back());
-        final TextButton resetOptionButton = new TextButton("reset options", skin);
-        resetOptionButton.addListener(resetOption());
+        final TextButton backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> {
+            context.setScreen(oldScreen);
+            InputMapper.reset();
+        }));
+        final TextButton resetOptionButton = new TextButtonMenu(context, "reset options", new OnClick((event, x, y) -> {
+            context.getRealmTechDataCtrl().option.setDefaultOption();
+            hide();
+            show();
+        }));
         resetOptionButton.setColor(Color.RED);
 
         // keyMoveForward
@@ -101,7 +111,7 @@ public class OptionsScreen extends AbstractScreen {
     }
 
     private TextButton newKeysBind(AtomicInteger atomicInteger) {
-        final TextButton field = new TextButton(Input.Keys.toString(atomicInteger.get()), skin);
+        TextButtonMenu field = new TextButtonMenu(context, Input.Keys.toString(atomicInteger.get()));
         field.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -122,7 +132,7 @@ public class OptionsScreen extends AbstractScreen {
         return field;
     }
     private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, AtomicInteger atomicIntegerOption) {
-        final Slider slider = new Slider(min, max, stepSize, vertical, skin);
+        SliderMenu slider = new SliderMenu(context, min, max, stepSize, vertical);
         slider.setValue(atomicIntegerOption.get());
         final Label label = new Label(String.valueOf((int) slider.getValue()), skin);
         slider.addListener(new ChangeListener() {
@@ -137,7 +147,7 @@ public class OptionsScreen extends AbstractScreen {
     }
 
     private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, IntegerRun integerRun) {
-        final Slider slider = new Slider(min, max, stepSize, vertical, skin);
+        SliderMenu slider = new SliderMenu(context, min, max, stepSize, vertical);
         slider.setValue(integerRun.get());
         final Label label = new Label(String.valueOf((int) slider.getValue()), skin);
         slider.addListener(new ChangeListener() {
@@ -152,7 +162,7 @@ public class OptionsScreen extends AbstractScreen {
     }
 
     private void newBoolean(Table table, AtomicBoolean atomicBoolean) {
-        CheckBox checkBox = new CheckBox(null, skin);
+        CheckBoxMenu checkBox = new CheckBoxMenu(context, null);
         checkBox.setChecked(atomicBoolean.get());
         checkBox.addListener(new ClickListener() {
             @Override
@@ -164,7 +174,7 @@ public class OptionsScreen extends AbstractScreen {
     }
 
     private void newBooleanRun(Table table, BooleanRun booleanRun) {
-        CheckBox checkBox = new CheckBox(null, skin);
+        CheckBoxMenu checkBox = new CheckBoxMenu(context, null);
         checkBox.setChecked(booleanRun.get());
         checkBox.addListener(new ClickListener() {
             @Override
@@ -173,28 +183,5 @@ public class OptionsScreen extends AbstractScreen {
             }
         });
         table.add(checkBox).padLeft(10f).padBottom(10f).row();
-    }
-
-
-
-    private ClickListener back() {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                context.setScreen(oldScreen);
-                InputMapper.reset();
-            }
-        };
-    }
-
-    private ClickListener resetOption() {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                context.getRealmTechDataCtrl().option.setDefaultOption();
-                hide();
-                show();
-            }
-        };
     }
 }

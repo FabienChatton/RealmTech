@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
+import static ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
+
 public final class Popup {
     private static final GlyphLayout glyphLayout;
 
@@ -24,7 +26,7 @@ public final class Popup {
         label.setWrap(true);
         Dialog popupErreur = new Dialog(erreur, context.getSkin());
         popupErreur.getContentTable().add(label).width(width);
-        popupErreur.button(ButtonsMenu.textButton(context, "ok"));
+        popupErreur.button(new TextButtonMenu(context, "ok"));
         popupErreur.key(Input.Keys.ESCAPE, true);
         popupErreur.setWidth(width);
         popupErreur.setHeight(150 + (message.length()));
@@ -41,9 +43,9 @@ public final class Popup {
         label.setWrap(true);
         Dialog popupConfirmation = new Dialog(confirmation, context.getSkin());
         popupConfirmation.getContentTable().add(label).width(width);
-        TextButton okButton = ButtonsMenu.textButton(context, "oui", new OnClick((event, x, y) -> okRunnable.run()));
+        TextButton okButton = new TextButtonMenu(context, "oui", new OnClick((event, x, y) -> okRunnable.run()));
         popupConfirmation.button(okButton);
-        TextButton nonButton = ButtonsMenu.textButton(context, "non");
+        TextButton nonButton = new TextButtonMenu(context, "non");
         nonButton.setColor(Color.RED);
         popupConfirmation.button(nonButton);
         popupConfirmation.setWidth(width);

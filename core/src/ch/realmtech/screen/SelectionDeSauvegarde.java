@@ -2,7 +2,6 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
-import ch.realmtech.helper.ButtonsMenu;
 import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;
 import com.badlogic.gdx.Input;
@@ -16,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
 
 public class SelectionDeSauvegarde extends AbstractScreen {
     private final static String TAG = SelectionDeSauvegarde.class.getSimpleName();
@@ -41,12 +42,12 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             for (File file : listSauvegarde) {
                 Table fichierTable = new Table(skin);
                 // button lancer la sauvegarde
-                TextButton buttonFichier = ButtonsMenu.textButton(context, file.getName());
+                TextButton buttonFichier = new TextButtonMenu(context, file.getName());
                 buttonFichier.addListener(loadSaveButton(file));
                 fichierTable.add(buttonFichier).expand();
 
                 // button supprimer la sauvegarde
-                TextButton buttonSupprimer = ButtonsMenu.textButton(context, "X", new OnClick((event, x, y) -> Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
+                TextButton buttonSupprimer = new TextButtonMenu(context, "X", new OnClick((event, x, y) -> Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
                     try {
                         supprimerDossier(file);
                     } catch (IOException e) {
@@ -69,7 +70,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         Table nouvelleCarteTable = new Table(skin);
         TextField nouvelleCarteTextField = new TextField("", skin);
         nouvelleCarteTable.add(nouvelleCarteTextField).width(200f).padRight(10f);
-        TextButton nouvelleCarteButton = ButtonsMenu.textButton(context, "générer nouvelle carte", new OnClick((event, x, y) -> {
+        TextButton nouvelleCarteButton = new TextButtonMenu(context, "générer nouvelle carte", new OnClick((event, x, y) -> {
             if (listSauvegarde.stream().map(File::getName).anyMatch(sauvegardeName -> sauvegardeName.equalsIgnoreCase(nouvelleCarteTextField.getText()))) {
                 Popup.popupErreur(context, "Une sauvegarde au même nom existe déjà. Veilliez choisir un autre nom", uiStage);
                 return;
@@ -84,7 +85,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         nouvelleCarteTable.add(nouvelleCarteButton);
         uiTable.add(nouvelleCarteTable).row();
 
-        TextButton backButton = ButtonsMenu.textButton(context, "back", new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
+        TextButtonMenu backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
         uiTable.add(backButton);
         InputEvent defaultClick = new InputEvent();
         defaultClick.setStage(listeDesSauvegardeScrollPane.getStage());

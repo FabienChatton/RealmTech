@@ -1,7 +1,7 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.helper.ButtonsMenu;
+import ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;
 import com.badlogic.gdx.Gdx;
@@ -14,9 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 public class Menu extends AbstractScreen {
     public Menu(RealmTech context) {
         super(context);
-        TextButton selectionnerSauvegarde = ButtonsMenu.textButton(context, "Joueur", new OnClick((event, x, y) -> context.setScreen(ScreenType.SELECTION_DE_SAUVEGARDE)));
-        TextButton option = ButtonsMenu.textButton(context, "options", new OnClick((event, x, y) -> context.setScreen(ScreenType.OPTION)));
-        TextButton quitter = ButtonsMenu.textButton(context, "quitter", new OnClick(
+        TextButton selectionnerSauvegarde = new TextButtonMenu(context, "Joueur", new OnClick((event, x, y) -> context.setScreen(ScreenType.SELECTION_DE_SAUVEGARDE)));
+        TextButton option = new TextButtonMenu(context, "options", new OnClick((event, x, y) -> context.setScreen(ScreenType.OPTION)));
+        TextButton quitter = new TextButtonMenu(context, "quitter", new OnClick(
                 (event, x, y) -> Popup.popupConfirmation(context, "Voulez-vous vraiment quitter ? :(", uiStage, () -> Gdx.app.exit())
         ));
         uiTable.add(creerLogo()).padBottom(10f).row();
