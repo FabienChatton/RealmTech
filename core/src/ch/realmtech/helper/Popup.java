@@ -45,8 +45,8 @@ public final class Popup {
         popupConfirmation.getContentTable().add(label).width(width);
         TextButton okButton = new TextButtonMenu(context, "oui", new OnClick((event, x, y) -> okRunnable.run()));
         popupConfirmation.button(okButton);
-        TextButton nonButton = new TextButtonMenu(context, "non");
-        nonButton.setColor(Color.RED);
+        TextButtonMenu nonButton = new TextButtonMenu(context, "non");
+        nonButton.setDefaultColor(Color.RED);
         popupConfirmation.button(nonButton);
         popupConfirmation.setWidth(width);
         popupConfirmation.setHeight(150 + (message.length()));

@@ -12,6 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class ButtonsMenu {
     public static class TextButtonMenu extends TextButton {
+        private final static Color DEFAULT_COLOR = Color.LIGHT_GRAY;
+        private Color buttonColor = DEFAULT_COLOR;
+
+        public void setDefaultColor(Color color) {
+            buttonColor = color;
+            setColor(color);
+        }
+
         public TextButtonMenu(RealmTech context, String text) {
             super(text, context.getSkin());
             getLabel().addListener(new ClickListener() {
@@ -28,7 +36,6 @@ public class ButtonsMenu {
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                     super.enter(event, x, y, pointer, fromActor);
-                    setColor(Color.GRAY);
                     getLabel().setColor(Color.WHITE);
                 }
             });
@@ -37,15 +44,14 @@ public class ButtonsMenu {
                 @Override
                 public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                     super.exit(event, x, y, pointer, toActor);
-                    setDefaultColor();
+                    applyDefaultColor();
                 }
             });
 
-            setDefaultColor();
+            applyDefaultColor();
         }
 
-        private void setDefaultColor() {
-            setColor(Color.LIGHT_GRAY);
+        private void applyDefaultColor() {
             getLabel().setColor(Color.LIGHT_GRAY);
         }
 

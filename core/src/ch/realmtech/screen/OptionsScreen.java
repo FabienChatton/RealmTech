@@ -36,16 +36,16 @@ public class OptionsScreen extends AbstractScreen {
     public void show() {
         super.show();
 
-        final TextButton backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> {
+        TextButtonMenu backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> {
             context.setScreen(oldScreen);
             InputMapper.reset();
         }));
-        final TextButton resetOptionButton = new TextButtonMenu(context, "reset options", new OnClick((event, x, y) -> {
+        TextButtonMenu resetOptionButton = new TextButtonMenu(context, "reset options", new OnClick((event, x, y) -> {
             context.getRealmTechDataCtrl().option.setDefaultOption();
             hide();
             show();
         }));
-        resetOptionButton.setColor(Color.RED);
+        resetOptionButton.setDefaultColor(Color.RED);
 
         // keyMoveForward
         optionTable.add(new Label("keyMoveForward", skin)).left();
