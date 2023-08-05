@@ -82,6 +82,9 @@ public class OptionsScreen extends AbstractScreen {
         newSlider(optionTable, 0, 300, 5, false, skin, context.getRealmTechDataCtrl().option.fps);
         optionTable.add(new Label("inventoryBlur", skin)).left();
         newBoolean(optionTable, context.getRealmTechDataCtrl().option.inventoryBlur);
+        // sound
+        optionTable.add(new Label("volume sonore", skin)).left();
+        newSlider(optionTable, 0, 100, 5, false, skin, context.getRealmTechDataCtrl().option.sound);
 
         //reset button
         optionTable.add(resetOptionButton).left();

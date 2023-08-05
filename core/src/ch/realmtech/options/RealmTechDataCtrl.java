@@ -53,6 +53,7 @@ public class RealmTechDataCtrl {
         propertiesFile.put("keyDropItem", option.keyDropItem.toString());
         propertiesFile.put("fullScreen", option.fullScreen.toString());
         propertiesFile.put("fps", option.fps.toString());
+        propertiesFile.put("sound", option.sound.toString());
         propertiesFile.put("vsync", option.vsync.toString());
         propertiesFile.put("inventoryBlur", option.inventoryBlur.toString());
         try (OutputStream outputStream = new FileOutputStream(getOptionFile())) {
@@ -78,6 +79,7 @@ public class RealmTechDataCtrl {
         option.keyDropItem.set(Integer.parseInt(propertiesFile.getProperty("keyDropItem")));
         option.fullScreen.set(Boolean.parseBoolean(propertiesFile.getProperty("fullScreen")));
         option.fps.set(Integer.parseInt(propertiesFile.getProperty("fps")));
+        option.sound.set(Integer.parseInt(propertiesFile.getProperty("sound")));
         option.vsync.set(Boolean.parseBoolean(propertiesFile.getProperty("vsync")));
         option.inventoryBlur.set(Boolean.parseBoolean(propertiesFile.getProperty("inventoryBlur")));
         return option;
@@ -112,6 +114,7 @@ public class RealmTechDataCtrl {
         public final IntegerRun fps = new IntegerRun(fps -> Gdx.graphics.setForegroundFPS(fps));
         public final BooleanRun vsync = new BooleanRun(bool -> Gdx.graphics.setVSync(bool));
         public final AtomicBoolean inventoryBlur = new AtomicBoolean();
+        public final AtomicInteger sound = new AtomicInteger();
 
         {
             setDefaultOption();
@@ -130,6 +133,7 @@ public class RealmTechDataCtrl {
             fps.set(60);
             vsync.set(true);
             inventoryBlur.set(true);
+            sound.set(100);
         }
     }
     public static void creerHiearchieRealmTechData() throws IOException {

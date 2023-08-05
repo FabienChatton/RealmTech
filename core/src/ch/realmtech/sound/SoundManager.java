@@ -24,7 +24,6 @@ public class SoundManager {
     public final static String CLICK_OVER = "sound/effects/menu/menu1.wav";
     public final static String BLIP = "sound/effects/menu/blip1.wav";
     public final static String DENY = "sound/effects/menu/launch_deny1.wav";
-    public float soundVolume = 1f;
     private HashMap<String, Long> soundLoop;
     private AssetManager assetManager;
 
@@ -38,7 +37,11 @@ public class SoundManager {
     }
 
     public void playOpenInventory() {
-        assetManager.get(OPEN_INVENTORY, Sound.class).play(soundVolume - 0.5f);
+        assetManager.get(OPEN_INVENTORY, Sound.class).play(getSoundPourCent() - 0.5f);
+    }
+
+    private float getSoundPourCent() {
+        return context.getRealmTechDataCtrl().option.sound.get() / 100f;
     }
 
     public static void initAsset(AssetManager assetManager) {
@@ -60,35 +63,33 @@ public class SoundManager {
     public void playFootStep(String playerWalkSound, float volume) {
         if (System.currentTimeMillis() - soundLoop.get("footStep") >= 300) {
             soundLoop.put("footStep", System.currentTimeMillis());
-            context.getAssetManager().get(playerWalkSound, Sound.class).play(soundVolume * volume);
+            context.getAssetManager().get(playerWalkSound, Sound.class).play(getSoundPourCent() * volume);
         }
     }
 
     public void playItemPickUp() {
-        assetManager.get(ITEM_PICK_UP, Sound.class).play(soundVolume);
+        assetManager.get(ITEM_PICK_UP, Sound.class).play(getSoundPourCent());
     }
 
     public void playItemDrop() {
-        assetManager.get(ITEM_DROP, Sound.class).play(soundVolume);
+        assetManager.get(ITEM_DROP, Sound.class).play(getSoundPourCent());
     }
 
     public void playClickMenu() {
-        assetManager.get(CLICK_CLICK, Sound.class).play();
+        assetManager.get(CLICK_CLICK, Sound.class).play(getSoundPourCent());
     }
 
     public void playBlip() {
-        assetManager.get(BLIP, Sound.class).play();
+        assetManager.get(BLIP, Sound.class).play(getSoundPourCent());
     }
 
     public void playDeny() {
-        assetManager.get(DENY, Sound.class).play();
+        assetManager.get(DENY, Sound.class).play(getSoundPourCent());
     }
 
     public void playClickOverMenu() {
-        if (System.currentTimeMillis() - soundLoop.get("clickOver") >= 0) {
-            soundLoop.put("clickOver", System.currentTimeMillis());
-            assetManager.get(CLICK_OVER, Sound.class).play();
-        }
+        soundLoop.put("clickOver", System.currentTimeMillis());
+        assetManager.get(CLICK_OVER, Sound.class).play(getSoundPourCent());
     }
 
     public boolean playCellBreak() {
@@ -96,8 +97,8 @@ public class SoundManager {
             soundLoop.put("cellBreak", System.currentTimeMillis());
             int random = MathUtils.random(0, 1);
             switch (random) {
-                case 0 -> assetManager.get(CELL_BREAK1, Sound.class).play(1);
-                case 1 -> assetManager.get(CELL_BREAK2, Sound.class).play(1);
+                case 0 -> assetManager.get(CELL_BREAK1, Sound.class).play(getSoundPourCent());
+                case 1 -> assetManager.get(CELL_BREAK2, Sound.class).play(getSoundPourCent());
             }
             return true;
         } else {
