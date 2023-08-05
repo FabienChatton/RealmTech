@@ -2,12 +2,16 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.SaveInfManager;
+import ch.realmtech.helper.ButtonsMenu.ScrollPaneMenu;
 import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.io.File;
@@ -21,7 +25,7 @@ import static ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
 public class SelectionDeSauvegarde extends AbstractScreen {
     private final static String TAG = SelectionDeSauvegarde.class.getSimpleName();
     private Table listeDesSauvegarde;
-    private ScrollPane listeDesSauvegardeScrollPane;
+    private ScrollPaneMenu listeDesSauvegardeScrollPane;
     private List<File> listSauvegarde;
 
     public SelectionDeSauvegarde(RealmTech context) {
@@ -63,9 +67,9 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         } catch (IOException e) {
             Popup.popupErreur(context, e.getMessage(), uiStage);
         }
-        listeDesSauvegardeScrollPane = new ScrollPane(listeDesSauvegarde);
-        uiTable.add(listeDesSauvegardeScrollPane).expand().top();
-        uiTable.row();
+        listeDesSauvegardeScrollPane = new ScrollPaneMenu(context, listeDesSauvegarde);
+        uiTable.add(listeDesSauvegardeScrollPane).expand().top().row();
+        listeDesSauvegardeScrollPane.focus();
 
         Table nouvelleCarteTable = new Table(skin);
         TextField nouvelleCarteTextField = new TextField("", skin);

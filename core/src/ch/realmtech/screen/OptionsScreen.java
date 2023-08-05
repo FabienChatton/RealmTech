@@ -1,6 +1,7 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.helper.ButtonsMenu.ScrollPaneMenu;
 import ch.realmtech.helper.ButtonsMenu.SliderMenu;
 import ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.helper.OnClick;
@@ -14,7 +15,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -90,15 +94,9 @@ public class OptionsScreen extends AbstractScreen {
         optionTable.add(resetOptionButton).left();
         optionTable.add(backButton).right();
 
-        ScrollPane scrollPane = new ScrollPane(optionTable, skin);
+        ScrollPaneMenu scrollPane = new ScrollPaneMenu(context, optionTable);
         uiTable.add(scrollPane).expand().fill().center();
-        InputEvent defaultClick = new InputEvent();
-        defaultClick.setStage(scrollPane.getStage());
-        defaultClick.setStageX(scrollPane.getMaxX());
-        defaultClick.setStageY(scrollPane.getMaxY());
-        defaultClick.setType(InputEvent.Type.touchDown);
-        defaultClick.setButton(Input.Buttons.LEFT);
-        scrollPane.fire(defaultClick);
+        scrollPane.focus();
     }
 
     @Override

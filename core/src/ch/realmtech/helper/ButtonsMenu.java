@@ -1,10 +1,12 @@
 package ch.realmtech.helper;
 
 import ch.realmtech.RealmTech;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -93,6 +95,42 @@ public class ButtonsMenu {
             addListener(new OnClick((event, x, y) -> {
                 context.getSoundManager().playClickMenu();
             }));
+        }
+    }
+
+    public static class ScrollPaneMenu extends ScrollPane {
+        private final RealmTech context;
+
+        public ScrollPaneMenu(RealmTech context, Actor widget) {
+            super(widget, context.getSkin());
+            this.context = context;
+            setScrollBarTouch(false);
+        }
+
+        public void focus() {
+            defaultClick();
+            defaultScroll();
+        }
+
+        private void defaultClick() {
+            InputEvent defaultClick = new InputEvent();
+            defaultClick.setStage(getStage());
+            defaultClick.setStageX(getMaxX());
+            defaultClick.setStageY(getMaxY());
+            defaultClick.setType(InputEvent.Type.touchDown);
+            defaultClick.setButton(Input.Buttons.LEFT);
+            fire(defaultClick);
+        }
+
+
+        private void defaultScroll() {
+            InputEvent defaultScroll = new InputEvent();
+            defaultScroll.setStage(getStage());
+            defaultScroll.setStageX(getMaxX());
+            defaultScroll.setStageY(getMaxY());
+            defaultScroll.setType(InputEvent.Type.scrolled);
+            defaultScroll.setScrollAmountY(0);
+            fire(defaultScroll);
         }
     }
 }
