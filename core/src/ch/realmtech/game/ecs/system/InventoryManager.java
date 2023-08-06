@@ -177,6 +177,6 @@ public class InventoryManager extends Manager {
         if (dst[0] == 0) return true;
         ItemComponent itemComponentSrc = mItem.get(src[0]);
         ItemComponent itemComponentDst = mItem.get(dst[0]);
-        return itemComponentSrc.itemRegisterEntry == itemComponentDst.itemRegisterEntry;
+        return dst.length - tailleStack(dst) >= tailleStack(src) && itemComponentSrc.itemRegisterEntry == itemComponentDst.itemRegisterEntry;
     }
 }
