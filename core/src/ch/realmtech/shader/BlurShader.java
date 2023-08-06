@@ -5,14 +5,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Disposable;
 
-public class BlurShader implements Disposable {
+public class BlurShader extends Shaders implements Disposable {
     public static final int FBO_SIZE = 1024;
     public static final float MAX_BLUR = 2f;
-    public ShaderProgram shaderProgram;
-
-    static {
-        ShaderProgram.pedantic = false;
-    }
 
     public BlurShader() {
         FileHandle vert = Gdx.files.local("shader/vertex.glsl");
@@ -24,8 +19,4 @@ public class BlurShader implements Disposable {
         shaderProgram.setUniformf("radius", 1f);
     }
 
-    @Override
-    public void dispose() {
-        shaderProgram.dispose();
-    }
 }

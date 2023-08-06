@@ -9,6 +9,8 @@ import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.shader.BlurShader;
+import ch.realmtech.shader.GrayShader;
+import ch.realmtech.shader.Shaders;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -39,13 +41,15 @@ public class PlayerInventorySystem extends BaseSystem {
     private RealmTech context;
     private Skin skin;
     private ClickAndDrop2 clickAndDrop2;
-    private BlurShader blurShader;
+    private Shaders blurShader;
+    private Shaders grayShader;
 
     @Override
     protected void processSystem() {
         inventoryStage.act();
         inventoryStage.draw();
     }
+
     /*
     inventoryStage
     inventoryWindow
@@ -76,6 +80,7 @@ public class PlayerInventorySystem extends BaseSystem {
         setEnabled(false);
         this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world);
         blurShader = new BlurShader();
+        grayShader = new GrayShader();
     }
 
     public boolean closePlayerInventory() {
@@ -97,7 +102,7 @@ public class PlayerInventorySystem extends BaseSystem {
             currentInventoryArgs = displayInventoryArgs;
             refreshInventory(currentInventoryArgs);
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
-                context.getGameStage().getBatch().setShader(blurShader.shaderProgram);
+                context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
             }
             context.getSoundManager().playOpenInventory();
             return true;
