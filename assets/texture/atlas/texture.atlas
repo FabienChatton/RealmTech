@@ -13,6 +13,8 @@ grass-01
 	bounds: 474, 125, 32, 32
 inventory-01
 	bounds: 236, 125, 32, 32
+inventory-02
+	bounds: 154, 91, 32, 32
 logo-RealmTech
 	bounds: 0, 159, 496, 92
 pelle-bois-01
@@ -30,29 +32,29 @@ plank-cell-01
 reimu
 	bounds: 0, 93, 64, 64
 reimu-back-0
-	bounds: 214, 99, 18, 24
+	bounds: 248, 99, 18, 24
 reimu-back-1
-	bounds: 194, 99, 18, 24
+	bounds: 228, 99, 18, 24
 reimu-back-2
-	bounds: 174, 99, 18, 24
+	bounds: 208, 99, 18, 24
 reimu-front-0
 	bounds: 0, 0, 18, 25
 reimu-front-1
 	bounds: 66, 98, 18, 25
 reimu-front-2
-	bounds: 154, 98, 18, 25
+	bounds: 188, 98, 18, 25
 reimu-left-0
 	bounds: 68, 73, 16, 23
 reimu-left-1
 	bounds: 86, 67, 17, 22
 reimu-left-2
-	bounds: 253, 101, 17, 22
+	bounds: 287, 101, 17, 22
 reimu-right-0
 	bounds: 68, 48, 16, 23
 reimu-right-1
-	bounds: 234, 101, 17, 22
+	bounds: 268, 101, 17, 22
 reimu-right-2
-	bounds: 272, 101, 17, 22
+	bounds: 306, 101, 17, 22
 sand-01
 	bounds: 34, 25, 32, 32
 sandales-01

@@ -54,9 +54,9 @@ public class ItemBarManager extends BaseSystem {
                 selectedSlot.setScale(1.2f);
                 selectedSlot.moveBy(-2, -2);
                 stackImage.addActor(selectedSlot);
-                itemBar.add(stackImage).size(35).padLeft(1f);
+                itemBar.add(stackImage).size(35);
             } else {
-                itemBar.add(stackImage).padLeft(1f);
+                itemBar.add(stackImage);
             }
         }
     }

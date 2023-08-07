@@ -154,7 +154,7 @@ public final class ECSEngine {
 
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, "water-01");
+        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         try {
             inventoryComponent.inventory = world.getSystem(SaveInfManager.class).getPlayerSaveInventory(getMapId());
         } catch (FileNotFoundException ignored) {
@@ -196,8 +196,8 @@ public final class ECSEngine {
         int defaultCraftingTable = world.create();
         int defaultResultInventory = world.create();
         world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory);
-        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, "water-01");
-        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, "water-01");
+        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
         return playerId;
     }

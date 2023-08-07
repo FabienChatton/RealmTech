@@ -16,6 +16,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -81,6 +82,7 @@ public class PlayerInventorySystem extends BaseSystem {
         this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world);
         blurShader = new BlurShader();
         grayShader = new GrayShader();
+        inventoryWindow.setColor(Color.WHITE);
     }
 
     public boolean closePlayerInventory() {
@@ -196,9 +198,9 @@ public class PlayerInventorySystem extends BaseSystem {
         Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryComponent(), inventoryStage, displayInventoryArgs.clickAndDropSrc(), displayInventoryArgs.clickAndDropDst());
         for (int i = 0; i < tableImages.size; i++) {
             if (i % displayInventoryArgs.inventoryComponent().numberOfSlotParRow == 0) {
-                displayInventoryArgs.inventoryTable().row().padBottom(2f);
+                displayInventoryArgs.inventoryTable().row();
             }
-            displayInventoryArgs.inventoryTable().add(tableImages.get(i)).padLeft(2f);
+            displayInventoryArgs.inventoryTable().add(tableImages.get(i));
         }
     }
 
