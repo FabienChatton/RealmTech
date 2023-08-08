@@ -71,8 +71,8 @@ public class PlayerInventorySystem extends BaseSystem {
         this.inventoryCraftingTable = new Table(context.getSkin());
         this.inventoryCraftResultTable = new Table(context.getSkin());
         this.inventoryPlayerTable = new Table(context.getSkin());
-        inventoryWindow.add(inventoryCraftingTable).right();
-        inventoryWindow.add(inventoryCraftResultTable).row();
+        inventoryWindow.add(inventoryCraftingTable).padBottom(10f).right();
+        inventoryWindow.add(inventoryCraftResultTable).padBottom(10f).row();
         inventoryWindow.add(inventoryPlayerTable);
         float with = inventoryStage.getWidth() * 0.5f;
         float height = inventoryStage.getHeight() * 0.5f;
