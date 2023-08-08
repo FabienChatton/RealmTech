@@ -44,7 +44,7 @@ public class PerlinNoise {
 
         if (groundCellRegisterEntry != RealmTechCoreMod.WATER_CELL) {
             if (copperNoise > 0.998f) {
-                groundDecoCellRegisterEntry = RealmTechCoreMod.COPPER_ORE;
+                groundDecoCellRegisterEntry = RealmTechCoreMod.COPPER.cellRegisterEntry();
             }
             float treeNoise = perlinNoise.getNoise(x, y, OCTAVE, ROUGHNESS, SCALE, perlinNoise.simplexNoiseTree);
             if (treeNoise > 0.5f) {

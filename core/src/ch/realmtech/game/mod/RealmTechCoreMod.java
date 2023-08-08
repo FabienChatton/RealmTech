@@ -49,12 +49,6 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
                     .build()
     ));
-    public final static CellRegisterEntry COPPER_ORE = registerCell("copper", new CellRegisterEntry(
-            "copper-ore-02",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.sandales")
-                    .build()
-    ));
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
             "tree-02",
             new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
@@ -156,6 +150,16 @@ public class RealmTechCoreMod extends ModInitializerManager {
             new ItemBehavior.Builder()
                     .placeCell("realmtech.chest")
                     .build()
+    ));
+
+    public final static CellItemRegisterEntry COPPER = registerCellItem("copper", new CellRegisterEntry(
+            "copper-ore-03",
+            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, "realmtech.copper")
+                    .build()
+    ), new ItemRegisterEntry(
+            "copper-ore-03",
+            new ItemBehavior.Builder().build()
     ));
     //</editor-fold>
 
