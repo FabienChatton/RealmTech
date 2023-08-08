@@ -10,4 +10,9 @@ public class PositionComponent extends Component {
         this.x = worldX;
         this.y = worldY;
     }
+
+    public void set(Box2dComponent box2dComponent, float worldX, float worldY) {
+        set(worldX, worldY);
+        box2dComponent.body.setTransform(worldX + box2dComponent.widthWorld / 2, worldY + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
+    }
 }

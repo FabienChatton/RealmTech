@@ -109,10 +109,9 @@ public final class ECSEngine {
     }
 
     /**
-     *
      * @return l'id du player
      */
-    public int createPlayer() {
+    public int createPlayer(InfMetaDonneesComponent metaDonneesComponent) {
         final int playerWorldWith = 1;
         final int playerWorldHigh = 1;
         if (world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
@@ -151,6 +150,7 @@ public final class ECSEngine {
 
         // position component
         PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
+        positionComponent.set(box2dComponent, metaDonneesComponent.playerPositionX, metaDonneesComponent.playerPositionY);
 
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
@@ -268,7 +268,7 @@ public final class ECSEngine {
 
     public void mapRequirementBeforeShow(int mapId) {
         world.getSystem(TagManager.class).register("infMap", mapId);
-        createPlayer();
+        createPlayer(world.getMapper(InfMapComponent.class).get(mapId).getMetaDonnesComponent(world));
     }
 
     public void saveInfMap() throws IOException {

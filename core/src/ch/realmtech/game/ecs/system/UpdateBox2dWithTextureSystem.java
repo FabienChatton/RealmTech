@@ -13,8 +13,8 @@ public class UpdateBox2dWithTextureSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        Box2dComponent box2dComponent = mbox2d.create(entityId);
-        PositionComponent positionComponent = mPosition.create(entityId);
+        Box2dComponent box2dComponent = mbox2d.get(entityId);
+        PositionComponent positionComponent = mPosition.get(entityId);
         positionComponent.x = box2dComponent.body.getWorldCenter().x - box2dComponent.widthWorld / 2;
         positionComponent.y = box2dComponent.body.getWorldCenter().y - box2dComponent.heightWorld / 2;
     }

@@ -7,6 +7,7 @@ import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.options.RealmTechDataCtrl;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 
@@ -27,6 +28,7 @@ public class SaveInfManager extends Manager {
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<PositionComponent> mPosition;
 
     public void saveInfMap(int mapId) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
@@ -67,6 +69,7 @@ public class SaveInfManager extends Manager {
 
     public void saveInfHeaderFile(int infMetaDonneesId, Path rootSaveDirPath) throws IOException {
         InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
+        PositionComponent positionComponentPlayer = world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG).getComponent(PositionComponent.class);
         File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath);
         metaDonneesFile.createNewFile();
 
@@ -77,8 +80,8 @@ public class SaveInfManager extends Manager {
             outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
             outputStream.writeLong(System.currentTimeMillis());
             outputStream.writeLong(infMetaDonneesComponent.seed);
-            outputStream.writeFloat(infMetaDonneesComponent.playerPositionX);
-            outputStream.writeFloat(infMetaDonneesComponent.playerPositionY);
+            outputStream.writeFloat(positionComponentPlayer.x);
+            outputStream.writeFloat(positionComponentPlayer.y);
             outputStream.flush();
         }
     }
