@@ -18,7 +18,10 @@ import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -37,6 +40,8 @@ public class PlayerInventorySystem extends BaseSystem {
     private Table inventoryPlayerTable;
     private Table inventoryCraftingTable;
     private Table inventoryCraftResultTable;
+    private Window overWindow;
+    private Label overLabel;
     private DisplayInventoryArgs[] currentInventoryArgs;
     @Wire(name = "context")
     private RealmTech context;
@@ -47,6 +52,28 @@ public class PlayerInventorySystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        if (!context.getUiStage().getActors().contains(overLabel, true)) {
+            context.getUiStage().addActor(overWindow);
+        }
+        Vector2 screenMouseOver = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        inventoryStage.screenToStageCoordinates(screenMouseOver);
+        boolean trouve = false;
+        for (ClickAndDropActor actor : clickAndDrop2.getActors()) {
+            Rectangle actorRectangle = new Rectangle(actor.getX(), actor.getY(), actor.getWidth(), actor.getHeight());
+            if (actorRectangle.contains(screenMouseOver)) {
+                trouve = true;
+                ItemComponent itemComponent = mItem.get(actor.getStack()[0]);
+                if (itemComponent != null) {
+                    overWindow.getTitleLabel().setText(itemComponent.itemRegisterEntry.toString());
+                    overWindow.setBounds(actor.getX() + actor.getWidth() / 2, actor.getY() + actor.getWidth() + 10, 300, overWindow.getTitleLabel().getHeight());
+                } else {
+                    overWindow.remove();
+                }
+            }
+        }
+        if (!trouve) {
+            overWindow.remove();
+        }
         inventoryStage.act();
         inventoryStage.draw();
     }
@@ -83,6 +110,12 @@ public class PlayerInventorySystem extends BaseSystem {
         blurShader = new BlurShader();
         grayShader = new GrayShader();
         inventoryWindow.setColor(Color.WHITE);
+        overWindow = new Window("", skin);
+        overWindow.setTouchable(Touchable.disabled);
+        overLabel = new Label(null, skin);
+        overWindow.add(overLabel);
+        overLabel.setFontScale(0.5f);
+        overWindow.setColor(Color.LIGHT_GRAY);
     }
 
     public boolean closePlayerInventory() {
@@ -91,6 +124,7 @@ public class PlayerInventorySystem extends BaseSystem {
             Gdx.input.setInputProcessor(context.getInputManager());
             context.getGameStage().getBatch().setShader(null);
             context.getSoundManager().playOpenInventory();
+            overWindow.remove();
             return true;
         } else {
             return false;

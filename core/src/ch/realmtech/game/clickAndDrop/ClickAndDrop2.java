@@ -116,4 +116,8 @@ public class ClickAndDrop2 {
         actors.clear();
         destinations.clear();
     }
+
+    public Array<ClickAndDropActor> getActors() {
+        return actors;
+    }
 }
