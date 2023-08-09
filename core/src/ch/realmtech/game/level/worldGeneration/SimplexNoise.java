@@ -139,7 +139,7 @@ public class SimplexNoise {  // Simplex noise in 2D
       this.w = w;
     }
   }
-  public void setRand(Random rand) {
+  public SimplexNoise setRand(Random rand) {
     this.rand = rand;
 
 
@@ -151,6 +151,7 @@ public class SimplexNoise {  // Simplex noise in 2D
       perm[i] = p[i & 255];
       permMod12[i] = (short) (perm[i] % 12);
     }
+    return this;
   }
 
 }

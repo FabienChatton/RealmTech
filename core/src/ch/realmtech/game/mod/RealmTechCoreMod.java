@@ -161,6 +161,45 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "copper-ore-03",
             new ItemBehavior.Builder().build()
     ));
+
+    public final static CellItemRegisterEntry STONE = registerCellItem("stone", new CellRegisterEntry(
+            "stone-ore-01",
+            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, "realmtech.stone")
+                    .build()
+    ), new ItemRegisterEntry(
+            "stone-ore-01",
+            new ItemBehavior.Builder().build()
+    ));
+
+    public final static CellItemRegisterEntry IRON = registerCellItem("iron", new CellRegisterEntry(
+            "iron-ore-01",
+            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, "realmtech.iron")
+                    .build()
+    ), new ItemRegisterEntry(
+            "iron-ore-01",
+            new ItemBehavior.Builder().build()
+    ));
+
+    public final static CellItemRegisterEntry COAL = registerCellItem("coal", new CellRegisterEntry(
+            "coal-ore-01",
+            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, "realmtech.coal")
+                    .build()
+    ), new ItemRegisterEntry(
+            "coal-ore-01",
+            new ItemBehavior.Builder().build()
+    ));
+    public final static CellItemRegisterEntry GOLD = registerCellItem("gold", new CellRegisterEntry(
+            "gold-ore-01",
+            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, "realmtech.gold")
+                    .build()
+    ), new ItemRegisterEntry(
+            "gold-ore-01",
+            new ItemBehavior.Builder().build()
+    ));
     //</editor-fold>
 
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
