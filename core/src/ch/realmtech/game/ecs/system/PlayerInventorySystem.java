@@ -6,7 +6,10 @@ import ch.realmtech.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.craft.DisplayInventoryArgs;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
+import ch.realmtech.game.registery.ItemRegisterEntry;
+import ch.realmtech.game.registery.RegistryEntry;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.shader.BlurShader;
 import ch.realmtech.shader.GrayShader;
@@ -64,8 +67,12 @@ public class PlayerInventorySystem extends BaseSystem {
                 trouve = true;
                 ItemComponent itemComponent = mItem.get(actor.getStack()[0]);
                 if (itemComponent != null) {
-                    overWindow.getTitleLabel().setText(itemComponent.itemRegisterEntry.toString());
-                    overWindow.setBounds(actor.getX() + actor.getWidth() / 2, actor.getY() + actor.getWidth() + 10, 300, overWindow.getTitleLabel().getHeight());
+                    RegistryEntry<ItemRegisterEntry> registryEntry = itemComponent.itemRegisterEntry.findRegistryEntry(RealmTechCoreMod.ITEMS)
+                            .or(() -> RealmTechCoreMod.NO_ITEM.findRegistryEntry(RealmTechCoreMod.ITEMS))
+                            .orElseThrow();
+                    overWindow.getTitleLabel().setText(registryEntry.getName());
+                    overWindow.setBounds(screenMouseOver.x + 16, screenMouseOver.y - actor.getHeight(), 300, 70);
+                    overLabel.setText(registryEntry.getID() + "\n" + registryEntry.getHashID());
                 } else {
                     overWindow.remove();
                 }
@@ -113,9 +120,9 @@ public class PlayerInventorySystem extends BaseSystem {
         overWindow = new Window("", skin);
         overWindow.setTouchable(Touchable.disabled);
         overLabel = new Label(null, skin);
-        overWindow.add(overLabel);
+        overWindow.add(overLabel).expand().left();
         overLabel.setFontScale(0.5f);
-        overWindow.setColor(Color.LIGHT_GRAY);
+        overWindow.setColor(new Color(1, 1, 1, 0.8f));
     }
 
     public boolean closePlayerInventory() {

@@ -201,7 +201,6 @@ public class RealmTechCoreMod extends ModInitializerManager {
             new ItemBehavior.Builder().build()
     ));
     //</editor-fold>
-
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
         return CELLS.add(name, cellRegisterEntry);
     }

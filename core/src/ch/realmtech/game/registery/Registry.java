@@ -47,6 +47,14 @@ public class Registry<T extends Entry> {
         return enfants.stream().map(Registry::getID).collect(Collectors.toList());
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getHashID() {
+        return CellRegisterEntry.hashString(getID());
+    }
+
     @Override
     public String toString() {
         return "name: " + name + " " +
