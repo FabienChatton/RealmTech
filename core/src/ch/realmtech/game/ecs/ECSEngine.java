@@ -61,6 +61,7 @@ public final class ECSEngine {
                 .with(new UpdateBox2dWithTextureSystem())
                 .with(new CameraFollowPlayerSystem())
                 .with(new MapRendererSystem())
+                .with(new CellHoverSystem())
                 .with(new TextureRenderer())
 
                 // ui

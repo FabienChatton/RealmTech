@@ -17,7 +17,6 @@ import com.badlogic.gdx.math.Vector3;
 public class CellBeingMineSystem extends IteratingSystem {
     private final static float TIME_LAPS = 1 / 20f;
     private long lastTime;
-    private long time;
     @Wire(name = "context")
     RealmTech context;
 
@@ -26,7 +25,7 @@ public class CellBeingMineSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        time = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         if (lastTime + time < TIME_LAPS + System.currentTimeMillis()) {
             return;
         }
