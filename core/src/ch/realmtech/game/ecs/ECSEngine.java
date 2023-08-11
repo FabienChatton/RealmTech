@@ -55,6 +55,7 @@ public final class ECSEngine {
                 .with(new PlayerMouvementSystem())
                 .with(new PhysiqueWorldStepSystem())
                 .with(new Box2dFrotementSystem())
+                .with(new CellBeingMineSystem())
                 // render
                 .with(new PlayerTextureAnimated())
                 .with(new UpdateBox2dWithTextureSystem())
@@ -280,13 +281,18 @@ public final class ECSEngine {
         return world.getSystem(TagManager.class).getEntityId("infMap");
     }
 
+    public Entity getMapEntity() {
+        return world.getSystem(TagManager.class).getEntity("infMap");
+    }
+
 
     /**
      * Donne l'id de la cellule via ses cordonnées dans le monde.
+     *
      * @return l'id de la cellule ou -1 si pas trouvé.
      */
     public int getCell(float worldPosX, float worldPosY, byte layer) {
-        return world.getSystem(MapSystem.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks ,(int) worldPosX, (int) worldPosY, layer);
+        return world.getSystem(MapSystem.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks, (int) worldPosX, (int) worldPosY, layer);
     }
 
     public void playFootStep(PlayerFootStepSound footStep) {
