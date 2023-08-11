@@ -30,6 +30,7 @@ public class CellBeingMineSystem extends IteratingSystem {
         if (lastTime + time < TIME_LAPS + System.currentTimeMillis()) {
             return;
         }
+        context.getSoundManager().playBreakingCell();
         lastTime = time;
         if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             remove(entityId);

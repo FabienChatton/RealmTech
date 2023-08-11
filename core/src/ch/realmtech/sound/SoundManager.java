@@ -24,6 +24,7 @@ public class SoundManager {
     public final static String CLICK_OVER = "sound/effects/menu/menu1.wav";
     public final static String BLIP = "sound/effects/menu/blip1.wav";
     public final static String DENY = "sound/effects/menu/launch_deny1.wav";
+    public final static String BREAKING_CELL = "sound/effects/level/break/bfh1_breaking_02.ogg";
     private HashMap<String, Long> soundLoop;
     private AssetManager assetManager;
 
@@ -34,6 +35,7 @@ public class SoundManager {
         soundLoop.put("footStep", System.currentTimeMillis());
         soundLoop.put("cellBreak", System.currentTimeMillis());
         soundLoop.put("clickOver", System.currentTimeMillis());
+        soundLoop.put("breakingCell", System.currentTimeMillis());
     }
 
     public void playOpenInventory() {
@@ -58,6 +60,7 @@ public class SoundManager {
         assetManager.load(CLICK_OVER, Sound.class);
         assetManager.load(BLIP, Sound.class);
         assetManager.load(DENY, Sound.class);
+        assetManager.load(BREAKING_CELL, Sound.class);
     }
 
     public void playFootStep(String playerWalkSound, float volume) {
@@ -103,6 +106,13 @@ public class SoundManager {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void playBreakingCell() {
+        if (System.currentTimeMillis() - soundLoop.get("breakingCell") >= 100) {
+            soundLoop.put("breakingCell", System.currentTimeMillis());
+            assetManager.get(BREAKING_CELL, Sound.class).play(getSoundPourCent() * 0.1f);
         }
     }
 }

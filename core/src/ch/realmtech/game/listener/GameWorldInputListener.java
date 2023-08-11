@@ -31,7 +31,6 @@ public class GameWorldInputListener implements Subcriber<InputMapper.PointerMapp
                         byte innerChunkY = MapSystem.getInnerChunk(gameCoordinate.y);
                         int topCellId = context.getSystem(MapSystem.class).getTopCell(chunk, innerChunkX, innerChunkY);
                         context.getEcsEngine().getWorld().getMapper(CellBeingMineComponent.class).create(topCellId).set(0, 20);
-                        //context.getSystem(MapSystem.class).breakTopCell(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y);
                     }
                     if (pointerMapper.button == InputMapper.rightClick.button) {
                         context.getSystem(MapSystem.class).interagieClickDroit(context.getEcsEngine().getPlayerId(), pointerMapper.button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y, context.getSystem(ItemBarManager.class).getSelectItem());
