@@ -48,6 +48,7 @@ public final class ECSEngine {
                 .with(new SaveInfManager())
 
                 // system
+                .with(new PlayerInputSystem())
                 .with(new MapSystem())
                 .with(new CraftingPlayerSystem())
                 .with(new ItemBeingPickAnimationSystem())

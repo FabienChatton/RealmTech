@@ -18,10 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @All(InfMapComponent.class)
 public class MapSystem extends DelayedIteratingSystem {
@@ -37,6 +34,7 @@ public class MapSystem extends DelayedIteratingSystem {
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
+    private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
     private int[] ancienneChunkPos = null;
     private final static float INITALE_DELAY = 0.005f;
     private float delay = INITALE_DELAY;
@@ -294,6 +292,18 @@ public class MapSystem extends DelayedIteratingSystem {
         return ret;
     }
 
+    public int findChunk(int[] chunks, int cellId) {
+        for (int chunk : chunks) {
+            InfChunkComponent infChunkComponent = mChunk.get(chunk);
+            for (int cell : infChunkComponent.infCellsId) {
+                if (cell == cellId) {
+                    return chunk;
+                }
+            }
+        }
+        throw new NoSuchElementException("Le chunk qui correspond à la cellule n'a pas été trouvé");
+    }
+
     public int getCell(int chunk, byte innerX, byte innerY, byte layer) {
         int ret = -1;
         int[] cells = mChunk.get(chunk).infCellsId;
@@ -392,18 +402,13 @@ public class MapSystem extends DelayedIteratingSystem {
         return ret;
     }
 
-    public void breakTopCell(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY) {
-        final byte innerX = getInnerChunk(gameCoordinateX);
-        final byte innerY = getInnerChunk(gameCoordinateY);
-        final int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
-        final int topCellId = getTopCell(chunk, innerX, innerY);
-        if (topCellId != -1) {
-            final InfCellComponent infCellComponent = mCell.get(topCellId);
-            final BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
-            if (breakCellEvent != null) {
-                if (breakCellEvent.breakCell(world, chunk, topCellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId))) {
-                    context.getSoundManager().playCellBreak();
-                }
+
+    public void breakCell(int chunk, int cellId, int playerId) {
+        InfCellComponent infCellComponent = mCell.get(cellId);
+        BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+        if (breakCellEvent != null) {
+            if (breakCellEvent.breakCell(world, chunk, cellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId))) {
+                context.getSoundManager().playCellBreak();
             }
         }
     }
@@ -441,6 +446,15 @@ public class MapSystem extends DelayedIteratingSystem {
                 context.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());
             }
         }
+    }
+
+    public boolean addCellBeingMine(int cellId, int step) {
+        boolean ret = false;
+        if (!mCellBeingMine.has(cellId)) {
+            mCellBeingMine.create(cellId).set(0, step);
+            ret = true;
+        }
+        return ret;
     }
 
     public static Vector3 getGameCoordinate(RealmTech context, Vector2 screenCoordinate) {

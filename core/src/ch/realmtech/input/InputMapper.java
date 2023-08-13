@@ -2,7 +2,6 @@ package ch.realmtech.input;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.listener.GameCameraListener;
-import ch.realmtech.game.listener.GameWorldInputListener;
 import ch.realmtech.observer.Observer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,7 +21,6 @@ public final class InputMapper implements InputProcessor {
     public static PointerMapper rightClick;
     private final Array<KeysMapper> keysMappers;
     private final Array<PointerMapper> pointerMappers;
-    public final Observer<PointerMapper> pointerSignal;
     private final Observer<float[]> scrollSignal;
     public final Observer<Integer> keysSignal;
     public final Observer<int[]> mouseMove;
@@ -53,9 +51,6 @@ public final class InputMapper implements InputProcessor {
         pointerMappers.add(leftClick);
         pointerMappers.add(rightClick);
 
-        // signal pointer
-        pointerSignal = new Observer<>();
-        pointerSignal.add(new GameWorldInputListener(context));
 
         // scroll signal
         scrollSignal = new Observer<>();
@@ -125,7 +120,6 @@ public final class InputMapper implements InputProcessor {
                 pointerMapper.isPressed = true;
                 pointerMapper.lastTouchedScreenX = screenX;
                 pointerMapper.lastTouchedScreenY = screenY;
-                pointerSignal.notifySubscribers(pointerMapper);
                 return true;
             }
         }
@@ -139,7 +133,6 @@ public final class InputMapper implements InputProcessor {
                 pointerMapper.isPressed = false;
                 pointerMapper.lastReleaseScreenX = screenX;
                 pointerMapper.lastReleaseScreenY = screenY;
-                pointerSignal.notifySubscribers(pointerMapper);
                 return true;
             }
         }

@@ -32,21 +32,19 @@ public class CellHoverSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        try {
-            Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            int chunk = MapSystem.getChunk(context, screenCoordinate);
-            int cell = MapSystem.getTopCell(context, chunk, screenCoordinate);
-            InfChunkComponent infChunkComponent = mChunk.get(chunk);
-            InfCellComponent infCellComponent = mCell.get(cell);
-            TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
-            context.getGameStage().getBatch().draw(region,
-                    MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX),
-                    MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY),
-                    RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
-                    RealmTech.PPM * RealmTech.UNITE_SCALE / 2
-            );
-        } catch (Exception e) {
-            Gdx.app.log(TAG, e.getMessage());
-        }
+        Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        int chunk = MapSystem.getChunk(context, screenCoordinate);
+        if (chunk == -1) return;
+        int cell = MapSystem.getTopCell(context, chunk, screenCoordinate);
+        if (cell == -1) return;
+        InfChunkComponent infChunkComponent = mChunk.get(chunk);
+        InfCellComponent infCellComponent = mCell.get(cell);
+        TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
+        context.getGameStage().getBatch().draw(region,
+                MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX),
+                MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY),
+                RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
+                RealmTech.PPM * RealmTech.UNITE_SCALE / 2
+        );
     }
 }

@@ -2,8 +2,6 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.CellBeingMineComponent;
-import ch.realmtech.game.ecs.component.InfCellComponent;
-import ch.realmtech.game.ecs.component.InfMapComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -13,39 +11,26 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-@All({CellBeingMineComponent.class, InfCellComponent.class})
+@All({CellBeingMineComponent.class})
 public class CellBeingMineSystem extends IteratingSystem {
-    private final static float TIME_LAPS = 1 / 20f;
-    private long lastTime;
     @Wire(name = "context")
-    RealmTech context;
-
-    ComponentMapper<CellBeingMineComponent> mCellBeingMine;
-    ComponentMapper<InfCellComponent> mCell;
+    private RealmTech context;
+    private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
 
     @Override
     protected void process(int entityId) {
-        long time = System.currentTimeMillis();
-        if (lastTime + time < TIME_LAPS + System.currentTimeMillis()) {
-            return;
-        }
-        context.getSoundManager().playBreakingCell();
-        lastTime = time;
-        if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            remove(entityId);
-            return;
-        }
-        CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
-        InfCellComponent infCellComponent = mCell.get(entityId);
-        int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+        int chunk = world.getSystem(MapSystem.class).findChunk(MapSystem.getChunkInUse(context), entityId);
 
+        // trouve la cellule qui devrait être miné pour être sûr qu'elle est toujours minée
         Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
-        int chunk = world.getSystem(MapSystem.class).getChunk(infChunks, gameCoordinate.x, gameCoordinate.y);
-        int cell = world.getSystem(MapSystem.class).getCell(chunk, infCellComponent.innerPosX, infCellComponent.innerPosY, infCellComponent.cellRegisterEntry.getCellBehavior().getLayer());
-        if (cell != -1) {
+        Vector3 gameCoordinate = MapSystem.getGameCoordinate(context, screenCoordinate);
+        int expectChunk = world.getSystem(MapSystem.class).getChunk(MapSystem.getChunkInUse(context), gameCoordinate.x, gameCoordinate.y);
+        int topCell = MapSystem.getTopCell(context, expectChunk, screenCoordinate);
+        if (topCell == entityId && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
+            context.getSoundManager().playBreakingCell();
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
-                context.getSystem(MapSystem.class).breakTopCell(context.getEcsEngine().getPlayerId(), Input.Buttons.LEFT, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, gameCoordinate.x, gameCoordinate.y);
+                world.getSystem(MapSystem.class).breakCell(chunk, entityId, context.getEcsEngine().getPlayerId());
                 remove(entityId);
             }
         } else {

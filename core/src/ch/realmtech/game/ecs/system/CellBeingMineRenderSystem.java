@@ -64,7 +64,6 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
         } else {
             textureFormat = String.format("cell-breaking-stage-%d", pourQuinze);
         }
-        System.out.println(textureFormat);
         return context.getTextureAtlas().findRegion(textureFormat);
     }
 }
