@@ -3,14 +3,12 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.InfCellComponent;
 import ch.realmtech.game.ecs.component.InfChunkComponent;
-import ch.realmtech.game.ecs.component.InfMapComponent;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 public class CellHoverSystem extends BaseSystem {
     private final static String TAG = CellHoverSystem.class.getSimpleName();
@@ -35,11 +33,9 @@ public class CellHoverSystem extends BaseSystem {
     @Override
     protected void processSystem() {
         try {
-            int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
             Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
-            int chunk = world.getSystem(MapSystem.class).getChunk(infChunks, gameCoordinate.x, gameCoordinate.y);
-            int cell = world.getSystem(MapSystem.class).getTopCell(chunk, MapSystem.getInnerChunk(gameCoordinate.x), MapSystem.getInnerChunk(gameCoordinate.y));
+            int chunk = MapSystem.getChunk(context, screenCoordinate);
+            int cell = MapSystem.getTopCell(context, chunk, screenCoordinate);
             InfChunkComponent infChunkComponent = mChunk.get(chunk);
             InfCellComponent infCellComponent = mCell.get(cell);
             TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");

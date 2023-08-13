@@ -13,6 +13,8 @@ import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.DelayedIteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -439,5 +441,24 @@ public class MapSystem extends DelayedIteratingSystem {
                 context.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());
             }
         }
+    }
+
+    public static Vector3 getGameCoordinate(RealmTech context, Vector2 screenCoordinate) {
+        return context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
+    }
+
+    public static int getTopCell(RealmTech context, int chunk, Vector2 screenCoordinate) {
+        Vector3 gameCoordinate = getGameCoordinate(context, screenCoordinate);
+        return context.getEcsEngine().getWorld().getSystem(MapSystem.class).getTopCell(chunk, getInnerChunk(gameCoordinate.x), getInnerChunk(gameCoordinate.y));
+    }
+
+    public static int getChunk(RealmTech context, Vector2 screenCoordinate) {
+        int[] infChunks = getChunkInUse(context);
+        Vector3 gameCoordinate = getGameCoordinate(context, screenCoordinate);
+        return context.getEcsEngine().getWorld().getSystem(MapSystem.class).getChunk(infChunks, gameCoordinate.x, gameCoordinate.y);
+    }
+
+    public static int[] getChunkInUse(RealmTech context) {
+        return context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
     }
 }
