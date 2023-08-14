@@ -17,12 +17,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public final class ECSEngine {
+public final class ECSEngine implements Disposable {
     private final static String TAG = ECSEngine.class.getSimpleName();
 
     private final static byte BIT_PLAYER = 1 << 1;
@@ -38,6 +39,7 @@ public final class ECSEngine {
     public ECSEngine(final RealmTech context) {
         this.context = context;
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+        CellBeingMineSystem cellBeingMineSystem = new CellBeingMineSystem();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
@@ -56,7 +58,6 @@ public final class ECSEngine {
                 .with(new PlayerMouvementSystem())
                 .with(new PhysiqueWorldStepSystem())
                 .with(new Box2dFrotementSystem())
-                .with(new CellBeingMineSystem())
                 // render
                 .with(new PlayerTextureAnimated())
                 .with(new UpdateBox2dWithTextureSystem())
@@ -69,12 +70,22 @@ public final class ECSEngine {
                 // ui
                 .with(new PlayerInventorySystem())
                 .with(new ItemBarManager())
+
+                // server
+                .with(cellBeingMineSystem)
                 .build();
+        ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
+        serverInvocationStrategy
+                .registerServerSystem(cellBeingMineSystem);
+
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
         worldConfiguration.register("context", context);
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
         worldConfiguration.register(context.getTextureAtlas());
+
+
+        worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);
         physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
         bodyDef = new BodyDef();
@@ -205,6 +216,8 @@ public final class ECSEngine {
         world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
         return playerId;
     }
+
+    @Override
     public void dispose() {
         world.dispose();
         physicWorld.dispose();
