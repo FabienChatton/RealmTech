@@ -4,7 +4,7 @@ import com.artemis.BaseSystem;
 import com.artemis.InvocationStrategy;
 import com.artemis.utils.Bag;
 
-public class ServerInvocationStrategy extends InvocationStrategy {
+public class ServerInvocationStrategy extends InvocationStrategy implements InvocationStrategyServer {
     private long time = System.currentTimeMillis();
     private final static long TIME_LAPS_MILLIS = 15;
     private Bag<BaseSystem> serverSystems;
@@ -38,6 +38,7 @@ public class ServerInvocationStrategy extends InvocationStrategy {
 
     }
 
+    @Override
     public void registerServerSystem(BaseSystem serverSystem) {
         serverSystems.add(serverSystem);
     }

@@ -39,44 +39,41 @@ public final class ECSEngine implements Disposable {
     public ECSEngine(final RealmTech context) {
         this.context = context;
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
-        CellBeingMineSystem cellBeingMineSystem = new CellBeingMineSystem();
-        WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
+        ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
+        WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
-                .with(new TagManager())
-                .with(new ItemManager())
-                .with(new InventoryManager())
-                .with(new PhysiqueContactListenerManager())
-                .with(new SaveInfManager())
+                .withClient(new TagManager())
+                .withClient(new ItemManager())
+                .withClient(new InventoryManager())
+                .withClient(new PhysiqueContactListenerManager())
+                .withClient(new SaveInfManager())
 
                 // system
-                .with(new PlayerInputSystem())
-                .with(new MapSystem())
-                .with(new CraftingPlayerSystem())
-                .with(new ItemBeingPickAnimationSystem())
-                .with(new PickUpOnGroundItemSystem())
-                .with(new PlayerMouvementSystem())
-                .with(new PhysiqueWorldStepSystem())
-                .with(new Box2dFrotementSystem())
+                .withClient(new PlayerInputSystem())
+                .withClient(new MapSystem())
+                .withClient(new CraftingPlayerSystem())
+                .withClient(new ItemBeingPickAnimationSystem())
+                .withClient(new PickUpOnGroundItemSystem())
+                .withClient(new PlayerMouvementSystem())
+                .withClient(new PhysiqueWorldStepSystem())
+                .withClient(new Box2dFrotementSystem())
                 // render
-                .with(new PlayerTextureAnimated())
-                .with(new UpdateBox2dWithTextureSystem())
-                .with(new CameraFollowPlayerSystem())
-                .with(new MapRendererSystem())
-                .with(new CellBeingMineRenderSystem())
-                .with(new CellHoverSystem())
-                .with(new TextureRenderer())
+                .withClient(new PlayerTextureAnimated())
+                .withClient(new UpdateBox2dWithTextureSystem())
+                .withClient(new CameraFollowPlayerSystem())
+                .withClient(new MapRendererSystem())
+                .withClient(new CellBeingMineRenderSystem())
+                .withClient(new CellHoverSystem())
+                .withClient(new TextureRenderer())
 
                 // ui
-                .with(new PlayerInventorySystem())
-                .with(new ItemBarManager())
+                .withClient(new PlayerInventorySystem())
+                .withClient(new ItemBarManager())
 
                 // server
-                .with(cellBeingMineSystem)
+                .withServer(new CellBeingMineSystem())
                 .build();
-        ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
-        serverInvocationStrategy
-                .registerServerSystem(cellBeingMineSystem);
 
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
