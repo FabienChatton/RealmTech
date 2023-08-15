@@ -6,7 +6,7 @@ import com.artemis.utils.Bag;
 
 public class ServerInvocationStrategy extends InvocationStrategy implements InvocationStrategyServer {
     private long time = System.currentTimeMillis();
-    private final static long TIME_LAPS_MILLIS = 15;
+    private final static long TIME_LAPS_MILLIS = 20;
     private Bag<BaseSystem> serverSystems;
 
     public ServerInvocationStrategy() {

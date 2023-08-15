@@ -20,8 +20,8 @@ public class PlayerInputSystem extends BaseSystem {
             byte innerChunkX = MapSystem.getInnerChunk(gameCoordinate.x);
             byte innerChunkY = MapSystem.getInnerChunk(gameCoordinate.y);
             int topCellId = context.getSystem(MapSystem.class).getTopCell(chunk, innerChunkX, innerChunkY);
-            world.getSystem(MapSystem.class).addCellBeingMine(topCellId, 50);
-        } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+            world.getSystem(MapSystem.class).addCellBeingMine(topCellId);
+        } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             world.getSystem(MapSystem.class).interagieClickDroit(context.getEcsEngine().getPlayerId(), Input.Buttons.RIGHT, MapSystem.getChunkInUse(context), gameCoordinate.x, gameCoordinate.y, world.getSystem(ItemBarManager.class).getSelectItem());
         }
     }

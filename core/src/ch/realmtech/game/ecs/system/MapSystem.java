@@ -448,10 +448,10 @@ public class MapSystem extends DelayedIteratingSystem {
         }
     }
 
-    public boolean addCellBeingMine(int cellId, int step) {
+    public boolean addCellBeingMine(int cellId) {
         boolean ret = false;
         if (!mCellBeingMine.has(cellId)) {
-            mCellBeingMine.create(cellId).set(0, step);
+            mCellBeingMine.create(cellId).set(0, mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakStepNeed());
             ret = true;
         }
         return ret;

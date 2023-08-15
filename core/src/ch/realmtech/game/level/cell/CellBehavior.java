@@ -13,6 +13,7 @@ public class CellBehavior {
     private PlayerFootStepSound playerFootStepSound;
     private final byte layer;
     private BreakCell breakCellEvent;
+    private int breakStepNeed;
 
     private CellBehavior(byte layer) {
         this.layer = layer;
@@ -38,11 +39,16 @@ public class CellBehavior {
         return breakCellEvent;
     }
 
+    public int getBreakStepNeed() {
+        return breakStepNeed;
+    }
+
     public static class Builder {
         private final CellBehavior cellBehavior;
 
         public Builder(byte layer) {
             cellBehavior = new CellBehavior(layer);
+            cellBehavior.breakStepNeed = 20;
         }
 
         public Builder(Layer ground) {
@@ -80,7 +86,15 @@ public class CellBehavior {
             return this;
         }
 
-        public CellBehavior build(){
+        /**
+         * Par défaut, 20
+         */
+        public Builder breakStepNeed(int steepNeed) {
+            cellBehavior.breakStepNeed = steepNeed;
+            return this;
+        }
+
+        public CellBehavior build() {
             return cellBehavior;
         }
     }

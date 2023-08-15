@@ -1,6 +1,7 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.component.CellBeingMineComponent;
 import ch.realmtech.game.ecs.component.CraftingComponent;
 import ch.realmtech.game.ecs.component.CraftingTableComponent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
@@ -34,12 +35,14 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "grass-01",
             new CellBehavior.Builder(Cells.Layer.GROUND)
                     .playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
+                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
     public final static CellRegisterEntry SAND_CELL = registerCell("sand", new CellRegisterEntry(
             "sand-01",
             new CellBehavior.Builder(Cells.Layer.GROUND)
                     .playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
+                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
     public final static CellRegisterEntry WATER_CELL = registerCell("water", new CellRegisterEntry(
@@ -47,6 +50,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             new CellBehavior.Builder(Cells.Layer.GROUND)
                     .speedEffect(0.5f)
                     .playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
+                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(

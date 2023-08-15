@@ -29,6 +29,7 @@ public class CellBeingMineSystem extends IteratingSystem {
         if (topCell == entityId && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
             context.getSoundManager().playBreakingCell();
+            if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) return;
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
                 world.getSystem(MapSystem.class).breakCell(chunk, entityId, context.getEcsEngine().getPlayerId());
                 remove(entityId);
