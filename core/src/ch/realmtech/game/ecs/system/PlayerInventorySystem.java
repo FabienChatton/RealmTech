@@ -14,6 +14,7 @@ import ch.realmtech.input.InputMapper;
 import ch.realmtech.shader.BlurShader;
 import ch.realmtech.shader.GrayShader;
 import ch.realmtech.shader.Shaders;
+import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -48,6 +49,8 @@ public class PlayerInventorySystem extends BaseSystem {
     private DisplayInventoryArgs[] currentInventoryArgs;
     @Wire(name = "context")
     private RealmTech context;
+    @Wire(name = "inGameSystemOnInventoryOpen")
+    private InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private Skin skin;
     private ClickAndDrop2 clickAndDrop2;
     private Shaders blurShader;
@@ -132,6 +135,7 @@ public class PlayerInventorySystem extends BaseSystem {
             context.getGameStage().getBatch().setShader(null);
             context.getSoundManager().playOpenInventory();
             overWindow.remove();
+            inGameSystemOnInventoryOpen.activeInGameSystemOnPause(world);
             return true;
         } else {
             return false;
@@ -148,6 +152,7 @@ public class PlayerInventorySystem extends BaseSystem {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
             }
             context.getSoundManager().playOpenInventory();
+            inGameSystemOnInventoryOpen.disableInGameSystemOnPause(world);
             return true;
         } else {
             return false;

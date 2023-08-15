@@ -6,6 +6,10 @@ import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
+import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
+import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
+import ch.realmtech.strategy.ServerInvocationStrategy;
+import ch.realmtech.strategy.WorldConfigurationBuilderServer;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
@@ -35,6 +39,7 @@ public final class ECSEngine implements Disposable {
     private final FixtureDef fixtureDef;
     private final World world;
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
+    private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
 
     public ECSEngine(final RealmTech context) {
         this.context = context;
@@ -74,13 +79,15 @@ public final class ECSEngine implements Disposable {
                 // server
                 .withServer(new CellBeingMineSystem())
                 .build();
-
+        inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
+                PlayerInputSystem.class
+        );
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
         worldConfiguration.register("context", context);
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
         worldConfiguration.register(context.getTextureAtlas());
-
+        worldConfiguration.register("inGameSystemOnInventoryOpen", inGameSystemOnInventoryOpen);
 
         worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);
@@ -332,5 +339,9 @@ public final class ECSEngine implements Disposable {
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {
         return world.getSystem(type);
+    }
+
+    public InGameSystemOnInventoryOpen getInGameSystemOnInventoryOpen() {
+        return inGameSystemOnInventoryOpen;
     }
 }

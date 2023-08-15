@@ -1,4 +1,4 @@
-package ch.realmtech.game.ecs;
+package ch.realmtech.strategy;
 
 import com.artemis.BaseSystem;
 
