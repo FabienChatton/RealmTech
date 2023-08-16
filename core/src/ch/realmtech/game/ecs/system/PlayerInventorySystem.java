@@ -199,20 +199,27 @@ public class PlayerInventorySystem extends BaseSystem {
     public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory) {
         final int[][] inventory = resultInventory.inventory;
         if (!mItem.has(inventory[0][0])) {
-            if (mItem.get(inventory[0][0]) != null && mItem.get(inventory[0][0]).itemRegisterEntry == craftResult.itemRegisterEntry()) {
-                //return false; // il y a déjà le craft dans le résultat
-            }
-            for (int i = 0; i < craftResult.nombre(); i++) {
-                int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
-                final ItemResultCraftComponent itemResultCraftComponent = world.edit(itemResultId).create(ItemResultCraftComponent.class);
-                itemResultCraftComponent.craftingRecipeEntry = craftingRecipeEntry;
-                world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, getCurrentCraftResultInventory());
-            }
-            if (isEnabled()) {
-                refreshInventory(currentInventoryArgs);
+            ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry);
+        } else {
+            ItemComponent itemComponent = mItem.get(inventory[0][0]);
+            if (itemComponent.itemRegisterEntry != craftResult.itemRegisterEntry()) {
+                world.getSystem(InventoryManager.class).removeInventory(inventory);
+                ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry);
             }
         }
         return true;
+    }
+
+    private void ajoutNouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry) {
+        for (int i = 0; i < craftResult.nombre(); i++) {
+            int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
+            final ItemResultCraftComponent itemResultCraftComponent = world.edit(itemResultId).create(ItemResultCraftComponent.class);
+            itemResultCraftComponent.craftingRecipeEntry = craftingRecipeEntry;
+            world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, getCurrentCraftResultInventory());
+        }
+        if (isEnabled()) {
+            refreshInventory(currentInventoryArgs);
+        }
     }
 
     public void aucunCraftDisponible(InventoryComponent inventoryComponent) {
