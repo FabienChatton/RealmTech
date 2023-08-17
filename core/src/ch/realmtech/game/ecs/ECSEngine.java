@@ -31,7 +31,7 @@ public final class ECSEngine implements Disposable {
     private final static String TAG = ECSEngine.class.getSimpleName();
 
     private final static byte BIT_PLAYER = 1 << 1;
-    private final static byte BIT_WORLD = 1 << 2;
+    public final static byte BIT_WORLD = 1 << 2;
     private final static byte BIT_GAME_OBJECT = 1 << 3;
     private final RealmTech context;
 
@@ -105,7 +105,7 @@ public final class ECSEngine implements Disposable {
         world.process();
     }
 
-    private void resetBodyDef() {
+    public void resetBodyDef() {
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(0, 0);
         bodyDef.angle = 0;
@@ -121,7 +121,7 @@ public final class ECSEngine implements Disposable {
         bodyDef.gravityScale = 1;
     }
 
-    private void resetFixtureDef() {
+    public void resetFixtureDef() {
         fixtureDef.shape = null;
         fixtureDef.friction = 0.2f;
         fixtureDef.restitution = 0;
@@ -347,5 +347,13 @@ public final class ECSEngine implements Disposable {
 
     public InGameSystemOnInventoryOpen getInGameSystemOnInventoryOpen() {
         return inGameSystemOnInventoryOpen;
+    }
+
+    public BodyDef getBodyDef() {
+        return bodyDef;
+    }
+
+    public FixtureDef getFixtureDef() {
+        return fixtureDef;
     }
 }

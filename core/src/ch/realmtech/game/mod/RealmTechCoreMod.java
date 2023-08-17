@@ -1,6 +1,7 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.ecs.component.CellBeingMineComponent;
 import ch.realmtech.game.ecs.component.CraftingComponent;
 import ch.realmtech.game.ecs.component.CraftingTableComponent;
@@ -9,10 +10,15 @@ import ch.realmtech.game.item.ItemBehavior;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.level.cell.Cells;
+import ch.realmtech.game.level.cell.CreatePhysiqueBody;
 import ch.realmtech.game.registery.*;
 import ch.realmtech.sound.SoundManager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class RealmTechCoreMod extends ModInitializerManager {
     @Wire
@@ -57,6 +63,22 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "tree-02",
             new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.buche")
+                    .physiqueBody((physiqueWorldCreate, bodyDef, fixtureDef, worldPosX, worldPosY) -> {
+                        PolygonShape polygonShape = new PolygonShape();
+                        float width = 1f / 2f;
+                        polygonShape.setAsBox(width, width);
+
+                        bodyDef.type = BodyDef.BodyType.StaticBody;
+                        bodyDef.position.set(worldPosX + width, worldPosY + width);
+                        Body body = physiqueWorldCreate.createBody(bodyDef);
+                        fixtureDef.shape = polygonShape;
+                        fixtureDef.filter.categoryBits = ECSEngine.BIT_WORLD;
+                        fixtureDef.filter.maskBits = -1;
+                        body.createFixture(fixtureDef);
+
+                        polygonShape.dispose();
+                        return new CreatePhysiqueBody.CreatePhysiqueBodyReturn(body, width, width);
+                    }, World::destroyBody)
                     .build()
     ));
     //</editor-fold>

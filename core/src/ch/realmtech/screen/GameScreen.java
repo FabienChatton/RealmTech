@@ -53,8 +53,10 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             if (uiTable.getChildren().contains(debugTable, true)) {
                 uiTable.clear();
+                uiStage.setDebugAll(false);
             } else {
                 uiTable.add(debugTable).expand().left().top();
+                uiStage.setDebugAll(true);
             }
         }
         // open inventory

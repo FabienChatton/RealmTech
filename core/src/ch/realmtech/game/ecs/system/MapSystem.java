@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.level.cell.BreakCell;
 import ch.realmtech.game.level.cell.Cells;
+import ch.realmtech.game.level.cell.CreatePhysiqueBody;
 import ch.realmtech.game.level.map.WorldMap;
 import ch.realmtech.game.level.worldGeneration.PerlinNoise;
 import ch.realmtech.game.registery.CellRegisterEntry;
@@ -15,6 +16,7 @@ import com.artemis.systems.DelayedIteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,6 +37,7 @@ public class MapSystem extends DelayedIteratingSystem {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
+    private ComponentMapper<Box2dComponent> mBox2d;
     private int[] ancienneChunkPos = null;
     private final static float INITALE_DELAY = 0.005f;
     private float delay = INITALE_DELAY;
@@ -116,7 +119,7 @@ public class MapSystem extends DelayedIteratingSystem {
         }
         world.delete(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            world.delete(infChunkComponent.infCellsId[i]);
+            supprimeCell(infChunkComponent.infCellsId[i]);
         }
     }
 
@@ -134,7 +137,7 @@ public class MapSystem extends DelayedIteratingSystem {
         System.arraycopy(cellIds, 0, newCellIds, 0, indexCell);
         System.arraycopy(cellIds, indexCell + 1, newCellIds, indexCell, newCellIds.length - indexCell);
         infChunkComponent.infCellsId = newCellIds;
-        world.delete(cellId);
+        supprimeCell(cellId);
     }
 
     private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
@@ -178,7 +181,7 @@ public class MapSystem extends DelayedIteratingSystem {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
         for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
-            int[] cells = generateNewCells(infMapComponent.infMetaDonnees, chunkPosX, chunkPosY, i);
+            int[] cells = generateNewCells(infMapComponent.infMetaDonnees, chunkId, chunkPosX, chunkPosY, i);
             for (int j = 0; j < cells.length; j++) {
                 cellsId.add(cells[j]);
             }
@@ -188,16 +191,41 @@ public class MapSystem extends DelayedIteratingSystem {
         return chunkId;
     }
 
-    public int newCell(byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
+    public int newCell(int chunkId, int chunkPosX, int chunkPosY, byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
         int cellId = world.create();
         world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
         if (cellRegisterEntry.getEditEntity() != null) {
             cellRegisterEntry.getEditEntity().accept(world, cellId);
         }
+        if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
+            CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
+                    .getCellBehavior()
+                    .getCreateBody()
+                    .createPhysiqueBody(
+                            context.getEcsEngine().physicWorld,
+                            context.getEcsEngine().getBodyDef(),
+                            context.getEcsEngine().getFixtureDef(),
+                            getWorldPos(chunkPosX, innerX),
+                            getWorldPos(chunkPosY, innerY)
+                    );
+            world.edit(cellId).create(Box2dComponent.class).set(physiqueBody.with(), physiqueBody.height(), physiqueBody.body());
+            context.getEcsEngine().resetBodyDef();
+            context.getEcsEngine().resetFixtureDef();
+        }
         return cellId;
     }
 
-    private int[] generateNewCells(int metaDonnees, int chunkPosX, int chunkPosY, short index) {
+    private void supprimeCell(int cellId) {
+        InfCellComponent infCellComponent = mCell.get(cellId);
+        if (infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
+            Box2dComponent box2dComponent = mBox2d.get(cellId);
+            Body body = box2dComponent.body;
+            infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(context.getEcsEngine().physicWorld, body);
+        }
+        world.delete(cellId);
+    }
+
+    private int[] generateNewCells(int metaDonnees, int chunkId, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = getInnerChunkX(index);
         byte innerChunkY = getInnerChunkY(index);
         int worldX = getWorldPos(chunkPosX, innerChunkX);
@@ -208,14 +236,15 @@ public class MapSystem extends DelayedIteratingSystem {
         for (int i = 0; i < cellRegisterEntries.length; i++) {
             CellRegisterEntry cellRegisterEntry = cellRegisterEntries[i];
             if (cellRegisterEntry != null) {
-                cellIds[i] = newCell(innerChunkX, innerChunkY, cellRegisterEntry);
+                cellIds[i] = newCell(chunkId, chunkPosX, chunkPosY, innerChunkX, innerChunkY, cellRegisterEntry);
             }
         }
         return cellIds;
     }
 
-    private void newCellInChunk(InfChunkComponent infChunkComponent, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
-        int cellId = newCell(innerX, innerY, cellRegisterEntry);
+    private void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
+        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+        int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
         System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
         newCellsArray[newCellsArray.length - 1] = cellId;
@@ -419,9 +448,9 @@ public class MapSystem extends DelayedIteratingSystem {
             if (selectedItemEntry.getItemBehavior().getPlaceCell() != null) {
                 final byte innerX = getInnerChunk(gameCoordinateX);
                 final byte innerY = getInnerChunk(gameCoordinateY);
-                final int chunk = getChunk(chunks, gameCoordinateX, gameCoordinateY);
-                if (getCell(chunk, innerX, innerY, selectedItemEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) == -1) {
-                    newCellInChunk(mChunk.get(chunk), selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
+                final int chunkId = getChunk(chunks, gameCoordinateX, gameCoordinateY);
+                if (getCell(chunkId, innerX, innerY, selectedItemEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) == -1) {
+                    newCellInChunk(chunkId, selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
                     return true;
                 }
             }

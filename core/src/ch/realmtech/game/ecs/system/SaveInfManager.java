@@ -180,7 +180,7 @@ public class SaveInfManager extends Manager {
                 byte posX = Cells.getInnerChunkPosX(pos);
                 byte posY = Cells.getInnerChunkPosY(pos);
                 final CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(hashRegistry);
-                cellulesId[i] = world.getSystem(MapSystem.class).newCell(posX, posY, cellRegisterEntry);
+                cellulesId[i] = world.getSystem(MapSystem.class).newCell(chunkId, chunkPosX, chunkPosY, posX, posY, cellRegisterEntry);
             }
             return chunkId;
         }

@@ -58,6 +58,12 @@ public class PlayerInventorySystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        showMouseOverLabel();
+        inventoryStage.act();
+        inventoryStage.draw();
+    }
+
+    private void showMouseOverLabel() {
         if (!context.getUiStage().getActors().contains(overLabel, true)) {
             context.getUiStage().addActor(overWindow);
         }
@@ -84,8 +90,6 @@ public class PlayerInventorySystem extends BaseSystem {
         if (!trouve) {
             overWindow.remove();
         }
-        inventoryStage.act();
-        inventoryStage.draw();
     }
 
     /*

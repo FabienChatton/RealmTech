@@ -4,6 +4,10 @@ import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+
+import java.util.function.BiConsumer;
 
 import static ch.realmtech.game.level.cell.Cells.Layer;
 
@@ -13,7 +17,9 @@ public class CellBehavior {
     private PlayerFootStepSound playerFootStepSound;
     private final byte layer;
     private BreakCell breakCellEvent;
-    private int breakStepNeed;
+    private int breakStepNeed = 20;
+    private CreatePhysiqueBody createBody;
+    private BiConsumer<World, Body> deleteBody;
 
     private CellBehavior(byte layer) {
         this.layer = layer;
@@ -43,12 +49,19 @@ public class CellBehavior {
         return breakStepNeed;
     }
 
+    public CreatePhysiqueBody getCreateBody() {
+        return createBody;
+    }
+
+    public BiConsumer<World, Body> getDeleteBody() {
+        return deleteBody;
+    }
+
     public static class Builder {
         private final CellBehavior cellBehavior;
 
         public Builder(byte layer) {
             cellBehavior = new CellBehavior(layer);
-            cellBehavior.breakStepNeed = 20;
         }
 
         public Builder(Layer ground) {
@@ -91,6 +104,12 @@ public class CellBehavior {
          */
         public Builder breakStepNeed(int steepNeed) {
             cellBehavior.breakStepNeed = steepNeed;
+            return this;
+        }
+
+        public Builder physiqueBody(CreatePhysiqueBody physiqueWorldCreate, BiConsumer<World, Body> physiqueWorldDelete) {
+            cellBehavior.createBody = physiqueWorldCreate;
+            cellBehavior.deleteBody = physiqueWorldDelete;
             return this;
         }
 
