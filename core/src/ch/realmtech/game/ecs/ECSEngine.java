@@ -135,8 +135,8 @@ public final class ECSEngine implements Disposable {
      * @return l'id du player
      */
     public int createPlayer(InfMetaDonneesComponent metaDonneesComponent) {
-        final int playerWorldWith = 1;
-        final int playerWorldHigh = 1;
+        final float playerWorldWith = 0.9f;
+        final float playerWorldHigh = 0.9f;
         if (world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
             int playerId = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
             world.getSystem(TagManager.class).unregister(PlayerComponent.TAG);

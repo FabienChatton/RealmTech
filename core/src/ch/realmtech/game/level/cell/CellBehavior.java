@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import java.util.function.BiConsumer;
 
 import static ch.realmtech.game.level.cell.Cells.Layer;
+import static ch.realmtech.game.level.cell.CreatePhysiqueBody.CreatePhysiqueBodyArgs;
 
 public class CellBehavior {
     private ItemType breakWith;
@@ -107,9 +108,9 @@ public class CellBehavior {
             return this;
         }
 
-        public Builder physiqueBody(CreatePhysiqueBody physiqueWorldCreate, BiConsumer<World, Body> physiqueWorldDelete) {
-            cellBehavior.createBody = physiqueWorldCreate;
-            cellBehavior.deleteBody = physiqueWorldDelete;
+        public Builder physiqueBody(CreatePhysiqueBodyArgs createPhysiqueBody) {
+            cellBehavior.createBody = createPhysiqueBody.createPhysiqueBody();
+            cellBehavior.deleteBody = createPhysiqueBody.deletePhysiqueBody();
             return this;
         }
 
