@@ -34,7 +34,8 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -141,11 +142,11 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    private boolean openPlayerInventory(Function<Window, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    private boolean openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();
-            currentInventoryArgs = openPlayerInventoryFunction.apply(inventoryWindow);
+            currentInventoryArgs = openPlayerInventoryFunction.get();
             refreshInventory(currentInventoryArgs);
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
@@ -158,7 +159,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public void toggleInventoryWindow(Function<Window, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    public void toggleInventoryWindow(Supplier<AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (isEnabled()) {
             closePlayerInventory();
         } else {
@@ -166,13 +167,13 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Function<Window, AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
-        return window -> {
+    public Supplier<AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
+        return () -> {
             final Table playerInventory = new Table(context.getSkin());
             final Table craftingInventory = new Table(context.getSkin());
             final Table craftingResultInventory = new Table(context.getSkin());
 
-            Runnable addTable = () -> {
+            Consumer<Window> addTable = window -> {
                 window.add(craftingInventory).padBottom(10f).right();
                 window.add(craftingResultInventory).padBottom(10f).row();
                 window.add(playerInventory);
@@ -191,13 +192,13 @@ public class PlayerInventorySystem extends BaseSystem {
         };
     }
 
-    public Function<Window, AddAndDisplayInventoryArgs> getDisplayCraftingInventory(InventoryComponent inventoryComponent, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
-        return window -> {
+    public Supplier<AddAndDisplayInventoryArgs> getDisplayCraftingInventory(InventoryComponent inventoryComponent, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
+        return () -> {
             final Table playerInventory = new Table(context.getSkin());
             final Table craftingInventory = new Table(context.getSkin());
             final Table craftingResultInventory = new Table(context.getSkin());
 
-            Runnable addTable = () -> {
+            Consumer<Window> addTable = window -> {
                 window.add(craftingInventory).padBottom(10f).right();
                 window.add(craftingResultInventory).padBottom(10f).row();
                 window.add(playerInventory);
@@ -210,13 +211,13 @@ public class PlayerInventorySystem extends BaseSystem {
         };
     }
 
-    public Function<Window, AddAndDisplayInventoryArgs> getDisplayInventory(InventoryComponent inventoryComponent) {
-        return window -> {
+    public Supplier<AddAndDisplayInventoryArgs> getDisplayChest(InventoryComponent inventoryComponent) {
+        return () -> {
             final Table playerInventory = new Table(context.getSkin());
             final Table inventory = new Table(context.getSkin());
 
-            Runnable addTable = () -> {
-                window.add(inventory).row();
+            Consumer<Window> addTable = window -> {
+                window.add(inventory).padBottom(10f).row();
                 window.add(playerInventory);
             };
 
@@ -266,7 +267,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    private void clearDisplayInventory(Runnable addTable) {
+    private void clearDisplayInventory(Consumer<Window> addTable) {
         for (Actor actor : inventoryWindow.getChildren().items) {
             if (actor != null) {
                 actor.clear();
@@ -274,7 +275,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
         inventoryWindow.clear();
         clickAndDrop2.clearActor();
-        addTable.run();
+        addTable.accept(inventoryWindow);
     }
 
     private void displayInventory(DisplayInventoryArgs[] displayInventoryPlayerArgs) {

@@ -1,4 +1,8 @@
 package ch.realmtech.game.inventory;
 
-public record AddAndDisplayInventoryArgs(Runnable addTable, DisplayInventoryArgs[] args) {
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+
+import java.util.function.Consumer;
+
+public record AddAndDisplayInventoryArgs(Consumer<Window> addTable, DisplayInventoryArgs[] args) {
 }

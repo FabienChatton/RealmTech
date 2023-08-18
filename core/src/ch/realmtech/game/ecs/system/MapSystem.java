@@ -463,7 +463,7 @@ public class MapSystem extends DelayedIteratingSystem {
         final int topCell = getTopCell(chunk, getInnerChunk(x), getInnerChunk(y));
         if (mInventory.has(topCell)) {
             InventoryComponent inventoryComponent = mInventory.get(topCell);
-            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayInventory(inventoryComponent));
+            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayChest(inventoryComponent));
         } else if (mCraftingTable.has(topCell)) {
             CraftingTableComponent craftingTableComponent = mCraftingTable.get(topCell);
             context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayCraftingInventory(
