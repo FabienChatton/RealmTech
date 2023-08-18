@@ -4,21 +4,15 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.helper.Lazy;
-import com.artemis.World;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public class CellRegisterEntry implements Entry {
     @Lazy(champSource = "textureRegionName")
     private TextureRegion textureRegion;
     private final String textureRegionName;
     private final CellBehavior cellBehavior;
-    /**
-     * Permet de modifier le monde quand la cellule se créer, comme puis lui ajouter des composants
-     */
-    private BiConsumer<World, Integer> editEntity;
 
 
     public static CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
@@ -58,17 +52,8 @@ public class CellRegisterEntry implements Entry {
         return cellBehavior;
     }
 
-    public BiConsumer<World, Integer> getEditEntity() {
-        return editEntity;
-    }
-
     public CellRegisterEntry(String textureRegionName, CellBehavior cellBehavior) {
         this.textureRegionName = textureRegionName;
         this.cellBehavior = cellBehavior;
-    }
-
-    public CellRegisterEntry(BiConsumer<World, Integer> editEntity, String textureRegionName, CellBehavior cellBehavior) {
-        this(textureRegionName, cellBehavior);
-        this.editEntity = editEntity;
     }
 }

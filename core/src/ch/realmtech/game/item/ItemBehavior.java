@@ -15,6 +15,10 @@ public class ItemBehavior {
         speedEffect = 1;
     }
 
+    public static ItemBehaviorBuilder builder() {
+        return new ItemBehaviorBuilder();
+    }
+
     public ItemType getItemType() {
         return itemType;
     }
@@ -31,24 +35,25 @@ public class ItemBehavior {
         return placeCell;
     }
 
-    public static class Builder {
+    public static class ItemBehaviorBuilder {
         private final ItemBehavior itemBehavior = new ItemBehavior();
 
-        public Builder setAttackDommage(int attackDommage) {
+        public ItemBehaviorBuilder setAttackDommage(int attackDommage) {
             itemBehavior.attackDommage = attackDommage;
             return this;
         }
 
-        public Builder setItemType(ItemType itemType) {
+        public ItemBehaviorBuilder setItemType(ItemType itemType) {
             itemBehavior.itemType = itemType;
             return this;
         }
-        public Builder setSpeedEffect(float speedEffect) {
+
+        public ItemBehaviorBuilder setSpeedEffect(float speedEffect) {
             itemBehavior.speedEffect = speedEffect;
             return this;
         }
 
-        public Builder placeCell(String cellRegistryName) {
+        public ItemBehaviorBuilder placeCell(String cellRegistryName) {
             Gdx.app.postRunnable(() -> itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry());
             return this;
         }

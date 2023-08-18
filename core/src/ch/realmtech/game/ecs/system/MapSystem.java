@@ -194,8 +194,8 @@ public class MapSystem extends DelayedIteratingSystem {
     public int newCell(int chunkId, int chunkPosX, int chunkPosY, byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
         int cellId = world.create();
         world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
-        if (cellRegisterEntry.getEditEntity() != null) {
-            cellRegisterEntry.getEditEntity().accept(world, cellId);
+        if (cellRegisterEntry.getCellBehavior().getEditEntity() != null) {
+            cellRegisterEntry.getCellBehavior().getEditEntity().accept(world, cellId);
         }
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
             CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry

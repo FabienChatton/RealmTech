@@ -20,7 +20,16 @@ public class CellBehavior {
     private BreakCell breakCellEvent;
     private int breakStepNeed = 20;
     private CreatePhysiqueBody createBody;
-    private BiConsumer<World, Body> deleteBody;
+    private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
+    private BiConsumer<com.artemis.World, Integer> editEntity;
+
+    public static CellBehaviorBuilder builder(byte layer) {
+        return new CellBehaviorBuilder(layer);
+    }
+
+    public static CellBehaviorBuilder builder(Layer layer) {
+        return builder(layer.layer);
+    }
 
     private CellBehavior(byte layer) {
         this.layer = layer;
@@ -50,6 +59,10 @@ public class CellBehavior {
         return breakStepNeed;
     }
 
+    public BiConsumer<com.artemis.World, Integer> getEditEntity() {
+        return editEntity;
+    }
+
     public CreatePhysiqueBody getCreateBody() {
         return createBody;
     }
@@ -58,57 +71,62 @@ public class CellBehavior {
         return deleteBody;
     }
 
-    public static class Builder {
+    public static class CellBehaviorBuilder {
         private final CellBehavior cellBehavior;
 
-        public Builder(byte layer) {
+        public CellBehaviorBuilder(byte layer) {
             cellBehavior = new CellBehavior(layer);
         }
 
-        public Builder(Layer ground) {
+        public CellBehaviorBuilder(Layer ground) {
             this(ground.layer);
         }
 
-        public Builder breakWith(ItemType itemType) {
+        public CellBehaviorBuilder breakWith(ItemType itemType) {
             cellBehavior.breakWith = itemType;
             return this;
         }
 
-        public Builder breakWith(ItemType itemType, String dropItemRegistryName) {
+        public CellBehaviorBuilder breakWith(ItemType itemType, String dropItemRegistryName) {
             breakWith(itemType);
             dropOnBreak(dropItemRegistryName);
             return this;
         }
 
-        public Builder dropOnBreak(String dropItemRegistryName) {
+        public CellBehaviorBuilder dropOnBreak(String dropItemRegistryName) {
             Gdx.app.postRunnable(() -> cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry()));
             return this;
         }
 
-        public Builder dropNothing() {
+        public CellBehaviorBuilder dropNothing() {
             cellBehavior.breakCellEvent = new BreakCellEvent().dropNothing();
             return this;
         }
 
-        public Builder speedEffect(float speedEffect) {
+        public CellBehaviorBuilder speedEffect(float speedEffect) {
             cellBehavior.speedEffect = speedEffect;
             return this;
         }
 
-        public Builder playerWalkSound(String soundEffectName, float volume) {
+        public CellBehaviorBuilder playerWalkSound(String soundEffectName, float volume) {
             cellBehavior.playerFootStepSound = new PlayerFootStepSound(soundEffectName, volume);
+            return this;
+        }
+
+        public CellBehaviorBuilder editEntity(BiConsumer<com.artemis.World, Integer> editEntity) {
+            cellBehavior.editEntity = editEntity;
             return this;
         }
 
         /**
          * Par défaut, 20
          */
-        public Builder breakStepNeed(int steepNeed) {
+        public CellBehaviorBuilder breakStepNeed(int steepNeed) {
             cellBehavior.breakStepNeed = steepNeed;
             return this;
         }
 
-        public Builder physiqueBody(CreatePhysiqueBodyArgs createPhysiqueBody) {
+        public CellBehaviorBuilder physiqueBody(CreatePhysiqueBodyArgs createPhysiqueBody) {
             cellBehavior.createBody = createPhysiqueBody.createPhysiqueBody();
             cellBehavior.deleteBody = createPhysiqueBody.deletePhysiqueBody();
             return this;

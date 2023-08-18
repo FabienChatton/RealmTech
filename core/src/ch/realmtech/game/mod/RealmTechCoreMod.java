@@ -35,21 +35,21 @@ public class RealmTechCoreMod extends ModInitializerManager {
     //<editor-fold desc="registre des cellules">
     public final static CellRegisterEntry GRASS_CELL = registerCell("grass", new CellRegisterEntry(
             "grass-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND)
+            CellBehavior.builder(Cells.Layer.GROUND)
                     .playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
     public final static CellRegisterEntry SAND_CELL = registerCell("sand", new CellRegisterEntry(
             "sand-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND)
+            CellBehavior.builder(Cells.Layer.GROUND)
                     .playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
     public final static CellRegisterEntry WATER_CELL = registerCell("water", new CellRegisterEntry(
             "water-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND)
+            CellBehavior.builder(Cells.Layer.GROUND)
                     .speedEffect(0.5f)
                     .playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
@@ -57,7 +57,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     ));
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
             "tree-02",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.buche")
                     .physiqueBody(defaultPhysiqueBody())
                     .build()
@@ -68,46 +68,46 @@ public class RealmTechCoreMod extends ModInitializerManager {
     //<editor-fold desc="registre des items">
     public final static ItemRegisterEntry NO_ITEM = registerItem("noitem", new ItemRegisterEntry(
             "default-texture",
-            new ItemBehavior.Builder().build()
+            ItemBehavior.builder().build()
     ));
     public final static ItemRegisterEntry PIOCHE_BOIS_ITEM = registerItem("piocheBois", new ItemRegisterEntry(
             "pioche-bois-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .setItemType(ItemType.PIOCHE)
                     .build()
     ));
     public final static ItemRegisterEntry PIOCHE_STONE_ITEM = registerItem("piocheStone", new ItemRegisterEntry(
             "pioche-stone-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .setItemType(ItemType.PIOCHE)
                     .build()
     ));
     public final static ItemRegisterEntry PELLE_BOIS_ITEM = registerItem("pelleBois", new ItemRegisterEntry(
             "pelle-bois-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .setItemType(ItemType.PELLE)
                     .build()
     ));
     public final static ItemRegisterEntry PELLE_STONE_ITEM = registerItem("pelleStone", new ItemRegisterEntry(
             "pelle-stone-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .setItemType(ItemType.PELLE)
                     .build()
     ));
     public final static ItemRegisterEntry SANDALES_ITEM = registerItem("sandales", new ItemRegisterEntry(
             "sandales-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .setSpeedEffect(2)
                     .build()
     ));
     public final static ItemRegisterEntry BUCHE_ITEM = registerItem("buche", new ItemRegisterEntry(
             "buche-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .build()
     ));
     public final static ItemRegisterEntry STICK_ITEM = registerItem("stick", new ItemRegisterEntry(
             "stick-02",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .build()
     ));
     //</editor-fold>
@@ -116,96 +116,96 @@ public class RealmTechCoreMod extends ModInitializerManager {
     //<editor-fold desc="registre des Cell/item">
     public final static CellItemRegisterEntry PLANCHE_CELL_ITEM = registerCellItem("planche", new CellRegisterEntry(
             "plank-cell-01",
-            new CellBehavior.Builder(Cells.Layer.BUILD)
+            CellBehavior.builder(Cells.Layer.BUILD)
                     .breakWith(ItemType.TOUS)
                     .dropOnBreak("realmtech.planche")
                     .build()
     ), new ItemRegisterEntry(
             "plank-02",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .placeCell("realmtech.planche")
                     .build()
     ));
     public final static CellItemRegisterEntry CRAFTING_TABLE = registerCellItem("craftingTable", new CellRegisterEntry(
-            (world, cellId) -> {
-                int craftingInventory = world.create();
-                int craftingResultInventory = world.create();
-                world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory);
-                world.edit(craftingInventory).create(InventoryComponent.class).set(3, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-                world.edit(craftingResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-                world.edit(craftingInventory).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventory);
-            },
             "table-craft-01",
-            new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.craftingTable")
+                    .editEntity((world, cellId) -> {
+                        int craftingInventory = world.create();
+                        int craftingResultInventory = world.create();
+                        world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory);
+                        world.edit(craftingInventory).create(InventoryComponent.class).set(3, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+                        world.edit(craftingResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+                        world.edit(craftingInventory).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventory);
+                    })
                     .build()
     ), new ItemRegisterEntry(
             "table-craft-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .placeCell("realmtech.craftingTable")
                     .build()
     ));
 
     public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
-            (world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME),
             "chest-01",
-            new CellBehavior.Builder(Cells.Layer.BUILD_DECO)
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.chest")
+                    .editEntity((world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME))
                     .build()
     ), new ItemRegisterEntry(
             "chest-01",
-            new ItemBehavior.Builder()
+            ItemBehavior.builder()
                     .placeCell("realmtech.chest")
                     .build()
     ));
 
     public final static CellItemRegisterEntry COPPER = registerCellItem("copper", new CellRegisterEntry(
             "copper-ore-03",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PIOCHE, "realmtech.copper")
                     .build()
     ), new ItemRegisterEntry(
             "copper-ore-03",
-            new ItemBehavior.Builder().build()
+            ItemBehavior.builder().build()
     ));
 
     public final static CellItemRegisterEntry STONE = registerCellItem("stone", new CellRegisterEntry(
             "stone-ore-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PIOCHE, "realmtech.stone")
                     .build()
     ), new ItemRegisterEntry(
             "stone-ore-01",
-            new ItemBehavior.Builder().build()
+            ItemBehavior.builder().build()
     ));
 
     public final static CellItemRegisterEntry IRON = registerCellItem("iron", new CellRegisterEntry(
             "iron-ore-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PIOCHE, "realmtech.iron")
                     .build()
     ), new ItemRegisterEntry(
             "iron-ore-01",
-            new ItemBehavior.Builder().build()
+            ItemBehavior.builder().build()
     ));
 
     public final static CellItemRegisterEntry COAL = registerCellItem("coal", new CellRegisterEntry(
             "coal-ore-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PIOCHE, "realmtech.coal")
                     .build()
     ), new ItemRegisterEntry(
             "coal-ore-01",
-            new ItemBehavior.Builder().build()
+            ItemBehavior.builder().build()
     ));
     public final static CellItemRegisterEntry GOLD = registerCellItem("gold", new CellRegisterEntry(
             "gold-ore-01",
-            new CellBehavior.Builder(Cells.Layer.GROUND_DECO)
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PIOCHE, "realmtech.gold")
                     .build()
     ), new ItemRegisterEntry(
             "gold-ore-01",
-            new ItemBehavior.Builder().build()
+            ItemBehavior.builder().build()
     ));
     //</editor-fold>
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
