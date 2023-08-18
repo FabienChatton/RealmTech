@@ -40,11 +40,11 @@ public final class ECSEngine implements Disposable {
     private final World world;
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
+    private ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
 
     public ECSEngine(final RealmTech context) {
         this.context = context;
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
-        ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
@@ -61,7 +61,6 @@ public final class ECSEngine implements Disposable {
                 .withClient(new ItemBeingPickAnimationSystem())
                 .withClient(new PickUpOnGroundItemSystem())
                 .withClient(new PlayerMouvementSystem())
-                .withClient(new PhysiqueWorldStepSystem())
                 .withClient(new Box2dFrotementSystem())
                 // render
                 .withClient(new PlayerTextureAnimated())
@@ -78,6 +77,7 @@ public final class ECSEngine implements Disposable {
 
                 // server
                 .withServer(new CellBeingMineSystem())
+                .withServer(new PhysiqueWorldStepSystem())
                 .build();
         inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
                 PlayerInputSystem.class,
@@ -355,5 +355,9 @@ public final class ECSEngine implements Disposable {
 
     public FixtureDef getFixtureDef() {
         return fixtureDef;
+    }
+
+    public ServerInvocationStrategy getServerInvocationStrategy() {
+        return serverInvocationStrategy;
     }
 }

@@ -3,11 +3,13 @@ package ch.realmtech.strategy;
 import com.artemis.BaseSystem;
 import com.artemis.InvocationStrategy;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class ServerInvocationStrategy extends InvocationStrategy implements InvocationStrategyServer {
     private long time = System.currentTimeMillis();
-    private final static long TIME_LAPS_MILLIS = 20;
+    public final static long TIME_LAPS_MILLIS = 20;
     private Bag<BaseSystem> serverSystems;
+    private float delta = 0;
 
     public ServerInvocationStrategy() {
         serverSystems = new Bag<>();
@@ -17,6 +19,8 @@ public class ServerInvocationStrategy extends InvocationStrategy implements Invo
     protected void process() {
         boolean processServer = false;
         if (System.currentTimeMillis() - time >= TIME_LAPS_MILLIS) {
+            long deltaMillis = TimeUtils.timeSinceMillis(time);
+            delta = deltaMillis / 1000f;
             time = System.currentTimeMillis();
             processServer = true;
         }
@@ -41,5 +45,10 @@ public class ServerInvocationStrategy extends InvocationStrategy implements Invo
     @Override
     public void registerServerSystem(BaseSystem serverSystem) {
         serverSystems.add(serverSystem);
+    }
+
+    @Override
+    public float getDeltaTime() {
+        return delta;
     }
 }

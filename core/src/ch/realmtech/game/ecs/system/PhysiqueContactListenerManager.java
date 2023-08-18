@@ -40,6 +40,9 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
     }
 
     private void playerPickUpItem(final Contact contact) {
+        if (contact.getFixtureA().getBody().getUserData() == null || contact.getFixtureB().getBody().getUserData() == null) {
+            return;
+        }
         try {
             if (mPlayer.has((int) contact.getFixtureA().getBody().getUserData())) {
                 int playerId = (int) contact.getFixtureA().getBody().getUserData();

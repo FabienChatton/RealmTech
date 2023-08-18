@@ -26,6 +26,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
     private boolean directionChange = false;
     private float xFactor = 0;
     private float yFactor = 0;
+    private final static float FORCE = 1f;
 
     @Override
     protected void process(int entityId) {
@@ -44,7 +45,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 }
                 playerComponent.moveUp = true;
                 directionChange = true;
-                yFactor = 1;
+                yFactor = FORCE;
                 yFactor *= infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
             } else {
                 playerComponent.moveUp = false;
@@ -55,7 +56,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 }
                 playerComponent.moveLeft = true;
                 directionChange = true;
-                xFactor = -1;
+                xFactor = -FORCE;
                 xFactor *= infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
             } else {
                 playerComponent.moveLeft = false;
@@ -66,7 +67,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 }
                 playerComponent.moveDown = true;
                 directionChange = true;
-                yFactor = -1;
+                yFactor = -FORCE;
                 yFactor *= infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
             } else {
                 playerComponent.moveDown = false;
@@ -77,7 +78,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 }
                 playerComponent.moveRight = true;
                 directionChange = true;
-                xFactor = 1;
+                xFactor = FORCE;
                 xFactor *= infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
             } else {
                 playerComponent.moveRight = false;
