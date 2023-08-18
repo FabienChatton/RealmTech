@@ -4,8 +4,9 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.clickAndDrop.ClickAndDrop2;
 import ch.realmtech.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.game.craft.CraftResult;
-import ch.realmtech.game.craft.DisplayInventoryArgs;
 import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.inventory.AddAndDisplayInventoryArgs;
+import ch.realmtech.game.inventory.DisplayInventoryArgs;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
@@ -24,6 +25,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -32,6 +34,7 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -41,12 +44,9 @@ public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private Stage inventoryStage;
     private Window inventoryWindow;
-    private Table inventoryPlayerTable;
-    private Table inventoryCraftingTable;
-    private Table inventoryCraftResultTable;
     private Window overWindow;
     private Label overLabel;
-    private DisplayInventoryArgs[] currentInventoryArgs;
+    private AddAndDisplayInventoryArgs currentInventoryArgs;
     @Wire(name = "context")
     private RealmTech context;
     @Wire(name = "inGameSystemOnInventoryOpen")
@@ -109,12 +109,7 @@ public class PlayerInventorySystem extends BaseSystem {
             }
         };
         this.skin = context.getSkin();
-        this.inventoryCraftingTable = new Table(context.getSkin());
-        this.inventoryCraftResultTable = new Table(context.getSkin());
-        this.inventoryPlayerTable = new Table(context.getSkin());
-        inventoryWindow.add(inventoryCraftingTable).padBottom(10f).right();
-        inventoryWindow.add(inventoryCraftResultTable).padBottom(10f).row();
-        inventoryWindow.add(inventoryPlayerTable);
+
         float with = inventoryStage.getWidth() * 0.5f;
         float height = inventoryStage.getHeight() * 0.5f;
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) / 2, (inventoryStage.getHeight() - height) / 2, with, height);
@@ -146,11 +141,11 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public boolean openPlayerInventory(DisplayInventoryArgs[] displayInventoryArgs) {
+    private boolean openPlayerInventory(Function<Window, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();
-            currentInventoryArgs = displayInventoryArgs;
+            currentInventoryArgs = openPlayerInventoryFunction.apply(inventoryWindow);
             refreshInventory(currentInventoryArgs);
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
@@ -163,40 +158,78 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public void toggleInventoryWindow(DisplayInventoryArgs[] displayInventoryArgs) {
+    public void toggleInventoryWindow(Function<Window, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (isEnabled()) {
             closePlayerInventory();
         } else {
-            openPlayerInventory(displayInventoryArgs);
+            openPlayerInventory(openPlayerInventoryFunction);
         }
     }
 
-    public DisplayInventoryArgs[] getDisplayInventoryPlayerArgs() {
-        return new DisplayInventoryArgs[]{
-                new DisplayInventoryArgs(mInventory.get(context.getEcsEngine().getPlayerId()), inventoryPlayerTable, true, true, false, false),
-                new DisplayInventoryArgs(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingInventory), inventoryCraftingTable, true, true, true, false),
-                new DisplayInventoryArgs(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingResultInventory), inventoryCraftResultTable, true, false, false, true)
+    public Function<Window, AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
+        return window -> {
+            final Table playerInventory = new Table(context.getSkin());
+            final Table craftingInventory = new Table(context.getSkin());
+            final Table craftingResultInventory = new Table(context.getSkin());
+
+            Runnable addTable = () -> {
+                window.add(craftingInventory).padBottom(10f).right();
+                window.add(craftingResultInventory).padBottom(10f).row();
+                window.add(playerInventory);
+            };
+
+            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                    DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
+                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingInventory), craftingInventory)
+                            .crafting()
+                            .build(),
+                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingResultInventory), craftingResultInventory)
+                            .notClickAndDropDst()
+                            .craftResult()
+                            .build()
+            });
         };
     }
 
-    public DisplayInventoryArgs[] getDisplayCraftingInventoryArgs(InventoryComponent playerInventory, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
-        return new DisplayInventoryArgs[]{
-                new DisplayInventoryArgs(playerInventory, inventoryPlayerTable, true, true, false, false),
-                new DisplayInventoryArgs(inventoryCraft, inventoryCraftingTable, true, true, true, false),
-                new DisplayInventoryArgs(inventoryResult, inventoryCraftResultTable, true, false, false, true)
+    public Function<Window, AddAndDisplayInventoryArgs> getDisplayCraftingInventory(InventoryComponent inventoryComponent, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
+        return window -> {
+            final Table playerInventory = new Table(context.getSkin());
+            final Table craftingInventory = new Table(context.getSkin());
+            final Table craftingResultInventory = new Table(context.getSkin());
+
+            Runnable addTable = () -> {
+                window.add(craftingInventory).padBottom(10f).right();
+                window.add(craftingResultInventory).padBottom(10f).row();
+                window.add(playerInventory);
+            };
+            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                    DisplayInventoryArgs.builder(inventoryComponent, playerInventory).build(),
+                    DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).crafting().build(),
+                    DisplayInventoryArgs.builder(inventoryResult, craftingResultInventory).notClickAndDropDst().craftResult().build()
+            });
         };
     }
 
-    public DisplayInventoryArgs[] getDisplayInventory(InventoryComponent inventoryComponent) {
-        return new DisplayInventoryArgs[]{
-                new DisplayInventoryArgs(mInventory.get(context.getEcsEngine().getPlayerId()), inventoryPlayerTable, true, true, false, false),
-                new DisplayInventoryArgs(inventoryComponent, inventoryCraftingTable, true, true, false, false)
+    public Function<Window, AddAndDisplayInventoryArgs> getDisplayInventory(InventoryComponent inventoryComponent) {
+        return window -> {
+            final Table playerInventory = new Table(context.getSkin());
+            final Table inventory = new Table(context.getSkin());
+
+            Runnable addTable = () -> {
+                window.add(inventory).row();
+                window.add(playerInventory);
+            };
+
+            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                    DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
+                    DisplayInventoryArgs.builder(inventoryComponent, inventory).build()
+            });
         };
     }
 
-    public void refreshInventory(DisplayInventoryArgs[] displayInventoryArgs) {
-        clearDisplayInventory();
-        displayInventory(displayInventoryArgs);
+    public void refreshInventory(AddAndDisplayInventoryArgs displayInventoryArgs) {
+        clearDisplayInventory(displayInventoryArgs.addTable());
+        displayInventory(displayInventoryArgs.args());
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
@@ -233,11 +266,15 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    private void clearDisplayInventory() {
-        inventoryPlayerTable.clear();
-        inventoryCraftingTable.clear();
-        inventoryCraftResultTable.clear();
+    private void clearDisplayInventory(Runnable addTable) {
+        for (Actor actor : inventoryWindow.getChildren().items) {
+            if (actor != null) {
+                actor.clear();
+            }
+        }
+        inventoryWindow.clear();
         clickAndDrop2.clearActor();
+        addTable.run();
     }
 
     private void displayInventory(DisplayInventoryArgs[] displayInventoryPlayerArgs) {
@@ -301,7 +338,7 @@ public class PlayerInventorySystem extends BaseSystem {
         if (currentInventoryArgs == null) {
             throw new NoSuchElementException();
         }
-        return Arrays.stream(currentInventoryArgs)
+        return Arrays.stream(currentInventoryArgs.args())
                 .filter(DisplayInventoryArgs::isCraftResult)
                 .findFirst()
                 .orElseThrow()
@@ -312,7 +349,7 @@ public class PlayerInventorySystem extends BaseSystem {
         if (currentInventoryArgs == null) {
             throw new NoSuchElementException();
         }
-        return Arrays.stream(currentInventoryArgs)
+        return Arrays.stream(currentInventoryArgs.args())
                 .filter(DisplayInventoryArgs::isCrafting)
                 .findFirst()
                 .orElseThrow()

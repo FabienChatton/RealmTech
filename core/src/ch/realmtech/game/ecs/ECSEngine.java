@@ -274,7 +274,7 @@ public final class ECSEngine implements Disposable {
     }
 
     public void togglePlayerInventoryWindow() {
-        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayerArgs());
+        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
     }
 
     public void loadInfFile(Path savePath) throws IOException {
