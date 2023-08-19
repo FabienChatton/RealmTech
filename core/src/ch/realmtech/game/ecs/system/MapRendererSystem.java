@@ -58,6 +58,9 @@ public class MapRendererSystem extends IteratingSystem {
                         int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX);
                         int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY);
                         TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion(context);
+                        if (textureRegion == null) {
+                            System.out.println("bonjour");
+                        }
                         context.getGameStage().getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
                     }
                 }

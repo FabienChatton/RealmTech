@@ -1,20 +1,25 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.CellBeingMineComponent;
-import ch.realmtech.game.ecs.component.CraftingComponent;
-import ch.realmtech.game.ecs.component.CraftingTableComponent;
-import ch.realmtech.game.ecs.component.InventoryComponent;
+import ch.realmtech.game.ecs.component.*;
+import ch.realmtech.game.ecs.system.PlayerInventorySystem;
+import ch.realmtech.game.inventory.AddAndDisplayInventoryArgs;
+import ch.realmtech.game.inventory.DisplayInventoryArgs;
 import ch.realmtech.game.item.ItemBehavior;
 import ch.realmtech.game.item.ItemType;
 import ch.realmtech.game.level.cell.CellBehavior;
 import ch.realmtech.game.level.cell.Cells;
+import ch.realmtech.game.level.cell.CreatePhysiqueBody;
 import ch.realmtech.game.registery.*;
 import ch.realmtech.sound.SoundManager;
+import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
-import static ch.realmtech.game.level.cell.CreatePhysiqueBody.defaultPhysiqueBody;
+import java.util.function.Consumer;
+
 
 public class RealmTechCoreMod extends ModInitializerManager {
     @Wire
@@ -26,10 +31,12 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static Registry<CellRegisterEntry> CELLS = Registry.create(MOD_ID);
     public final static Registry<ItemRegisterEntry> ITEMS = Registry.create(MOD_ID);
     public final static InfRegistryAnonyme<CraftingRecipeEntry> CRAFT = InfRegistryAnonyme.create();
+    public final static InfRegistryAnonyme<CraftingRecipeEntry> FURNACE_RECIPE = InfRegistryAnonyme.create();
 
     @Override
     public void initialize() {
         RealmTechCoreCraftingRecipe.initCraftingRecipe(CRAFT);
+        RealmTechCoreCraftingRecipe.initFurnaceRecipe(FURNACE_RECIPE);
     }
 
     //<editor-fold desc="registre des cellules">
@@ -59,7 +66,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "tree-02",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.buche")
-                    .physiqueBody(defaultPhysiqueBody())
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .build()
     ));
     //</editor-fold>
@@ -138,6 +145,29 @@ public class RealmTechCoreMod extends ModInitializerManager {
                         world.edit(craftingResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(craftingInventory).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventory);
                     })
+                    .interagieClickDroit((world, cellId) -> {
+                        ComponentMapper<CraftingTableComponent> mCrafting = world.getMapper(CraftingTableComponent.class);
+                        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+                        CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
+                        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
+                            final Table playerInventory = new Table(context.getSkin());
+                            final Table craftingInventory = new Table(context.getSkin());
+                            final Table craftingResultInventory = new Table(context.getSkin());
+                            Consumer<Window> addTable = window -> {
+                                window.add(craftingInventory).padBottom(10f).right();
+                                window.add(craftingResultInventory).padBottom(10f).row();
+                                window.add(playerInventory);
+                            };
+                            InventoryComponent inventoryComponent = mInventory.get(context.getEcsEngine().getPlayerId());
+                            InventoryComponent inventoryCraft = mInventory.get(craftingTableComponent.craftingInventory);
+                            InventoryComponent inventoryResult = mInventory.get(craftingTableComponent.craftingResultInventory);
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                                    DisplayInventoryArgs.builder(inventoryComponent, playerInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).crafting().build(),
+                                    DisplayInventoryArgs.builder(inventoryResult, craftingResultInventory).notClickAndDropDst().craftResult().build()
+                            });
+                        });
+                    })
                     .build()
     ), new ItemRegisterEntry(
             "table-craft-01",
@@ -151,6 +181,23 @@ public class RealmTechCoreMod extends ModInitializerManager {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.chest")
                     .editEntity((world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME))
+                    .interagieClickDroit((world, cellId) -> {
+                        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+                        InventoryComponent inventoryComponent = mInventory.get(cellId);
+                        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
+                            final Table playerInventory = new Table(context.getSkin());
+                            final Table inventory = new Table(context.getSkin());
+
+                            Consumer<Window> addTable = window -> {
+                                window.add(inventory).padBottom(10f).row();
+                                window.add(playerInventory);
+                            };
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                                    DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryComponent, inventory).build()
+                            });
+                        });
+                    })
                     .build()
     ), new ItemRegisterEntry(
             "chest-01",
@@ -207,6 +254,60 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "gold-ore-01",
             ItemBehavior.builder().build()
     ));
+    public final static CellItemRegisterEntry FURNACE = registerCellItem("furnace", new CellRegisterEntry(
+            "furnace-01",
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                    .editEntity((world, id) -> {
+                        FurnaceComponent furnaceComponent = world.edit(id).create(FurnaceComponent.class);
+                        int inventoryItemToSmelt = world.create();
+                        int inventoryCarburant = world.create();
+                        int inventoryResult = world.create();
+
+                        world.edit(inventoryItemToSmelt).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+                        world.edit(inventoryItemToSmelt).create(CraftingComponent.class).set(FURNACE_RECIPE, inventoryResult);
+                        world.edit(inventoryCarburant).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+                        world.edit(inventoryResult).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+                        furnaceComponent.set(inventoryItemToSmelt, inventoryCarburant, inventoryResult);
+                    })
+                    .interagieClickDroit((world, cellId) -> {
+                        ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
+                        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+                        FurnaceComponent furnaceComponent = mFurnace.get(cellId);
+
+                        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
+                            InventoryComponent inventoryItemToSmelt = mInventory.get(furnaceComponent.inventoryItemToSmelt);
+                            InventoryComponent inventoryCarburant = mInventory.get(furnaceComponent.inventoryCarburant);
+                            InventoryComponent inventoryResult = mInventory.get(furnaceComponent.inventoryResult);
+                            InventoryComponent inventoryPlayer = mInventory.get(context.getEcsEngine().getPlayerId());
+
+                            Table playerInventoryTable = new Table(context.getSkin());
+                            Table itemToSmeltTable = new Table(context.getSkin());
+                            Table carburantTable = new Table(context.getSkin());
+                            Table resultTable = new Table(context.getSkin());
+                            Consumer<Window> addTable = window -> {
+                                window.add(itemToSmeltTable).row();
+                                window.add(resultTable).padLeft(100f).row();
+                                window.add(carburantTable).row();
+                                window.add(playerInventoryTable);
+                            };
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                                    DisplayInventoryArgs.builder(inventoryItemToSmelt, itemToSmeltTable).crafting().build(),
+                                    DisplayInventoryArgs.builder(inventoryCarburant, carburantTable).build(),
+                                    DisplayInventoryArgs.builder(inventoryResult, resultTable).notClickAndDropDst().craftResult().build(),
+                                    DisplayInventoryArgs.builder(inventoryPlayer, playerInventoryTable).build()
+                            });
+                        });
+                    })
+                    .breakWith(ItemType.PIOCHE, "realmtech.furnace")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .build()
+    ), new ItemRegisterEntry(
+            "furnace-01",
+            ItemBehavior.builder()
+                    .placeCell("realmtech.furnace")
+                    .build()
+    ));
+
     //</editor-fold>
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
         return CELLS.add(name, cellRegisterEntry);

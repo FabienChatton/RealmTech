@@ -461,15 +461,9 @@ public class MapSystem extends DelayedIteratingSystem {
     public void interagieClickDroit(int playerId, int button, int[] infChunks, float x, float y, int selectItem) {
         final int chunk = getChunk(infChunks, x, y);
         final int topCell = getTopCell(chunk, getInnerChunk(x), getInnerChunk(y));
-        if (mInventory.has(topCell)) {
-            InventoryComponent inventoryComponent = mInventory.get(topCell);
-            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayChest(inventoryComponent));
-        } else if (mCraftingTable.has(topCell)) {
-            CraftingTableComponent craftingTableComponent = mCraftingTable.get(topCell);
-            context.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context.getSystem(PlayerInventorySystem.class).getDisplayCraftingInventory(
-                    mInventory.get(context.getEcsEngine().getPlayerId()),
-                    mInventory.get(craftingTableComponent.craftingInventory),
-                    mInventory.get(craftingTableComponent.craftingResultInventory)));
+        InfCellComponent infCellComponent = mCell.get(topCell);
+        if (infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
+            infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(world, topCell);
         } else {
             if (context.getSystem(MapSystem.class).placeItemToBloc(context.getEcsEngine().getPlayerId(), button, context.getEcsEngine().getWorld().getMapper(InfMapComponent.class).get(context.getEcsEngine().getMapId()).infChunks, x, y, context.getSystem(ItemBarManager.class).getSelectItem())) {
                 context.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());

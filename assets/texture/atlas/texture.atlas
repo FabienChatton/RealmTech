@@ -10,23 +10,23 @@ cell-breaking-stage-02
 cell-breaking-stage-03
 	bounds: 338, 124, 32, 32
 cell-breaking-stage-04
-	bounds: 272, 56, 32, 32
+	bounds: 306, 56, 32, 32
 cell-breaking-stage-05
 	bounds: 188, 90, 32, 32
 cell-breaking-stage-06
 	bounds: 202, 124, 32, 32
 cell-breaking-stage-07
-	bounds: 136, 56, 32, 32
+	bounds: 170, 56, 32, 32
 cell-breaking-stage-08
 	bounds: 34, 24, 32, 32
 cell-breaking-stage-09
-	bounds: 408, 56, 32, 32
+	bounds: 442, 56, 32, 32
 cell-breaking-stage-10
 	bounds: 290, 90, 32, 32
 cell-breaking-stage-11
 	bounds: 270, 124, 32, 32
 cell-breaking-stage-12
-	bounds: 170, 56, 32, 32
+	bounds: 204, 56, 32, 32
 cell-breaking-stage-13
 	bounds: 120, 90, 32, 32
 cell-breaking-stage-14
@@ -38,19 +38,21 @@ cellOver-01
 chest-01
 	bounds: 34, 58, 32, 32
 coal-ore-01
-	bounds: 374, 56, 32, 32
+	bounds: 408, 56, 32, 32
 copper-ore-03
 	bounds: 304, 124, 32, 32
 default-texture
+	bounds: 68, 56, 32, 32
+furnace-01
 	bounds: 460, 90, 32, 32
 gold-ore-01
 	bounds: 474, 124, 32, 32
 grass-01
-	bounds: 204, 56, 32, 32
+	bounds: 238, 56, 32, 32
 inventory-01
 	bounds: 406, 124, 32, 32
 inventory-02
-	bounds: 340, 56, 32, 32
+	bounds: 374, 56, 32, 32
 iron-ore-01
 	bounds: 86, 90, 32, 32
 logo-RealmTech
@@ -62,11 +64,11 @@ pelle-stone-01
 pioche-bois-01
 	bounds: 236, 124, 32, 32
 pioche-stone-01
-	bounds: 238, 56, 32, 32
+	bounds: 272, 56, 32, 32
 plank-02
 	bounds: 324, 90, 32, 32
 plank-cell-01
-	bounds: 442, 56, 32, 32
+	bounds: 68, 22, 32, 32
 reimu
 	bounds: 0, 92, 64, 64
 reimu-back-0
@@ -84,25 +86,25 @@ reimu-front-2
 reimu-left-0
 	bounds: 476, 65, 16, 23
 reimu-left-1
-	bounds: 106, 32, 17, 22
+	bounds: 140, 32, 17, 22
 reimu-left-2
-	bounds: 87, 32, 17, 22
+	bounds: 121, 32, 17, 22
 reimu-right-0
 	bounds: 476, 40, 16, 23
 reimu-right-1
-	bounds: 68, 32, 17, 22
+	bounds: 102, 32, 17, 22
 reimu-right-2
-	bounds: 125, 32, 17, 22
+	bounds: 159, 32, 17, 22
 sand-01
-	bounds: 102, 56, 32, 32
+	bounds: 136, 56, 32, 32
 sandales-01
 	bounds: 358, 90, 32, 32
 stick-02
 	bounds: 168, 124, 32, 32
 stone-ore-01
-	bounds: 68, 56, 32, 32
+	bounds: 102, 56, 32, 32
 table-craft-01
-	bounds: 306, 56, 32, 32
+	bounds: 340, 56, 32, 32
 tin-ore-01
 	bounds: 256, 90, 32, 32
 tree-02

@@ -35,7 +35,7 @@ import com.badlogic.gdx.utils.Array;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -142,11 +142,11 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    private boolean openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    private boolean openPlayerInventory(Function<RealmTech, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();
-            currentInventoryArgs = openPlayerInventoryFunction.get();
+            currentInventoryArgs = openPlayerInventoryFunction.apply(context);
             refreshInventory(currentInventoryArgs);
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
@@ -159,7 +159,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public void toggleInventoryWindow(Supplier<AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    public void toggleInventoryWindow(Function<RealmTech, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (isEnabled()) {
             closePlayerInventory();
         } else {
@@ -167,8 +167,8 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Supplier<AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
-        return () -> {
+    public Function<RealmTech, AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
+        return (context) -> {
             final Table playerInventory = new Table(context.getSkin());
             final Table craftingInventory = new Table(context.getSkin());
             final Table craftingResultInventory = new Table(context.getSkin());
@@ -192,8 +192,8 @@ public class PlayerInventorySystem extends BaseSystem {
         };
     }
 
-    public Supplier<AddAndDisplayInventoryArgs> getDisplayCraftingInventory(InventoryComponent inventoryComponent, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
-        return () -> {
+    public Function<RealmTech, AddAndDisplayInventoryArgs> getDisplayCraftingInventory(InventoryComponent inventoryComponent, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
+        return (context) -> {
             final Table playerInventory = new Table(context.getSkin());
             final Table craftingInventory = new Table(context.getSkin());
             final Table craftingResultInventory = new Table(context.getSkin());
@@ -207,23 +207,6 @@ public class PlayerInventorySystem extends BaseSystem {
                     DisplayInventoryArgs.builder(inventoryComponent, playerInventory).build(),
                     DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).crafting().build(),
                     DisplayInventoryArgs.builder(inventoryResult, craftingResultInventory).notClickAndDropDst().craftResult().build()
-            });
-        };
-    }
-
-    public Supplier<AddAndDisplayInventoryArgs> getDisplayChest(InventoryComponent inventoryComponent) {
-        return () -> {
-            final Table playerInventory = new Table(context.getSkin());
-            final Table inventory = new Table(context.getSkin());
-
-            Consumer<Window> addTable = window -> {
-                window.add(inventory).padBottom(10f).row();
-                window.add(playerInventory);
-            };
-
-            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
-                    DisplayInventoryArgs.builder(inventoryComponent, inventory).build()
             });
         };
     }

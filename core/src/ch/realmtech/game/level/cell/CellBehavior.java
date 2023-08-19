@@ -22,6 +22,7 @@ public class CellBehavior {
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
     private BiConsumer<com.artemis.World, Integer> editEntity;
+    private BiConsumer<com.artemis.World, Integer> interagieClickDroit;
 
     public static CellBehaviorBuilder builder(byte layer) {
         return new CellBehaviorBuilder(layer);
@@ -69,6 +70,10 @@ public class CellBehavior {
 
     public BiConsumer<World, Body> getDeleteBody() {
         return deleteBody;
+    }
+
+    public BiConsumer<com.artemis.World, Integer> getInteragieClickDroit() {
+        return interagieClickDroit;
     }
 
     public static class CellBehaviorBuilder {
@@ -129,6 +134,11 @@ public class CellBehavior {
         public CellBehaviorBuilder physiqueBody(CreatePhysiqueBodyArgs createPhysiqueBody) {
             cellBehavior.createBody = createPhysiqueBody.createPhysiqueBody();
             cellBehavior.deleteBody = createPhysiqueBody.deletePhysiqueBody();
+            return this;
+        }
+
+        public CellBehaviorBuilder interagieClickDroit(BiConsumer<com.artemis.World, Integer> interagieClickDroit) {
+            cellBehavior.interagieClickDroit = interagieClickDroit;
             return this;
         }
 
