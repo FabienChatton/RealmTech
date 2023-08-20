@@ -2,6 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
@@ -190,7 +191,21 @@ public final class RealmTech extends Game{
     }
 
     public void process(float deltaTime) {
-        ecsEngine.process(deltaTime);
+        try {
+            ecsEngine.process(deltaTime);
+        } catch (Exception e) {
+            Gdx.app.error(TAG, e.getMessage(), e);
+            if (uiStage.getBatch().isDrawing()) {
+                uiStage.getBatch().end();
+            }
+            if (gameStage.getBatch().isDrawing()) {
+                gameStage.getBatch().end();
+            }
+            ecsEngine.dispose();
+            ecsEngine = new ECSEngine(this);
+            setScreen(ScreenType.MENU);
+            Popup.popupErreur(this, e.toString(), uiStage);
+        }
     }
 
     public void loadInfFile(Path path) throws IOException {
