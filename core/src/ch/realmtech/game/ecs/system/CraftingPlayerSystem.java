@@ -41,9 +41,9 @@ public class CraftingPlayerSystem extends IteratingSystem {
         boolean nouveauCraft = false;
         if (Arrays.stream(itemRegister).anyMatch(Objects::nonNull)) {
             for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
-                final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister);
+                final Optional<CraftResult> craftResult = craftingRecipeEntry.craft(itemRegister, inventoryComponent.numberOfSlotParRow, inventoryResultComponent.numberOfRow);
                 if (craftResult.isPresent()) {
-                    nouveauCraft = world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get(), craftingRecipeEntry, inventoryResultComponent);
+                    nouveauCraft = world.getSystem(PlayerInventorySystem.class).nouveauCraftDisponible(craftResult.get(), craftingRecipeEntry, inventoryResultComponent, craftingTableComponent.craftingResultInventory);
                     break;
                 }
             }

@@ -7,4 +7,9 @@ import com.artemis.Component;
 public class ItemResultCraftComponent extends Component {
     public ItemResultCraftPickEvent pickEvent = ItemResultCraftPickEvent.clearCraftingInventory();
     public CraftingRecipeEntry craftingRecipeEntry;
+
+    public ItemResultCraftComponent set(CraftingRecipeEntry craftingRecipeEntry) {
+        this.craftingRecipeEntry = craftingRecipeEntry;
+        return this;
+    }
 }

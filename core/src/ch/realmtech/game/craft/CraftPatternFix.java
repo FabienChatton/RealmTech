@@ -44,13 +44,14 @@ public class CraftPatternFix extends CraftPattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry) {
+    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
         if (Arrays.equals(itemRegisterEntry, Arrays.stream(craftPattern).map(entry -> entry == RealmTechCoreMod.NO_ITEM ? null : entry).toArray())) {
             return Optional.of(new CraftResult(itemResult, nombre));
         } else {
             return Optional.empty();
         }
     }
+
     @Override
     public List<ItemRegisterEntry> getRequireItem() {
         return Arrays.stream(craftPattern).filter(Objects::nonNull).toList();

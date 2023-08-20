@@ -52,7 +52,7 @@ public class CraftPatternShape extends CraftPattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry) {
+    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
         int taille2d = (int) Math.sqrt(itemRegisterEntry.length);
         ItemRegisterEntry[] pureItemRegisterEntry = new ItemRegisterEntry[itemRegisterEntry.length];
         for (int i = 0; i < itemRegisterEntry.length; i++) {

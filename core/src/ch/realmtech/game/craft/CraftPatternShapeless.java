@@ -27,7 +27,7 @@ public class CraftPatternShapeless extends CraftPattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry) {
+    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
         return craftNonNull(Arrays.stream(itemRegisterEntry).filter(Objects::nonNull).toArray(ItemRegisterEntry[]::new));
     }
 

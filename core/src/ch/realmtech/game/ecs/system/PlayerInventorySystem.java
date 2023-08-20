@@ -217,26 +217,29 @@ public class PlayerInventorySystem extends BaseSystem {
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
-    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory) {
+    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory, int craftingResultInventoryId) {
+        boolean ajouter = false;
         final int[][] inventory = resultInventory.inventory;
         if (!mItem.has(inventory[0][0])) {
-            ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry);
+            ajouter = true;
         } else {
             ItemComponent itemComponent = mItem.get(inventory[0][0]);
             if (itemComponent.itemRegisterEntry != craftResult.itemRegisterEntry()) {
                 world.getSystem(InventoryManager.class).removeInventory(inventory);
-                ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry);
+                ajouter = true;
             }
+        }
+        if (ajouter) {
+            ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry, craftingResultInventoryId);
         }
         return true;
     }
 
-    private void ajoutNouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry) {
+    private void ajoutNouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, int craftingResultInventoryId) {
         for (int i = 0; i < craftResult.nombre(); i++) {
             int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
-            final ItemResultCraftComponent itemResultCraftComponent = world.edit(itemResultId).create(ItemResultCraftComponent.class);
-            itemResultCraftComponent.craftingRecipeEntry = craftingRecipeEntry;
-            world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, getCurrentCraftResultInventory());
+            world.edit(itemResultId).create(ItemResultCraftComponent.class).set(craftingRecipeEntry);
+            world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, mInventory.get(craftingResultInventoryId));
         }
         if (isEnabled()) {
             refreshInventory(currentInventoryArgs);
@@ -316,17 +319,6 @@ public class PlayerInventorySystem extends BaseSystem {
         label.setFontScale(0.5f);
         label.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
-    }
-
-    public InventoryComponent getCurrentCraftResultInventory() throws NoSuchElementException {
-        if (currentInventoryArgs == null) {
-            throw new NoSuchElementException();
-        }
-        return Arrays.stream(currentInventoryArgs.args())
-                .filter(DisplayInventoryArgs::isCraftResult)
-                .findFirst()
-                .orElseThrow()
-                .inventoryComponent();
     }
 
     public InventoryComponent getCurrentCraftingInventory() throws NoSuchElementException {
