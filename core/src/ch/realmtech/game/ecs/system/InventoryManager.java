@@ -179,4 +179,13 @@ public class InventoryManager extends Manager {
         ItemComponent itemComponentDst = mItem.get(dst[0]);
         return dst.length - tailleStack(dst) >= tailleStack(src) && itemComponentSrc.itemRegisterEntry == itemComponentDst.itemRegisterEntry;
     }
+
+    public static int getTopItem(int[] stack) {
+        int tailleStack = tailleStack(stack);
+        if (tailleStack > 0) {
+            return stack[tailleStack - 1];
+        } else {
+            return 0;
+        }
+    }
 }

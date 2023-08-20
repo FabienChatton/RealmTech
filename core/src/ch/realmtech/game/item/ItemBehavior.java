@@ -9,6 +9,7 @@ public class ItemBehavior {
     private ItemType itemType;
     private float speedEffect;
     private CellRegisterEntry placeCell;
+    private int timeToBurn = 0;
 
     private ItemBehavior() {
         attackDommage = 1;
@@ -35,6 +36,10 @@ public class ItemBehavior {
         return placeCell;
     }
 
+    public int getTimeToBurn() {
+        return timeToBurn;
+    }
+
     public static class ItemBehaviorBuilder {
         private final ItemBehavior itemBehavior = new ItemBehavior();
 
@@ -58,7 +63,12 @@ public class ItemBehavior {
             return this;
         }
 
-        public ItemBehavior build(){
+        public ItemBehaviorBuilder setTimeToBurn(int timeToBurn) {
+            itemBehavior.timeToBurn = timeToBurn;
+            return this;
+        }
+
+        public ItemBehavior build() {
             return itemBehavior;
         }
     }

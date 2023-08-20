@@ -110,6 +110,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static ItemRegisterEntry BUCHE_ITEM = registerItem("buche", new ItemRegisterEntry(
             "buche-01",
             ItemBehavior.builder()
+                    .setTimeToBurn(10)
                     .build()
     ));
     public final static ItemRegisterEntry STICK_ITEM = registerItem("stick", new ItemRegisterEntry(
@@ -140,7 +141,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .editEntity((world, cellId) -> {
                         int craftingInventory = world.create();
                         int craftingResultInventory = world.create();
-                        world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory);
+                        world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory, () -> true, true);
                         world.edit(craftingInventory).create(InventoryComponent.class).set(3, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(craftingResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(craftingInventory).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventory);
@@ -263,7 +264,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
                         int inventoryCarburant = world.create();
                         int inventoryResult = world.create();
 
-                        world.edit(id).create(CraftingTableComponent.class).set(inventoryItemToSmelt, inventoryResult);
+                        world.edit(id).create(CraftingTableComponent.class).set(inventoryItemToSmelt, inventoryResult, () -> furnaceComponent.timeToBurn > 0, true);
                         world.edit(inventoryItemToSmelt).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(inventoryItemToSmelt).create(CraftingComponent.class).set(FURNACE_RECIPE, inventoryResult);
                         world.edit(inventoryCarburant).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);

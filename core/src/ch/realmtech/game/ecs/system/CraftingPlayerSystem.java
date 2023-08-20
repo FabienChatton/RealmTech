@@ -25,6 +25,9 @@ public class CraftingPlayerSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
+        if (!craftingTableComponent.getCanCraft()) {
+            return;
+        }
         InventoryComponent inventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
         CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
         InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);

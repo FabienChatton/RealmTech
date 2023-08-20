@@ -10,6 +10,7 @@ public class FurnaceComponent extends Component {
     public int inventoryCarburant;
     @EntityId
     public int inventoryResult;
+    public int timeToBurn;
 
     public FurnaceComponent set(int inventoryItemToSmeltId, int inventoryCarburantId, int inventoryResultId) {
         this.inventoryItemToSmelt = inventoryItemToSmeltId;

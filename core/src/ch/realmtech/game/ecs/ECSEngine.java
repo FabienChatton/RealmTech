@@ -78,6 +78,7 @@ public final class ECSEngine implements Disposable {
                 // server
                 .withServer(new CellBeingMineSystem())
                 .withServer(new PhysiqueWorldStepSystem())
+                .withServer(new FurnaceSystem())
                 .build();
         inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
                 PlayerInputSystem.class,
@@ -218,7 +219,7 @@ public final class ECSEngine implements Disposable {
         // default crafting table
         int defaultCraftingTable = world.create();
         int defaultResultInventory = world.create();
-        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory);
+        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, () -> true, true);
         world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
