@@ -23,8 +23,8 @@ public class CraftingPlayerSystem extends IteratingSystem {
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
 
     @Override
-    protected void process(int craftingTableId) {
-        CraftingTableComponent craftingTableComponent = mCraftingTable.get(craftingTableId);
+    protected void process(int entityId) {
+        CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
         InventoryComponent inventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
         CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
         InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);

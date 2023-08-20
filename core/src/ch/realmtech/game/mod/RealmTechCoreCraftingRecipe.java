@@ -73,7 +73,7 @@ public class RealmTechCoreCraftingRecipe {
 
     public static void initFurnaceRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
         registry.add(new CraftPatternShape(SANDALES_ITEM, new char[][]{
-                new char['a']
+                new char[]{'a'}
         }, new CraftPatternArgs('a', BUCHE_ITEM)));
     }
 }
