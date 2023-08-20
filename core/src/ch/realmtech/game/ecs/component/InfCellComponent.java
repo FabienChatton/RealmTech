@@ -1,23 +1,29 @@
 package ch.realmtech.game.ecs.component;
 
+import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
 
 public class InfCellComponent extends PooledComponent {
-    public byte innerPosX;
-    public byte innerPosY;
+    private byte innerPos;
     public CellRegisterEntry cellRegisterEntry;
 
     public InfCellComponent set(byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry) {
-        this.innerPosX = innerPosX;
-        this.innerPosY = innerPosY;
+        innerPos = Cells.getInnerChunkPos(innerPosX, innerPosY);
         this.cellRegisterEntry = cellRegisterEntry;
         return this;
     }
 
     @Override
     protected void reset() {
-        innerPosX = 0;
-        innerPosY = 0;
+        innerPos = 0;
+    }
+
+    public byte getInnerPosX() {
+        return Cells.getInnerChunkPosX(innerPos);
+    }
+
+    public byte getInnerPosY() {
+        return Cells.getInnerChunkPosY(innerPos);
     }
 }

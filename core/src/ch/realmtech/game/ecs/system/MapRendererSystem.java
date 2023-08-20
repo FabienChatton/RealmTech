@@ -55,8 +55,8 @@ public class MapRendererSystem extends IteratingSystem {
                 if (infCellComponents != null) {
                     for (InfCellComponent infCellComponent : infCellComponents) {
                         InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
-                        int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX);
-                        int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY);
+                        int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
+                        int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
                         TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion(context);
                         if (textureRegion == null) {
                             System.out.println("bonjour");

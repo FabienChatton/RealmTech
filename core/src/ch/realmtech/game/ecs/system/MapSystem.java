@@ -313,7 +313,7 @@ public class MapSystem extends DelayedIteratingSystem {
         byte innerChunkY = getInnerChunk(worldPosY);
         for (int i = 0; i < cells.length; i++) {
             InfCellComponent infCellComponent = mCell.get(cells[i]);
-            if (infCellComponent.innerPosX == innerChunkX && infCellComponent.innerPosY == innerChunkY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
+            if (infCellComponent.getInnerPosX() == innerChunkX && infCellComponent.getInnerPosY() == innerChunkY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
                 ret = cells[i];
                 break;
             }
@@ -338,7 +338,7 @@ public class MapSystem extends DelayedIteratingSystem {
         int[] cells = mChunk.get(chunk).infCellsId;
         for (int i = 0; i < cells.length; i++) {
             InfCellComponent infCellComponent = mCell.get(cells[i]);
-            if (infCellComponent.innerPosX == innerX && infCellComponent.innerPosY == innerY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
+            if (infCellComponent.getInnerPosX() == innerX && infCellComponent.getInnerPosY() == innerY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
                 ret = cells[i];
                 break;
             }

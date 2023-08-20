@@ -103,7 +103,7 @@ public class SaveInfManager extends Manager {
                 InfCellComponent infCellComponent = mCell.get(infChunkComponent.infCellsId[i]);
                 if (infCellComponent != null) {
                     outputStream.writeInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
-                    outputStream.write(Cells.getInnerChunkPos(infCellComponent.innerPosX, infCellComponent.innerPosY));
+                    outputStream.write(Cells.getInnerChunkPos(infCellComponent.getInnerPosX(), infCellComponent.getInnerPosY()));
                 }
             }
             outputStream.flush();

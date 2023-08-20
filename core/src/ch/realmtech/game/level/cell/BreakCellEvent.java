@@ -21,8 +21,8 @@ public class BreakCellEvent {
                     if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS
                             || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemTypeUse) {
                         world.getSystem(ItemManager.class).newItemOnGround(
-                                MapSystem.getWorldPos(infChunkComponent.chunkPosX, cellComponent.innerPosX),
-                                MapSystem.getWorldPos(infChunkComponent.chunkPosY, cellComponent.innerPosY),
+                                MapSystem.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX()),
+                                MapSystem.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY()),
                                 itemRegisterEntry
                         );
                         world.getSystem(MapSystem.class).damneCell(chunkId, cellId);

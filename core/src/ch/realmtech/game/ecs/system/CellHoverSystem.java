@@ -41,8 +41,8 @@ public class CellHoverSystem extends BaseSystem {
         InfCellComponent infCellComponent = mCell.get(cell);
         TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
         context.getGameStage().getBatch().draw(region,
-                MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX),
-                MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY),
+                MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX()),
+                MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY()),
                 RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
                 RealmTech.PPM * RealmTech.UNITE_SCALE / 2
         );

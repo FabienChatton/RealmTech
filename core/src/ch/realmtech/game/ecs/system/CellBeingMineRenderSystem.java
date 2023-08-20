@@ -32,8 +32,8 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
         InfCellComponent infCellComponent = mCell.get(entityId);
         int chunkId = world.getSystem(MapSystem.class).findChunk(MapSystem.getChunkInUse(context), entityId);
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int worldPosX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.innerPosX);
-        int worldPosY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.innerPosY);
+        int worldPosX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
+        int worldPosY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
         TextureRegion texture = getTextureViaPourCent(cellBeingMineComponent);
 
         context.getGameStage().getBatch().draw(
