@@ -8,11 +8,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
 
-public class CellRegisterEntry implements Entry {
+public class CellRegisterEntry implements Entry<CellRegisterEntry> {
     @Lazy(champSource = "textureRegionName")
     private TextureRegion textureRegion;
     private final String textureRegionName;
     private final CellBehavior cellBehavior;
+    private Registry<CellRegisterEntry> registry;
 
 
     public static CellRegisterEntry getCellModAndCellHash(int cellRegisterHash) {
@@ -55,5 +56,15 @@ public class CellRegisterEntry implements Entry {
     public CellRegisterEntry(String textureRegionName, CellBehavior cellBehavior) {
         this.textureRegionName = textureRegionName;
         this.cellBehavior = cellBehavior;
+    }
+
+    @Override
+    public String toString() {
+        return registry != null ? findRegistryEntryToString(registry) : textureRegionName;
+    }
+
+    @Override
+    public void setRegistry(Registry<CellRegisterEntry> registry) {
+        this.registry = registry;
     }
 }

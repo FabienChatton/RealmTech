@@ -1,7 +1,6 @@
 package ch.realmtech.game.craft;
 
 import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
@@ -12,7 +11,7 @@ import java.util.Optional;
 import static ch.realmtech.game.craft.CraftPatternFix.CraftPatternArgs;
 import static ch.realmtech.game.craft.CraftPatternFix.getCraftPatternFromArgs;
 
-public class CraftPatternShape implements CraftingRecipeEntry {
+public class CraftPatternShape extends CraftPattern {
     protected final ItemRegisterEntry itemResult;
     protected final int nombre;
     private final ItemRegisterEntry[][] craftPattern2d;

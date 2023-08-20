@@ -9,12 +9,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.NoSuchElementException;
 
-public class ItemRegisterEntry implements Entry {
+public class ItemRegisterEntry implements Entry<ItemRegisterEntry> {
     private Archetype archetype;
     @Lazy(champSource = "textureRegionName")
     private TextureRegion textureRegion;
     private String textureRegionName;
     private final ItemBehavior itemBehavior;
+    private Registry<ItemRegisterEntry> registry;
 
     public Archetype getArchetype() {
         return archetype;
@@ -52,7 +53,7 @@ public class ItemRegisterEntry implements Entry {
 
     @Override
     public String toString() {
-        return textureRegion.toString();
+        return registry != null ? findRegistryEntryToString(registry) : textureRegionName;
     }
 
     public static int getHash(ItemRegisterEntry itemRegisterEntry) {
@@ -68,12 +69,16 @@ public class ItemRegisterEntry implements Entry {
         return getHash(this);
     }
 
-
     public static ItemRegisterEntry getItemByHash(int itemModIdHash) {
         return RealmTechCoreMod.ITEMS.getEnfants().stream()
                 .filter(itemRegisterEntryRegistryEntry -> itemRegisterEntryRegistryEntry.getID().hashCode() == itemModIdHash)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("On dirait qu'un item est présente dans la sauvegarde mais dans le jeu. La sauvegarde n'a pas pu être chargé. Hash de l'item en question \"" + itemModIdHash + "\""))
                 .getEntry();
+    }
+
+    @Override
+    public void setRegistry(Registry<ItemRegisterEntry> registry) {
+        this.registry = registry;
     }
 }

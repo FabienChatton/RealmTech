@@ -1,7 +1,6 @@
 package ch.realmtech.game.craft;
 
 
-import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
@@ -9,17 +8,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CraftPatternShapeless implements CraftingRecipeEntry {
+public class CraftPatternShapeless extends CraftPattern {
     private final ItemRegisterEntry itemResult;
     private final ItemRegisterEntry[] itemRequire;
     private final int nombre;
+
     public CraftPatternShapeless(ItemRegisterEntry itemResult, ItemRegisterEntry... itemRequire) {
         this(itemResult, 1, itemRequire);
     }
 
     public CraftPatternShapeless(ItemRegisterEntry itemResult, int nombre, ItemRegisterEntry... itemRequire) {
-        if (itemRequire == null || itemRequire.length == 0) throw new IllegalArgumentException("Il manque les items requit pour le craft");
-        if (nombre <= 0 ) throw new IllegalArgumentException("Le nombre de résultat ne peut pas être nul ou négatif");
+        if (itemRequire == null || itemRequire.length == 0)
+            throw new IllegalArgumentException("Il manque les items requit pour le craft");
+        if (nombre <= 0) throw new IllegalArgumentException("Le nombre de résultat ne peut pas être nul ou négatif");
         this.itemResult = itemResult;
         this.itemRequire = itemRequire;
         this.nombre = nombre;

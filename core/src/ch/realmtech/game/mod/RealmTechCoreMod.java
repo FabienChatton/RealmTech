@@ -263,6 +263,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
                         int inventoryCarburant = world.create();
                         int inventoryResult = world.create();
 
+                        world.edit(id).create(CraftingTableComponent.class).set(inventoryItemToSmelt, inventoryResult);
                         world.edit(inventoryItemToSmelt).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(inventoryItemToSmelt).create(CraftingComponent.class).set(FURNACE_RECIPE, inventoryResult);
                         world.edit(inventoryCarburant).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
