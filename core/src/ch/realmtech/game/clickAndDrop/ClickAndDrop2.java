@@ -5,7 +5,6 @@ import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.game.ecs.system.InventoryManager;
-import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
@@ -60,7 +59,7 @@ public class ClickAndDrop2 {
                         if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
                             if (world.getSystem(InventoryManager.class).canMouveStack(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack())) {
                                 ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
-                                itemResultCraftComponent.pickEvent.pick(world, world.getSystem(PlayerInventorySystem.class).getCurrentCraftingInventory());
+                                itemResultCraftComponent.pickEvent.pick(world);
                                 for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
                                     world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
                                 }

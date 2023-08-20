@@ -5,9 +5,9 @@ import ch.realmtech.game.ecs.system.InventoryManager;
 import com.artemis.World;
 
 public interface ItemResultCraftPickEvent {
-    void pick(final World world, final InventoryComponent inventoryComponent);
+    void pick(final World world);
 
-    static ItemResultCraftPickEvent clearCraftingInventory() {
-        return (world, inventoryComponent) -> world.getSystem(InventoryManager.class).removeAllOneItem(inventoryComponent.inventory);
+    static ItemResultCraftPickEvent removeAllOneItem(InventoryComponent inventoryComponent) {
+        return (world) -> world.getSystem(InventoryManager.class).removeAllOneItem(inventoryComponent.inventory);
     }
 }

@@ -5,10 +5,11 @@ import ch.realmtech.game.registery.CraftingRecipeEntry;
 import com.artemis.Component;
 
 public class ItemResultCraftComponent extends Component {
-    public ItemResultCraftPickEvent pickEvent = ItemResultCraftPickEvent.clearCraftingInventory();
+    public ItemResultCraftPickEvent pickEvent;
     public CraftingRecipeEntry craftingRecipeEntry;
 
-    public ItemResultCraftComponent set(CraftingRecipeEntry craftingRecipeEntry) {
+    public ItemResultCraftComponent set(ItemResultCraftPickEvent pickEvent, CraftingRecipeEntry craftingRecipeEntry) {
+        this.pickEvent = pickEvent;
         this.craftingRecipeEntry = craftingRecipeEntry;
         return this;
     }

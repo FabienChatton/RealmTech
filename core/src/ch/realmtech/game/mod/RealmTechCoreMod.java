@@ -164,7 +164,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
                             InventoryComponent inventoryResult = mInventory.get(craftingTableComponent.craftingResultInventory);
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
                                     DisplayInventoryArgs.builder(inventoryComponent, playerInventory).build(),
-                                    DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).crafting().build(),
+                                    DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).build(),
                                     DisplayInventoryArgs.builder(inventoryResult, craftingResultInventory).notClickAndDropDst().build()
                             });
                         });
@@ -293,7 +293,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
                                 window.add(playerInventoryTable);
                             };
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                    DisplayInventoryArgs.builder(inventoryItemToSmelt, itemToSmeltTable).crafting().build(),
+                                    DisplayInventoryArgs.builder(inventoryItemToSmelt, itemToSmeltTable).build(),
                                     DisplayInventoryArgs.builder(inventoryCarburant, carburantTable).build(),
                                     DisplayInventoryArgs.builder(inventoryResult, resultTable).notClickAndDropDst().build(),
                                     DisplayInventoryArgs.builder(inventoryPlayer, playerInventoryTable).build()

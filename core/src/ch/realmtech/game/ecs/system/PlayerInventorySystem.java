@@ -7,6 +7,7 @@ import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.game.inventory.DisplayInventoryArgs;
+import ch.realmtech.game.item.ItemResultCraftPickEvent;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
@@ -32,8 +33,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -182,31 +181,10 @@ public class PlayerInventorySystem extends BaseSystem {
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
                     DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
                     DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingInventory), craftingInventory)
-                            .crafting()
                             .build(),
                     DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingResultInventory), craftingResultInventory)
                             .notClickAndDropDst()
-                            .craftResult()
                             .build()
-            });
-        };
-    }
-
-    public Function<RealmTech, AddAndDisplayInventoryArgs> getDisplayCraftingInventory(InventoryComponent inventoryComponent, InventoryComponent inventoryCraft, InventoryComponent inventoryResult) {
-        return (context) -> {
-            final Table playerInventory = new Table(context.getSkin());
-            final Table craftingInventory = new Table(context.getSkin());
-            final Table craftingResultInventory = new Table(context.getSkin());
-
-            Consumer<Window> addTable = window -> {
-                window.add(craftingInventory).padBottom(10f).right();
-                window.add(craftingResultInventory).padBottom(10f).row();
-                window.add(playerInventory);
-            };
-            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(inventoryComponent, playerInventory).build(),
-                    DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).crafting().build(),
-                    DisplayInventoryArgs.builder(inventoryResult, craftingResultInventory).notClickAndDropDst().craftResult().build()
             });
         };
     }
@@ -217,7 +195,7 @@ public class PlayerInventorySystem extends BaseSystem {
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
-    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory, int craftingResultInventoryId) {
+    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory, int craftingInventoryId, int craftingResultInventoryId) {
         boolean ajouter = false;
         final int[][] inventory = resultInventory.inventory;
         if (!mItem.has(inventory[0][0])) {
@@ -230,15 +208,15 @@ public class PlayerInventorySystem extends BaseSystem {
             }
         }
         if (ajouter) {
-            ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry, craftingResultInventoryId);
+            ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry, craftingInventoryId, craftingResultInventoryId);
         }
         return true;
     }
 
-    private void ajoutNouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, int craftingResultInventoryId) {
+    private void ajoutNouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, int craftingInventoryId, int craftingResultInventoryId) {
         for (int i = 0; i < craftResult.nombre(); i++) {
             int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
-            world.edit(itemResultId).create(ItemResultCraftComponent.class).set(craftingRecipeEntry);
+            world.edit(itemResultId).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(mInventory.get(craftingInventoryId)), craftingRecipeEntry);
             world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, mInventory.get(craftingResultInventoryId));
         }
         if (isEnabled()) {
@@ -319,16 +297,5 @@ public class PlayerInventorySystem extends BaseSystem {
         label.setFontScale(0.5f);
         label.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
-    }
-
-    public InventoryComponent getCurrentCraftingInventory() throws NoSuchElementException {
-        if (currentInventoryArgs == null) {
-            throw new NoSuchElementException();
-        }
-        return Arrays.stream(currentInventoryArgs.args())
-                .filter(DisplayInventoryArgs::isCrafting)
-                .findFirst()
-                .orElseThrow()
-                .inventoryComponent();
     }
 }
