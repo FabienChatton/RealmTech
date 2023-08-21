@@ -3,13 +3,10 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.clickAndDrop.ClickAndDrop2;
 import ch.realmtech.game.clickAndDrop.ClickAndDropActor;
-import ch.realmtech.game.craft.CraftResult;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.game.inventory.DisplayInventoryArgs;
-import ch.realmtech.game.item.ItemResultCraftPickEvent;
 import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import ch.realmtech.game.registery.RegistryEntry;
 import ch.realmtech.input.InputMapper;
@@ -193,42 +190,6 @@ public class PlayerInventorySystem extends BaseSystem {
         clearDisplayInventory(displayInventoryArgs.addTable());
         displayInventory(displayInventoryArgs.args());
         Gdx.input.setInputProcessor(inventoryStage);
-    }
-
-    public boolean nouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, InventoryComponent resultInventory, int craftingInventoryId, int craftingResultInventoryId) {
-        boolean ajouter = false;
-        final int[][] inventory = resultInventory.inventory;
-        if (!mItem.has(inventory[0][0])) {
-            ajouter = true;
-        } else {
-            ItemComponent itemComponent = mItem.get(inventory[0][0]);
-            if (itemComponent.itemRegisterEntry != craftResult.itemRegisterEntry()) {
-                world.getSystem(InventoryManager.class).removeInventory(inventory);
-                ajouter = true;
-            }
-        }
-        if (ajouter) {
-            ajoutNouveauCraftDisponible(craftResult, craftingRecipeEntry, craftingInventoryId, craftingResultInventoryId);
-        }
-        return true;
-    }
-
-    private void ajoutNouveauCraftDisponible(CraftResult craftResult, CraftingRecipeEntry craftingRecipeEntry, int craftingInventoryId, int craftingResultInventoryId) {
-        for (int i = 0; i < craftResult.nombre(); i++) {
-            int itemResultId = world.getSystem(ItemManager.class).newItemInventory(craftResult.itemRegisterEntry());
-            world.edit(itemResultId).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(mInventory.get(craftingInventoryId)), craftingRecipeEntry);
-            world.getSystem(InventoryManager.class).addItemToInventory(itemResultId, mInventory.get(craftingResultInventoryId));
-        }
-        if (isEnabled()) {
-            refreshInventory(currentInventoryArgs);
-        }
-    }
-
-    public void aucunCraftDisponible(InventoryComponent inventoryComponent) {
-        int[][] inventory = inventoryComponent.inventory;
-        if (inventory[0][0] != 0) {
-            world.getSystem(InventoryManager.class).removeInventory(inventory);
-        }
     }
 
     private void clearDisplayInventory(Consumer<Window> addTable) {

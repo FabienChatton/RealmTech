@@ -3,7 +3,7 @@ package ch.realmtech.game.registery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InfRegistryAnonyme<T extends Entry> {
+public class InfRegistryAnonyme<T extends Entry<T>> {
     private final InfRegistryAnonyme<T> parent;
     private final List<RegistryEntryAnonyme<T>> enfants;
 
@@ -19,10 +19,12 @@ public class InfRegistryAnonyme<T extends Entry> {
     public void add(T entry) {
         enfants.add(new RegistryEntryAnonyme<>(this, entry));
     }
-    public static <T extends Entry> InfRegistryAnonyme<T> create() {
+
+    public static <T extends Entry<T>> InfRegistryAnonyme<T> create() {
         return new InfRegistryAnonyme<>(null);
     }
-    public static <T extends Entry> InfRegistryAnonyme<T> create(InfRegistryAnonyme<T> parent) {
+
+    public static <T extends Entry<T>> InfRegistryAnonyme<T> create(InfRegistryAnonyme<T> parent) {
         return new InfRegistryAnonyme<>(parent);
     }
 }

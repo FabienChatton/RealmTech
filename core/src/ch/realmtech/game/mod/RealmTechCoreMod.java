@@ -155,8 +155,11 @@ public class RealmTechCoreMod extends ModInitializerManager {
                             final Table craftingInventory = new Table(context.getSkin());
                             final Table craftingResultInventory = new Table(context.getSkin());
                             Consumer<Window> addTable = window -> {
-                                window.add(craftingInventory).padBottom(10f).right();
-                                window.add(craftingResultInventory).padBottom(10f).row();
+                                Table craftingTable = new Table(context.getSkin());
+                                craftingTable.add(craftingInventory).padRight(32f);
+                                craftingTable.add(craftingResultInventory);
+                                craftingTable.padBottom(10f);
+                                window.add(craftingTable).row();
                                 window.add(playerInventory);
                             };
                             InventoryComponent inventoryComponent = mInventory.get(context.getEcsEngine().getPlayerId());

@@ -3,7 +3,6 @@ package ch.realmtech.game.registery;
 
 import ch.realmtech.game.craft.CraftResult;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CraftingRecipeEntry extends Entry<CraftingRecipeEntry> {
@@ -16,6 +15,4 @@ public interface CraftingRecipeEntry extends Entry<CraftingRecipeEntry> {
      * @return Le registre de l'item résultat du craft s'il est valide.
      */
     Optional<CraftResult> craft(final ItemRegisterEntry[] itemRegisterEntry, int width, int height);
-
-    List<ItemRegisterEntry> getRequireItem();
 }

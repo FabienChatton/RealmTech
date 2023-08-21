@@ -4,7 +4,6 @@ package ch.realmtech.game.craft;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,11 +30,6 @@ public class CraftPatternShapeless extends CraftPattern {
         return craftNonNull(Arrays.stream(itemRegisterEntry).filter(Objects::nonNull).toArray(ItemRegisterEntry[]::new));
     }
 
-    @Override
-    public List<ItemRegisterEntry> getRequireItem() {
-        return Arrays.stream(itemRequire).filter(Objects::nonNull).toList();
-    }
-
     private Optional<CraftResult> craftNonNull(ItemRegisterEntry[] itemRegisterEntry) {
         if (itemRegisterEntry.length != itemRequire.length) return Optional.empty();
         boolean[] indexDejaPris = new boolean[itemRequire.length];
@@ -53,6 +47,6 @@ public class CraftPatternShapeless extends CraftPattern {
                 return Optional.empty();
             }
         }
-        return Optional.of(new CraftResult(itemResult, nombre));
+        return Optional.of(new CraftResult(itemResult, nombre, 0));
     }
 }

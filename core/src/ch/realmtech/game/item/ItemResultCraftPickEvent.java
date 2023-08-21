@@ -7,7 +7,7 @@ import com.artemis.World;
 public interface ItemResultCraftPickEvent {
     void pick(final World world);
 
-    static ItemResultCraftPickEvent removeAllOneItem(InventoryComponent inventoryComponent) {
-        return (world) -> world.getSystem(InventoryManager.class).removeAllOneItem(inventoryComponent.inventory);
+    static ItemResultCraftPickEvent removeAllOneItem(InventoryComponent inventoryToRemoveComponent) {
+        return (world) -> world.getSystem(InventoryManager.class).removeAllOneItem(inventoryToRemoveComponent.inventory);
     }
 }

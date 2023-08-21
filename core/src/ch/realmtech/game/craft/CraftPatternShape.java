@@ -4,7 +4,6 @@ import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -80,7 +79,7 @@ public class CraftPatternShape extends CraftPattern {
                         }
                     }
                     if (Arrays.stream(itemRegisterEntries2d).flatMap(Arrays::stream).noneMatch(e -> e != RealmTechCoreMod.NO_ITEM)) {
-                        return Optional.of(new CraftResult(itemResult, nombre));
+                        return Optional.of(new CraftResult(itemResult, nombre, 0));
                     } else {
                         throw new NoSuchElementException();
                     }
@@ -89,10 +88,5 @@ public class CraftPatternShape extends CraftPattern {
         } catch (IndexOutOfBoundsException | NoSuchElementException ignored) {
         }
         return Optional.empty();
-    }
-
-    @Override
-    public List<ItemRegisterEntry> getRequireItem() {
-        return Arrays.stream(craftPattern2d).flatMap(Arrays::stream).toList();
     }
 }

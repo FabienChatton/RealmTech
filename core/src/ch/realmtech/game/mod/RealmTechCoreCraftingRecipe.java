@@ -3,6 +3,7 @@ package ch.realmtech.game.mod;
 import ch.realmtech.game.craft.CraftPatternFix;
 import ch.realmtech.game.craft.CraftPatternShape;
 import ch.realmtech.game.craft.CraftPatternShapeless;
+import ch.realmtech.game.craft.FurnacePatternShape;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.InfRegistryAnonyme;
 
@@ -72,7 +73,7 @@ public class RealmTechCoreCraftingRecipe {
     }
 
     public static void initFurnaceRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
-        registry.add(new CraftPatternShape(SANDALES_ITEM, new char[][]{
+        registry.add(new FurnacePatternShape(SANDALES_ITEM, 100, new char[][]{
                 new char[]{'a'}
         }, new CraftPatternArgs('a', BUCHE_ITEM)));
     }
