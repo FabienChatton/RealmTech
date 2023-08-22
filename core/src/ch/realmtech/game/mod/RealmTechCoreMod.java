@@ -1,6 +1,7 @@
 package ch.realmtech.game.mod;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.craft.CraftStrategy;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.game.inventory.AddAndDisplayInventoryArgs;
@@ -110,7 +111,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static ItemRegisterEntry BUCHE_ITEM = registerItem("buche", new ItemRegisterEntry(
             "buche-01",
             ItemBehavior.builder()
-                    .setTimeToBurn(10)
+                    .setTimeToBurn(60)
                     .build()
     ));
     public final static ItemRegisterEntry STICK_ITEM = registerItem("stick", new ItemRegisterEntry(
@@ -141,7 +142,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .editEntity((world, cellId) -> {
                         int craftingInventory = world.create();
                         int craftingResultInventory = world.create();
-                        world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory, () -> true, true);
+                        world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory, () -> true, CraftStrategy.craftingStrategyCraftingTable());
                         world.edit(craftingInventory).create(InventoryComponent.class).set(3, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(craftingResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(craftingInventory).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventory);
@@ -267,22 +268,24 @@ public class RealmTechCoreMod extends ModInitializerManager {
                         int inventoryCarburant = world.create();
                         int inventoryResult = world.create();
 
-                        world.edit(id).create(CraftingTableComponent.class).set(inventoryItemToSmelt, inventoryResult, () -> furnaceComponent.timeToBurn > 0, true);
+                        world.edit(id).create(CraftingTableComponent.class).set(inventoryItemToSmelt, inventoryResult, () -> furnaceComponent.timeToBurn > 0, CraftStrategy.craftingStrategyFurnace());
                         world.edit(inventoryItemToSmelt).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(inventoryItemToSmelt).create(CraftingComponent.class).set(FURNACE_RECIPE, inventoryResult);
                         world.edit(inventoryCarburant).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
                         world.edit(inventoryResult).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-                        furnaceComponent.set(inventoryItemToSmelt, inventoryCarburant, inventoryResult);
+                        furnaceComponent.set(inventoryCarburant);
                     })
                     .interagieClickDroit((world, cellId) -> {
                         ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
+                        ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
                         FurnaceComponent furnaceComponent = mFurnace.get(cellId);
+                        CraftingTableComponent craftingTableComponent = mCraftingTable.get(cellId);
 
                         world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
-                            InventoryComponent inventoryItemToSmelt = mInventory.get(furnaceComponent.inventoryItemToSmelt);
+                            InventoryComponent inventoryItemToSmelt = mInventory.get(craftingTableComponent.craftingInventory);
                             InventoryComponent inventoryCarburant = mInventory.get(furnaceComponent.inventoryCarburant);
-                            InventoryComponent inventoryResult = mInventory.get(furnaceComponent.inventoryResult);
+                            InventoryComponent inventoryResult = mInventory.get(craftingTableComponent.craftingResultInventory);
                             InventoryComponent inventoryPlayer = mInventory.get(context.getEcsEngine().getPlayerId());
 
                             Table playerInventoryTable = new Table(context.getSkin());

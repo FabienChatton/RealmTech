@@ -1,8 +1,10 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.game.craft.CraftResult;
-import ch.realmtech.game.ecs.component.*;
-import ch.realmtech.game.item.ItemResultCraftPickEvent;
+import ch.realmtech.game.ecs.component.CraftingComponent;
+import ch.realmtech.game.ecs.component.CraftingTableComponent;
+import ch.realmtech.game.ecs.component.InventoryComponent;
+import ch.realmtech.game.ecs.component.ItemComponent;
 import ch.realmtech.game.registery.CraftingRecipeEntry;
 import ch.realmtech.game.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -23,12 +25,17 @@ public class CraftingPlayerSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
+
+        CraftResult craftResult = getCraft(craftingTableComponent);
+        craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(world, craftResult, entityId);
+    }
+
+    public CraftResult getCraft(CraftingTableComponent craftingTableComponent) {
         if (!craftingTableComponent.getCanCraft()) {
-            return;
+            return null;
         }
         InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
         CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
-        InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
         int[][] inventoryCraft = inventoryCraftComponent.inventory;
         ItemRegisterEntry[] itemRegister = new ItemRegisterEntry[inventoryCraft.length];
         for (int i = 0; i < inventoryCraft.length; i++) {
@@ -36,34 +43,15 @@ public class CraftingPlayerSystem extends IteratingSystem {
                 itemRegister[i] = mItem.get(inventoryCraft[i][0]).itemRegisterEntry;
             }
         }
-//        boolean craftDisponible = false;
+
         if (Arrays.stream(itemRegister).anyMatch(Objects::nonNull)) {
             for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
                 Optional<CraftResult> craftResultOption = craftingRecipeEntry.craft(itemRegister, inventoryCraftComponent.numberOfSlotParRow, inventoryCraftComponent.numberOfRow);
                 if (craftResultOption.isPresent()) {
-                    CraftResult craftResult = craftResultOption.get();
-                    boolean modifierStackItemResult = false;
-                    if (InventoryManager.tailleStack(inventoryResultComponent.inventory[0]) == 0) {
-                        modifierStackItemResult = true;
-                    } else {
-                        ItemComponent itemComponentResultDeja = mItem.get(inventoryResultComponent.inventory[0][0]);
-                        if (craftResult.getItemRegisterEntry() != itemComponentResultDeja.itemRegisterEntry) {
-                            modifierStackItemResult = true;
-                        }
-                    }
-                    if (modifierStackItemResult) {
-                        world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);
-                        for (int i = 0; i < craftResult.getNombreResult(); i++) {
-                            int nouvelItemResult = world.getSystem(ItemManager.class).newItemInventory(craftResult.getItemRegisterEntry());
-                            world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(inventoryCraftComponent), craftingRecipeEntry);
-                            world.getSystem(InventoryManager.class).addItemToStack(inventoryResultComponent.inventory[0], nouvelItemResult);
-                        }
-                    }
-                    return;
+                    return craftResultOption.get();
                 }
             }
         }
-        world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);
+        return null;
     }
-
 }

@@ -1,5 +1,6 @@
 package ch.realmtech.game.ecs.system;
 
+import ch.realmtech.game.ecs.component.CraftingTableComponent;
 import ch.realmtech.game.ecs.component.FurnaceComponent;
 import ch.realmtech.game.ecs.component.InventoryComponent;
 import ch.realmtech.game.ecs.component.ItemComponent;
@@ -7,7 +8,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
-@All(FurnaceComponent.class)
+@All({FurnaceComponent.class, CraftingTableComponent.class})
 public class FurnaceSystem extends IteratingSystem {
     private ComponentMapper<FurnaceComponent> mFurnace;
     private ComponentMapper<ItemComponent> mItem;

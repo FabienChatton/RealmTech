@@ -1,5 +1,6 @@
 package ch.realmtech.game.ecs.component;
 
+import ch.realmtech.game.craft.CraftStrategy;
 import com.artemis.Component;
 import com.artemis.annotations.EntityId;
 
@@ -13,20 +14,20 @@ public class CraftingTableComponent extends Component {
     public int craftingResultInventory;
 
     private Supplier<Boolean> canCraft;
-    private boolean consumeItemOnNewCraft;
+    private CraftStrategy craftStrategy;
 
-    public void set(int craftingInventory, int craftingResultInventory, Supplier<Boolean> canCraft, boolean consumeItemOnNewCraft) {
+    public void set(int craftingInventory, int craftingResultInventory, Supplier<Boolean> canCraft, CraftStrategy craftStrategy) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.canCraft = canCraft;
-        this.consumeItemOnNewCraft = consumeItemOnNewCraft;
+        this.craftStrategy = craftStrategy;
     }
 
     public boolean getCanCraft() {
         return canCraft.get();
     }
 
-    public boolean isConsumeItemOnNewCraft() {
-        return consumeItemOnNewCraft;
+    public CraftStrategy getCraftResultStrategy() {
+        return craftStrategy;
     }
 }
