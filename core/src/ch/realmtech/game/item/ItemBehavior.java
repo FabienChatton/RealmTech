@@ -10,6 +10,7 @@ public class ItemBehavior {
     private float speedEffect;
     private CellRegisterEntry placeCell;
     private int timeToBurn = 0;
+    private boolean icon;
 
     private ItemBehavior() {
         attackDommage = 1;
@@ -40,7 +41,12 @@ public class ItemBehavior {
         return timeToBurn;
     }
 
+    public boolean isIcon() {
+        return icon;
+    }
+
     public static class ItemBehaviorBuilder {
+
         private final ItemBehavior itemBehavior = new ItemBehavior();
 
         public ItemBehaviorBuilder setAttackDommage(int attackDommage) {
@@ -65,6 +71,11 @@ public class ItemBehavior {
 
         public ItemBehaviorBuilder setTimeToBurn(int timeToBurn) {
             itemBehavior.timeToBurn = timeToBurn;
+            return this;
+        }
+
+        public ItemBehaviorBuilder icon() {
+            itemBehavior.icon = true;
             return this;
         }
 

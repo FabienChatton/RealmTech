@@ -51,8 +51,10 @@ public class ClickAndDropActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         if (stack[0] != 0) {
             final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
-            batch.draw(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context), getX(), getY());
-            bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context).getRegionHeight());
+            batch.draw(itemRegisterEntry.getTextureRegion(context), getX(), getY());
+            if (!itemRegisterEntry.getItemBehavior().isIcon()) {
+                bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context).getRegionHeight());
+            }
         }
     }
 

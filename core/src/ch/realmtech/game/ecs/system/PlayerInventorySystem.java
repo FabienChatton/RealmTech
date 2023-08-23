@@ -56,6 +56,7 @@ public class PlayerInventorySystem extends BaseSystem {
     @Override
     protected void processSystem() {
         showMouseOverLabel();
+        inventoryStage.setDebugAll(context.getUiStage().isDebugAll());
         inventoryStage.act();
         inventoryStage.draw();
     }
@@ -245,18 +246,18 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public Table createItemSlotToDisplay(int[] stack, InventoryComponent inventoryComponent) {
         Image image = new Image();
-        Label label = new Label(null, skin);
+        Label nombreItem = new Label(null, skin);
         final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
         if (mItem.has(stack[0])) {
             image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context)));
-            label.setText(Integer.toString(InventoryManager.tailleStack(stack)));
+            nombreItem.setText(Integer.toString(InventoryManager.tailleStack(stack)));
         }
         Table table = new Table();
         table.add(image);
-        table.addActor(label);
+        table.addActor(nombreItem);
         table.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
-        label.setFontScale(0.5f);
-        label.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
+        nombreItem.setFontScale(0.5f);
+        nombreItem.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
     }
 }

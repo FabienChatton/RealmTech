@@ -15,6 +15,7 @@ public record DisplayInventoryArgs(InventoryComponent inventoryComponent, Table 
         private Table inventoryTable;
         private boolean clickAndDropSrc = true;
         private boolean clickAndDropDst = true;
+        private boolean icon = false;
 
 
         public DisplayInventoryArgsBuilder(InventoryComponent inventoryComponent, Table inventoryTable) {
@@ -29,6 +30,13 @@ public record DisplayInventoryArgs(InventoryComponent inventoryComponent, Table 
 
         public DisplayInventoryArgsBuilder notClickAndDropDst() {
             clickAndDropDst = false;
+            return this;
+        }
+
+        public DisplayInventoryArgsBuilder icon() {
+            icon = true;
+            notClickAndDropSrc();
+            notClickAndDropDst();
             return this;
         }
 

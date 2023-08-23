@@ -31,9 +31,6 @@ public class CraftingPlayerSystem extends IteratingSystem {
     }
 
     public CraftResult getCraft(CraftingTableComponent craftingTableComponent) {
-        if (!craftingTableComponent.getCanCraft()) {
-            return null;
-        }
         InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
         CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
         int[][] inventoryCraft = inventoryCraftComponent.inventory;

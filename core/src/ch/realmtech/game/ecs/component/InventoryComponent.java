@@ -7,6 +7,7 @@ public class InventoryComponent extends Component {
     public final static int DEFAULT_NUMBER_OF_ROW = 4;
     public final static int DEFAULT_NUMBER_OF_SLOT_PAR_ROW = 9;
     public final static String DEFAULT_BACKGROUND_TEXTURE_NAME = "inventory-02";
+    public final static String NO_BACKGROUND_TEXTURE_NAME = "no-texture";
     public int[][] inventory;
     public int stackLimite;
     public int numberOfRow;

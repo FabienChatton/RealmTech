@@ -1,133 +1,135 @@
 texture.png
-	size: 902, 143
+	size: 902, 146
 	repeat: none
 buche-01
-	bounds: 632, 77, 32, 32
+	bounds: 632, 80, 32, 32
 cell-breaking-stage-01
-	bounds: 598, 111, 32, 32
+	bounds: 598, 114, 32, 32
 cell-breaking-stage-02
-	bounds: 620, 9, 32, 32
+	bounds: 654, 12, 32, 32
 cell-breaking-stage-03
-	bounds: 532, 45, 32, 32
+	bounds: 532, 48, 32, 32
 cell-breaking-stage-04
-	bounds: 170, 17, 32, 32
+	bounds: 204, 20, 32, 32
 cell-breaking-stage-05
-	bounds: 688, 43, 32, 32
+	bounds: 722, 46, 32, 32
 cell-breaking-stage-06
-	bounds: 802, 111, 32, 32
+	bounds: 802, 114, 32, 32
 cell-breaking-stage-07
-	bounds: 0, 17, 32, 32
+	bounds: 34, 20, 32, 32
 cell-breaking-stage-08
-	bounds: 802, 77, 32, 32
+	bounds: 836, 80, 32, 32
 cell-breaking-stage-09
-	bounds: 340, 17, 32, 32
+	bounds: 374, 20, 32, 32
 cell-breaking-stage-10
-	bounds: 790, 43, 32, 32
+	bounds: 824, 46, 32, 32
 cell-breaking-stage-11
-	bounds: 870, 111, 32, 32
+	bounds: 870, 114, 32, 32
 cell-breaking-stage-12
-	bounds: 34, 17, 32, 32
+	bounds: 68, 20, 32, 32
 cell-breaking-stage-13
-	bounds: 586, 43, 32, 32
+	bounds: 620, 46, 32, 32
 cell-breaking-stage-14
-	bounds: 632, 111, 32, 32
+	bounds: 632, 114, 32, 32
 cell-breaking-stage-15
-	bounds: 688, 9, 32, 32
+	bounds: 722, 12, 32, 32
 cellOver-01
-	bounds: 722, 43, 32, 32
+	bounds: 756, 46, 32, 32
 chest-01
-	bounds: 734, 77, 32, 32
+	bounds: 768, 80, 32, 32
 coal-ore-01
-	bounds: 272, 17, 32, 32
+	bounds: 306, 20, 32, 32
 copper-ore-03
-	bounds: 598, 77, 32, 32
+	bounds: 598, 80, 32, 32
 default-texture
-	bounds: 756, 9, 32, 32
+	bounds: 790, 12, 32, 32
 furnace-01
-	bounds: 722, 9, 32, 32
+	bounds: 756, 12, 32, 32
 furnace-time-to-burn-01
-	bounds: 768, 111, 32, 32
+	bounds: 768, 114, 32, 32
 furnace-time-to-burn-02
-	bounds: 824, 9, 32, 32
+	bounds: 858, 12, 32, 32
 furnace-time-to-burn-03
-	bounds: 768, 77, 32, 32
+	bounds: 802, 80, 32, 32
 furnace-time-to-burn-04
-	bounds: 306, 17, 32, 32
+	bounds: 340, 20, 32, 32
 furnace-time-to-burn-05
-	bounds: 824, 43, 32, 32
+	bounds: 858, 46, 32, 32
 furnace-time-to-burn-06
-	bounds: 498, 45, 32, 32
+	bounds: 498, 48, 32, 32
 furnace-time-to-burn-07
-	bounds: 68, 17, 32, 32
+	bounds: 102, 20, 32, 32
 furnace-time-to-burn-08
-	bounds: 620, 43, 32, 32
+	bounds: 654, 46, 32, 32
 furnace-time-to-burn-09
-	bounds: 700, 111, 32, 32
+	bounds: 700, 114, 32, 32
 furnace-time-to-burn-10
-	bounds: 654, 9, 32, 32
+	bounds: 688, 12, 32, 32
 gold-ore-01
-	bounds: 836, 77, 32, 32
+	bounds: 870, 80, 32, 32
 grass-01
-	bounds: 102, 17, 32, 32
+	bounds: 136, 20, 32, 32
 inventory-01
-	bounds: 666, 77, 32, 32
+	bounds: 666, 80, 32, 32
 inventory-02
-	bounds: 238, 17, 32, 32
+	bounds: 272, 20, 32, 32
 iron-ore-01
-	bounds: 870, 77, 32, 32
+	bounds: 586, 46, 32, 32
 logo-RealmTech
-	bounds: 0, 51, 496, 92
+	bounds: 0, 54, 496, 92
+no-texture
+	bounds: 734, 80, 32, 32
 pelle-bois-01
-	bounds: 666, 111, 32, 32
+	bounds: 666, 114, 32, 32
 pelle-stone-01
-	bounds: 654, 43, 32, 32
+	bounds: 688, 46, 32, 32
 pioche-bois-01
-	bounds: 836, 111, 32, 32
+	bounds: 836, 114, 32, 32
 pioche-stone-01
-	bounds: 136, 17, 32, 32
+	bounds: 170, 20, 32, 32
 plank-02
-	bounds: 858, 43, 32, 32
+	bounds: 586, 12, 32, 32
 plank-cell-01
-	bounds: 374, 17, 32, 32
+	bounds: 408, 20, 32, 32
 reimu
-	bounds: 498, 79, 64, 64
+	bounds: 498, 82, 64, 64
 reimu-back-0
-	bounds: 468, 25, 18, 24
+	bounds: 462, 2, 18, 24
 reimu-back-1
-	bounds: 448, 25, 18, 24
+	bounds: 482, 22, 18, 24
 reimu-back-2
-	bounds: 428, 25, 18, 24
+	bounds: 462, 28, 18, 24
 reimu-front-0
-	bounds: 566, 25, 18, 25
+	bounds: 566, 28, 18, 25
 reimu-front-1
-	bounds: 566, 52, 18, 25
+	bounds: 566, 55, 18, 25
 reimu-front-2
-	bounds: 408, 24, 18, 25
+	bounds: 442, 27, 18, 25
 reimu-left-0
-	bounds: 488, 20, 16, 23
+	bounds: 502, 23, 16, 23
 reimu-left-1
-	bounds: 465, 1, 17, 22
+	bounds: 557, 4, 17, 22
 reimu-left-2
-	bounds: 446, 1, 17, 22
+	bounds: 538, 24, 17, 22
 reimu-right-0
-	bounds: 428, 0, 16, 23
+	bounds: 520, 23, 16, 23
 reimu-right-1
-	bounds: 408, 0, 17, 22
+	bounds: 442, 3, 17, 22
 reimu-right-2
-	bounds: 506, 21, 17, 22
+	bounds: 538, 0, 17, 22
 sand-01
-	bounds: 858, 9, 32, 32
+	bounds: 0, 20, 32, 32
 sandales-01
-	bounds: 586, 9, 32, 32
+	bounds: 620, 12, 32, 32
 stick-02
-	bounds: 734, 111, 32, 32
+	bounds: 734, 114, 32, 32
 stone-ore-01
-	bounds: 790, 9, 32, 32
+	bounds: 824, 12, 32, 32
 table-craft-01
-	bounds: 204, 17, 32, 32
+	bounds: 238, 20, 32, 32
 tin-ore-01
-	bounds: 756, 43, 32, 32
+	bounds: 790, 46, 32, 32
 tree-02
-	bounds: 564, 79, 32, 64
+	bounds: 564, 82, 32, 64
 water-01
-	bounds: 700, 77, 32, 32
+	bounds: 700, 80, 32, 32

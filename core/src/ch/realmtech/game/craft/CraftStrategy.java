@@ -45,25 +45,27 @@ public interface CraftStrategy {
             InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
 
-            if (furnaceComponent.timeToBurn == 0) {
+            if (furnaceComponent.timeToBurn == 0 && craftResult != null) {
                 InventoryComponent inventoryCarburant = mInventory.get(furnaceComponent.inventoryCarburant);
                 int[] stack = inventoryCarburant.inventory[0];
-                int topItem = InventoryManager.getTopItem(stack);
-                if (mItem.has(topItem)) {
-                    ItemComponent burnItemComponent = mItem.get(topItem);
-                    int timeToBurn = burnItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();
+                int itemCarburant = InventoryManager.getTopItem(stack);
+                if (mItem.has(itemCarburant)) {
+                    ItemComponent itemCarburantComponent = mItem.get(itemCarburant);
+                    int timeToBurn = itemCarburantComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();
                     if (timeToBurn > 0) {
                         furnaceComponent.timeToBurn = timeToBurn;
-                        furnaceComponent.itemBurn = burnItemComponent.itemRegisterEntry;
+                        furnaceComponent.itemBurn = itemCarburantComponent.itemRegisterEntry;
                         world.getSystem(InventoryManager.class).removeOneItem(stack);
                     }
                 }
             } else {
-                furnaceComponent.timeToBurn--;
+                if (furnaceComponent.timeToBurn > 0) {
+                    furnaceComponent.timeToBurn--;
+                }
             }
 
             if (craftResult != null) {
-                if (furnaceComponent.curentBurnTime == 0 && furnaceComponent.curentCraftResult == null && isModifierStackItemResultFurnace(craftResult, mItem, inventoryResultComponent)) {
+                if (furnaceComponent.timeToBurn > 0 && furnaceComponent.curentBurnTime == 0 && furnaceComponent.curentCraftResult == null && isModifierStackItemResultFurnace(craftResult, mItem, inventoryResultComponent)) {
                     world.getSystem(InventoryManager.class).removeOneItem(inventoryCraftComponent.inventory[0]);
                     furnaceComponent.curentCraftResult = craftResult;
                 }
