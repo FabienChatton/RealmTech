@@ -129,6 +129,16 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_08 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-08", ItemBehavior.builder().icon().build()));
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_09 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-09", ItemBehavior.builder().icon().build()));
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_10 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-10", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_01 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-01", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_02 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-02", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_03 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-03", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_04 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-04", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_05 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-05", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_06 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-06", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_07 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-07", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_08 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-08", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_09 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-09", ItemBehavior.builder().icon().build()));
+    public final static ItemRegisterEntry ICON_FURNACE_ARROW_10 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-10", ItemBehavior.builder().icon().build()));
     //</editor-fold>
 
 
@@ -302,16 +312,19 @@ public class RealmTechCoreMod extends ModInitializerManager {
                             InventoryComponent inventoryResult = mInventory.get(craftingTableComponent.craftingResultInventory);
                             InventoryComponent inventoryPlayer = mInventory.get(context.getEcsEngine().getPlayerId());
                             InventoryComponent iconInventoryTimeToBurn = mInventory.get(furnaceComponent.iconInventoryTimeToBurn);
+                            InventoryComponent iconInventoryCurentBurnTime = mInventory.get(furnaceComponent.iconInventoryCurentBurnTime);
 
                             Table playerInventoryTable = new Table(context.getSkin());
                             Table itemToSmeltTable = new Table(context.getSkin());
                             Table midleTable = new Table(context.getSkin());
                             Table iconTimeToBurnTable = new Table(context.getSkin());
+                            Table iconCurentBurnTime = new Table(context.getSkin());
                             Table carburantTable = new Table(context.getSkin());
                             Table resultTable = new Table(context.getSkin());
                             Consumer<Window> addTable = window -> {
                                 window.add(itemToSmeltTable).padBottom(10f).row();
-                                midleTable.add(iconTimeToBurnTable).padLeft(32 + 16).padRight(16f).left();
+                                midleTable.add(iconTimeToBurnTable).padLeft(64 + 32).padRight(16);
+                                midleTable.add(iconCurentBurnTime).padRight(16);
                                 midleTable.add(resultTable).row();
                                 window.add(midleTable).padBottom(10f).row();
                                 window.add(carburantTable).padBottom(10f).row();
@@ -322,7 +335,8 @@ public class RealmTechCoreMod extends ModInitializerManager {
                                     DisplayInventoryArgs.builder(inventoryCarburant, carburantTable).build(),
                                     DisplayInventoryArgs.builder(inventoryResult, resultTable).notClickAndDropDst().build(),
                                     DisplayInventoryArgs.builder(inventoryPlayer, playerInventoryTable).build(),
-                                    DisplayInventoryArgs.builder(iconInventoryTimeToBurn, iconTimeToBurnTable).icon().build()
+                                    DisplayInventoryArgs.builder(iconInventoryTimeToBurn, iconTimeToBurnTable).icon().build(),
+                                    DisplayInventoryArgs.builder(iconInventoryCurentBurnTime, iconCurentBurnTime).icon().build()
                             });
                         });
                     })
