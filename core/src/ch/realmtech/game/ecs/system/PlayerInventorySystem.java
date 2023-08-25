@@ -30,7 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -151,16 +150,16 @@ public class PlayerInventorySystem extends BaseSystem {
             }
             context.getSoundManager().playOpenInventory();
             inGameSystemOnInventoryOpen.disableInGameSystemOnPause(world);
-            for (Actor actor : inventoryStage.getActors().items) {
-                if (actor instanceof ClickAndDropActor clickAndDropActor) {
-                    int[] stack = clickAndDropActor.getStack();
-                    for (int itemId : stack) {
-                        if (mItem.has(itemId)) {
-                            System.out.println(mItem.get(itemId) + ", itemId:" + itemId);
-                        }
-                    }
-                }
-            }
+//            for (Actor actor : inventoryStage.getActors().items) {
+//                if (actor instanceof ClickAndDropActor clickAndDropActor) {
+//                    int[] stack = clickAndDropActor.getStack();
+//                    for (int itemId : stack) {
+//                        if (mItem.has(itemId)) {
+//                            System.out.println(mItem.get(itemId) + ", itemId:" + itemId);
+//                        }
+//                    }
+//                }
+//            }
             return true;
         } else {
             return false;
@@ -207,10 +206,7 @@ public class PlayerInventorySystem extends BaseSystem {
 
     private void clearDisplayInventory() {
         for (Actor actor : inventoryStage.getActors().items) {
-            if (actor instanceof ClickAndDropActor clickAndDropActor) {
-                clickAndDropActor.remove();
-                Arrays.fill(clickAndDropActor.getStack(), 0);
-            } else if (actor != null) {
+            if (actor != null) {
                 actor.clear();
             }
         }
