@@ -30,6 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -150,6 +151,16 @@ public class PlayerInventorySystem extends BaseSystem {
             }
             context.getSoundManager().playOpenInventory();
             inGameSystemOnInventoryOpen.disableInGameSystemOnPause(world);
+            for (Actor actor : inventoryStage.getActors().items) {
+                if (actor instanceof ClickAndDropActor clickAndDropActor) {
+                    int[] stack = clickAndDropActor.getStack();
+                    for (int itemId : stack) {
+                        if (mItem.has(itemId)) {
+                            System.out.println(mItem.get(itemId) + ", itemId:" + itemId);
+                        }
+                    }
+                }
+            }
             return true;
         } else {
             return false;
@@ -188,19 +199,26 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void refreshInventory(AddAndDisplayInventoryArgs displayInventoryArgs) {
-        clearDisplayInventory(displayInventoryArgs.addTable());
+        clearDisplayInventory();
+        displayAddTable(displayInventoryArgs.addTable());
         displayInventory(displayInventoryArgs.args());
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
-    private void clearDisplayInventory(Consumer<Window> addTable) {
-        for (Actor actor : inventoryWindow.getChildren().items) {
-            if (actor != null) {
+    private void clearDisplayInventory() {
+        for (Actor actor : inventoryStage.getActors().items) {
+            if (actor instanceof ClickAndDropActor clickAndDropActor) {
+                clickAndDropActor.remove();
+                Arrays.fill(clickAndDropActor.getStack(), 0);
+            } else if (actor != null) {
                 actor.clear();
             }
         }
         inventoryWindow.clear();
         clickAndDrop2.clearActor();
+    }
+
+    private void displayAddTable(Consumer<Window> addTable) {
         addTable.accept(inventoryWindow);
     }
 
