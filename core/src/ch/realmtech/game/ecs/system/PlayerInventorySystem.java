@@ -30,6 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -44,6 +45,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private Window overWindow;
     private Label overLabel;
     private AddAndDisplayInventoryArgs currentInventoryArgs;
+    private ArrayList<ClickAndDropActor> curentClickAndDropActors;
     @Wire(name = "context")
     private RealmTech context;
     @Wire(name = "inGameSystemOnInventoryOpen")
@@ -123,6 +125,7 @@ public class PlayerInventorySystem extends BaseSystem {
         overWindow.add(overLabel).expand().left();
         overLabel.setFontScale(0.5f);
         overWindow.setColor(new Color(1, 1, 1, 0.8f));
+        curentClickAndDropActors = new ArrayList<>();
     }
 
     public boolean closePlayerInventory() {
@@ -143,6 +146,7 @@ public class PlayerInventorySystem extends BaseSystem {
         if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();
+            clearDisplayInventory();
             currentInventoryArgs = openPlayerInventoryFunction.apply(context);
             refreshInventory(currentInventoryArgs);
             if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
@@ -198,18 +202,18 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void refreshInventory(AddAndDisplayInventoryArgs displayInventoryArgs) {
-        clearDisplayInventory();
         displayAddTable(displayInventoryArgs.addTable());
         displayInventory(displayInventoryArgs.args());
         Gdx.input.setInputProcessor(inventoryStage);
     }
 
     private void clearDisplayInventory() {
-        for (Actor actor : inventoryStage.getActors().items) {
+        for (Actor actor : inventoryWindow.getChildren().items) {
             if (actor != null) {
                 actor.clear();
             }
         }
+        curentClickAndDropActors.forEach(Actor::remove);
         inventoryWindow.clear();
         clickAndDrop2.clearActor();
     }
@@ -247,6 +251,7 @@ public class PlayerInventorySystem extends BaseSystem {
             final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
             tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
             final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage);
+            curentClickAndDropActors.add(clickAndDropActor);
             clickAndDropActor.setWidth(backGroundTextureRegion.getRegionWidth());
             clickAndDropActor.setHeight(backGroundTextureRegion.getRegionHeight());
             if (clickAndDropSrc) clickAndDrop2.addSource(clickAndDropActor);
