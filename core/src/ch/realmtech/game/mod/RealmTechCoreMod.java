@@ -119,6 +119,27 @@ public class RealmTechCoreMod extends ModInitializerManager {
             ItemBehavior.builder()
                     .build()
     ));
+    public final static ItemRegisterEntry TIN_INGOT = registerItem("tinIngot", new ItemRegisterEntry(
+            "tin-ingot-01",
+            ItemBehavior.builder().build()
+    ));
+    public final static ItemRegisterEntry COAL = registerItem("coal", new ItemRegisterEntry(
+            "coal-01",
+            ItemBehavior.builder().setTimeToBurn(1000).build()
+    ));
+    public final static ItemRegisterEntry GOLD_INGOT = registerItem("goldIngot", new ItemRegisterEntry(
+            "gold-ingot-01",
+            ItemBehavior.builder().build()
+    ));
+    public final static ItemRegisterEntry IRON_INGOT = registerItem("ironIngot", new ItemRegisterEntry(
+            "iron-ingot-01",
+            ItemBehavior.builder().build()
+    ));
+    public final static ItemRegisterEntry COPPER_INGOT = registerItem("copperIngot", new ItemRegisterEntry(
+            "copper-ingot-01",
+            ItemBehavior.builder().build()
+    ));
+
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_01 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-01", ItemBehavior.builder().icon().build()));
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_02 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-02", ItemBehavior.builder().icon().build()));
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_03 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-03", ItemBehavior.builder().icon().build()));
@@ -159,6 +180,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "table-craft-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.craftingTable")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntity((world, cellId) -> {
                         int craftingInventory = world.create();
                         int craftingResultInventory = world.create();
@@ -206,6 +228,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.chest")
                     .editEntity((world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME))
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((world, cellId) -> {
                         ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
                         InventoryComponent inventoryComponent = mInventory.get(cellId);
@@ -231,10 +254,10 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .build()
     ));
 
-    public final static CellItemRegisterEntry COPPER = registerCellItem("copper", new CellRegisterEntry(
+    public final static CellItemRegisterEntry COPPER_ORE = registerCellItem("copperOre", new CellRegisterEntry(
             "copper-ore-03",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.copper")
+                    .breakWith(ItemType.PIOCHE, "realmtech.copperOre")
                     .build()
     ), new ItemRegisterEntry(
             "copper-ore-03",
@@ -251,17 +274,25 @@ public class RealmTechCoreMod extends ModInitializerManager {
             ItemBehavior.builder().build()
     ));
 
-    public final static CellItemRegisterEntry IRON = registerCellItem("iron", new CellRegisterEntry(
+    public final static CellItemRegisterEntry IRON_ORE = registerCellItem("ironOre", new CellRegisterEntry(
             "iron-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.iron")
+                    .breakWith(ItemType.PIOCHE, "realmtech.ironOre")
                     .build()
     ), new ItemRegisterEntry(
             "iron-ore-01",
             ItemBehavior.builder().build()
     ));
-
-    public final static CellItemRegisterEntry COAL = registerCellItem("coal", new CellRegisterEntry(
+    public final static CellItemRegisterEntry TIN_ORE = registerCellItem("tinOre", new CellRegisterEntry(
+            "tin-ore-01",
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.PIOCHE, "realmtech.tinOre")
+                    .build()
+    ), new ItemRegisterEntry(
+            "tin-ore-01",
+            ItemBehavior.builder().build()
+    ));
+    public final static CellItemRegisterEntry COAL_ORE = registerCellItem("coalOre", new CellRegisterEntry(
             "coal-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PIOCHE, "realmtech.coal")
@@ -270,10 +301,10 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "coal-ore-01",
             ItemBehavior.builder().build()
     ));
-    public final static CellItemRegisterEntry GOLD = registerCellItem("gold", new CellRegisterEntry(
+    public final static CellItemRegisterEntry GOLD_ORE = registerCellItem("goldOre", new CellRegisterEntry(
             "gold-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.gold")
+                    .breakWith(ItemType.PIOCHE, "realmtech.goldOre")
                     .build()
     ), new ItemRegisterEntry(
             "gold-ore-01",

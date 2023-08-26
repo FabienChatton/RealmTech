@@ -45,16 +45,16 @@ public class PerlineNoise3 implements GetNoise {
     public CellRegisterEntry getGroundDeco(PerlinNoise perlinNoise, int x, int y) {
         CellRegisterEntry ret = null;
         if (perlinNoise.getNoise(this, x, y, simplexNoiseGold) > 0.999999f) {
-            ret = RealmTechCoreMod.GOLD.cellRegisterEntry();
+            ret = RealmTechCoreMod.GOLD_ORE.cellRegisterEntry();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseIron) > 0.999f) {
-            ret = RealmTechCoreMod.IRON.cellRegisterEntry();
+            ret = RealmTechCoreMod.IRON_ORE.cellRegisterEntry();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCopper) > 0.999f) {
-            ret = RealmTechCoreMod.COPPER.cellRegisterEntry();
+            ret = RealmTechCoreMod.COPPER_ORE.cellRegisterEntry();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCoal) > 0.999f) {
-            ret = RealmTechCoreMod.COAL.cellRegisterEntry();
+            ret = RealmTechCoreMod.COAL_ORE.cellRegisterEntry();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseStone) > 0.999f) {
             ret = RealmTechCoreMod.STONE.cellRegisterEntry();

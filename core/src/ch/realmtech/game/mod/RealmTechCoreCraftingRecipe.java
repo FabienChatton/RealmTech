@@ -76,5 +76,21 @@ public class RealmTechCoreCraftingRecipe {
         registry.add(new FurnacePatternShape(SANDALES_ITEM, 100, new char[][]{
                 new char[]{'a'}
         }, new CraftPatternArgs('a', BUCHE_ITEM)));
+
+        registry.add(new FurnacePatternShape(TIN_INGOT, 100, new char[][]{
+                new char[]{'a'}
+        }, new CraftPatternArgs('a', TIN_ORE.itemRegisterEntry())));
+
+        registry.add(new FurnacePatternShape(COPPER_INGOT, 100, new char[][]{
+                new char[]{'a'}
+        }, new CraftPatternArgs('a', COPPER_ORE.itemRegisterEntry())));
+
+        registry.add(new FurnacePatternShape(GOLD_INGOT, 100, new char[][]{
+                new char[]{'a'}
+        }, new CraftPatternArgs('a', GOLD_ORE.itemRegisterEntry())));
+
+        registry.add(new FurnacePatternShape(IRON_INGOT, 100, new char[][]{
+                new char[]{'a'}
+        }, new CraftPatternArgs('a', IRON_ORE.itemRegisterEntry())));
     }
 }

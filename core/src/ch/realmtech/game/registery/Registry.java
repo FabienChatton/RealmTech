@@ -1,10 +1,13 @@
 package ch.realmtech.game.registery;
 
+import com.badlogic.gdx.Gdx;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Registry<T extends Entry<T>> {
+    private final static String TAG = Registry.class.getSimpleName();
     private final Registry<T> parent;
     private final String name;
     private final List<RegistryEntry<T>> enfants;
@@ -40,7 +43,15 @@ public class Registry<T extends Entry<T>> {
     }
 
     public RegistryEntry<T> get(String id) {
-        return getEnfants().get(getEnfantsId().indexOf(id));
+        try {
+            return getEnfants().get(getEnfantsId().indexOf(id));
+        } catch (Exception e) {
+            Gdx.app.error(TAG, "On dirait que cette id n'existe pas : \"" + id + "\" Tous les enfants de ce registre :" +
+                    getEnfants().stream()
+                            .map(Registry::toString)
+                            .reduce("", (s, s2) -> s + '\n' + s2), e);
+            throw new RuntimeException(e);
+        }
     }
 
     public List<RegistryEntry<T>> getEnfants() {
@@ -61,7 +72,7 @@ public class Registry<T extends Entry<T>> {
 
     @Override
     public String toString() {
-        return "name: " + name + " " +
+        return "name: " + name + ", " +
                 "hash(byte): " + (CellRegisterEntry.hashString(getID()));
     }
 }
