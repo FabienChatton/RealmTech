@@ -8,7 +8,6 @@ import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
-import ch.realmtechServer.ServerHello;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -51,8 +50,6 @@ public final class RealmTech extends Game{
 
     @Override
     public void create() {
-        ServerHello a = new ServerHello();
-        a.echo();
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         try {
             realmTechDataCtrl = new RealmTechDataCtrl();
@@ -81,7 +78,6 @@ public final class RealmTech extends Game{
     }
 
     public void loadingFinish() {
-        ecsEngine = new ECSEngine(this);
         setScreen(ScreenType.MENU);
     }
 
@@ -121,15 +117,12 @@ public final class RealmTech extends Game{
         if (screen == null) {
             try {
                 screen = screenType.screenClass.getConstructor(RealmTech.class).newInstance(this);
-                Gdx.app.debug(TAG, "screen : " + screenType + " creer");
                 screenCash.put(screenType, screen);
-                Gdx.app.debug(TAG, "screen : " + screenType + " ajoute au cash des screens");
             } catch (ReflectiveOperationException e) {
                 Gdx.app.error(TAG, "La class " + screenType + " n'a pas pu etre cree", e);
             }
         }
         screen.setOldScreen(oldScreenType);
-        Gdx.app.debug(TAG, "Changement d'ecran vers " + screenType);
         super.setScreen(screen);
     }
 
@@ -164,6 +157,7 @@ public final class RealmTech extends Game{
         assetManager.dispose();
         realmTechDataCtrl.saveConfig();
         discord.stop();
+        supprimeECS();
     }
 
     public TextureAtlas getTextureAtlas() {
@@ -177,13 +171,12 @@ public final class RealmTech extends Game{
         try {
             ecsEngine.saveInfMap();
             ecsEngine.savePlayerInventory();
-            ecsEngine.dispose();
-            ecsEngine = new ECSEngine(this);
         } catch (IOException e) {
             Gdx.app.error(TAG, "impossible de sauvegarder", e);
         } finally {
             setScreen(ScreenType.MENU);
             screenCash.remove(ScreenType.GAME_SCREEN);
+            supprimeECS();
         }
     }
 
@@ -204,15 +197,35 @@ public final class RealmTech extends Game{
             if (gameStage.getBatch().isDrawing()) {
                 gameStage.getBatch().end();
             }
-            ecsEngine.dispose();
-            ecsEngine = new ECSEngine(this);
+            supprimeECS();
             setScreen(ScreenType.MENU);
             Popup.popupErreur(this, e.toString(), uiStage);
         }
     }
 
+    public void nouveauECS() throws IOException {
+        if (ecsEngine != null) {
+            supprimeECS();
+        }
+        ecsEngine = new ECSEngine(this);
+    }
+
+    public void supprimeECS() {
+        if (ecsEngine != null) {
+            ecsEngine.clearAllEntity();
+            ecsEngine.dispose();
+        }
+        ecsEngine = null;
+    }
+
     public void loadInfFile(Path path) throws IOException {
+        nouveauECS();
         ecsEngine.loadInfFile(path);
+    }
+
+    public void generateNewSave(String name) throws IOException {
+        nouveauECS();
+        ecsEngine.generateNewSave(name);
     }
 
     public RealmTechDataCtrl getRealmTechDataCtrl() {

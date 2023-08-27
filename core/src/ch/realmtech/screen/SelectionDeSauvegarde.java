@@ -68,7 +68,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             Popup.popupErreur(context, e.getMessage(), uiStage);
         }
         listeDesSauvegardeScrollPane = new ScrollPaneMenu(context, listeDesSauvegarde);
-        uiTable.add(listeDesSauvegardeScrollPane).expand().top().row();
+        uiTable.add(listeDesSauvegardeScrollPane).expand().fillX().top().row();
         listeDesSauvegardeScrollPane.focus();
 
         Table nouvelleCarteTable = new Table(skin);
@@ -80,7 +80,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                 return;
             }
             try {
-                context.getEcsEngine().generateNewSave(nouvelleCarteTextField.getText());
+                context.generateNewSave(nouvelleCarteTextField.getText());
                 context.setScreen(ScreenType.GAME_SCREEN);
             } catch (IOException | IllegalArgumentException e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
@@ -107,21 +107,8 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                 context.setScreen(ScreenType.GAME_SCREEN);
             } catch (Exception e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
-                context.getEcsEngine().clearAllEntity();
+                context.supprimeECS();
             }
-        });
-    }
-
-    private ClickListener supprimerSave(File file) {
-        return new OnClick((event, x, y) -> {
-            Popup.popupConfirmation(context, "voulez vous supprimer la sauvegarde \"" + file.getName() + "\" ?", uiStage, () -> {
-                try {
-                    supprimerDossier(file);
-                } catch (IOException e) {
-                    Popup.popupErreur(context, e.getMessage(), uiStage);
-                }
-                show();
-            });
         });
     }
 
@@ -132,23 +119,5 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             }
         }
         Files.delete(file.toPath());
-    }
-
-    private ClickListener nouvelleCarte(TextField nomNouvelleCarte) {
-        return new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (listSauvegarde.stream().map(File::getName).anyMatch(sauvegardeName -> sauvegardeName.equalsIgnoreCase(nomNouvelleCarte.getText()))) {
-                    Popup.popupErreur(context, "Une sauvegarde au même nom existe déjà. Veilliez choisir un autre nom", uiStage);
-                    return;
-                }
-                try {
-                    context.getEcsEngine().generateNewSave(nomNouvelleCarte.getText());
-                    context.setScreen(ScreenType.GAME_SCREEN);
-                } catch (IOException | IllegalArgumentException e) {
-                    Popup.popupErreur(context, e.getMessage(), uiStage);
-                }
-            }
-        };
     }
 }

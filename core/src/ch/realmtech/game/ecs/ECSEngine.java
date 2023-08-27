@@ -7,6 +7,7 @@ import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.game.mod.RealmTechCorePlugin;
+import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
 import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
@@ -42,10 +43,12 @@ public final class ECSEngine implements Disposable {
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
+    private final RealmtechClientConnectionHandler connectionHandler;
 
-    public ECSEngine(final RealmTech context) {
+    public ECSEngine(final RealmTech context) throws IOException {
         this.context = context;
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+        connectionHandler = new RealmtechClientConnectionHandler();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
@@ -231,6 +234,11 @@ public final class ECSEngine implements Disposable {
     public void dispose() {
         world.dispose();
         physicWorld.dispose();
+        try {
+            connectionHandler.close();
+        } catch (IOException e) {
+            Gdx.app.error(TAG, e.getMessage(), e);
+        }
         System.gc();
     }
 
