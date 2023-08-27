@@ -8,6 +8,7 @@ import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
+import ch.realmtechServer.ServerHello;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -50,6 +51,8 @@ public final class RealmTech extends Game{
 
     @Override
     public void create() {
+        ServerHello a = new ServerHello();
+        a.echo();
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         try {
             realmTechDataCtrl = new RealmTechDataCtrl();
