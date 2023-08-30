@@ -45,7 +45,7 @@ public interface CraftStrategy {
             InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
 
-            if (furnaceComponent.timeToBurn == 0 && craftResult != null) {
+            if (furnaceComponent.timeToBurn == 0) {
                 InventoryComponent inventoryCarburant = mInventory.get(furnaceComponent.inventoryCarburant);
                 int[] stack = inventoryCarburant.inventory[0];
                 int itemCarburant = InventoryManager.getTopItem(stack);
