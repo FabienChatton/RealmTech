@@ -1,6 +1,6 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtechServer.netty.RealmTechServer;
+import ch.realmtechServer.netty.ConnectionBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -14,15 +14,11 @@ public class RealmtechClient {
     private Channel channel;
     private NioEventLoopGroup group;
 
-    public RealmtechClient() throws Exception {
-        this("localhost");
+    public RealmtechClient(ConnectionBuilder connectionBuilder) throws Exception {
+        run(connectionBuilder);
     }
 
-    public RealmtechClient(String host) throws Exception {
-        run(host);
-    }
-
-    private void run(String host) throws InterruptedException {
+    private void run(ConnectionBuilder connectionBuilder) throws InterruptedException {
         this.group = new NioEventLoopGroup();
         Bootstrap b = new Bootstrap();
         b.group(group)
@@ -33,7 +29,7 @@ public class RealmtechClient {
                         ch.pipeline().addLast(new ClientHandler());
                     }
                 });
-        channel = b.connect(host, RealmTechServer.PORT).sync().channel();
+        channel = b.connect(connectionBuilder.getHost(), connectionBuilder.getPort()).sync().channel();
         channel.closeFuture().addListener(ChannelFutureListener.CLOSE);
     }
 

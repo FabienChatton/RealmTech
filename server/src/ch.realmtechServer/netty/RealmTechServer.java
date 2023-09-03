@@ -8,22 +8,37 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import picocli.CommandLine;
+
+import java.net.ServerSocket;
 
 public class RealmTechServer {
-    public final static int PORT = 25533;
+    public final static int PREFERRED_PORT = 25533;
     private Channel channel;
     private NioEventLoopGroup boss;
     private NioEventLoopGroup worker;
 
-    public RealmTechServer() throws Exception {
-        run();
+    public RealmTechServer(ConnectionBuilder connectionBuilder) throws Exception {
+        run(connectionBuilder);
     }
 
     public static void main(String[] args) throws Exception {
-        new RealmTechServer();
+        ConnectionCommand connectionCommand = new ConnectionCommand();
+        new CommandLine(connectionCommand).parseArgs(args);
+        new RealmTechServer(connectionCommand.call());
     }
 
-    private void run() throws Exception {
+    public static boolean isPortAvailable(int port) {
+        boolean ret = false;
+        try {
+            (new ServerSocket(port)).close();
+            ret = true;
+        } catch (Exception ignored) {
+        }
+        return ret;
+    }
+
+    private void run(ConnectionBuilder connectionBuilder) throws Exception {
         this.boss = new NioEventLoopGroup();
         this.worker = new NioEventLoopGroup();
 
@@ -36,7 +51,8 @@ public class RealmTechServer {
                         ch.pipeline().addLast(new ServerHandler());
                     }
                 });
-        channel = sb.bind(PORT).sync().channel();
+        channel = sb.bind(connectionBuilder.getPort()).sync().channel();
+        System.out.println("Le serveur à overt sur le port " + connectionBuilder.getPort());
         channel.closeFuture().addListener(ChannelFutureListener.CLOSE);
     }
 
@@ -45,5 +61,10 @@ public class RealmTechServer {
         boss.shutdownGracefully();
         worker.shutdownGracefully();
         return channel.close();
+    }
+
+
+    public static ConnectionBuilder builder() {
+        return new ConnectionBuilder();
     }
 }
