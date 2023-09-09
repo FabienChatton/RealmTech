@@ -2,8 +2,8 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
-import ch.realmtech.game.level.cell.Cells;
 import ch.realmtech.game.mod.PlayerFootStepSound;
+import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.input.InputMapper;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -34,11 +34,11 @@ public class PlayerMouvementSystem extends IteratingSystem {
         MovementComponent movementComponent = mMouvement.get(entityId);
         PositionComponent positionComponent = mPosition.get(entityId);
         Box2dComponent box2dComponent = mBox2d.get(entityId);
-        int cellId = context.getEcsEngine().getCell(positionComponent.x, positionComponent.y, Cells.Layer.GROUND.layer);
+//        int cellId = context.getEcsEngine().getCell(positionComponent.x, positionComponent.y, Cells.Layer.GROUND.layer);
+        InfCellComponent infCellComponent = new InfCellComponent().set((byte) 0, (byte) 0, RealmTechCoreMod.GRASS_CELL);
         xFactor = 0;
         yFactor = 0;
-        if (cellId != -1) {
-            InfCellComponent infCellComponent = mCell.get(cellId);
+        if (true) {
             if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key.get())) {
                 if (!playerComponent.moveUp) {
                     playerComponent.cooldown = 0;
@@ -102,7 +102,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 directionChange = false;
                 movementComponent.speed.x = xFactor * movementComponent.speedMeterParSeconde;
                 movementComponent.speed.y = yFactor * movementComponent.speedMeterParSeconde;
-                playFootStepSound(cellId);
+//                playFootStepSound(cellId);
             } else {
                 movementComponent.speed.x = 0;
                 movementComponent.speed.y = 0;

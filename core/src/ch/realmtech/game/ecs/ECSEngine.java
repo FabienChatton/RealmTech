@@ -42,13 +42,14 @@ public final class ECSEngine implements Disposable {
     private final World world;
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
-    private ServerInvocationStrategy serverInvocationStrategy = new ServerInvocationStrategy();
+    private final ServerInvocationStrategy serverInvocationStrategy;
     private final RealmtechClientConnectionHandler connectionHandler;
 
-    public ECSEngine(final RealmTech context) throws IOException {
+    public ECSEngine(final RealmTech context, RealmtechClientConnectionHandler connectionHandler) {
         this.context = context;
+        this.connectionHandler = connectionHandler;
+        this.serverInvocationStrategy = new ServerInvocationStrategy();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
-        connectionHandler = new RealmtechClientConnectionHandler();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
@@ -60,7 +61,7 @@ public final class ECSEngine implements Disposable {
 
                 // system
                 .withClient(new PlayerInputSystem())
-                .withClient(new MapSystem())
+//                .withClient(new MapSystem())
                 .withClient(new CraftingPlayerSystem())
                 .withClient(new ItemBeingPickAnimationSystem())
                 .withClient(new PickUpOnGroundItemSystem())
@@ -70,14 +71,14 @@ public final class ECSEngine implements Disposable {
                 .withClient(new PlayerTextureAnimated())
                 .withClient(new UpdateBox2dWithTextureSystem())
                 .withClient(new CameraFollowPlayerSystem())
-                .withClient(new MapRendererSystem())
+//                .withClient(new MapRendererSystem())
                 .withClient(new CellBeingMineRenderSystem())
-                .withClient(new CellHoverEtWailaSystem())
+//                .withClient(new CellHoverEtWailaSystem())
                 .withClient(new TextureRenderer())
 
                 // ui
                 .withClient(new PlayerInventorySystem())
-                .withClient(new ItemBarManager())
+//                .withClient(new ItemBarManager())
 
                 // server
                 .withServer(new CellBeingMineSystem())
@@ -103,6 +104,10 @@ public final class ECSEngine implements Disposable {
         physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
+    }
+
+    public ECSEngine(final RealmTech context) throws IOException {
+        this(context, new RealmtechClientConnectionHandler());
     }
 
     public void process(float delta) {

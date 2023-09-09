@@ -14,6 +14,9 @@ public class RealmtechClient {
     private Channel channel;
     private NioEventLoopGroup group;
 
+    /**
+     * Initie directement une connection
+     */
     public RealmtechClient(ConnectionBuilder connectionBuilder) throws Exception {
         run(connectionBuilder);
     }

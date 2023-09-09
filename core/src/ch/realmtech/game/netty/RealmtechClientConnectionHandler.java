@@ -8,9 +8,23 @@ import java.io.IOException;
 import java.util.Random;
 
 public class RealmtechClientConnectionHandler implements Closeable {
-    private final RealmTechServer server;
+    private RealmTechServer server;
     private final RealmtechClient client;
 
+    /**
+     * Pour une connection en multi
+     */
+    public RealmtechClientConnectionHandler(ConnectionBuilder connectionBuilder) throws IOException {
+        try {
+            client = new RealmtechClient(connectionBuilder);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    /**
+     * Destiner pour une connection en solo
+     */
     public RealmtechClientConnectionHandler() throws IOException {
         try {
             ConnectionBuilder connectionBuilder = RealmTechServer.builder();
@@ -31,7 +45,7 @@ public class RealmtechClientConnectionHandler implements Closeable {
     public void close() throws IOException {
         try {
             client.close();
-            server.close();
+            if (server != null) server.close();
         } catch (InterruptedException e) {
             throw new IOException(e);
         }

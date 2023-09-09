@@ -2,12 +2,14 @@ package ch.realmtech;
 
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.options.RealmTechDataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
+import ch.realmtechServer.netty.ConnectionBuilder;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -210,6 +212,13 @@ public final class RealmTech extends Game{
         ecsEngine = new ECSEngine(this);
     }
 
+    public void nouveauECS(RealmtechClientConnectionHandler clientConnectionHandler) throws IOException {
+        if (ecsEngine != null) {
+            supprimeECS();
+        }
+        ecsEngine = new ECSEngine(this, clientConnectionHandler);
+    }
+
     public void supprimeECS() {
         if (ecsEngine != null) {
             ecsEngine.clearAllEntity();
@@ -221,6 +230,10 @@ public final class RealmTech extends Game{
     public void loadInfFile(Path path) throws IOException {
         nouveauECS();
         ecsEngine.loadInfFile(path);
+    }
+
+    public void rejoindreMulti(String host, int port) throws IOException {
+        nouveauECS(new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port)));
     }
 
     public void generateNewSave(String name) throws IOException {

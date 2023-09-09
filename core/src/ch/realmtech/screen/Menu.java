@@ -15,12 +15,14 @@ public class Menu extends AbstractScreen {
     public Menu(RealmTech context) {
         super(context);
         TextButton selectionnerSauvegarde = new TextButtonMenu(context, "Joueur", new OnClick((event, x, y) -> context.setScreen(ScreenType.SELECTION_DE_SAUVEGARDE)));
+        TextButton rejoindreMulti = new TextButtonMenu(context, "multijoueur", new OnClick((event, x, y) -> context.setScreen(ScreenType.REJOINDRE_MULTI)));
         TextButton option = new TextButtonMenu(context, "options", new OnClick((event, x, y) -> context.setScreen(ScreenType.OPTION)));
         TextButton quitter = new TextButtonMenu(context, "quitter", new OnClick(
                 (event, x, y) -> Popup.popupConfirmation(context, "Voulez-vous vraiment quitter ? :(", uiStage, () -> Gdx.app.exit())
         ));
         uiTable.add(creerLogo()).padBottom(10f).row();
         uiTable.add(selectionnerSauvegarde).width(250).padBottom(10f).row();
+        uiTable.add(rejoindreMulti).width(250).padBottom(10f).row();
         uiTable.add(option).width(250).padBottom(10f).row();
         uiTable.add(quitter).width(250).padBottom(10f).row();
     }
