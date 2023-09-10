@@ -1,6 +1,8 @@
 package ch.realmtech.game.netty;
 
 import ch.realmtechServer.netty.ConnectionBuilder;
+import ch.realmtechServer.netty.PacketDecoder;
+import ch.realmtechServer.netty.PacketEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -29,6 +31,8 @@ public class RealmtechClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new PacketEncoder());
                         ch.pipeline().addLast(new ClientHandler());
                     }
                 });

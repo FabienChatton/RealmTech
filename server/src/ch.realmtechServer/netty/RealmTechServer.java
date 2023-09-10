@@ -1,6 +1,9 @@
 package ch.realmtechServer.netty;
 
+import ch.realmtechServer.netty.packet.Packet;
+import ch.realmtechServer.netty.packet.PlayerConnectionPacket;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -11,14 +14,19 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import picocli.CommandLine;
 
 import java.net.ServerSocket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 public class RealmTechServer {
     public final static int PREFERRED_PORT = 25533;
     private Channel channel;
     private NioEventLoopGroup boss;
     private NioEventLoopGroup worker;
+    public final static Map<Integer, Function<ByteBuf, ? extends Packet>> packets = new HashMap<>();
 
     public RealmTechServer(ConnectionBuilder connectionBuilder) throws Exception {
+        Packet.addPacket(packets, PlayerConnectionPacket.class);
         run(connectionBuilder);
     }
 
@@ -48,6 +56,8 @@ public class RealmTechServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new PacketEncoder());
                         ch.pipeline().addLast(new ServerHandler());
                     }
                 });
