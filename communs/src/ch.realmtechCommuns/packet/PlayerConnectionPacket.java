@@ -1,5 +1,6 @@
-package ch.realmtechServer.netty.packet;
+package ch.realmtechCommuns.packet;
 
+import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 
 public class PlayerConnectionPacket implements Packet {
@@ -20,5 +21,10 @@ public class PlayerConnectionPacket implements Packet {
     public void write(ByteBuf byteBuf) {
         byteBuf.writeFloat(x);
         byteBuf.writeFloat(y);
+    }
+
+    @Override
+    public void execute(World world) {
+
     }
 }

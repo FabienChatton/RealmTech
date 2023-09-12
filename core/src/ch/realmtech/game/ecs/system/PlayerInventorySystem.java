@@ -48,6 +48,8 @@ public class PlayerInventorySystem extends BaseSystem {
     private ArrayList<ClickAndDropActor> curentClickAndDropActors;
     @Wire(name = "context")
     private RealmTech context;
+    @Wire(name = "uiStage")
+    private Stage uiStage;
     @Wire(name = "inGameSystemOnInventoryOpen")
     private InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private Skin skin;
@@ -58,14 +60,14 @@ public class PlayerInventorySystem extends BaseSystem {
     @Override
     protected void processSystem() {
         showMouseOverLabel();
-        inventoryStage.setDebugAll(context.getUiStage().isDebugAll());
+        inventoryStage.setDebugAll(uiStage.isDebugAll());
         inventoryStage.act();
         inventoryStage.draw();
     }
 
     private void showMouseOverLabel() {
-        if (!context.getUiStage().getActors().contains(overLabel, true)) {
-            context.getUiStage().addActor(overWindow);
+        if (!uiStage.getActors().contains(overLabel, true)) {
+            uiStage.addActor(overWindow);
         }
         Vector2 screenMouseOver = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         inventoryStage.screenToStageCoordinates(screenMouseOver);
@@ -100,15 +102,15 @@ public class PlayerInventorySystem extends BaseSystem {
     @Override
     protected void initialize() {
         super.initialize();
-        this.inventoryStage = new Stage(context.getUiStage().getViewport(), context.getUiStage().getBatch());
-        this.inventoryWindow = new Window("Inventaire", context.getSkin()) {
+        this.inventoryStage = new Stage(uiStage.getViewport(), uiStage.getBatch());
+        this.inventoryWindow = new Window("Inventaire", skin) {
             @Override
             public void act(float delta) {
                 super.act(delta);
                 setZIndex(0);
             }
         };
-        this.skin = context.getSkin();
+        this.skin = skin;
 
         float with = inventoryStage.getWidth() * 0.5f;
         float height = inventoryStage.getHeight() * 0.5f;
@@ -180,9 +182,9 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public Function<RealmTech, AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
         return (context) -> {
-            final Table playerInventory = new Table(context.getSkin());
-            final Table craftingInventory = new Table(context.getSkin());
-            final Table craftingResultInventory = new Table(context.getSkin());
+            final Table playerInventory = new Table(skin);
+            final Table craftingInventory = new Table(skin);
+            final Table craftingResultInventory = new Table(skin);
 
             Consumer<Window> addTable = window -> {
                 window.add(craftingInventory).padBottom(10f).right();

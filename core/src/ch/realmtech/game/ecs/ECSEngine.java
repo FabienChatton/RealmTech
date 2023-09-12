@@ -98,6 +98,10 @@ public final class ECSEngine implements Disposable {
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
         worldConfiguration.register(context.getTextureAtlas());
         worldConfiguration.register("inGameSystemOnInventoryOpen", inGameSystemOnInventoryOpen);
+        worldConfiguration.register("uiStage", context.getUiStage());
+        worldConfiguration.register(context.getSkin());
+        worldConfiguration.register(context.getSoundManager());
+        worldConfiguration.register(context.getInputManager());
 
         worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);

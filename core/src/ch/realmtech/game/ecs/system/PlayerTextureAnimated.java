@@ -13,9 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 @All({TextureComponent.class, PlayerComponent.class})
 public class PlayerTextureAnimated extends IteratingSystem {
     @Wire(name = "gameStage")
-    Stage gameStage;
-    ComponentMapper<TextureComponent> mTexture;
-    ComponentMapper<PlayerComponent> mPlayer;
+    private Stage gameStage;
+    private ComponentMapper<TextureComponent> mTexture;
+    private ComponentMapper<PlayerComponent> mPlayer;
 
     private void updateAnimation(PlayerComponent playerComponent, TextureComponent textureComponent) {
         final TextureRegion textureRegion;

@@ -1,13 +1,12 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.mod.PlayerFootStepSound;
 import ch.realmtech.game.mod.RealmTechCoreMod;
 import ch.realmtech.input.InputMapper;
+import ch.realmtech.sound.SoundManager;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
-import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,8 +15,9 @@ import com.badlogic.gdx.math.Vector2;
         PositionComponent.class,
         Box2dComponent.class})
 public class PlayerMouvementSystem extends IteratingSystem {
-    @Wire(name = "context")
-    private RealmTech context;
+
+    private InputMapper inputMapper;
+    private SoundManager soundManager;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<MovementComponent> mMouvement;
@@ -39,7 +39,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
         xFactor = 0;
         yFactor = 0;
         if (true) {
-            if (context.getInputManager().isKeyPressed(InputMapper.moveForward.key.get())) {
+            if (inputMapper.isKeyPressed(InputMapper.moveForward.key.get())) {
                 if (!playerComponent.moveUp) {
                     playerComponent.cooldown = 0;
                 }
@@ -50,7 +50,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             } else {
                 playerComponent.moveUp = false;
             }
-            if (context.getInputManager().isKeyPressed(InputMapper.moveLeft.key.get())) {
+            if (inputMapper.isKeyPressed(InputMapper.moveLeft.key.get())) {
                 if (!playerComponent.moveLeft) {
                     playerComponent.cooldown = 0;
                 }
@@ -61,7 +61,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             } else {
                 playerComponent.moveLeft = false;
             }
-            if (context.getInputManager().isKeyPressed(InputMapper.moveBack.key.get())) {
+            if (inputMapper.isKeyPressed(InputMapper.moveBack.key.get())) {
                 if (!playerComponent.moveDown) {
                     playerComponent.cooldown = 0;
                 }
@@ -72,7 +72,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
             } else {
                 playerComponent.moveDown = false;
             }
-            if (context.getInputManager().isKeyPressed(InputMapper.moveRight.key.get())) {
+            if (inputMapper.isKeyPressed(InputMapper.moveRight.key.get())) {
                 if (!playerComponent.moveRight) {
                     playerComponent.cooldown = 0;
                 }
@@ -125,7 +125,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
         if (cellId != -1) {
             PlayerFootStepSound playerFootStepSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
             if (playerFootStepSound != null) {
-                context.getEcsEngine().playFootStep(playerFootStepSound);
+                soundManager.playFootStep(playerFootStepSound.playerFootStepSound(), playerFootStepSound.volume());
             }
         }
     }

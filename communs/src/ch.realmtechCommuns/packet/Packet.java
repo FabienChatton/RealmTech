@@ -1,5 +1,6 @@
-package ch.realmtechServer.netty.packet;
+package ch.realmtechCommuns.packet;
 
+import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +10,8 @@ import java.util.function.Function;
 
 public interface Packet {
     void write(ByteBuf byteBuf);
+
+    void execute(World world);
 
     default int getId() {
         return getClass().getSimpleName().hashCode();
