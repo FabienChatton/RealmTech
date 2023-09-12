@@ -12,7 +12,7 @@ import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
-import ch.realmtechServer.netty.packet.PlayerConnectionPacket;
+import ch.realmtechCommuns.packet.PlayerConnectionPacket;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
