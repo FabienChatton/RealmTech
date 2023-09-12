@@ -10,6 +10,7 @@ import java.util.function.Function;
 public interface Packet {
     void write(ByteBuf byteBuf);
 
+
     default int getId() {
         return getClass().getSimpleName().hashCode();
     }

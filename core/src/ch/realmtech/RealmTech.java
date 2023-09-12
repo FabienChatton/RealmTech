@@ -233,7 +233,7 @@ public final class RealmTech extends Game{
     }
 
     public void rejoindreMulti(String host, int port) throws IOException {
-        nouveauECS(new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port)));
+        nouveauECS(new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port), this));
     }
 
     public void generateNewSave(String name) throws IOException {

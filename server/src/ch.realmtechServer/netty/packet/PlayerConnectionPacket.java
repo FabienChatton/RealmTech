@@ -21,4 +21,12 @@ public class PlayerConnectionPacket implements Packet {
         byteBuf.writeFloat(x);
         byteBuf.writeFloat(y);
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
 }

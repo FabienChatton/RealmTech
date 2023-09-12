@@ -12,6 +12,7 @@ import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
+import ch.realmtechServer.netty.packet.PlayerConnectionPacket;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
@@ -107,7 +108,7 @@ public final class ECSEngine implements Disposable {
     }
 
     public ECSEngine(final RealmTech context) throws IOException {
-        this(context, new RealmtechClientConnectionHandler());
+        this(context, new RealmtechClientConnectionHandler(context));
     }
 
     public void process(float delta) {
@@ -141,10 +142,11 @@ public final class ECSEngine implements Disposable {
         fixtureDef.filter.maskBits = 0;
     }
 
-    /**
-     * @return l'id du player
-     */
-    public int createPlayer(InfMetaDonneesComponent metaDonneesComponent) {
+    public Body ajouteEntitePhysique(BodyDef bodyDef) {
+        return physicWorld.createBody(bodyDef);
+    }
+
+    public int createPlayer(float x, float y) {
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         if (world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
@@ -159,7 +161,7 @@ public final class ECSEngine implements Disposable {
         resetBodyDef();
         resetFixtureDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Body bodyPlayer = physicWorld.createBody(bodyDef);
+        Body bodyPlayer = ajouteEntitePhysique(bodyDef);
         bodyPlayer.setUserData(playerId);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(playerWorldWith / 2f, playerWorldHigh / 2f);
@@ -183,7 +185,7 @@ public final class ECSEngine implements Disposable {
 
         // position component
         PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
-        positionComponent.set(box2dComponent, metaDonneesComponent.playerPositionX, metaDonneesComponent.playerPositionY);
+        positionComponent.set(box2dComponent, x, y);
 
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
@@ -308,7 +310,12 @@ public final class ECSEngine implements Disposable {
 
     public void mapRequirementBeforeShow(int mapId) {
         world.getSystem(TagManager.class).register("infMap", mapId);
-        createPlayer(world.getMapper(InfMapComponent.class).get(mapId).getMetaDonnesComponent(world));
+        InfMetaDonneesComponent metaDonnesComponent = world.getMapper(InfMapComponent.class).get(mapId).getMetaDonnesComponent(world);
+        int playerId = createPlayer(metaDonnesComponent.playerPositionX, metaDonnesComponent.playerPositionY);
+        Entity playerEntity = world.getEntity(playerId);
+        PositionComponent playerPositionComponent = playerEntity.getComponent(PositionComponent.class);
+        connectionHandler.sendAndFlushPacketToServer(new PlayerConnectionPacket(playerPositionComponent.x, playerPositionComponent.y));
+
     }
 
     public void saveInfMap() throws IOException {

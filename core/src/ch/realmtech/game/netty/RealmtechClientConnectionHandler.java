@@ -1,7 +1,9 @@
 package ch.realmtech.game.netty;
 
+import ch.realmtech.RealmTech;
 import ch.realmtechServer.netty.ConnectionBuilder;
 import ch.realmtechServer.netty.RealmTechServer;
+import ch.realmtechServer.netty.packet.Packet;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -14,9 +16,9 @@ public class RealmtechClientConnectionHandler implements Closeable {
     /**
      * Pour une connection en multi
      */
-    public RealmtechClientConnectionHandler(ConnectionBuilder connectionBuilder) throws IOException {
+    public RealmtechClientConnectionHandler(ConnectionBuilder connectionBuilder, RealmTech context) throws IOException {
         try {
-            client = new RealmtechClient(connectionBuilder);
+            client = new RealmtechClient(connectionBuilder, context);
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -25,7 +27,7 @@ public class RealmtechClientConnectionHandler implements Closeable {
     /**
      * Destiner pour une connection en solo
      */
-    public RealmtechClientConnectionHandler() throws IOException {
+    public RealmtechClientConnectionHandler(RealmTech context) throws IOException {
         try {
             ConnectionBuilder connectionBuilder = RealmTechServer.builder();
             if (!RealmTechServer.isPortAvailable(connectionBuilder.getPort())) {
@@ -35,7 +37,7 @@ public class RealmtechClientConnectionHandler implements Closeable {
                 } while (!RealmTechServer.isPortAvailable(connectionBuilder.getPort()) || ++limite < 10);
             }
             server = new RealmTechServer(connectionBuilder);
-            client = new RealmtechClient(connectionBuilder);
+            client = new RealmtechClient(connectionBuilder, context);
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -49,5 +51,9 @@ public class RealmtechClientConnectionHandler implements Closeable {
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
+    }
+
+    public void sendAndFlushPacketToServer(Packet packet) {
+        client.getChannel().writeAndFlush(packet);
     }
 }
