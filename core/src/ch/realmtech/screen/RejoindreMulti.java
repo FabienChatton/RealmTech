@@ -4,12 +4,16 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import java.io.IOException;
 
+import static ch.realmtechCommuns.ecs.component.PlayerComponent.TAG;
+
 public class RejoindreMulti extends AbstractScreen {
+    public static final String TAG = RejoindreMulti.class.getSimpleName();
 
     public RejoindreMulti(RealmTech context) {
         super(context);
@@ -36,6 +40,7 @@ public class RejoindreMulti extends AbstractScreen {
             context.rejoindreMulti(host, port);
             context.setScreen(ScreenType.GAME_SCREEN);
         } catch (IOException e) {
+            Gdx.app.error(TAG, e.getMessage(), e);
             Popup.popupErreur(context, e.getMessage(), uiStage);
         }
 

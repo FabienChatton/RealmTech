@@ -1,8 +1,8 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.Box2dComponent;
-import ch.realmtech.game.ecs.component.PlayerComponent;
-import ch.realmtech.game.ecs.component.PositionComponent;
+import ch.realmtechCommuns.ecs.component.Box2dComponent;
+import ch.realmtechCommuns.ecs.component.PlayerComponent;
+import ch.realmtechCommuns.ecs.component.PositionComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;

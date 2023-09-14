@@ -1,12 +1,14 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtech.game.ecs.component.*;
-import ch.realmtech.game.mod.PlayerFootStepSound;
-import ch.realmtech.game.mod.RealmTechCoreMod;
+import ch.realmtechCommuns.ecs.component.*;
+import ch.realmtechCommuns.ecs.system.InventoryManager;
+import ch.realmtechCommuns.mod.PlayerFootStepSound;
+import ch.realmtechCommuns.mod.RealmTechCoreMod;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.sound.SoundManager;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
+import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 
@@ -15,8 +17,9 @@ import com.badlogic.gdx.math.Vector2;
         PositionComponent.class,
         Box2dComponent.class})
 public class PlayerMouvementSystem extends IteratingSystem {
-
+    @Wire
     private InputMapper inputMapper;
+    @Wire
     private SoundManager soundManager;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InfCellComponent> mCell;

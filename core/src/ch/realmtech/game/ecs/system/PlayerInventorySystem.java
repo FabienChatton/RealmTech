@@ -3,12 +3,13 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.clickAndDrop.ClickAndDrop2;
 import ch.realmtech.game.clickAndDrop.ClickAndDropActor;
-import ch.realmtech.game.ecs.component.*;
 import ch.realmtech.game.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.game.inventory.DisplayInventoryArgs;
-import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.game.registery.ItemRegisterEntry;
-import ch.realmtech.game.registery.RegistryEntry;
+import ch.realmtechCommuns.ecs.component.*;
+import ch.realmtechCommuns.ecs.system.InventoryManager;
+import ch.realmtechCommuns.mod.RealmTechCoreMod;
+import ch.realmtechCommuns.registery.ItemRegisterEntry;
+import ch.realmtechCommuns.registery.RegistryEntry;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.shader.BlurShader;
 import ch.realmtech.shader.GrayShader;
@@ -52,7 +53,6 @@ public class PlayerInventorySystem extends BaseSystem {
     private Stage uiStage;
     @Wire(name = "inGameSystemOnInventoryOpen")
     private InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
-    private Skin skin;
     private ClickAndDrop2 clickAndDrop2;
     private Shaders blurShader;
     private Shaders grayShader;
@@ -103,14 +103,13 @@ public class PlayerInventorySystem extends BaseSystem {
     protected void initialize() {
         super.initialize();
         this.inventoryStage = new Stage(uiStage.getViewport(), uiStage.getBatch());
-        this.inventoryWindow = new Window("Inventaire", skin) {
+        this.inventoryWindow = new Window("Inventaire", context.getSkin()) {
             @Override
             public void act(float delta) {
                 super.act(delta);
                 setZIndex(0);
             }
         };
-        this.skin = skin;
 
         float with = inventoryStage.getWidth() * 0.5f;
         float height = inventoryStage.getHeight() * 0.5f;
@@ -121,9 +120,9 @@ public class PlayerInventorySystem extends BaseSystem {
         blurShader = new BlurShader();
         grayShader = new GrayShader();
         inventoryWindow.setColor(Color.WHITE);
-        overWindow = new Window("", skin);
+        overWindow = new Window("", context.getSkin());
         overWindow.setTouchable(Touchable.disabled);
-        overLabel = new Label(null, skin);
+        overLabel = new Label(null, context.getSkin());
         overWindow.add(overLabel).expand().left();
         overLabel.setFontScale(0.5f);
         overWindow.setColor(new Color(1, 1, 1, 0.8f));
@@ -151,7 +150,7 @@ public class PlayerInventorySystem extends BaseSystem {
             clearDisplayInventory();
             currentInventoryArgs = openPlayerInventoryFunction.apply(context);
             refreshInventory(currentInventoryArgs);
-            if (context.getRealmTechDataCtrl().option.inventoryBlur.get()) {
+            if (context.getDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
             }
             context.getSoundManager().playOpenInventory();
@@ -182,9 +181,9 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public Function<RealmTech, AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
         return (context) -> {
-            final Table playerInventory = new Table(skin);
-            final Table craftingInventory = new Table(skin);
-            final Table craftingResultInventory = new Table(skin);
+            final Table playerInventory = new Table(context.getSkin());
+            final Table craftingInventory = new Table(context.getSkin());
+            final Table craftingResultInventory = new Table(context.getSkin());
 
             Consumer<Window> addTable = window -> {
                 window.add(craftingInventory).padBottom(10f).right();
@@ -267,10 +266,10 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public Table createItemSlotToDisplay(int[] stack, InventoryComponent inventoryComponent) {
         Image image = new Image();
-        Label nombreItem = new Label(null, skin);
+        Label nombreItem = new Label(null, context.getSkin());
         final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
         if (mItem.has(stack[0])) {
-            image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context)));
+            image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context.getTextureAtlas())));
             nombreItem.setText(Integer.toString(InventoryManager.tailleStack(stack)));
         }
         Table table = new Table();

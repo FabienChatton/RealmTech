@@ -1,9 +1,9 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.InventoryComponent;
-import ch.realmtech.game.ecs.component.ItemComponent;
-import ch.realmtech.game.ecs.component.PlayerComponent;
+import ch.realmtechCommuns.ecs.component.InventoryComponent;
+import ch.realmtechCommuns.ecs.component.ItemComponent;
+import ch.realmtechCommuns.ecs.component.PlayerComponent;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;

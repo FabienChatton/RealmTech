@@ -5,7 +5,7 @@ import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
-import ch.realmtech.options.RealmTechDataCtrl;
+import ch.realmtechCommuns.options.DataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
@@ -47,14 +47,14 @@ public final class RealmTech extends Game{
     private Discord discord;
 
     private TextureAtlas textureAtlas;
-    private RealmTechDataCtrl realmTechDataCtrl;
+    private DataCtrl dataCtrl;
     private SoundManager soundManager;
 
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         try {
-            realmTechDataCtrl = new RealmTechDataCtrl();
+            dataCtrl = new DataCtrl();
         } catch (IOException e) {
             Gdx.app.error(TAG, "La hiérarchie des dossier n'a pas pu être créer correctement", e);
             Gdx.app.exit();
@@ -157,7 +157,7 @@ public final class RealmTech extends Game{
         gameStage.dispose();
         uiStage.dispose();
         assetManager.dispose();
-        realmTechDataCtrl.saveConfig();
+        dataCtrl.saveConfig();
         discord.stop();
         supprimeECS();
     }
@@ -201,6 +201,7 @@ public final class RealmTech extends Game{
             }
             supprimeECS();
             setScreen(ScreenType.MENU);
+            Gdx.app.error(TAG, e.getMessage(), e);
             Popup.popupErreur(this, e.toString(), uiStage);
         }
     }
@@ -241,8 +242,8 @@ public final class RealmTech extends Game{
         ecsEngine.generateNewSave(name);
     }
 
-    public RealmTechDataCtrl getRealmTechDataCtrl() {
-        return realmTechDataCtrl;
+    public DataCtrl getDataCtrl() {
+        return dataCtrl;
     }
 
     public SoundManager getSoundManager() {

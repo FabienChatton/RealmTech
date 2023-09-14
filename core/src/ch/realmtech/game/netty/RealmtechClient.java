@@ -36,7 +36,7 @@ public class RealmtechClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new PacketEncoder());
-                        ch.pipeline().addLast(new ClientHandler(context));
+                        ch.pipeline().addLast(new ClientHandler());
                     }
                 });
         channel = b.connect(connectionBuilder.getHost(), connectionBuilder.getPort()).sync().channel();

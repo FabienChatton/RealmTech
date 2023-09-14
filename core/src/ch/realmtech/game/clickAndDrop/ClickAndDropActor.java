@@ -1,9 +1,9 @@
 package ch.realmtech.game.clickAndDrop;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.ItemComponent;
-import ch.realmtech.game.ecs.system.InventoryManager;
-import ch.realmtech.game.registery.ItemRegisterEntry;
+import ch.realmtechCommuns.ecs.component.ItemComponent;
+import ch.realmtechCommuns.ecs.system.InventoryManager;
+import ch.realmtechCommuns.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -34,8 +34,8 @@ public class ClickAndDropActor extends Actor {
         if (stack[0] != 0) {
             if (getWidth() == 0) {
                 final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
-                setWidth(itemRegisterEntry.getTextureRegion(context).getRegionWidth());
-                setHeight(itemRegisterEntry.getTextureRegion(context).getRegionHeight());
+                setWidth(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionWidth());
+                setHeight(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionHeight());
             }
         }
         if (tableImage != null) {
@@ -51,9 +51,9 @@ public class ClickAndDropActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         if (stack[0] != 0) {
             final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
-            batch.draw(itemRegisterEntry.getTextureRegion(context), getX(), getY());
+            batch.draw(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()), getX(), getY());
             if (!itemRegisterEntry.getItemBehavior().isIcon()) {
-                bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context).getRegionHeight());
+                bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionHeight());
             }
         }
     }

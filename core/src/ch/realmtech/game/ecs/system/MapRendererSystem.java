@@ -1,24 +1,29 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.InfCellComponent;
-import ch.realmtech.game.ecs.component.InfChunkComponent;
-import ch.realmtech.game.ecs.component.InfMapComponent;
-import ch.realmtech.game.level.map.WorldMap;
+import ch.realmtechCommuns.ecs.component.InfCellComponent;
+import ch.realmtechCommuns.ecs.component.InfChunkComponent;
+import ch.realmtechCommuns.ecs.component.InfMapComponent;
+import ch.realmtechCommuns.ecs.system.MapSystem;
+import ch.realmtechCommuns.level.map.WorldMap;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @All(InfMapComponent.class)
 public class MapRendererSystem extends IteratingSystem {
-    @Wire(name = "context")
-    private RealmTech context;
+    @Wire(name = "gameStage")
+    private Stage gameStage;
+    @Wire
+    private TextureAtlas textureAtlas;
     private ComponentMapper<InfMapComponent> mMap;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
@@ -26,9 +31,9 @@ public class MapRendererSystem extends IteratingSystem {
 
     @Override
     protected void begin() {
-        context.getGameStage().getBatch().setProjectionMatrix(context.getGameStage().getCamera().combined);
-        context.getGameStage().getCamera().update();
-        context.getGameStage().getBatch().begin();
+        gameStage.getBatch().setProjectionMatrix(gameStage.getCamera().combined);
+        gameStage.getCamera().update();
+        gameStage.getBatch().begin();
     }
 
     @Override
@@ -57,8 +62,8 @@ public class MapRendererSystem extends IteratingSystem {
                         InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
                         int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
                         int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
-                        TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion(context);
-                        context.getGameStage().getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
+                        TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
+                        gameStage.getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
                     }
                 }
             }
@@ -67,6 +72,6 @@ public class MapRendererSystem extends IteratingSystem {
 
     @Override
     protected void end() {
-        context.getGameStage().getBatch().end();
+        gameStage.getBatch().end();
     }
 }

@@ -2,7 +2,7 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
-import ch.realmtech.game.ecs.system.MapSystem;
+import ch.realmtechCommuns.ecs.system.MapSystem;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -60,11 +60,11 @@ public class GameScreen extends AbstractScreen {
             }
         }
         // open inventory
-        if (Gdx.input.isKeyJustPressed(context.getRealmTechDataCtrl().option.openInventory.get())) {
+        if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get())) {
             context.getEcsEngine().togglePlayerInventoryWindow();
         }
 
-        if (Gdx.input.isKeyJustPressed(context.getRealmTechDataCtrl().option.keyDropItem.get())) {
+        if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.keyDropItem.get())) {
             context.getEcsEngine().dropCurentPlayerItem();
         }
 

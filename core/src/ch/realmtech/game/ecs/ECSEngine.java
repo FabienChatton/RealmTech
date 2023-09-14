@@ -1,17 +1,19 @@
 package ch.realmtech.game.ecs;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.craft.CraftStrategy;
-import ch.realmtech.game.ecs.component.*;
+import ch.realmtechCommuns.craft.CraftStrategy;
 import ch.realmtech.game.ecs.system.*;
-import ch.realmtech.game.mod.PlayerFootStepSound;
-import ch.realmtech.game.mod.RealmTechCoreMod;
-import ch.realmtech.game.mod.RealmTechCorePlugin;
+import ch.realmtechCommuns.ecs.component.*;
+import ch.realmtechCommuns.ecs.system.*;
+import ch.realmtechCommuns.mod.PlayerFootStepSound;
+import ch.realmtechCommuns.mod.RealmTechCoreMod;
+import ch.realmtechCommuns.mod.RealmTechCorePlugin;
 import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
 import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
+import ch.realmtechCommuns.PhysiqueWorldHelper;
 import ch.realmtechCommuns.packet.PlayerConnectionPacket;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
@@ -20,6 +22,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -33,9 +36,6 @@ import java.nio.file.Path;
 public final class ECSEngine implements Disposable {
     private final static String TAG = ECSEngine.class.getSimpleName();
 
-    private final static byte BIT_PLAYER = 1 << 1;
-    public final static byte BIT_WORLD = 1 << 2;
-    private final static byte BIT_GAME_OBJECT = 1 << 3;
     private final RealmTech context;
 
     private final BodyDef bodyDef;
@@ -51,6 +51,8 @@ public final class ECSEngine implements Disposable {
         this.connectionHandler = connectionHandler;
         this.serverInvocationStrategy = new ServerInvocationStrategy();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+        bodyDef = new BodyDef();
+        fixtureDef = new FixtureDef();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 // manageur
@@ -97,18 +99,20 @@ public final class ECSEngine implements Disposable {
         worldConfiguration.register("gameStage", context.getGameStage());
         worldConfiguration.register("context", context);
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
-        worldConfiguration.register(context.getTextureAtlas());
         worldConfiguration.register("inGameSystemOnInventoryOpen", inGameSystemOnInventoryOpen);
         worldConfiguration.register("uiStage", context.getUiStage());
+        worldConfiguration.register(context.getTextureAtlas());
         worldConfiguration.register(context.getSkin());
         worldConfiguration.register(context.getSoundManager());
         worldConfiguration.register(context.getInputManager());
+        worldConfiguration.register(context.getDataCtrl());
+        worldConfiguration.register(bodyDef);
+        worldConfiguration.register(fixtureDef);
 
         worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);
         physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
-        bodyDef = new BodyDef();
-        fixtureDef = new FixtureDef();
+
     }
 
     public ECSEngine(final RealmTech context) throws IOException {
@@ -120,32 +124,6 @@ public final class ECSEngine implements Disposable {
         world.process();
     }
 
-    public void resetBodyDef() {
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0, 0);
-        bodyDef.angle = 0;
-        bodyDef.linearVelocity.set(0, 0);
-        bodyDef.angularVelocity = 0;
-        bodyDef.linearDamping = 0;
-        bodyDef.angularDamping = 0;
-        bodyDef.allowSleep = true;
-        bodyDef.awake = true;
-        bodyDef.fixedRotation = false;
-        bodyDef.bullet = false;
-        bodyDef.active = true;
-        bodyDef.gravityScale = 1;
-    }
-
-    public void resetFixtureDef() {
-        fixtureDef.shape = null;
-        fixtureDef.friction = 0.2f;
-        fixtureDef.restitution = 0;
-        fixtureDef.density = 0;
-        fixtureDef.isSensor = false;
-        fixtureDef.filter.categoryBits = 0;
-        fixtureDef.filter.maskBits = 0;
-    }
-
     public Body ajouteEntitePhysique(BodyDef bodyDef) {
         return physicWorld.createBody(bodyDef);
     }
@@ -153,7 +131,8 @@ public final class ECSEngine implements Disposable {
     public int createPlayer(float x, float y) {
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
-        if (world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
+        if (world.getSystem(TagManager.class).getEntity(
+                PlayerComponent.TAG) != null) {
             int playerId = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
             world.getSystem(TagManager.class).unregister(PlayerComponent.TAG);
             physicWorld.destroyBody(world.edit(playerId).create(Box2dComponent.class).body);
@@ -162,16 +141,16 @@ public final class ECSEngine implements Disposable {
         int playerId = world.create();
         world.getSystem(TagManager.class).register(PlayerComponent.TAG, playerId);
 
-        resetBodyDef();
-        resetFixtureDef();
+        PhysiqueWorldHelper.resetBodyDef(bodyDef);
+        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         Body bodyPlayer = ajouteEntitePhysique(bodyDef);
         bodyPlayer.setUserData(playerId);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(playerWorldWith / 2f, playerWorldHigh / 2f);
         fixtureDef.shape = playerShape;
-        fixtureDef.filter.categoryBits = BIT_PLAYER;
-        fixtureDef.filter.maskBits = BIT_WORLD | BIT_GAME_OBJECT;
+        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
         bodyPlayer.createFixture(fixtureDef);
 
         playerShape.dispose();
@@ -258,23 +237,6 @@ public final class ECSEngine implements Disposable {
         for (int entity : entities.getData()) {
             world.delete(entity);
         }
-    }
-    public Body createBox2dItem(int itemId, float worldX, float worldY, TextureRegion texture) {
-        resetBodyDef();
-        resetFixtureDef();
-        bodyDef.position.set(worldX, worldY);
-        bodyDef.gravityScale = 0;
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Body itemBody = physicWorld.createBody(bodyDef);
-        itemBody.setUserData(itemId);
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(texture.getRegionWidth() / RealmTech.PPM, texture.getRegionHeight() / RealmTech.PPM);
-        fixtureDef.shape = polygonShape;
-        fixtureDef.filter.categoryBits = BIT_GAME_OBJECT;
-        fixtureDef.filter.maskBits = BIT_WORLD | BIT_GAME_OBJECT | BIT_PLAYER;
-        itemBody.createFixture(fixtureDef);
-        polygonShape.dispose();
-        return itemBody;
     }
 
     public int getPlayerId() {
@@ -364,7 +326,13 @@ public final class ECSEngine implements Disposable {
     }
 
     public void dropCurentPlayerItem() {
-        world.getSystem(ItemManager.class).dropCurentPlayerItem();
+        ItemComponent itemComponent = world.getSystem(ItemBarManager.class).getSelectItemComponent();
+        if (itemComponent != null) {
+            world.getSystem(InventoryManager.class).removeOneItem(world.getSystem(ItemBarManager.class).getSelectStack());
+            Vector3 gameCoo = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            world.getSystem(ItemManager.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
+            context.getSoundManager().playItemDrop();
+        }
     }
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {

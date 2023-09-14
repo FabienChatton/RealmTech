@@ -1,9 +1,10 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.component.CellBeingMineComponent;
-import ch.realmtech.game.ecs.component.InfCellComponent;
-import ch.realmtech.game.ecs.component.InfChunkComponent;
+import ch.realmtechCommuns.ecs.component.CellBeingMineComponent;
+import ch.realmtechCommuns.ecs.component.InfCellComponent;
+import ch.realmtechCommuns.ecs.component.InfChunkComponent;
+import ch.realmtechCommuns.ecs.system.MapSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -28,21 +29,21 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
-        InfCellComponent infCellComponent = mCell.get(entityId);
-        int chunkId = world.getSystem(MapSystem.class).findChunk(MapSystem.getChunkInUse(context), entityId);
-        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int worldPosX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
-        int worldPosY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
-        TextureRegion texture = getTextureViaPourCent(cellBeingMineComponent);
-
-        context.getGameStage().getBatch().draw(
-                texture,
-                worldPosX,
-                worldPosY,
-                RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
-                RealmTech.PPM * RealmTech.UNITE_SCALE / 2
-        );
+//        CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
+//        InfCellComponent infCellComponent = mCell.get(entityId);
+//        int chunkId = world.getSystem(MapSystem.class).findChunk(MapSystem.getChunkInUse(context), entityId);
+//        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+//        int worldPosX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
+//        int worldPosY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
+//        TextureRegion texture = getTextureViaPourCent(cellBeingMineComponent);
+//
+//        context.getGameStage().getBatch().draw(
+//                texture,
+//                worldPosX,
+//                worldPosY,
+//                RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
+//                RealmTech.PPM * RealmTech.UNITE_SCALE / 2
+//        );
     }
 
     @Override

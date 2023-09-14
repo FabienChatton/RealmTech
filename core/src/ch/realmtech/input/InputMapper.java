@@ -32,11 +32,11 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveForward = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveForward);
-        moveLeft = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveLeft);
-        moveRight = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveRight);
-        moveBack = new KeysMapper(context.getRealmTechDataCtrl().option.keyMoveBack);
-        openInventory = new KeysMapper(context.getRealmTechDataCtrl().option.openInventory);
+        moveForward = new KeysMapper(context.getDataCtrl().option.keyMoveForward);
+        moveLeft = new KeysMapper(context.getDataCtrl().option.keyMoveLeft);
+        moveRight = new KeysMapper(context.getDataCtrl().option.keyMoveRight);
+        moveBack = new KeysMapper(context.getDataCtrl().option.keyMoveBack);
+        openInventory = new KeysMapper(context.getDataCtrl().option.openInventory);
 
         keysMappers.add(moveForward);
         keysMappers.add(moveLeft);
