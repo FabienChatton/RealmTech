@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,7 +27,7 @@ public class DataCtrl {
 
     private Option loadOptionFile(final Properties propertiesFile) throws IOException {
         try {
-            final InputStream inputStream = Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).read();
+            final InputStream inputStream = new FileInputStream(Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).toFile());
             propertiesFile.load(inputStream);
             return loadOptionFromFile(propertiesFile);
         } catch (IllegalArgumentException e) {
@@ -64,7 +65,7 @@ public class DataCtrl {
     private static Option loadOptionFromFile(final Properties propertiesFile) throws IllegalArgumentException {
         if (propertiesFile.size() == 0) {
             final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Il manque des champs de le fichier de configuration");
-            Gdx.app.log(TAG, illegalArgumentException.getMessage(), illegalArgumentException);
+            //Gdx.app.log(TAG, illegalArgumentException.getMessage(), illegalArgumentException);
             throw illegalArgumentException;
         }
         final Option option = new Option();
@@ -88,7 +89,7 @@ public class DataCtrl {
         try {
             saveOptionFile(propertiesFile, option);
         } catch (IOException e) {
-            Gdx.app.error(TAG, "La configuration n'a pas put être sauvegarder", e);
+            //Gdx.app.error(TAG, "La configuration n'a pas put être sauvegarder", e);
         }
     }
 
@@ -107,11 +108,11 @@ public class DataCtrl {
         public final AtomicInteger chunkParUpdate = new AtomicInteger();
         public final AtomicInteger keyDropItem = new AtomicInteger();
         public final BooleanRun fullScreen = new BooleanRun(bool -> {
-            if (bool) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            //if (bool) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             //else Gdx.graphics.setWindowedMode(RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
         });
-        public final IntegerRun fps = new IntegerRun(fps -> Gdx.graphics.setForegroundFPS(fps));
-        public final BooleanRun vsync = new BooleanRun(bool -> Gdx.graphics.setVSync(bool));
+        public final IntegerRun fps = new IntegerRun(fps -> fps.byteValue()/*Gdx.graphics.setForegroundFPS(fps)*/);
+        public final BooleanRun vsync = new BooleanRun(bool -> bool.booleanValue() /*Gdx.graphics.setVSync(bool)*/);
         public final AtomicBoolean inventoryBlur = new AtomicBoolean();
         public final AtomicInteger sound = new AtomicInteger();
 
@@ -136,15 +137,15 @@ public class DataCtrl {
         }
     }
     public static void creerHiearchieRealmTechData() throws IOException {
-        File root = Gdx.files.local(ROOT_PATH).file();
+        File root = Path.of(ROOT_PATH).toFile();
         if (!root.exists()) {
             Files.createDirectories(root.toPath());
         }
-        File rootSave = Gdx.files.local(String.format("%s/%s", ROOT_PATH, SaveInfManager.ROOT_PATH_SAVES)).file();
+        File rootSave = Path.of(String.format("%s/%s", ROOT_PATH, SaveInfManager.ROOT_PATH_SAVES)).toFile();
         if (!rootSave.exists()) {
             Files.createDirectories(rootSave.toPath());
         }
-        File rootProperties = Gdx.files.local(String.format("%s/%s", ROOT_PATH, PATH_PROPERTIES)).file();
+        File rootProperties = Path.of(String.format("%s/%s", ROOT_PATH, PATH_PROPERTIES)).toFile();
         if (!rootProperties.exists()) {
             Files.createDirectories(rootProperties.toPath());
         }
@@ -155,6 +156,6 @@ public class DataCtrl {
     }
 
     private static File getOptionFile() {
-        return Gdx.files.local(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).file();
+        return Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).toFile();
     }
 }

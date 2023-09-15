@@ -18,8 +18,6 @@ public class ItemManager extends Manager {
     private final static String TAG = ItemManager.class.getSimpleName();
     @Wire(name = "physicWorld")
     private World physicWorld;
-    @Wire
-    private TextureAtlas textureAtlas;
     private BodyDef bodyDef;
     private FixtureDef fixtureDef;
     private Archetype defaultItemGroundArchetype;

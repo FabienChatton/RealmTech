@@ -1,6 +1,7 @@
 package ch.realmtechServer.netty;
 
 import ch.realmtechCommuns.packet.Packet;
+import ch.realmtechServer.ServerContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -11,7 +12,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = in.readInt();
-        Packet incomingPacket = RealmTechServer.packets.get(packetId).apply(in);
+        Packet incomingPacket = ServerContext.packets.get(packetId).apply(in);
         out.add(incomingPacket);
     }
 }

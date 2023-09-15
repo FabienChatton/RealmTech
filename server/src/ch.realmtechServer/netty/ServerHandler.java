@@ -1,7 +1,6 @@
 package ch.realmtechServer.netty;
 
 import ch.realmtechCommuns.packet.Packet;
-import ch.realmtechCommuns.packet.PlayerConnectionPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -21,7 +20,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Packet> {
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         Channel incomingChannel = ctx.channel();
         System.out.println("[SERVER] - " + incomingChannel.remoteAddress() + " c'est connecté au serveur");
-        channels.forEach(channel -> channel.writeAndFlush(new PlayerConnectionPacket(0, 0)));
+        //channels.forEach(channel -> channel.writeAndFlush(new PlayerConnectionPacket(0, 0)));
         channels.add(incomingChannel);
     }
 

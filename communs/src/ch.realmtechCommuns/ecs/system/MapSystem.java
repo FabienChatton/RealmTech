@@ -28,7 +28,7 @@ public class MapSystem extends DelayedIteratingSystem {
     private final static String TAG = MapSystem.class.getSimpleName();
 //    @Wire
 //    private SoundManager soundManager;
-    @Wire
+    @Wire(name = "physicWorld")
     private World physicWorld;
     @Wire
     private DataCtrl dataCtrl;
@@ -154,7 +154,8 @@ public class MapSystem extends DelayedIteratingSystem {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int dstX = Math.abs(posX - infChunkComponent.chunkPosX);
         int dstY = Math.abs(posY - infChunkComponent.chunkPosY);
-        return dstX <= dataCtrl.option.renderDistance.get() && dstY <= dataCtrl.option.renderDistance.get();
+        // à remplacer pour une valuer dans une configuration
+        return dstX <= 4 /*dataCtrl.option.renderDistance.get()*/ && dstY <= 4 /*dataCtrl.option.renderDistance.get()*/;
     }
 
     private int getOrGenerateChunk(int mapId, int chunkX, int chunkY) {

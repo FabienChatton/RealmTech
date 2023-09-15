@@ -1,6 +1,5 @@
-package ch.realmtech.game.ecs.system;
+package ch.realmtechCommuns.ecs.system;
 
-import ch.realmtech.RealmTech;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.physics.box2d.World;

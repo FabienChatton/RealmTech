@@ -2,7 +2,8 @@ package ch.realmtechServer.netty;
 
 public final class ConnectionBuilder {
     private String host = "localhost";
-    private int port = RealmTechServer.PREFERRED_PORT;
+    private int port = ServerNetty.PREFERRED_PORT;
+    private String saveName;
 
     /**
      * default "localhost"
@@ -29,5 +30,14 @@ public final class ConnectionBuilder {
 
     public int getPort() {
         return port;
+    }
+
+    public String getSaveName() {
+        return saveName;
+    }
+
+    public ConnectionBuilder setSaveName(String saveName) {
+        this.saveName = saveName;
+        return this;
     }
 }

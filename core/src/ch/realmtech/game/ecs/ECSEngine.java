@@ -14,7 +14,6 @@ import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
 import ch.realmtechCommuns.PhysiqueWorldHelper;
-import ch.realmtechCommuns.packet.PlayerConnectionPacket;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
@@ -280,7 +279,7 @@ public final class ECSEngine implements Disposable {
         int playerId = createPlayer(metaDonnesComponent.playerPositionX, metaDonnesComponent.playerPositionY);
         Entity playerEntity = world.getEntity(playerId);
         PositionComponent playerPositionComponent = playerEntity.getComponent(PositionComponent.class);
-        connectionHandler.sendAndFlushPacketToServer(new PlayerConnectionPacket(playerPositionComponent.x, playerPositionComponent.y));
+        //connectionHandler.sendAndFlushPacketToServer(new PlayerConnectionPacket(playerPositionComponent.x, playerPositionComponent.y));
 
     }
 

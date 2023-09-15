@@ -11,8 +11,13 @@ public class ConnectionCommand implements Callable<ConnectionBuilder> {
     @Option(names = {"-p", "--port"}, description = "Le port", defaultValue = "25533")
     private int port;
 
+    @Option(names = {"-s", "--saveName"}, description = "Quel carte sera chargé par le serveur", defaultValue = "default")
+    private String saveName;
+
     @Override
     public ConnectionBuilder call() throws Exception {
-        return new ConnectionBuilder().setPort(port);
+        return new ConnectionBuilder()
+                .setSaveName(saveName)
+                .setPort(port);
     }
 }

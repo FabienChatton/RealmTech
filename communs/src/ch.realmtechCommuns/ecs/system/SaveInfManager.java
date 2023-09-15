@@ -49,6 +49,25 @@ public class SaveInfManager extends Manager {
     }
 
     /**
+     * Prépare la sauvegarde.
+     * Créer une sauvegarde si le nom de la sauvegarde n'existe pas ou charge la sauvegarde si elle existe.
+     * @param saveName Le nom de la sauvegarde
+     * @return l'id de la infMap
+     * @throws IOException
+     */
+    public int generateOrLoadSave(String saveName) throws IOException {
+        int mapId;
+        List<File> listSauvegarde = listSauvegardeInfinie();
+        // la sauvegarde existe déjà
+        if (listSauvegarde.stream().map(File::getName).anyMatch(s -> s.equals(saveName))) {
+            mapId = readInfMap(Path.of(saveName));
+        } else {
+            mapId = generateNewSave(saveName);
+        }
+        return mapId;
+    }
+
+    /**
      *
      * @param saveName nom de la nouvelle sauvegarde
      * @return l'id un infMap
@@ -280,7 +299,7 @@ public class SaveInfManager extends Manager {
 
     private static Path getLocalPathSaveRoot() throws IOException {
         DataCtrl.creerHiearchieRealmTechData();
-        return Gdx.files.local(String.format("%s/%s", DataCtrl.ROOT_PATH, ROOT_PATH_SAVES)).file().toPath();
+        return Path.of(String.format("%s/%s", DataCtrl.ROOT_PATH, ROOT_PATH_SAVES));
     }
 
     private static File getPlayerSaveInventoryFile(String saveName) throws IOException {
