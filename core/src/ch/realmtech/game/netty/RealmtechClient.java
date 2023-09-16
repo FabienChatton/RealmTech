@@ -1,10 +1,9 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtech.RealmTech;
+import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.netty.ConnectionBuilder;
 import ch.realmtechServer.netty.PacketDecoder;
 import ch.realmtechServer.netty.PacketEncoder;
-import com.badlogic.gdx.Gdx;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -17,13 +16,13 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 public class RealmtechClient {
     private Channel channel;
     private NioEventLoopGroup group;
-    private final RealmTech context;
+    private final ClientExecute clientExecute;
 
     /**
      * Initie directement une connection
      */
-    public RealmtechClient(ConnectionBuilder connectionBuilder, RealmTech context) throws Exception {
-        this.context = context;
+    public RealmtechClient(ConnectionBuilder connectionBuilder, ClientExecute clientExecute) throws Exception {
+        this.clientExecute = clientExecute;
         run(connectionBuilder);
     }
 
@@ -37,7 +36,7 @@ public class RealmtechClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new PacketEncoder());
-                        Gdx.app.postRunnable(() -> ch.pipeline().addLast(new ClientHandler(context.getEcsEngine().getWorld())));
+                        ch.pipeline().addLast(new ClientHandler(clientExecute));
                     }
                 });
         channel = b.connect(connectionBuilder.getHost(), connectionBuilder.getPort()).sync().channel();

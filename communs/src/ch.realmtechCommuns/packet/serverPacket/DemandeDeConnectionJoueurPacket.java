@@ -10,11 +10,11 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class DemandeDeConnectionJoueurPacket implements ServerPacket {
 
-    public DemandeDeConnectionJoueurPacket(ByteBuf byteBuf) {
-
+    public DemandeDeConnectionJoueurPacket() {
     }
 
-    public DemandeDeConnectionJoueurPacket() {
+    public DemandeDeConnectionJoueurPacket(ByteBuf byteBuf) {
+
     }
 
     @Override

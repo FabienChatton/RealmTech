@@ -107,7 +107,7 @@ public final class ECSEngine implements Disposable {
     }
 
     public ECSEngine(final RealmTech context) throws IOException {
-        this(context, new RealmtechClientConnectionHandler(context));
+        this(context, new RealmtechClientConnectionHandler(context.getClientExecute()));
     }
 
     public void process(float delta) {

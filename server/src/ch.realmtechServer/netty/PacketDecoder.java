@@ -16,7 +16,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = in.readInt();
-        Packet incomingPacket = ServerContext.packets.get(packetId).apply(in);
+        Packet incomingPacket = ServerContext.PACKETS.get(packetId).apply(in);
         out.add(incomingPacket);
     }
 

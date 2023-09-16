@@ -1,7 +1,7 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtech.RealmTech;
 import ch.realmtechCommuns.packet.ServerPacket;
+import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.netty.ConnectionBuilder;
 import ch.realmtechServer.netty.ServerNetty;
@@ -17,9 +17,9 @@ public class RealmtechClientConnectionHandler implements Closeable {
     /**
      * Pour une connection en multi
      */
-    public RealmtechClientConnectionHandler(ConnectionBuilder connectionBuilder, RealmTech context) throws IOException {
+    public RealmtechClientConnectionHandler(ConnectionBuilder connectionBuilder, ClientExecute clientExecute) throws IOException {
         try {
-            client = new RealmtechClient(connectionBuilder, context);
+            client = new RealmtechClient(connectionBuilder, clientExecute);
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -28,7 +28,7 @@ public class RealmtechClientConnectionHandler implements Closeable {
     /**
      * Destiner pour une connection en solo
      */
-    public RealmtechClientConnectionHandler(RealmTech context) throws IOException {
+    public RealmtechClientConnectionHandler(ClientExecute clientExecute) throws IOException {
         try {
             ConnectionBuilder connectionBuilder = ServerContext.builder();
             if (!ServerNetty.isPortAvailable(connectionBuilder.getPort())) {
@@ -38,7 +38,7 @@ public class RealmtechClientConnectionHandler implements Closeable {
                 } while (!ServerNetty.isPortAvailable(connectionBuilder.getPort()) || ++limite < 10);
             }
             server = new ServerContext(connectionBuilder);
-            client = new RealmtechClient(connectionBuilder, context);
+            client = new RealmtechClient(connectionBuilder, clientExecute);
         } catch (Exception e) {
             throw new IOException(e);
         }

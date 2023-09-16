@@ -2,6 +2,7 @@ package ch.realmtech;
 
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
+import ch.realmtech.game.netty.ClientExecuteContext;
 import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
@@ -9,6 +10,7 @@ import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
 import ch.realmtechCommuns.options.DataCtrl;
+import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
 import ch.realmtechServer.netty.ConnectionBuilder;
 import com.artemis.BaseSystem;
@@ -50,6 +52,7 @@ public final class RealmTech extends Game{
     private TextureAtlas textureAtlas;
     private DataCtrl dataCtrl;
     private SoundManager soundManager;
+    private ClientExecute clientExecute;
 
     @Override
     public void create() {
@@ -77,6 +80,7 @@ public final class RealmTech extends Game{
 
         inputMapper = InputMapper.getInstance(this);
         screenCash = new EnumMap<>(ScreenType.class);
+        clientExecute = new ClientExecuteContext(this);
         setScreen(ScreenType.LOADING);
     }
 
@@ -235,7 +239,7 @@ public final class RealmTech extends Game{
     }
 
     public void rejoindreMulti(String host, int port) throws IOException {
-        RealmtechClientConnectionHandler clientConnectionHandler = new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port), this);
+        RealmtechClientConnectionHandler clientConnectionHandler = new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port), clientExecute);
         nouveauECS(clientConnectionHandler);
         clientConnectionHandler.sendAndFlushPacketToServer(new DemandeDeConnectionJoueurPacket());
     }
@@ -255,5 +259,9 @@ public final class RealmTech extends Game{
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {
         return ecsEngine.getSystem(type);
+    }
+
+    public ClientExecute getClientExecute() {
+        return clientExecute;
     }
 }

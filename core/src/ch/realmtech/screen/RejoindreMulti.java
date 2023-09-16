@@ -10,8 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import java.io.IOException;
 
-import static ch.realmtechCommuns.ecs.component.PlayerComponent.TAG;
-
 public class RejoindreMulti extends AbstractScreen {
     public static final String TAG = RejoindreMulti.class.getSimpleName();
 
@@ -38,7 +36,6 @@ public class RejoindreMulti extends AbstractScreen {
     public void rejoindre(String host, int port) {
         try {
             context.rejoindreMulti(host, port);
-            context.setScreen(ScreenType.GAME_SCREEN);
         } catch (IOException e) {
             Gdx.app.error(TAG, e.getMessage(), e);
             Popup.popupErreur(context, e.getMessage(), uiStage);

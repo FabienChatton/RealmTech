@@ -1,7 +1,7 @@
 package ch.realmtechCommuns.packet;
 
-import com.artemis.World;
+import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 
-public interface ClientPacket extends Packet {
-    void executeOnClient(World world);
+public interface ClientPacket<T extends ClientExecute> extends Packet {
+    void executeOnClient(T clientExecute);
 }
