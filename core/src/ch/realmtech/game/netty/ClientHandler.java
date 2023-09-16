@@ -1,11 +1,11 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtechCommuns.packet.Packet;
+import ch.realmtechCommuns.packet.ClientPacket;
 import com.artemis.World;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class ClientHandler extends SimpleChannelInboundHandler<Packet> {
+public class ClientHandler extends SimpleChannelInboundHandler<ClientPacket> {
     private final World world;
 
     public ClientHandler(World world) {
@@ -13,7 +13,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ClientPacket msg) throws Exception {
         msg.executeOnClient(world);
     }
 }

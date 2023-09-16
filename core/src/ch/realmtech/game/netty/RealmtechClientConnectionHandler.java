@@ -1,9 +1,9 @@
 package ch.realmtech.game.netty;
 
 import ch.realmtech.RealmTech;
-import ch.realmtechCommuns.packet.Packet;
-import ch.realmtechServer.netty.ConnectionBuilder;
+import ch.realmtechCommuns.packet.ServerPacket;
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.netty.ConnectionBuilder;
 import ch.realmtechServer.netty.ServerNetty;
 
 import java.io.Closeable;
@@ -54,7 +54,7 @@ public class RealmtechClientConnectionHandler implements Closeable {
         }
     }
 
-    public void sendAndFlushPacketToServer(Packet packet) {
+    public void sendAndFlushPacketToServer(ServerPacket packet) {
         client.getChannel().writeAndFlush(packet);
     }
 }

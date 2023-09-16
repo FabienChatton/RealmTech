@@ -1,8 +1,12 @@
 package ch.realmtechServer;
 
 import ch.realmtechCommuns.packet.Packet;
+import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
+import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
 import ch.realmtechServer.ecs.EcsEngineServer;
-import ch.realmtechServer.netty.*;
+import ch.realmtechServer.netty.ConnectionBuilder;
+import ch.realmtechServer.netty.ConnectionCommand;
+import ch.realmtechServer.netty.ServerNetty;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
@@ -19,11 +23,16 @@ public class ServerContext {
     private final ServerNetty serverNetty;
     private final EcsEngineServer ecsEngineServer;
 
+    static {
+        Packet.addPacket(packets,
+                ConnectionJoueurReussitPacket.class,
+                DemandeDeConnectionJoueurPacket.class);
+    }
+
     public ServerContext(ConnectionBuilder connectionBuilder) throws Exception {
-        //Packet.addPacket(packets, );
         ecsEngineServer = new EcsEngineServer();
         ecsEngineServer.prepareSaveToLoad(connectionBuilder.getSaveName());
-        serverNetty = new ServerNetty(connectionBuilder);
+        serverNetty = new ServerNetty(connectionBuilder, ecsEngineServer.getWorld());
     }
 
     public static void main(String[] args) throws Exception {

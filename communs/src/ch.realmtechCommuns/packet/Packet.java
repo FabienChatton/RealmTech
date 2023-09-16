@@ -1,18 +1,21 @@
 package ch.realmtechCommuns.packet;
 
-import com.artemis.BaseSystem;
-import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
 
 public interface Packet {
     Logger logger = LoggerFactory.getLogger(Packet.class);
+
+    /**
+     * Méthode pour écrire le packet sur le réseau.
+     */
     void write(ByteBuf byteBuf);
 
     default int getId() {
@@ -21,12 +24,12 @@ public interface Packet {
 
     static int getId(Class<? extends Packet> packet) {
         int packetId = packet.getSimpleName().hashCode();
-        logger.trace("calcule du packet id {} du packet {}", packetId, packet);
+        logger.trace("calcule du packetId {} du packet {}", packetId, packet);
         return packetId;
     }
 
     static void addPacket(Map<Integer, Function<ByteBuf, ? extends Packet>> packetsMap, Class<? extends Packet> ...packets) {
-        for (Class<? extends Packet> packet : packets) {
+        Arrays.stream(packets).forEach(packet -> {
             int id = getId(packet);
             packetsMap.put(id, byteBuf -> {
                 try {
@@ -41,11 +44,11 @@ public interface Packet {
                 } catch (InvocationTargetException e) {
                     logger.error("Une erreur d'invocation c'est produite", e);
                     throw new RuntimeException(e);
-                } catch(IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     logger.error("Le constructeur n'est pas publique", e);
                     throw new RuntimeException(e);
                 }
             });
-        }
+        });
     }
 }

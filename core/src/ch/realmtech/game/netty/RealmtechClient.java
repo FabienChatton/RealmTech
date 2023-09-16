@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtechServer.netty.ConnectionBuilder;
 import ch.realmtechServer.netty.PacketDecoder;
 import ch.realmtechServer.netty.PacketEncoder;
+import com.badlogic.gdx.Gdx;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -36,7 +37,7 @@ public class RealmtechClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new PacketEncoder());
-                        ch.pipeline().addLast(new ClientHandler(context.getEcsEngine().getWorld()));
+                        Gdx.app.postRunnable(() -> ch.pipeline().addLast(new ClientHandler(context.getEcsEngine().getWorld())));
                     }
                 });
         channel = b.connect(connectionBuilder.getHost(), connectionBuilder.getPort()).sync().channel();

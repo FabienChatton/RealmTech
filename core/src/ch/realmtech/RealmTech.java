@@ -5,10 +5,11 @@ import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
-import ch.realmtechCommuns.options.DataCtrl;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
+import ch.realmtechCommuns.options.DataCtrl;
+import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
 import ch.realmtechServer.netty.ConnectionBuilder;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
@@ -234,7 +235,9 @@ public final class RealmTech extends Game{
     }
 
     public void rejoindreMulti(String host, int port) throws IOException {
-        nouveauECS(new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port), this));
+        RealmtechClientConnectionHandler clientConnectionHandler = new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port), this);
+        nouveauECS(clientConnectionHandler);
+        clientConnectionHandler.sendAndFlushPacketToServer(new DemandeDeConnectionJoueurPacket());
     }
 
     public void generateNewSave(String name) throws IOException {

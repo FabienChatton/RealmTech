@@ -6,7 +6,6 @@ import ch.realmtechCommuns.options.DataCtrl;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
-import com.artemis.managers.PlayerManager;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -33,7 +32,7 @@ public final class EcsEngineServer {
         fixtureDef = new FixtureDef();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
-                .with(new PlayerManager())
+                .with(new PhysicEntityManager())
 
 
                 // manageur
@@ -83,4 +82,7 @@ public final class EcsEngineServer {
         logger.info("La carte \"{}\" à chargé", saveName);
     }
 
+    public World getWorld() {
+        return world;
+    }
 }
