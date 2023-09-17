@@ -1,8 +1,8 @@
 package ch.realmtechCommuns.packet;
 
-import com.artemis.World;
-import io.netty.channel.ChannelHandlerContext;
+import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
+import io.netty.channel.Channel;
 
 public interface ServerPacket extends Packet {
-    void executeOnServer(final ChannelHandlerContext incomingCtx, final World world, final ServerResponseHandler serverResponseHandler);
+    void executeOnServer(final Channel clientChannel, final ServerResponseHandler serverResponseHandler, ServerExecute serverExecute);
 }

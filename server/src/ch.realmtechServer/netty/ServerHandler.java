@@ -3,7 +3,8 @@ package ch.realmtechServer.netty;
 import ch.realmtechCommuns.packet.ClientPacket;
 import ch.realmtechCommuns.packet.ServerPacket;
 import ch.realmtechCommuns.packet.ServerResponseHandler;
-import com.artemis.World;
+import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
+import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -19,14 +20,14 @@ import java.util.List;
 public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> implements ServerResponseHandler {
     private final static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
     private static final ChannelGroup channels;
-    private final World world;
+    private final ServerExecute serverExecute;
 
     static {
         channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     }
 
-    public ServerHandler(World world) {
-        this.world = world;
+    public ServerHandler(ServerExecute serverExecute) {
+        this.serverExecute = serverExecute;
     }
 
     @Override
@@ -45,19 +46,19 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> imp
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ServerPacket msg) throws Exception {
-        msg.executeOnServer(ctx, world, this);
+        msg.executeOnServer(ctx.channel(), this, serverExecute);
     }
 
     @Override
-    public void broadCastPacket(ClientPacket packet) {
+    public void broadCastPacket(ClientPacket<ClientExecute> packet) {
         logger.trace("envoie du packet {} en broadCast", packet.getClass().getSimpleName());
         channels.forEach(channel -> channel.writeAndFlush(packet));
     }
 
     @Override
-    public void boardCastPacketExcept(ClientPacket packet, Channel... channels) {
-        List<Channel> channelFiltre = Arrays.stream(channels)
-                .filter(channel -> Arrays.stream(channels).noneMatch(c -> c == channel))
+    public void boardCastPacketExcept(ClientPacket<ClientExecute> packet, Channel... channels) {
+        List<Channel> channelFiltre = ServerHandler.channels.stream()
+                .filter(channel -> Arrays.stream(channels).anyMatch(c -> c != channel))
                 .toList();
         logger.trace("envoie du packet {} vers {}", packet.getClass().getSimpleName(), channelFiltre);
         channelFiltre
@@ -65,7 +66,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> imp
     }
 
     @Override
-    public void sendPacketTo(ClientPacket packet, Channel... channels) {
+    public void sendPacketTo(ClientPacket<ClientExecute> packet, Channel... channels) {
         logger.trace("envoie du packet {} vers {}", packet.getClass().getSimpleName(), Arrays.toString(channels));
         Arrays.stream(channels)
                 .forEach(channel -> channel.writeAndFlush(packet));

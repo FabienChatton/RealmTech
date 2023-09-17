@@ -46,6 +46,8 @@ public final class ECSEngine implements Disposable {
         fixtureDef = new FixtureDef();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
+                .withClient(new PhysicPlayerManagerClient())
+
                 // manageur
                 .withClient(new TagManager())
                 .withClient(new ItemManager())
@@ -115,95 +117,8 @@ public final class ECSEngine implements Disposable {
         world.process();
     }
 
+    @Deprecated
     public int createPlayer(float x, float y) {
-//        final float playerWorldWith = 0.9f;
-//        final float playerWorldHigh = 0.9f;
-//        if (world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG) != null) {
-//            int playerId = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
-//            world.getSystem(TagManager.class).unregister(PlayerComponent.TAG);
-//            physicWorld.destroyBody(world.edit(playerId).create(Box2dComponent.class).body);
-//            world.delete(playerId);
-//        }
-//        int playerId = world.create();
-//        world.getSystem(TagManager.class).register(PlayerComponent.TAG, playerId);
-//
-//        PhysiqueWorldHelper.resetBodyDef(bodyDef);
-//        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
-//        bodyDef.type = BodyDef.BodyType.DynamicBody;
-//        Body bodyPlayer = ajouteEntitePhysique(bodyDef);
-//        bodyPlayer.setUserData(playerId);
-//        PolygonShape playerShape = new PolygonShape();
-//        playerShape.setAsBox(playerWorldWith / 2f, playerWorldHigh / 2f);
-//        fixtureDef.shape = playerShape;
-//        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
-//        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
-//        bodyPlayer.createFixture(fixtureDef);
-//
-//        playerShape.dispose();
-//
-//        // box2d component
-//        Box2dComponent box2dComponent = world.edit(playerId).create(Box2dComponent.class);
-//        box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
-//
-//        // player component
-//        PlayerComponent playerComponent = world.edit(playerId).create(PlayerComponent.class);
-//
-//        // movement component
-//        MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
-//        movementComponent.set(10, 10);
-//
-//        // position component
-//        PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
-//        positionComponent.set(box2dComponent, x, y);
-//
-//        // inventory component
-//        InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
-//        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//        try {
-//            inventoryComponent.inventory = world.getSystem(SaveInfManager.class).getPlayerSaveInventory(getMapId());
-//        } catch (FileNotFoundException ignored) {
-//
-//        } catch (IOException e) {
-//            Gdx.app.error(TAG, "l'inventaire du joueur n'a pas pu être récupérer de la présente sauvegarde", e);
-//        }
-//
-//        // pick up item component
-//        PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
-//        pickerGroundItemComponent.set(10);
-//
-////        // texture component
-////        TextureComponent textureComponent = world.edit(playerId).create(TextureComponent.class);
-////        final TextureRegion texture = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu");
-////        textureComponent.set(texture);
-//
-//        // animation
-//        TextureComponent textureComponent = world.edit(playerId).create(TextureComponent.class);
-//        textureComponent.scale = 0.05f;
-//        TextureAtlas.AtlasRegion textureFront0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-front-0");
-//        TextureAtlas.AtlasRegion textureFront1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-front-1");
-//        TextureAtlas.AtlasRegion textureFront2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-front-2");
-//        playerComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
-//        TextureAtlas.AtlasRegion textureLeft0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-left-0");
-//        TextureAtlas.AtlasRegion textureLeft1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-left-1");
-//        TextureAtlas.AtlasRegion textureLeft2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-left-2");
-//        playerComponent.animationLeft = new TextureRegion[]{textureLeft0, textureLeft1, textureLeft2};
-//        TextureAtlas.AtlasRegion textureBack0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-back-0");
-//        TextureAtlas.AtlasRegion textureBack1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-back-1");
-//        TextureAtlas.AtlasRegion textureBack2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-back-2");
-//        playerComponent.animationBack = new TextureRegion[]{textureBack0, textureBack1, textureBack2};
-//        TextureAtlas.AtlasRegion textureRight0 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-right-0");
-//        TextureAtlas.AtlasRegion textureRight1 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-right-1");
-//        TextureAtlas.AtlasRegion textureRight2 = context.getAssetManager().get("texture/atlas/texture.atlas", TextureAtlas.class).findRegion("reimu-right-2");
-//        playerComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
-//
-//        // default crafting table
-//        int defaultCraftingTable = world.create();
-//        int defaultResultInventory = world.create();
-//        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-//        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
-//        return playerId;
         return 0;
     }
 

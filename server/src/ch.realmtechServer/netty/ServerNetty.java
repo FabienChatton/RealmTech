@@ -1,7 +1,7 @@
 package ch.realmtechServer.netty;
 
+import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.ServerContext;
-import com.artemis.World;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -18,13 +18,13 @@ import java.net.ServerSocket;
 public class ServerNetty {
     public final static int PREFERRED_PORT = 25533;
     private final static Logger logger = LoggerFactory.getLogger(ServerContext.class);
-    private final World world;
+    private final ServerExecute serverExecute;
     private Channel channel;
     private NioEventLoopGroup boss;
     private NioEventLoopGroup worker;
 
-    public ServerNetty(ConnectionBuilder connectionBuilder, World world) throws Exception {
-        this.world = world;
+    public ServerNetty(ConnectionBuilder connectionBuilder, ServerExecute serverExecute) throws Exception {
+        this.serverExecute = serverExecute;
         prepareSocket(connectionBuilder);
     }
 
@@ -50,7 +50,7 @@ public class ServerNetty {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new PacketEncoder());
-                        ch.pipeline().addLast(new ServerHandler(world));
+                        ch.pipeline().addLast(new ServerHandler(serverExecute));
                     }
                 });
         channel = sb.bind(connectionBuilder.getPort()).sync().channel();

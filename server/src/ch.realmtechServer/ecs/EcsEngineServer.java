@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public final class EcsEngineServer {
         fixtureDef = new FixtureDef();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
-                .with(new PhysicEntityManager())
+                .with(new PlayerManagerServer())
 
 
                 // manageur
@@ -80,6 +81,10 @@ public final class EcsEngineServer {
         int mapId = world.getSystem(SaveInfManager.class).generateOrLoadSave(saveName);
         world.getSystem(TagManager.class).register("infMap", mapId);
         logger.info("La carte \"{}\" à chargé", saveName);
+    }
+
+    public void createPlayer(Channel channel) {
+        world.getSystem(PlayerManagerServer.class).createPlayerServer(channel);
     }
 
     public World getWorld() {
