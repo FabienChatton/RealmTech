@@ -3,6 +3,7 @@ package ch.realmtechServer;
 import ch.realmtechCommuns.packet.PacketMap;
 import ch.realmtechCommuns.packet.clientPacket.ConnectionAutreJoueurPacket;
 import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
+import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.ecs.EcsEngineServer;
@@ -26,6 +27,7 @@ public class ServerContext {
         PACKETS.put(ConnectionJoueurReussitPacket.class, ConnectionJoueurReussitPacket::new)
                 .put(DemandeDeConnectionJoueurPacket.class, DemandeDeConnectionJoueurPacket::new)
                 .put(ConnectionAutreJoueurPacket.class, ConnectionAutreJoueurPacket::new)
+                .put(TousLesJoueurPacket.class, TousLesJoueurPacket::new)
         ;
     }
 

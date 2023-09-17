@@ -6,11 +6,14 @@ import ch.realmtechCommuns.ecs.component.*;
 import ch.realmtechCommuns.mod.RealmTechCoreMod;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 public class PhysicPlayerManagerClient extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PhysicPlayerManagerClient.class);
@@ -23,11 +26,13 @@ public class PhysicPlayerManagerClient extends Manager {
     @Wire
     private BodyDef bodyDef;
 
-    public void createPlayerClient(float x, float y) {
+    public void createPlayerClient(float x, float y, UUID uuid) {
         logger.info("creation du joueur client");
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
+
+        world.getSystem(TagManager.class).register("MAIN_PLAYER", playerId);
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
@@ -49,6 +54,10 @@ public class PhysicPlayerManagerClient extends Manager {
 
         // player component
         PlayerComponent playerComponent = world.edit(playerId).create(PlayerComponent.class);
+
+        // player connection
+        PlayerConnectionComponent playerConnectionComponent = world.edit(playerId).create(PlayerConnectionComponent.class);
+        playerConnectionComponent.uuid = uuid;
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);

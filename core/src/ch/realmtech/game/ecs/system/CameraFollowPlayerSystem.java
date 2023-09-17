@@ -16,12 +16,16 @@ public class CameraFollowPlayerSystem extends IteratingSystem {
 
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<PlayerComponent> mPlayer;
 
     @Override
     protected void process(int entityId) {
+        if (!PlayerComponent.isMainPlayer(entityId, world)) {
+            return;
+        }
         PositionComponent positionComponent = mPosition.get(entityId);
         Box2dComponent box2dComponent = mBox2d.get(entityId);
-        gameCamera.position.x = positionComponent.x + box2dComponent.widthWorld/2;
-        gameCamera.position.y = positionComponent.y + box2dComponent.heightWorld/2;
+        gameCamera.position.x = positionComponent.x + box2dComponent.widthWorld / 2;
+        gameCamera.position.y = positionComponent.y + box2dComponent.heightWorld / 2;
     }
 }

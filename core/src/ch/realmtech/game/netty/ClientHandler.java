@@ -5,7 +5,7 @@ import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class ClientHandler extends SimpleChannelInboundHandler<ClientPacket<ClientExecute>> {
+public class ClientHandler extends SimpleChannelInboundHandler<ClientPacket> {
     private final ClientExecute clientExecute;
 
     public ClientHandler(ClientExecute clientExecute) {
@@ -13,7 +13,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientPacket<Clie
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ClientPacket<ClientExecute> msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ClientPacket msg) throws Exception {
         msg.executeOnClient(clientExecute);
     }
 }

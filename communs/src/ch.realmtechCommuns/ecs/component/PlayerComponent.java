@@ -1,6 +1,8 @@
 package ch.realmtechCommuns.ecs.component;
 
 import com.artemis.Component;
+import com.artemis.World;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 
@@ -21,4 +23,15 @@ public class PlayerComponent extends Component {
      * 0 front, 1 left, 2 back, 3 right
      */
     public byte lastDirection = 0;
+
+    /**
+     * Seulement sur le client
+     */
+    public static boolean isMainPlayer(int playerId, World world) {
+        return world.getSystem(TagManager.class).getEntityId("MAIN_PLAYER") == playerId;
+    }
+
+    public static int getMainPlayer(World world) {
+        return world.getSystem(TagManager.class).getEntityId("MAIN_PLAYER");
+    }
 }

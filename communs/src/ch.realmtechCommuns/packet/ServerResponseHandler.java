@@ -1,12 +1,11 @@
 package ch.realmtechCommuns.packet;
 
-import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import io.netty.channel.Channel;
 
 public interface ServerResponseHandler {
-    void broadCastPacket(ClientPacket<ClientExecute> packet);
+    void broadCastPacket(ClientPacket packet);
 
-    void boardCastPacketExcept(ClientPacket<ClientExecute> packet, Channel... channel);
+    void boardCastPacketExcept(ClientPacket packet, Channel... channel);
 
-    void sendPacketTo(ClientPacket<ClientExecute> packet, Channel... channel);
+    void sendPacketTo(ClientPacket packet, Channel... channel);
 }

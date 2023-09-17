@@ -3,45 +3,44 @@ package ch.realmtechCommuns.packet.clientPacket;
 import ch.realmtechCommuns.packet.ClientPacket;
 import io.netty.buffer.ByteBuf;
 
-public class ConnectionJoueurReussitPacket implements ClientPacket<ClientExecute> {
+import java.util.UUID;
+
+/**
+ * Le serveur donne se packet quand le joueur initie la connexion et que la connexion, et réussie.
+ * Reçoit les informations sur sa position dans le monde et sont UUID.
+ */
+public class ConnectionJoueurReussitPacket implements ClientPacket {
     private final float x;
     private final float y;
-    private final int nombreAutreJoueur;
-    private final float[] autreJoueurXY;
+    private final UUID uuid;
 
-    public ConnectionJoueurReussitPacket(float x, float y, int nombreAutreJoueur, float[] autreJoueurXY) {
+    public ConnectionJoueurReussitPacket(float x, float y, UUID uuid) {
         this.x = x;
         this.y = y;
-        this.nombreAutreJoueur = nombreAutreJoueur;
-        this.autreJoueurXY = autreJoueurXY;
+        this.uuid = uuid;
     }
 
     public ConnectionJoueurReussitPacket(ByteBuf byteBuf) {
         this.x = byteBuf.readFloat();
         this.y = byteBuf.readFloat();
-        this.nombreAutreJoueur = byteBuf.readInt();
-        autreJoueurXY = new float[nombreAutreJoueur * 2];
-        for (int i = 0; i < autreJoueurXY.length; i++) {
-            autreJoueurXY[i] = byteBuf.readFloat();
-        }
+        long msb = byteBuf.readLong();
+        long lsb = byteBuf.readLong();
+        this.uuid = new UUID(msb, lsb);
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.connectionJoueurReussit(x, y);
-        for (int i = 0; i < autreJoueurXY.length; i += 2) {
-            clientExecute.connectionAutreJoueur(autreJoueurXY[i], autreJoueurXY[i + 1]);
-        }
+        clientExecute.connectionJoueurReussit(x, y, uuid);
     }
 
     @Override
     public void write(ByteBuf byteBuf) {
         byteBuf.writeFloat(x);
         byteBuf.writeFloat(y);
-        byteBuf.writeInt(nombreAutreJoueur);
-        for (int i = 0; i < autreJoueurXY.length; i++) {
-            byteBuf.writeFloat(autreJoueurXY[i]);
-        }
+        byteBuf.writeLong(uuid.getMostSignificantBits());
+        byteBuf.writeLong(uuid.getLeastSignificantBits());
     }
 
+    public record ConnectionJoueurReussitArg(float x, float y, UUID uuid) {
+    }
 }

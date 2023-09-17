@@ -21,6 +21,6 @@ public class DemandeDeConnectionJoueurPacket implements ServerPacket {
 
     @Override
     public void executeOnServer(Channel clientChannel, ServerResponseHandler serverResponseHandler, ServerExecute serverExecute) {
-        serverExecute.createPlayer(clientChannel, serverResponseHandler);
+        serverExecute.newPlayerConnect(clientChannel, serverResponseHandler);
     }
 }

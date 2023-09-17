@@ -2,18 +2,17 @@ package ch.realmtechCommuns.ecs.system;
 
 import ch.realmtechCommuns.PhysiqueWorldHelper;
 import ch.realmtechCommuns.ecs.component.*;
+import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.math.Vector2;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.*;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class PlayerManagerServer extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerServer.class);
@@ -23,18 +22,19 @@ public class PlayerManagerServer extends Manager {
     private FixtureDef fixtureDef;
     @Wire
     private BodyDef bodyDef;
-    private final List<Integer> playersConnection;
+    private final IntBag players;
     private ComponentMapper<PlayerConnectionComponent> mPlayerConnection;
 
     public PlayerManagerServer() {
-        playersConnection = new ArrayList<>();
+        players = new IntBag();
     }
 
-    public Vector2 createPlayerServer(Channel channel) {
+    public ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg createPlayerServer(Channel channel) {
         logger.info("creation du joueur {}", channel.remoteAddress());
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
+        float x = 0, y = 0;
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
@@ -55,8 +55,9 @@ public class PlayerManagerServer extends Manager {
         box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
         // player connection component
+        UUID uuid = UUID.randomUUID();
         PlayerConnectionComponent playerConnectionComponent = world.edit(playerId).create(PlayerConnectionComponent.class);
-        playerConnectionComponent.set(channel);
+        playerConnectionComponent.set(channel, uuid);
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
@@ -64,7 +65,7 @@ public class PlayerManagerServer extends Manager {
 
         // position component
         PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
-        positionComponent.set(box2dComponent, 0, 0);
+        positionComponent.set(box2dComponent, x, y);
 
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
@@ -73,16 +74,24 @@ public class PlayerManagerServer extends Manager {
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
-        playersConnection.add(playerId);
+        players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
-        return new Vector2(0, 0);
+        return new ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg(x, y, uuid);
     }
 
-    public List<PlayerConnectionComponent> getPlayersConnection() {
-        return playersConnection.stream().map(mPlayerConnection::get).collect(Collectors.toList());
+    public IntBag getPlayers() {
+        return players;
     }
 
-    public float[] getPlayerConnectionPos(PlayerConnectionComponent playerConnectionComponent) {
-        return new float[]{1, 0};
+
+    public void removePlayer(Channel channel) {
+        int[] playersConnectionData = players.getData();
+        for (int i = 0; i < playersConnectionData.length; i++) {
+            PlayerConnectionComponent playerConnectionComponent = mPlayerConnection.get(players.get(i));
+            if (playerConnectionComponent.channel == channel) {
+                players.removeIndex(i);
+                break;
+            }
+        }
     }
 }

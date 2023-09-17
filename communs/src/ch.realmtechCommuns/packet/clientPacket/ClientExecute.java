@@ -1,7 +1,9 @@
 package ch.realmtechCommuns.packet.clientPacket;
 
-public interface ClientExecute {
-    void connectionJoueurReussit(final float x, final float y);
+import java.util.UUID;
 
-    void connectionAutreJoueur(float x, float y);
+public interface ClientExecute {
+    void connectionJoueurReussit(final float x, final float y, UUID uuid);
+
+    void connectionAutreJoueur(float x, float y, UUID uuid);
 }

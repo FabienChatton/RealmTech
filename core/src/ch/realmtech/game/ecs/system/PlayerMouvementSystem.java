@@ -1,11 +1,11 @@
 package ch.realmtech.game.ecs.system;
 
+import ch.realmtech.input.InputMapper;
+import ch.realmtech.sound.SoundManager;
 import ch.realmtechCommuns.ecs.component.*;
 import ch.realmtechCommuns.ecs.system.InventoryManager;
 import ch.realmtechCommuns.mod.PlayerFootStepSound;
 import ch.realmtechCommuns.mod.RealmTechCoreMod;
-import ch.realmtech.input.InputMapper;
-import ch.realmtech.sound.SoundManager;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -34,6 +34,9 @@ public class PlayerMouvementSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         PlayerComponent playerComponent = mPlayer.get(entityId);
+        if (!PlayerComponent.isMainPlayer(entityId, world)) {
+            return;
+        }
         MovementComponent movementComponent = mMouvement.get(entityId);
         PositionComponent positionComponent = mPosition.get(entityId);
         Box2dComponent box2dComponent = mBox2d.get(entityId);

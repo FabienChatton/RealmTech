@@ -16,13 +16,16 @@ public class PacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         int packetId = in.readInt();
-        Packet incomingPacket = ServerContext.PACKETS.get(packetId).apply(in);
-        out.add(incomingPacket);
+        if (ServerContext.PACKETS.containsKey(packetId)) {
+            Packet incomingPacket = ServerContext.PACKETS.get(packetId).apply(in);
+            out.add(incomingPacket);
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
         logger.error("Une erreur est survenue {}", cause.getMessage());
+        ctx.channel().close();
     }
 }
