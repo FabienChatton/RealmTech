@@ -1,13 +1,14 @@
 package ch.realmtechCommuns.ecs.system;
 
 import ch.realmtechCommuns.ecs.component.Box2dComponent;
+import ch.realmtechCommuns.ecs.component.PlayerComponent;
 import ch.realmtechCommuns.ecs.component.PositionComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
 @All({Box2dComponent.class, PositionComponent.class})
-public class UpdateBox2dWithTextureSystem extends IteratingSystem {
+public class UpdateBox2dWithPosition extends IteratingSystem {
     private ComponentMapper<Box2dComponent> mbox2d;
     private ComponentMapper<PositionComponent> mPosition;
 

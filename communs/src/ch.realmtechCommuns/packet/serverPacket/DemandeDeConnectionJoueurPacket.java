@@ -20,7 +20,7 @@ public class DemandeDeConnectionJoueurPacket implements ServerPacket {
     }
 
     @Override
-    public void executeOnServer(Channel clientChannel, ServerResponseHandler serverResponseHandler, ServerExecute serverExecute) {
-        serverExecute.newPlayerConnect(clientChannel, serverResponseHandler);
+    public void executeOnServer(Channel clientChannel, ServerExecute serverExecute) {
+        serverExecute.newPlayerConnect(clientChannel);
     }
 }

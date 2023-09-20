@@ -1,5 +1,6 @@
 package ch.realmtech.strategy;
 
+import ch.realmtechServer.tick.TickThread;
 import com.artemis.BaseSystem;
 import com.artemis.InvocationStrategy;
 import com.artemis.utils.Bag;
@@ -7,7 +8,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class ServerInvocationStrategy extends InvocationStrategy implements InvocationStrategyServer {
     private long time = System.currentTimeMillis();
-    public final static long TIME_LAPS_MILLIS = 20;
     private Bag<BaseSystem> serverSystems;
     private float delta = 0;
 
@@ -18,7 +18,7 @@ public class ServerInvocationStrategy extends InvocationStrategy implements Invo
     @Override
     protected void process() {
         boolean processServer = false;
-        if (System.currentTimeMillis() - time >= TIME_LAPS_MILLIS) {
+        if (System.currentTimeMillis() - time >= TickThread.TIME_TICK_LAPS_MILLIS) {
             long deltaMillis = TimeUtils.timeSinceMillis(time);
             delta = deltaMillis / 1000f;
             time = System.currentTimeMillis();

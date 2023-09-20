@@ -264,4 +264,7 @@ public final class RealmTech extends Game{
     public ClientExecute getClientExecute() {
         return clientExecute;
     }
+    public RealmtechClientConnectionHandler getConnectionHandler() {
+        return ecsEngine.getConnectionHandler();
+    }
 }

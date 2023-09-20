@@ -1,16 +1,15 @@
 package ch.realmtechServer;
 
 import ch.realmtechCommuns.packet.PacketMap;
-import ch.realmtechCommuns.packet.clientPacket.ConnectionAutreJoueurPacket;
+import ch.realmtechCommuns.packet.ServerResponseHandler;
 import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
+import ch.realmtechCommuns.packet.serverPacket.PlayerMovePacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.ecs.EcsEngineServer;
-import ch.realmtechServer.netty.ConnectionBuilder;
-import ch.realmtechServer.netty.ConnectionCommand;
-import ch.realmtechServer.netty.ServerExecuteContext;
-import ch.realmtechServer.netty.ServerNetty;
+import ch.realmtechServer.netty.*;
+import ch.realmtechServer.tick.TickThread;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,20 +21,25 @@ public class ServerContext {
     private final ServerNetty serverNetty;
     private final EcsEngineServer ecsEngineServer;
     private final ServerExecute serverExecuteContext;
+    private final ServerResponseHandler serverResponseHandler;
+    private final TickThread tickThread;
 
     static {
         PACKETS.put(ConnectionJoueurReussitPacket.class, ConnectionJoueurReussitPacket::new)
                 .put(DemandeDeConnectionJoueurPacket.class, DemandeDeConnectionJoueurPacket::new)
-                .put(ConnectionAutreJoueurPacket.class, ConnectionAutreJoueurPacket::new)
                 .put(TousLesJoueurPacket.class, TousLesJoueurPacket::new)
+                .put(PlayerMovePacket.class, PlayerMovePacket::new)
         ;
     }
 
     public ServerContext(ConnectionBuilder connectionBuilder) throws Exception {
-        ecsEngineServer = new EcsEngineServer();
+        ecsEngineServer = new EcsEngineServer(this);
         ecsEngineServer.prepareSaveToLoad(connectionBuilder.getSaveName());
         serverExecuteContext = new ServerExecuteContext(this);
         serverNetty = new ServerNetty(connectionBuilder, serverExecuteContext);
+        serverResponseHandler = new ServerResponse();
+        tickThread = new TickThread(this);
+        tickThread.start();
     }
 
     public static void main(String[] args) throws Exception {
@@ -60,5 +64,9 @@ public class ServerContext {
 
     public EcsEngineServer getEcsEngineServer() {
         return ecsEngineServer;
+    }
+
+    public ServerResponseHandler getServerHandler() {
+        return serverResponseHandler;
     }
 }

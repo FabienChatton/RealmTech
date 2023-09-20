@@ -1,7 +1,7 @@
 package ch.realmtech.game.netty;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.game.ecs.system.PhysicPlayerManagerClient;
+import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtechCommuns.ecs.component.PlayerComponent;
 import ch.realmtechCommuns.ecs.component.PlayerConnectionComponent;
@@ -9,6 +9,7 @@ import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.Gdx;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ClientExecuteContext implements ClientExecute {
@@ -20,16 +21,16 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void connectionJoueurReussit(float x, float y, UUID uuid) {
-        context.getEcsEngine().getSystem(PhysicPlayerManagerClient.class).createPlayerClient(x, y, uuid);
+        context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
         Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
     }
 
     @Override
-    public void connectionAutreJoueur(float x, float y, UUID uuid) {
-        int mainPlayerId = PlayerComponent.getMainPlayer(context.getEcsEngine().getWorld());
-        ComponentMapper<PlayerConnectionComponent> mPlayerConnection = context.getEcsEngine().getWorld().getMapper(PlayerConnectionComponent.class);
-        if (mPlayerConnection.get(mainPlayerId).uuid != uuid) {
-            context.getEcsEngine().getSystem(PhysicPlayerManagerClient.class).createPlayerClient(x, y, uuid);
+    public void autreJoueur(float x, float y, UUID uuid) {
+        HashMap<UUID, Integer> players = context.getEcsEngine().getSystem(PlayerManagerClient.class).getPlayers();
+        if (!players.containsKey(uuid)) {
+            context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
         }
+        context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
     }
 }

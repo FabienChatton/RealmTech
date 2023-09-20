@@ -46,7 +46,7 @@ public final class ECSEngine implements Disposable {
         fixtureDef = new FixtureDef();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
-                .withClient(new PhysicPlayerManagerClient())
+                .withClient(new PlayerManagerClient())
 
                 // manageur
                 .withClient(new TagManager())
@@ -65,7 +65,7 @@ public final class ECSEngine implements Disposable {
                 .withClient(new Box2dFrotementSystem())
                 // render
                 .withClient(new PlayerTextureAnimated())
-                .withClient(new UpdateBox2dWithTextureSystem())
+                .withClient(new UpdateBox2dWithPosition())
                 .withClient(new CameraFollowPlayerSystem())
 //                .withClient(new MapRendererSystem())
                 .withClient(new CellBeingMineRenderSystem())
@@ -255,5 +255,8 @@ public final class ECSEngine implements Disposable {
 
     public ServerInvocationStrategy getServerInvocationStrategy() {
         return serverInvocationStrategy;
+    }
+    public RealmtechClientConnectionHandler getConnectionHandler() {
+        return connectionHandler;
     }
 }

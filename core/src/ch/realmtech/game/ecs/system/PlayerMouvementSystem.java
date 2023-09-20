@@ -1,11 +1,13 @@
 package ch.realmtech.game.ecs.system;
 
+import ch.realmtech.RealmTech;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.sound.SoundManager;
 import ch.realmtechCommuns.ecs.component.*;
 import ch.realmtechCommuns.ecs.system.InventoryManager;
 import ch.realmtechCommuns.mod.PlayerFootStepSound;
 import ch.realmtechCommuns.mod.RealmTechCoreMod;
+import ch.realmtechCommuns.packet.serverPacket.PlayerMovePacket;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -17,6 +19,8 @@ import com.badlogic.gdx.math.Vector2;
         PositionComponent.class,
         Box2dComponent.class})
 public class PlayerMouvementSystem extends IteratingSystem {
+    @Wire(name = "context")
+    private RealmTech context;
     @Wire
     private InputMapper inputMapper;
     @Wire
@@ -117,13 +121,16 @@ public class PlayerMouvementSystem extends IteratingSystem {
             }
 
             final Vector2 worldCenter = box2dComponent.body.getWorldCenter();
+            float impulseX = (movementComponent.speed.x - box2dComponent.body.getLinearVelocity().x) * box2dComponent.body.getMass();
+            float impulseY = (movementComponent.speed.y - box2dComponent.body.getLinearVelocity().y) * box2dComponent.body.getMass();
             box2dComponent.body.applyLinearImpulse(
-                    (movementComponent.speed.x - box2dComponent.body.getLinearVelocity().x) * box2dComponent.body.getMass(),
-                    (movementComponent.speed.y - box2dComponent.body.getLinearVelocity().y) * box2dComponent.body.getMass(),
+                    impulseX,
+                    impulseY,
                     worldCenter.x,
                     worldCenter.y,
                     true
             );
+            context.getConnectionHandler().sendAndFlushPacketToServer(new PlayerMovePacket(impulseX, impulseY, new Vector2(positionComponent.x, positionComponent.y)));
         }
     }
 

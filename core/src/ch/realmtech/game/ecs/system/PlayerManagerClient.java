@@ -4,6 +4,7 @@ import ch.realmtechCommuns.PhysiqueWorldHelper;
 import ch.realmtechCommuns.craft.CraftStrategy;
 import ch.realmtechCommuns.ecs.component.*;
 import ch.realmtechCommuns.mod.RealmTechCoreMod;
+import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
@@ -13,10 +14,11 @@ import com.badlogic.gdx.physics.box2d.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.UUID;
 
-public class PhysicPlayerManagerClient extends Manager {
-    private final static Logger logger = LoggerFactory.getLogger(PhysicPlayerManagerClient.class);
+public class PlayerManagerClient extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(PlayerManagerClient.class);
     @Wire
     private TextureAtlas textureAtlas;
     @Wire(name = "physicWorld")
@@ -25,6 +27,13 @@ public class PhysicPlayerManagerClient extends Manager {
     private FixtureDef fixtureDef;
     @Wire
     private BodyDef bodyDef;
+    private ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<Box2dComponent> mBox2d;
+    private final HashMap<UUID, Integer> players;
+
+    {
+        players = new HashMap<>();
+    }
 
     public void createPlayerClient(float x, float y, UUID uuid) {
         logger.info("creation du joueur client");
@@ -102,5 +111,18 @@ public class PhysicPlayerManagerClient extends Manager {
         world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
+        players.put(uuid, playerId);
+    }
+
+    public HashMap<UUID, Integer> getPlayers() {
+        return players;
+    }
+
+    public void setPlayerPos(float x, float y, UUID uuid) {
+        int playerId = players.get(uuid);
+        if (!PlayerComponent.isMainPlayer(playerId, world)) {
+            Box2dComponent box2dComponent = mBox2d.get(playerId);
+            box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
+        }
     }
 }

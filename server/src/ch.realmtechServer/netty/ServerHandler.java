@@ -1,8 +1,6 @@
 package ch.realmtechServer.netty;
 
-import ch.realmtechCommuns.packet.ClientPacket;
 import ch.realmtechCommuns.packet.ServerPacket;
-import ch.realmtechCommuns.packet.ServerResponseHandler;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,12 +11,9 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> implements ServerResponseHandler {
+public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> {
     private final static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
-    private static final ChannelGroup channels;
+    public static final ChannelGroup channels;
     private final ServerExecute serverExecute;
 
     static {
@@ -46,36 +41,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> imp
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ServerPacket msg) throws Exception {
-        msg.executeOnServer(ctx.channel(), this, serverExecute);
-    }
-
-    @Override
-    public void broadCastPacket(ClientPacket packet) {
-        logger.trace("envoie du packet {} en broadCast", packet.getClass().getSimpleName());
-        channels.forEach(channel -> channel.writeAndFlush(packet));
-    }
-
-    @Override
-    public void boardCastPacketExcept(ClientPacket packet, Channel... channels) {
-        if (channels.length == 0) {
-            logger.warn("Attention, un packet a été envoyé vers personne");
-        }
-        List<Channel> channelFiltre = ServerHandler.channels.stream()
-                .filter(channel -> Arrays.stream(channels).anyMatch(c -> c != channel))
-                .toList();
-        logger.trace("envoie du packet {} vers {}", packet.getClass().getSimpleName(), channelFiltre);
-        channelFiltre
-                .forEach(channel -> channel.writeAndFlush(packet));
-    }
-
-    @Override
-    public void sendPacketTo(ClientPacket packet, Channel... channels) {
-        if (channels.length == 0) {
-            logger.warn("Attention, un packet a été envoyé vers personne");
-        }
-        logger.trace("envoie du packet {} vers {}", packet.getClass().getSimpleName(), Arrays.toString(channels));
-        Arrays.stream(channels)
-                .forEach(channel -> channel.writeAndFlush(packet));
+        msg.executeOnServer(ctx.channel(), serverExecute);
     }
 
     @Override

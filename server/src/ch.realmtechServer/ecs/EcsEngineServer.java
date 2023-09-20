@@ -3,6 +3,8 @@ package ch.realmtechServer.ecs;
 import ch.realmtechCommuns.ecs.system.*;
 import ch.realmtechCommuns.mod.RealmTechCorePlugin;
 import ch.realmtechCommuns.options.DataCtrl;
+import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -23,7 +25,7 @@ public final class EcsEngineServer {
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
 
-    public EcsEngineServer() throws IOException {
+    public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
         Box2D.init();
         DataCtrl dataCtrl = new DataCtrl();
@@ -51,7 +53,7 @@ public final class EcsEngineServer {
                 .with(new Box2dFrotementSystem())
                 // render
 //                .with(new PlayerTextureAnimated())
-                .with(new UpdateBox2dWithTextureSystem())
+                .with(new UpdateBox2dWithPosition())
 //                .with(new CameraFollowPlayerSystem())
 //                .with(new MapRendererSystem())
 //                .with(new CellBeingMineRenderSystem())
@@ -67,6 +69,7 @@ public final class EcsEngineServer {
                 //.with(new PhysiqueWorldStepSystem())
                 .with(new FurnaceSystem())
                 .build();
+        worldConfiguration.register("serverContext", serverContext);
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);

@@ -1,21 +1,28 @@
-package ch.realmtechCommuns.ecs.system;
+package ch.realmtechServer.ecs.system;
 
 import ch.realmtechCommuns.PhysiqueWorldHelper;
 import ch.realmtechCommuns.ecs.component.*;
+import ch.realmtechCommuns.packet.ServerResponseHandler;
 import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
+import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
+import ch.realmtechServer.ServerContext;
+import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
-import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
-public class PlayerManagerServer extends Manager {
+public class PlayerManagerServer extends BaseSystem {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerServer.class);
+    @Wire(name = "serverContext")
+    private ServerContext serverContext;
     @Wire(name = "physicWorld")
     private World physicWorld;
     @Wire
@@ -24,9 +31,17 @@ public class PlayerManagerServer extends Manager {
     private BodyDef bodyDef;
     private final IntBag players;
     private ComponentMapper<PlayerConnectionComponent> mPlayerConnection;
+    private ComponentMapper<PositionComponent> mPosition;
 
     public PlayerManagerServer() {
         players = new IntBag();
+    }
+
+    @Override
+    protected void processSystem() {
+        TousLesJoueursArg tousLesJoueursArg = getTousLesJoueurs();
+        TousLesJoueurPacket tousLesJoueurPacket = new TousLesJoueurPacket(tousLesJoueursArg.nombreDeJoueur(), tousLesJoueursArg.pos(), tousLesJoueursArg.uuids());
+        serverContext.getServerHandler().broadCastPacket(tousLesJoueurPacket);
     }
 
     public ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg createPlayerServer(Channel channel) {
@@ -83,6 +98,30 @@ public class PlayerManagerServer extends Manager {
         return players;
     }
 
+    public TousLesJoueursArg getTousLesJoueurs() {
+        int[] playersData = players.getData();
+        Vector2[] poss = new Vector2[players.size()];
+        UUID[] uuids = new UUID[players.size()];
+        ComponentMapper<PlayerConnectionComponent> mPlayer = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnectionComponent.class);
+        ComponentMapper<PositionComponent> mPos = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class);
+        for (int i = 0; i < players.size(); i++) {
+            PositionComponent positionComponent = mPos.get(playersData[i]);
+            PlayerConnectionComponent playerComponent = mPlayer.get(playersData[i]);
+            poss[i] = new Vector2(positionComponent.x, positionComponent.y);
+            uuids[i] = playerComponent.uuid;
+        }
+        return new TousLesJoueursArg(players.size(), poss, uuids);
+    }
+    public record TousLesJoueursArg(int nombreDeJoueur, Vector2[] pos, UUID[] uuids) { }
+    public int getPlayerByChannel(Channel clientChannel) {
+        int[] playersData = players.getData();
+        for (int i = 0; i < players.size(); i++) {
+            if (mPlayerConnection.get(playersData[i]).channel.equals(clientChannel)) {
+                return playersData[i];
+            }
+        }
+        throw new NoSuchElementException("Le player au channel " + clientChannel.toString() + " n'est pas dans la liste des joueurs");
+    }
 
     public void removePlayer(Channel channel) {
         int[] playersConnectionData = players.getData();
@@ -93,5 +132,11 @@ public class PlayerManagerServer extends Manager {
                 break;
             }
         }
+    }
+
+    public void playerMove(Channel clientChannel, float impulseX, float impulseY, Vector2 pos) {
+        int player = getPlayerByChannel(clientChannel);
+        PositionComponent positionComponent = mPosition.get(player);
+        positionComponent.set(pos.x, pos.y);
     }
 }

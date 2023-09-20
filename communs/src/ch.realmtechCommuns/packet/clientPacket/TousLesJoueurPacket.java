@@ -37,13 +37,13 @@ public class TousLesJoueurPacket implements ClientPacket {
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
         for (int i = 0; i < nombreDeJoueur; i++) {
-            clientExecute.connectionAutreJoueur(poss[i].x, poss[i].y, uuids[i]);
+            clientExecute.autreJoueur(poss[i].x, poss[i].y, uuids[i]);
         }
     }
 
     @Override
     public void write(ByteBuf byteBuf) {
-        byteBuf.writeLong(nombreDeJoueur);
+        byteBuf.writeInt(nombreDeJoueur);
         for (int i = 0; i < nombreDeJoueur; i++) {
             byteBuf.writeFloat(poss[i].x);
             byteBuf.writeFloat(poss[i].y);
