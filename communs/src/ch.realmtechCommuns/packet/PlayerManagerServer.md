@@ -8,6 +8,6 @@ sequenceDiagram
         alt player not existe on client
             clients ->> clients: ajoute joueur
         end
-        clients ->> client: setPosJoueur
+        clients ->> clients: setPosJoueur
     end
 ```

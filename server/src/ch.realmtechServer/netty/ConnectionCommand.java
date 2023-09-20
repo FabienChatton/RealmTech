@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 
-@Command(name = "connectionConfiguration", description = "La configuration pour la connection.")
+@Command(name = "connectionConfiguration", description = "La configuration pour la connection.", version = "0.1", mixinStandardHelpOptions = true)
 public class ConnectionCommand implements Callable<ConnectionBuilder> {
     @Option(names = {"-p", "--port"}, description = "Le port", defaultValue = "25533")
     private int port;

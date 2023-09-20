@@ -83,7 +83,7 @@ project(":communs") {
         api "net.mostlyoriginal.artemis-odb:contrib-eventbus:2.4.0"
         api "net.mostlyoriginal.artemis-odb:contrib-plugin-singleton:2.5.0"
         api 'org.slf4j:slf4j-api:2.0.9'
-        api 'org.slf4j:slf4j-jdk14:2.0.9'
+        api 'ch.qos.logback:logback-classic:1.4.11'
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"

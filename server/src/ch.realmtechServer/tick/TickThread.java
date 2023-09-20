@@ -2,13 +2,17 @@ package ch.realmtechServer.tick;
 
 import ch.realmtechServer.ServerContext;
 
-public class TickThread extends Thread {
+import java.io.Closeable;
+import java.io.IOException;
+
+public class TickThread extends Thread implements Closeable {
     public final static long TIME_TICK_LAPS_MILLIS = 20;
     private final ServerContext serverContext;
     private long lastTickTime = System.currentTimeMillis();
     private boolean run = true;
 
     public TickThread(ServerContext serverContext) {
+        super("Tick Thread");
         this.serverContext = serverContext;
     }
 
@@ -24,4 +28,8 @@ public class TickThread extends Thread {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        run = false;
+    }
 }

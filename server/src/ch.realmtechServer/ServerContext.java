@@ -7,6 +7,7 @@ import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.PlayerMovePacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
+import ch.realmtechServer.cli.CommandThread;
 import ch.realmtechServer.ecs.EcsEngineServer;
 import ch.realmtechServer.netty.*;
 import ch.realmtechServer.tick.TickThread;
@@ -14,6 +15,8 @@ import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+
+import java.io.IOException;
 
 public class ServerContext {
     private final static Logger logger = LoggerFactory.getLogger(ServerContext.class);
@@ -23,6 +26,7 @@ public class ServerContext {
     private final ServerExecute serverExecuteContext;
     private final ServerResponseHandler serverResponseHandler;
     private final TickThread tickThread;
+    private final CommandThread commandThread;
 
     static {
         PACKETS.put(ConnectionJoueurReussitPacket.class, ConnectionJoueurReussitPacket::new)
@@ -38,18 +42,33 @@ public class ServerContext {
         serverExecuteContext = new ServerExecuteContext(this);
         serverNetty = new ServerNetty(connectionBuilder, serverExecuteContext);
         serverResponseHandler = new ServerResponse();
+        commandThread = new CommandThread(this);
         tickThread = new TickThread(this);
+        commandThread.start();
         tickThread.start();
     }
 
     public static void main(String[] args) throws Exception {
         ConnectionCommand connectionCommand = new ConnectionCommand();
-        new CommandLine(connectionCommand).parseArgs(args);
-        new ServerContext(connectionCommand.call());
+        CommandLine commandLine = new CommandLine(connectionCommand);
+        commandLine.parseArgs(args);
+        ConnectionBuilder connectionBuilder = connectionCommand.call();
+        if (commandLine.isUsageHelpRequested()) {
+            commandLine.usage(System.out);
+            return;
+        }
+        if (commandLine.isVersionHelpRequested()) {
+            commandLine.printVersionHelp(System.out);
+            return;
+        }
+        new ServerContext(connectionBuilder);
     }
 
 
-    public ChannelFuture close() throws InterruptedException {
+    public ChannelFuture close() throws InterruptedException, IOException {
+        logger.info("Fermeture du serveur...");
+        tickThread.close();
+        commandThread.close();
         return serverNetty.close();
     }
 
