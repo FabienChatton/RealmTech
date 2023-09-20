@@ -29,8 +29,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.EnumMap;
-import java.util.Map;
 
 public final class RealmTech extends Game{
     public final static float WORLD_WIDTH = 16f;
@@ -41,18 +39,19 @@ public final class RealmTech extends Game{
     public final static float UNITE_SCALE = 1 / 32f;
     private final String TAG = RealmTech.class.getSimpleName();
     private InputMapper inputMapper;
-    private EnumMap<ScreenType, AbstractScreen> screenCash;
     private AssetManager assetManager;
     private Stage gameStage;
     private Stage uiStage;
     private Skin skin;
-	private ECSEngine ecsEngine;
+    private ECSEngine ecsEngine;
     private Discord discord;
 
     private TextureAtlas textureAtlas;
     private DataCtrl dataCtrl;
     private SoundManager soundManager;
     private ClientExecute clientExecute;
+    private ScreenType currentScreenType;
+    private AbstractScreen gameScreen;
 
     @Override
     public void create() {
@@ -79,7 +78,6 @@ public final class RealmTech extends Game{
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
 
         inputMapper = InputMapper.getInstance(this);
-        screenCash = new EnumMap<>(ScreenType.class);
         clientExecute = new ClientExecuteContext(this);
         setScreen(ScreenType.LOADING);
     }
@@ -113,24 +111,17 @@ public final class RealmTech extends Game{
     }
 
     public void setScreen(final ScreenType screenType) {
-        AbstractScreen screen = screenCash.get(screenType);
-        ScreenType oldScreenType = null;
-        for (Map.Entry<ScreenType, AbstractScreen> screenTypeAbstractScreenEntry : screenCash.entrySet()) {
-            if (screenTypeAbstractScreenEntry.getValue() == getScreen()) {
-                oldScreenType = screenTypeAbstractScreenEntry.getKey();
-                break;
+        try {
+            AbstractScreen screen = screenType.screenClass.getConstructor(RealmTech.class).newInstance(this);
+            screen.setOldScreen(currentScreenType);
+            setScreen(screen);
+            if (screenType == ScreenType.GAME_SCREEN) {
+                gameScreen = screen;
             }
+            currentScreenType = screenType;
+        } catch (ReflectiveOperationException e) {
+            Gdx.app.error(TAG, "La class " + screenType + " n'a pas pu etre cree", e);
         }
-        if (screen == null) {
-            try {
-                screen = screenType.screenClass.getConstructor(RealmTech.class).newInstance(this);
-                screenCash.put(screenType, screen);
-            } catch (ReflectiveOperationException e) {
-                Gdx.app.error(TAG, "La class " + screenType + " n'a pas pu etre cree", e);
-            }
-        }
-        screen.setOldScreen(oldScreenType);
-        super.setScreen(screen);
     }
 
 	public Skin getSkin() {
@@ -182,14 +173,14 @@ public final class RealmTech extends Game{
             Gdx.app.error(TAG, "impossible de sauvegarder", e);
         } finally {
             setScreen(ScreenType.MENU);
-            screenCash.remove(ScreenType.GAME_SCREEN);
+            gameScreen = null;
             supprimeECS();
         }
     }
 
     public void drawGameScreen() {
-        if (screenCash.containsKey(ScreenType.GAME_SCREEN)) {
-            screenCash.get(ScreenType.GAME_SCREEN).draw();
+        if (gameScreen != null) {
+            gameScreen.draw();
         }
     }
 

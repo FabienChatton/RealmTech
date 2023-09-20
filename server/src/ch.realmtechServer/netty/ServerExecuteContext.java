@@ -1,10 +1,9 @@
 package ch.realmtechServer.netty;
 
-import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
-import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 
@@ -21,9 +20,9 @@ public class ServerExecuteContext implements ServerExecute {
         ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg connectionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel);
         serverContext.getServerHandler().sendPacketTo(new ConnectionJoueurReussitPacket(connectionJoueurReussitArg.x(), connectionJoueurReussitArg.y(), connectionJoueurReussitArg.uuid()), clientChanel);
 
-        // tous les joueurs
-        PlayerManagerServer.TousLesJoueursArg tousLesJoueursArgs = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getTousLesJoueurs();
-        serverContext.getServerHandler().sendPacketTo(new TousLesJoueurPacket(tousLesJoueursArgs.nombreDeJoueur(), tousLesJoueursArgs.pos(), tousLesJoueursArgs.uuids()), clientChanel);
+//        // tous les joueurs
+//        PlayerManagerServer.TousLesJoueursArg tousLesJoueursArgs = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getTousLesJoueurs();
+//        serverContext.getServerHandler().sendPacketTo(new TousLesJoueurPacket(tousLesJoueursArgs.nombreDeJoueur(), tousLesJoueursArgs.pos(), tousLesJoueursArgs.uuids()), clientChanel);
     }
 
     @Override

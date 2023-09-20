@@ -36,12 +36,13 @@ public class PlayerManagerClient extends Manager {
     }
 
     public void createPlayerClient(float x, float y, UUID uuid) {
-        logger.info("creation du joueur client");
+        logger.info("creation du joueur client " + uuid);
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
-
-        world.getSystem(TagManager.class).register("MAIN_PLAYER", playerId);
+        if (!world.getSystem(TagManager.class).isRegistered("MAIN_PLAYER")) {
+            world.getSystem(TagManager.class).register("MAIN_PLAYER", playerId);
+        }
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
