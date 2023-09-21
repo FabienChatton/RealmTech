@@ -34,8 +34,6 @@ public final class EcsEngineServer {
         fixtureDef = new FixtureDef();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
-                .with(new PlayerManagerServer())
-
 
                 // manageur
                 .with(new TagManager())
@@ -68,6 +66,8 @@ public final class EcsEngineServer {
 //                .with(new CellBeingMineSystem())
                 //.with(new PhysiqueWorldStepSystem())
                 .with(new FurnaceSystem())
+
+                .with(new PlayerManagerServer())
                 .build();
         worldConfiguration.register("serverContext", serverContext);
         worldConfiguration.register("physicWorld", physicWorld);

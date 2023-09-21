@@ -27,5 +27,6 @@ public class CameraFollowPlayerSystem extends IteratingSystem {
         Box2dComponent box2dComponent = mBox2d.get(entityId);
         gameCamera.position.x = positionComponent.x + box2dComponent.widthWorld / 2;
         gameCamera.position.y = positionComponent.y + box2dComponent.heightWorld / 2;
+        gameCamera.update();
     }
 }

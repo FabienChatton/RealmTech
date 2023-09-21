@@ -32,6 +32,7 @@ public class PlayerManagerServer extends BaseSystem {
     private final IntBag players;
     private ComponentMapper<PlayerConnectionComponent> mPlayerConnection;
     private ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<Box2dComponent> mBox2d;
 
     public PlayerManagerServer() {
         players = new IntBag();
@@ -135,8 +136,15 @@ public class PlayerManagerServer extends BaseSystem {
     }
 
     public void playerMove(Channel clientChannel, float impulseX, float impulseY, Vector2 pos) {
-        int player = getPlayerByChannel(clientChannel);
-        PositionComponent positionComponent = mPosition.get(player);
-        positionComponent.set(pos.x, pos.y);
+        int playerId = getPlayerByChannel(clientChannel);
+        Box2dComponent box2dComponent = mBox2d.get(playerId);
+        Vector2 worldCenter = box2dComponent.body.getWorldCenter();
+        box2dComponent.body.applyLinearImpulse(
+                impulseX,
+                impulseY,
+                worldCenter.x,
+                worldCenter.y,
+                true
+        );
     }
 }
