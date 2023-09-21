@@ -1,9 +1,9 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtechCommuns.PhysiqueWorldHelper;
-import ch.realmtechCommuns.craft.CraftStrategy;
-import ch.realmtechCommuns.ecs.component.*;
-import ch.realmtechCommuns.mod.RealmTechCoreMod;
+import ch.realmtechServer.PhysiqueWorldHelper;
+import ch.realmtechServer.craft.CraftStrategy;
+import ch.realmtechServer.ecs.component.*;
+import ch.realmtechServer.mod.RealmTechCoreMod;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;

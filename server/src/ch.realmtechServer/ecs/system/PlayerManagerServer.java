@@ -1,8 +1,7 @@
 package ch.realmtechServer.ecs.system;
 
-import ch.realmtechCommuns.PhysiqueWorldHelper;
-import ch.realmtechCommuns.ecs.component.*;
-import ch.realmtechCommuns.packet.ServerResponseHandler;
+import ch.realmtechServer.PhysiqueWorldHelper;
+import ch.realmtechServer.ecs.component.*;
 import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtechServer.ServerContext;

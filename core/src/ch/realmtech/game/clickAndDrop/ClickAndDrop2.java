@@ -1,10 +1,10 @@
 package ch.realmtech.game.clickAndDrop;
 
 import ch.realmtech.RealmTech;
-import ch.realmtechCommuns.ecs.component.InventoryComponent;
-import ch.realmtechCommuns.ecs.component.ItemComponent;
-import ch.realmtechCommuns.ecs.component.ItemResultCraftComponent;
-import ch.realmtechCommuns.ecs.system.InventoryManager;
+import ch.realmtechServer.ecs.component.InventoryComponent;
+import ch.realmtechServer.ecs.component.ItemComponent;
+import ch.realmtechServer.ecs.component.ItemResultCraftComponent;
+import ch.realmtechServer.ecs.system.InventoryManager;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;

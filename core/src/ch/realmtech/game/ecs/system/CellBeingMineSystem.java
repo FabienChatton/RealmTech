@@ -1,16 +1,11 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtechCommuns.ecs.component.CellBeingMineComponent;
-import ch.realmtechCommuns.ecs.system.MapSystem;
+import ch.realmtechServer.ecs.component.CellBeingMineComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 @All({CellBeingMineComponent.class})
 public class CellBeingMineSystem extends IteratingSystem {

@@ -1,11 +1,11 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtechCommuns.ecs.component.InfCellComponent;
-import ch.realmtechCommuns.ecs.component.InfChunkComponent;
-import ch.realmtechCommuns.ecs.component.InfMapComponent;
-import ch.realmtechCommuns.ecs.system.MapSystem;
-import ch.realmtechCommuns.level.map.WorldMap;
+import ch.realmtechServer.ecs.component.InfCellComponent;
+import ch.realmtechServer.ecs.component.InfChunkComponent;
+import ch.realmtechServer.ecs.component.InfMapComponent;
+import ch.realmtechServer.ecs.system.MapSystem;
+import ch.realmtechServer.level.map.WorldMap;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;

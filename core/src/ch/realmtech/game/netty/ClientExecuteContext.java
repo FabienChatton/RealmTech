@@ -3,10 +3,7 @@ package ch.realmtech.game.netty;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.screen.ScreenType;
-import ch.realmtechCommuns.ecs.component.PlayerComponent;
-import ch.realmtechCommuns.ecs.component.PlayerConnectionComponent;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
-import com.artemis.ComponentMapper;
 import com.badlogic.gdx.Gdx;
 
 import java.util.HashMap;

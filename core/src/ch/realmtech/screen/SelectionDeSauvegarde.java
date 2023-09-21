@@ -1,7 +1,7 @@
 package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
-import ch.realmtechCommuns.ecs.system.SaveInfManager;
+import ch.realmtechServer.ecs.system.SaveInfManager;
 import ch.realmtech.helper.ButtonsMenu.ScrollPaneMenu;
 import ch.realmtech.helper.OnClick;
 import ch.realmtech.helper.Popup;

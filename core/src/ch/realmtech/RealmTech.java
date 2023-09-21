@@ -9,7 +9,7 @@ import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
-import ch.realmtechCommuns.options.DataCtrl;
+import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
 import ch.realmtechServer.netty.ConnectionBuilder;

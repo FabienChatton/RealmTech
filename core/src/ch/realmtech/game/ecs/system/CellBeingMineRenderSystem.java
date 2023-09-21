@@ -1,10 +1,9 @@
 package ch.realmtech.game.ecs.system;
 
 import ch.realmtech.RealmTech;
-import ch.realmtechCommuns.ecs.component.CellBeingMineComponent;
-import ch.realmtechCommuns.ecs.component.InfCellComponent;
-import ch.realmtechCommuns.ecs.component.InfChunkComponent;
-import ch.realmtechCommuns.ecs.system.MapSystem;
+import ch.realmtechServer.ecs.component.CellBeingMineComponent;
+import ch.realmtechServer.ecs.component.InfCellComponent;
+import ch.realmtechServer.ecs.component.InfChunkComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;

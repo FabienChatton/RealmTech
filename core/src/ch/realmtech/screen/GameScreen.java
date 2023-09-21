@@ -2,7 +2,7 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
-import ch.realmtechCommuns.ecs.system.MapSystem;
+import ch.realmtechServer.ecs.system.MapSystem;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

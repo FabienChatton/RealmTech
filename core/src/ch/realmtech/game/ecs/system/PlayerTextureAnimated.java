@@ -1,7 +1,7 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtechCommuns.ecs.component.PlayerComponent;
-import ch.realmtechCommuns.ecs.component.TextureComponent;
+import ch.realmtechServer.ecs.component.PlayerComponent;
+import ch.realmtechServer.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;

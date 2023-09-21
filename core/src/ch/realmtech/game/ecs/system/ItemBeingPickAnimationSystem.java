@@ -1,8 +1,8 @@
 package ch.realmtech.game.ecs.system;
 
-import ch.realmtechCommuns.ecs.component.Box2dComponent;
-import ch.realmtechCommuns.ecs.component.ItemBeingPickComponent;
-import ch.realmtechCommuns.ecs.component.PlayerComponent;
+import ch.realmtechServer.ecs.component.Box2dComponent;
+import ch.realmtechServer.ecs.component.ItemBeingPickComponent;
+import ch.realmtechServer.ecs.component.PlayerComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.managers.TagManager;
