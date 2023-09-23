@@ -206,7 +206,12 @@ public final class RealmTech extends Game{
         if (ecsEngine != null) {
             supprimeECS();
         }
-        ecsEngine = new ECSEngine(this);
+        try {
+            ecsEngine = new ECSEngine(this);
+        } catch (IOException e) {
+            supprimeECS();
+            throw e;
+        }
     }
 
     public void nouveauECS(RealmtechClientConnectionHandler clientConnectionHandler) throws IOException {

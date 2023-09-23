@@ -37,15 +37,23 @@ public class ServerContext {
     }
 
     public ServerContext(ConnectionBuilder connectionBuilder) throws Exception {
-        ecsEngineServer = new EcsEngineServer(this);
-        ecsEngineServer.prepareSaveToLoad(connectionBuilder.getSaveName());
-        serverExecuteContext = new ServerExecuteContext(this);
-        serverNetty = new ServerNetty(connectionBuilder, serverExecuteContext);
-        serverResponseHandler = new ServerResponse();
-        commandThread = new CommandThread(this);
-        tickThread = new TickThread(this);
-        commandThread.start();
-        tickThread.start();
+        try {
+            ecsEngineServer = new EcsEngineServer(this);
+            ecsEngineServer.prepareSaveToLoad(connectionBuilder.getSaveName());
+            serverExecuteContext = new ServerExecuteContext(this);
+            serverNetty = new ServerNetty(connectionBuilder, serverExecuteContext);
+            serverResponseHandler = new ServerResponse();
+            commandThread = new CommandThread(this);
+            tickThread = new TickThread(this);
+            commandThread.start();
+            tickThread.start();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            try {
+                close();
+            } catch (Exception ignored) {}
+            throw e;
+        }
     }
 
     public static void main(String[] args) throws Exception {
