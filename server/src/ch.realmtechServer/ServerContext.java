@@ -2,14 +2,13 @@ package ch.realmtechServer;
 
 import ch.realmtechCommuns.packet.PacketMap;
 import ch.realmtechCommuns.packet.ServerResponseHandler;
-import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
+import ch.realmtechCommuns.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
-import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
+import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnexionJoueurPacket;
 import ch.realmtechCommuns.packet.serverPacket.PlayerMovePacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.cli.CommandThread;
 import ch.realmtechServer.ecs.EcsEngineServer;
-import ch.realmtechServer.ecs.system.SaveInfManager;
 import ch.realmtechServer.netty.*;
 import ch.realmtechServer.tick.TickThread;
 import io.netty.channel.ChannelFuture;
@@ -30,19 +29,19 @@ public class ServerContext {
     private final CommandThread commandThread;
 
     static {
-        PACKETS.put(ConnectionJoueurReussitPacket.class, ConnectionJoueurReussitPacket::new)
-                .put(DemandeDeConnectionJoueurPacket.class, DemandeDeConnectionJoueurPacket::new)
+        PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
+                .put(DemandeDeConnexionJoueurPacket.class, DemandeDeConnexionJoueurPacket::new)
                 .put(TousLesJoueurPacket.class, TousLesJoueurPacket::new)
                 .put(PlayerMovePacket.class, PlayerMovePacket::new)
         ;
     }
 
-    public ServerContext(ConnectionBuilder connectionBuilder) throws Exception {
+    public ServerContext(ConnexionBuilder connexionBuilder) throws Exception {
         try {
             ecsEngineServer = new EcsEngineServer(this);
-            ecsEngineServer.prepareSaveToLoad(connectionBuilder.getSaveName());
+            ecsEngineServer.prepareSaveToLoad(connexionBuilder.getSaveName());
             serverExecuteContext = new ServerExecuteContext(this);
-            serverNetty = new ServerNetty(connectionBuilder, serverExecuteContext);
+            serverNetty = new ServerNetty(connexionBuilder, serverExecuteContext);
             serverResponseHandler = new ServerResponse();
             commandThread = new CommandThread(this);
             tickThread = new TickThread(this);
@@ -58,10 +57,10 @@ public class ServerContext {
     }
 
     public static void main(String[] args) throws Exception {
-        ConnectionCommand connectionCommand = new ConnectionCommand();
-        CommandLine commandLine = new CommandLine(connectionCommand);
+        ConnexionCommand connexionCommand = new ConnexionCommand();
+        CommandLine commandLine = new CommandLine(connexionCommand);
         commandLine.parseArgs(args);
-        ConnectionBuilder connectionBuilder = connectionCommand.call();
+        ConnexionBuilder connexionBuilder = connexionCommand.call();
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
@@ -70,7 +69,7 @@ public class ServerContext {
             commandLine.printVersionHelp(System.out);
             return;
         }
-        new ServerContext(connectionBuilder);
+        new ServerContext(connexionBuilder);
     }
 
 
@@ -85,8 +84,8 @@ public class ServerContext {
     }
 
 
-    public static ConnectionBuilder builder() {
-        return new ConnectionBuilder();
+    public static ConnexionBuilder builder() {
+        return new ConnexionBuilder();
     }
 
     public ServerNetty getServerNetty() {

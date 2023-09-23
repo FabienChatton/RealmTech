@@ -1,16 +1,15 @@
 package ch.realmtechCommuns.packet.serverPacket;
 
 import ch.realmtechCommuns.packet.ServerPacket;
-import ch.realmtechCommuns.packet.ServerResponseHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
-public class DemandeDeConnectionJoueurPacket implements ServerPacket {
+public class DemandeDeConnexionJoueurPacket implements ServerPacket {
 
-    public DemandeDeConnectionJoueurPacket() {
+    public DemandeDeConnexionJoueurPacket() {
     }
 
-    public DemandeDeConnectionJoueurPacket(ByteBuf byteBuf) {
+    public DemandeDeConnexionJoueurPacket(ByteBuf byteBuf) {
 
     }
 

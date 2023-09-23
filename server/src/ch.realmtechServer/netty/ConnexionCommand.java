@@ -1,13 +1,12 @@
 package ch.realmtechServer.netty;
 
-import java.util.Random;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 
-@Command(name = "connectionConfiguration", description = "La configuration pour la connection.", version = "0.1", mixinStandardHelpOptions = true)
-public class ConnectionCommand implements Callable<ConnectionBuilder> {
+@Command(name = "connexionConfiguration", description = "La configuration pour la connection.", version = "0.1", mixinStandardHelpOptions = true)
+public class ConnexionCommand implements Callable<ConnexionBuilder> {
     @Option(names = {"-p", "--port"}, description = "Le port", defaultValue = "25533")
     private int port;
 
@@ -15,8 +14,8 @@ public class ConnectionCommand implements Callable<ConnectionBuilder> {
     private String saveName;
 
     @Override
-    public ConnectionBuilder call() throws Exception {
-        return new ConnectionBuilder()
+    public ConnexionBuilder call() throws Exception {
+        return new ConnexionBuilder()
                 .setSaveName(saveName)
                 .setPort(port);
     }

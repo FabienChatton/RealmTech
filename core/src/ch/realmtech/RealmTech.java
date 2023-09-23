@@ -3,7 +3,7 @@ package ch.realmtech;
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.netty.ClientExecuteContext;
-import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
+import ch.realmtech.game.netty.RealmtechClientConnexionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
@@ -11,8 +11,8 @@ import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
-import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnectionJoueurPacket;
-import ch.realmtechServer.netty.ConnectionBuilder;
+import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnexionJoueurPacket;
+import ch.realmtechServer.netty.ConnexionBuilder;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
@@ -28,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public final class RealmTech extends Game{
     public final static float WORLD_WIDTH = 16f;
@@ -214,11 +213,11 @@ public final class RealmTech extends Game{
         }
     }
 
-    public void nouveauECS(RealmtechClientConnectionHandler clientConnectionHandler) throws IOException {
+    public void nouveauECS(RealmtechClientConnexionHandler clientConnexionHandler) throws IOException {
         if (ecsEngine != null) {
             supprimeECS();
         }
-        ecsEngine = new ECSEngine(this, clientConnectionHandler);
+        ecsEngine = new ECSEngine(this, clientConnexionHandler);
     }
 
     public void supprimeECS() {
@@ -235,9 +234,9 @@ public final class RealmTech extends Game{
     }
 
     public void rejoindreMulti(String host, int port) throws IOException {
-        RealmtechClientConnectionHandler clientConnectionHandler = new RealmtechClientConnectionHandler(new ConnectionBuilder().setHost(host).setPort(port), clientExecute);
-        nouveauECS(clientConnectionHandler);
-        clientConnectionHandler.sendAndFlushPacketToServer(new DemandeDeConnectionJoueurPacket());
+        RealmtechClientConnexionHandler clientconnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute);
+        nouveauECS(clientconnexionHandler);
+        clientconnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
     }
 
     public void generateNewSave(String name) throws IOException {
@@ -260,7 +259,7 @@ public final class RealmTech extends Game{
     public ClientExecute getClientExecute() {
         return clientExecute;
     }
-    public RealmtechClientConnectionHandler getConnectionHandler() {
-        return ecsEngine.getConnectionHandler();
+    public RealmtechClientConnexionHandler getConnexionHandler() {
+        return ecsEngine.getConnexionHandler();
     }
 }

@@ -1,6 +1,6 @@
 package ch.realmtechServer.netty;
 
-import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
+import ch.realmtechCommuns.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
@@ -16,9 +16,9 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void newPlayerConnect(Channel clientChanel) {
-        // connection réussie
-        ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg connectionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel);
-        serverContext.getServerHandler().sendPacketTo(new ConnectionJoueurReussitPacket(connectionJoueurReussitArg.x(), connectionJoueurReussitArg.y(), connectionJoueurReussitArg.uuid()), clientChanel);
+        // connexion réussie
+        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel);
+        serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.uuid()), clientChanel);
 
 //        // tous les joueurs
 //        PlayerManagerServer.TousLesJoueursArg tousLesJoueursArgs = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getTousLesJoueurs();

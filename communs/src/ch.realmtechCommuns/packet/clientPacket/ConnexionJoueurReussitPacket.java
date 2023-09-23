@@ -9,18 +9,18 @@ import java.util.UUID;
  * Le serveur donne se packet quand le joueur initie la connexion et que la connexion, et réussie.
  * Reçoit les informations sur sa position dans le monde et sont UUID.
  */
-public class ConnectionJoueurReussitPacket implements ClientPacket {
+public class ConnexionJoueurReussitPacket implements ClientPacket {
     private final float x;
     private final float y;
     private final UUID uuid;
 
-    public ConnectionJoueurReussitPacket(float x, float y, UUID uuid) {
+    public ConnexionJoueurReussitPacket(float x, float y, UUID uuid) {
         this.x = x;
         this.y = y;
         this.uuid = uuid;
     }
 
-    public ConnectionJoueurReussitPacket(ByteBuf byteBuf) {
+    public ConnexionJoueurReussitPacket(ByteBuf byteBuf) {
         this.x = byteBuf.readFloat();
         this.y = byteBuf.readFloat();
         long msb = byteBuf.readLong();
@@ -30,7 +30,7 @@ public class ConnectionJoueurReussitPacket implements ClientPacket {
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.connectionJoueurReussit(x, y, uuid);
+        clientExecute.connexionJoueurReussit(x, y, uuid);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class ConnectionJoueurReussitPacket implements ClientPacket {
         byteBuf.writeLong(uuid.getLeastSignificantBits());
     }
 
-    public record ConnectionJoueurReussitArg(float x, float y, UUID uuid) {
+    public record ConnexionJoueurReussitArg(float x, float y, UUID uuid) {
     }
 }

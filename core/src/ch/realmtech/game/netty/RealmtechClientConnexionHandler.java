@@ -3,42 +3,42 @@ package ch.realmtech.game.netty;
 import ch.realmtechCommuns.packet.ServerPacket;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.ServerContext;
-import ch.realmtechServer.netty.ConnectionBuilder;
+import ch.realmtechServer.netty.ConnexionBuilder;
 import ch.realmtechServer.netty.ServerNetty;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Random;
 
-public class RealmtechClientConnectionHandler implements Closeable {
+public class RealmtechClientConnexionHandler implements Closeable {
     private ServerContext server;
     private final RealmtechClient client;
 
     /**
-     * Pour une connection en multi
+     * Pour une connexion en multi
      */
-    public RealmtechClientConnectionHandler(ConnectionBuilder connectionBuilder, ClientExecute clientExecute) throws IOException {
+    public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws IOException {
         try {
-            client = new RealmtechClient(connectionBuilder, clientExecute);
+            client = new RealmtechClient(connexionBuilder, clientExecute);
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
     /**
-     * Destiner pour une connection en solo
+     * Destiner pour une connexion en solo
      */
-    public RealmtechClientConnectionHandler(ClientExecute clientExecute) throws IOException {
+    public RealmtechClientConnexionHandler(ClientExecute clientExecute) throws IOException {
         try {
-            ConnectionBuilder connectionBuilder = ServerContext.builder();
-            if (!ServerNetty.isPortAvailable(connectionBuilder.getPort())) {
+            ConnexionBuilder connexionBuilder = ServerContext.builder();
+            if (!ServerNetty.isPortAvailable(connexionBuilder.getPort())) {
                 byte limite = 0;
                 do {
-                    connectionBuilder.setPort(new Random().nextInt(1024, 65565));
-                } while (!ServerNetty.isPortAvailable(connectionBuilder.getPort()) || ++limite < 10);
+                    connexionBuilder.setPort(new Random().nextInt(1024, 65565));
+                } while (!ServerNetty.isPortAvailable(connexionBuilder.getPort()) || ++limite < 10);
             }
-            server = new ServerContext(connectionBuilder);
-            client = new RealmtechClient(connectionBuilder, clientExecute);
+            server = new ServerContext(connexionBuilder);
+            client = new RealmtechClient(connexionBuilder, clientExecute);
         } catch (Exception e) {
             throw new IOException(e);
         }

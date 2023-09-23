@@ -2,7 +2,7 @@ package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ecs.component.*;
-import ch.realmtechCommuns.packet.clientPacket.ConnectionJoueurReussitPacket;
+import ch.realmtechCommuns.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtechServer.ServerContext;
 import com.artemis.BaseSystem;
@@ -29,7 +29,7 @@ public class PlayerManagerServer extends BaseSystem {
     @Wire
     private BodyDef bodyDef;
     private final IntBag players;
-    private ComponentMapper<PlayerConnectionComponent> mPlayerConnection;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
 
@@ -44,7 +44,7 @@ public class PlayerManagerServer extends BaseSystem {
         serverContext.getServerHandler().broadCastPacket(tousLesJoueurPacket);
     }
 
-    public ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg createPlayerServer(Channel channel) {
+    public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel) {
         logger.info("creation du joueur {}", channel.remoteAddress());
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
@@ -69,10 +69,10 @@ public class PlayerManagerServer extends BaseSystem {
         Box2dComponent box2dComponent = world.edit(playerId).create(Box2dComponent.class);
         box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
-        // player connection component
+        // player connexion component
         UUID uuid = UUID.randomUUID();
-        PlayerConnectionComponent playerConnectionComponent = world.edit(playerId).create(PlayerConnectionComponent.class);
-        playerConnectionComponent.set(channel, uuid);
+        PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
+        playerConnexionComponent.set(channel, uuid);
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
@@ -91,7 +91,7 @@ public class PlayerManagerServer extends BaseSystem {
         pickerGroundItemComponent.set(10);
         players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
-        return new ConnectionJoueurReussitPacket.ConnectionJoueurReussitArg(x, y, uuid);
+        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, uuid);
     }
 
     public IntBag getPlayers() {
@@ -102,11 +102,11 @@ public class PlayerManagerServer extends BaseSystem {
         int[] playersData = players.getData();
         Vector2[] poss = new Vector2[players.size()];
         UUID[] uuids = new UUID[players.size()];
-        ComponentMapper<PlayerConnectionComponent> mPlayer = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnectionComponent.class);
+        ComponentMapper<PlayerConnexionComponent> mPlayer = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class);
         ComponentMapper<PositionComponent> mPos = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class);
         for (int i = 0; i < players.size(); i++) {
             PositionComponent positionComponent = mPos.get(playersData[i]);
-            PlayerConnectionComponent playerComponent = mPlayer.get(playersData[i]);
+            PlayerConnexionComponent playerComponent = mPlayer.get(playersData[i]);
             poss[i] = new Vector2(positionComponent.x, positionComponent.y);
             uuids[i] = playerComponent.uuid;
         }
@@ -116,7 +116,7 @@ public class PlayerManagerServer extends BaseSystem {
     public int getPlayerByChannel(Channel clientChannel) {
         int[] playersData = players.getData();
         for (int i = 0; i < players.size(); i++) {
-            if (mPlayerConnection.get(playersData[i]).channel.equals(clientChannel)) {
+            if (mPlayerConnexion.get(playersData[i]).channel.equals(clientChannel)) {
                 return playersData[i];
             }
         }
@@ -124,10 +124,10 @@ public class PlayerManagerServer extends BaseSystem {
     }
 
     public void removePlayer(Channel channel) {
-        int[] playersConnectionData = players.getData();
-        for (int i = 0; i < playersConnectionData.length; i++) {
-            PlayerConnectionComponent playerConnectionComponent = mPlayerConnection.get(players.get(i));
-            if (playerConnectionComponent.channel == channel) {
+        int[] playersConnexionData = players.getData();
+        for (int i = 0; i < playersConnexionData.length; i++) {
+            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(players.get(i));
+            if (playerConnexionComponent.channel == channel) {
                 players.removeIndex(i);
                 break;
             }

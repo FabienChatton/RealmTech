@@ -1,6 +1,6 @@
 package ch.realmtechServer.netty;
 
-public final class ConnectionBuilder {
+public final class ConnexionBuilder {
     private String host = "localhost";
     private int port = ServerNetty.PREFERRED_PORT;
     private String saveName;
@@ -8,7 +8,7 @@ public final class ConnectionBuilder {
     /**
      * default "localhost"
      */
-    public ConnectionBuilder setHost(String host) {
+    public ConnexionBuilder setHost(String host) {
         this.host = host;
         return this;
     }
@@ -21,7 +21,7 @@ public final class ConnectionBuilder {
      * default 25533.
      * La valeur doit être > 1024 et < 65565
      */
-    public ConnectionBuilder setPort(int port) throws IllegalArgumentException {
+    public ConnexionBuilder setPort(int port) throws IllegalArgumentException {
         if (!(port > 1024 && port < 65565))
             throw new IllegalArgumentException("Le port doit être plus > 1024 et 65565. Il était de : " + port);
         this.port = port;
@@ -36,7 +36,7 @@ public final class ConnectionBuilder {
         return saveName;
     }
 
-    public ConnectionBuilder setSaveName(String saveName) {
+    public ConnexionBuilder setSaveName(String saveName) {
         this.saveName = saveName;
         return this;
     }

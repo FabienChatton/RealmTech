@@ -65,9 +65,9 @@ public class PlayerManagerClient extends Manager {
         // player component
         PlayerComponent playerComponent = world.edit(playerId).create(PlayerComponent.class);
 
-        // player connection
-        PlayerConnectionComponent playerConnectionComponent = world.edit(playerId).create(PlayerConnectionComponent.class);
-        playerConnectionComponent.uuid = uuid;
+        // player connexion
+        PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
+        playerConnexionComponent.uuid = uuid;
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);

@@ -130,7 +130,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                     worldCenter.y,
                     true
             );
-            context.getConnectionHandler().sendAndFlushPacketToServer(new PlayerMovePacket(impulseX, impulseY, new Vector2(positionComponent.x, positionComponent.y)));
+            context.getConnexionHandler().sendAndFlushPacketToServer(new PlayerMovePacket(impulseX, impulseY, new Vector2(positionComponent.x, positionComponent.y)));
         }
     }
 

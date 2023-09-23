@@ -2,7 +2,7 @@ package ch.realmtech.game.ecs;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.*;
-import ch.realmtech.game.netty.RealmtechClientConnectionHandler;
+import ch.realmtech.game.netty.RealmtechClientConnexionHandler;
 import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
@@ -35,11 +35,11 @@ public final class ECSEngine implements Disposable {
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private final ServerInvocationStrategy serverInvocationStrategy;
-    private final RealmtechClientConnectionHandler connectionHandler;
+    private final RealmtechClientConnexionHandler connexionHandler;
 
-    public ECSEngine(final RealmTech context, RealmtechClientConnectionHandler connectionHandler) {
+    public ECSEngine(final RealmTech context, RealmtechClientConnexionHandler connexionHandler) {
         this.context = context;
-        this.connectionHandler = connectionHandler;
+        this.connexionHandler = connexionHandler;
         this.serverInvocationStrategy = new ServerInvocationStrategy();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
@@ -109,7 +109,7 @@ public final class ECSEngine implements Disposable {
     }
 
     public ECSEngine(final RealmTech context) throws IOException {
-        this(context, new RealmtechClientConnectionHandler(context.getClientExecute()));
+        this(context, new RealmtechClientConnexionHandler(context.getClientExecute()));
     }
 
     public void process(float delta) {
@@ -127,7 +127,7 @@ public final class ECSEngine implements Disposable {
         world.dispose();
         physicWorld.dispose();
         try {
-            connectionHandler.close();
+            connexionHandler.close();
         } catch (IOException e) {
             Gdx.app.error(TAG, e.getMessage(), e);
         }
@@ -182,7 +182,7 @@ public final class ECSEngine implements Disposable {
         int playerId = createPlayer(metaDonnesComponent.playerPositionX, metaDonnesComponent.playerPositionY);
         Entity playerEntity = world.getEntity(playerId);
         PositionComponent playerPositionComponent = playerEntity.getComponent(PositionComponent.class);
-        //connectionHandler.sendAndFlushPacketToServer(new PlayerConnectionPacket(playerPositionComponent.x, playerPositionComponent.y));
+        //connexionHandler.sendAndFlushPacketToServer(new PlayerconnexionPacket(playerPositionComponent.x, playerPositionComponent.y));
 
     }
 
@@ -256,7 +256,7 @@ public final class ECSEngine implements Disposable {
     public ServerInvocationStrategy getServerInvocationStrategy() {
         return serverInvocationStrategy;
     }
-    public RealmtechClientConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+    public RealmtechClientConnexionHandler getConnexionHandler() {
+        return connexionHandler;
     }
 }

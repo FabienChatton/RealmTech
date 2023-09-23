@@ -17,7 +17,7 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void connectionJoueurReussit(float x, float y, UUID uuid) {
+    public void connexionJoueurReussit(float x, float y, UUID uuid) {
         context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
         Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
     }

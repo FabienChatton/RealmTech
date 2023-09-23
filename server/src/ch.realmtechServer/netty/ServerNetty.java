@@ -25,9 +25,9 @@ public class ServerNetty {
     private NioEventLoopGroup boss;
     private NioEventLoopGroup worker;
 
-    public ServerNetty(ConnectionBuilder connectionBuilder, ServerExecute serverExecute) throws Exception {
+    public ServerNetty(ConnexionBuilder connexionBuilder, ServerExecute serverExecute) throws Exception {
         this.serverExecute = serverExecute;
-        prepareSocket(connectionBuilder);
+        prepareSocket(connexionBuilder);
     }
 
     public static boolean isPortAvailable(int port) {
@@ -40,7 +40,7 @@ public class ServerNetty {
         return ret;
     }
 
-    private void prepareSocket(ConnectionBuilder connectionBuilder) throws Exception {
+    private void prepareSocket(ConnexionBuilder connexionBuilder) throws Exception {
         this.boss = new NioEventLoopGroup();
         this.worker = new NioEventLoopGroup();
 
@@ -57,8 +57,8 @@ public class ServerNetty {
                         ch.pipeline().addLast(new ServerHandler(serverExecute));
                     }
                 });
-        channel = sb.bind(connectionBuilder.getPort()).sync().channel();
-        logger.info("Le serveur à ouvert sur le port {}", connectionBuilder.getPort());
+        channel = sb.bind(connexionBuilder.getPort()).sync().channel();
+        logger.info("Le serveur à ouvert sur le port {}", connexionBuilder.getPort());
         channel.closeFuture().addListener(ChannelFutureListener.CLOSE);
     }
 

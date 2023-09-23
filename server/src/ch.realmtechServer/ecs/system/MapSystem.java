@@ -15,7 +15,6 @@ import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.DelayedIteratingSystem;
 import com.artemis.utils.IntBag;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -55,7 +54,7 @@ public class MapSystem extends DelayedIteratingSystem {
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
     private ComponentMapper<Box2dComponent> mBox2d;
-    private ComponentMapper<PlayerConnectionComponent> mPlayerConnection;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private final static float INITALE_DELAY = 0.005f;
     private float delay = INITALE_DELAY;
 
@@ -66,8 +65,8 @@ public class MapSystem extends DelayedIteratingSystem {
             int playerId = playersData[p];
             InfMapComponent infMapComponent = mInfMap.get(mapId);
             PositionComponent positionPlayerComponent = mPosition.get(playerId);
-            PlayerConnectionComponent playerConnectionComponent = mPlayerConnection.get(playerId);
-            int[] ancienChunkPos = playerConnectionComponent.ancienChunkPos;
+            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+            int[] ancienChunkPos = playerConnexionComponent.ancienChunkPos;
             int chunkPosX = getChunkPos((int) positionPlayerComponent.x);
             int chunkPosY = getChunkPos((int) positionPlayerComponent.y);
             if (ancienChunkPos == null || !(ancienChunkPos[0] == chunkPosX && ancienChunkPos[1] == chunkPosY)) {
