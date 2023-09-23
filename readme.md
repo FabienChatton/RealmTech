@@ -216,11 +216,9 @@ Body
         - hash du cellRegisterEntry, int
         - position dans le chunk, byte
 ```
+Un chunk fait <code>version protocole (int) + nombre de cells * taille cell (short) + chunkPosX (int) + chunkPosY (int)</code>.
 
-Pour récupérer le hash du registre pour la cellule qui est un int,
-il faut cast le int en byte, cella va faire des overflow et c'est
-tout à fait normal.
-
+Une cellule fait <code>6 bytes</code>.
 #### Fichier .psi
 
 Le fichier contient l'inventaire du joueur

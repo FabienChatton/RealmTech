@@ -5,6 +5,7 @@ import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
 
 public class InfCellComponent extends PooledComponent {
+    public final static Byte TAILLE_BYTES = 6;
     private byte innerPos;
     public CellRegisterEntry cellRegisterEntry;
 

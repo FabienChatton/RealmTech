@@ -41,7 +41,6 @@ public class SaveInfManager extends Manager {
         if (infMapComponent != null) {
             Path savePath = getSavePath(saveName);
             saveInfHeaderFile(infMapComponent.infMetaDonnees, savePath);
-            creerHiearchieDUneSave(saveName);
             for (int infChunkId : infMapComponent.infChunks) {
                 saveInfChunk(infChunkId, savePath);
             }
@@ -113,20 +112,29 @@ public class SaveInfManager extends Manager {
         }
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(chunksFile)))) {
-            // Métadonnées
-            outputStream.write(ByteBuffer.allocate(Integer.BYTES).putInt(SAVE_PROTOCOLE_VERSION).array());
-            // Header
-            outputStream.writeShort(infChunkComponent.infCellsId.length); // nombre de cellules dans ce chunk
-            // body
-            for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-                InfCellComponent infCellComponent = mCell.get(infChunkComponent.infCellsId[i]);
-                if (infCellComponent != null) {
-                    outputStream.writeInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
-                    outputStream.write(Cells.getInnerChunkPos(infCellComponent.getInnerPosX(), infCellComponent.getInnerPosY()));
-                }
-            }
+            outputStream.write(getBytesFromChunk(infChunkComponent));
             outputStream.flush();
         }
+    }
+
+    public byte[] getBytesFromChunk(InfChunkComponent infChunkComponent) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(infChunkComponent.getTailleBytes());
+        // Métadonnées
+        byteBuffer.putInt(SAVE_PROTOCOLE_VERSION);
+        // Header
+        byteBuffer.putShort((short) infChunkComponent.infCellsId.length);
+        // body
+        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
+            byteBuffer.put(getBytesFromCell(mCell.get(infChunkComponent.infCellsId[i])));
+        }
+        return byteBuffer.array();
+    }
+
+    public byte[] getBytesFromCell(InfCellComponent infCellComponent) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(InfCellComponent.TAILLE_BYTES);
+        byteBuffer.putInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
+        byteBuffer.put(Cells.getInnerChunkPos(infCellComponent.getInnerPosX(), infCellComponent.getInnerPosY()));
+        return byteBuffer.array();
     }
 
     /**

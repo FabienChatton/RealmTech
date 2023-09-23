@@ -22,4 +22,9 @@ public class InfChunkComponent extends PooledComponent {
         chunkPosY = 0;
         infCellsId = null;
     }
+
+    public int getTailleBytes() {
+        // version protocole (int) + nombre de cells * taille cell (short) + chunkPosX (int) + chunkPosY (int)
+        return Integer.BYTES + infCellsId.length * InfCellComponent.TAILLE_BYTES + Integer.BYTES + Integer.BYTES;
+    }
 }
