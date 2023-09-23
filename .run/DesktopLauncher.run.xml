@@ -1,8 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="DesktopLauncher" type="Application" factoryName="Application" singleton="false"
-                 nameIsGenerated="true">
+  <configuration default="false" name="DesktopLauncher" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="ch.realmtech.DesktopLauncher"/>
-    <module name="realmTech.desktop.main"/>
+    <module name="Realmtech.desktop.main" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="server.*"/>
