@@ -9,6 +9,7 @@ import ch.realmtechCommuns.packet.serverPacket.PlayerMovePacket;
 import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.cli.CommandThread;
 import ch.realmtechServer.ecs.EcsEngineServer;
+import ch.realmtechServer.ecs.system.SaveInfManager;
 import ch.realmtechServer.netty.*;
 import ch.realmtechServer.tick.TickThread;
 import io.netty.channel.ChannelFuture;
@@ -75,6 +76,9 @@ public class ServerContext {
 
     public ChannelFuture close() throws InterruptedException, IOException {
         logger.info("Fermeture du serveur...");
+        try {
+            ecsEngineServer.saveMap();
+        } catch (IOException ignored) {}
         tickThread.close();
         commandThread.close();
         return serverNetty.close();

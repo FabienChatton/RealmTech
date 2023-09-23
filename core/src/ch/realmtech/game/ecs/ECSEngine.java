@@ -162,8 +162,8 @@ public final class ECSEngine implements Disposable {
         world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
     }
 
-    public void loadInfFile(Path savePath) throws IOException {
-        int mapId = world.getSystem(SaveInfManager.class).readInfMap(savePath);
+    public void loadInfFile(String saveName) throws IOException {
+        int mapId = world.getSystem(SaveInfManager.class).readInfMap(saveName);
         mapRequirementBeforeShow(mapId);
     }
 

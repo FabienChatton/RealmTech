@@ -198,8 +198,6 @@ nomSauvegade, bytes len n
 Version protocole file save, int
 save date, long
 seed, long
-player position x, float
-player position y, float
 ```
 #### Fichier .rsc
 Le nom du fichier qui correspond à un fichier .rsc, correspond à la position

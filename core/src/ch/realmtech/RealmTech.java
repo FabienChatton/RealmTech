@@ -229,9 +229,9 @@ public final class RealmTech extends Game{
         ecsEngine = null;
     }
 
-    public void loadInfFile(Path path) throws IOException {
+    public void loadInfFile(String saveName) throws IOException {
         nouveauECS();
-        ecsEngine.loadInfFile(path);
+        ecsEngine.loadInfFile(saveName);
     }
 
     public void rejoindreMulti(String host, int port) throws IOException {

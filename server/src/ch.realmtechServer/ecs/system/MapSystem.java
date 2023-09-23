@@ -20,6 +20,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.util.*;
 @All(InfMapComponent.class)
 public class MapSystem extends DelayedIteratingSystem {
     private final static String TAG = MapSystem.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(MapSystem.class);
 //    @Wire
 //    private SoundManager soundManager;
     @Wire(name = "serverContext")
@@ -136,7 +139,7 @@ public class MapSystem extends DelayedIteratingSystem {
         try {
             world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName));
         } catch (IOException e) {
-            Gdx.app.error(TAG, String.format("Le chunk %d,%d n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY), e);
+            logger.error("Le chunk {},{} n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
         }
         world.delete(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
@@ -179,11 +182,11 @@ public class MapSystem extends DelayedIteratingSystem {
             try {
                 world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
             } catch (IOException ex) {
-                Gdx.app.error(TAG, e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 throw new RuntimeException(ex);
             }
         } catch (IOException e) {
-            Gdx.app.error(TAG, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
         return chunkId;

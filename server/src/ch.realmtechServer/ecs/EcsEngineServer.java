@@ -85,6 +85,11 @@ public final class EcsEngineServer {
         logger.info("La carte \"{}\" a été chargée", saveName);
     }
 
+    public void saveMap() throws IOException {
+        int infMap = world.getSystem(TagManager.class).getEntityId("infMap");
+        world.getSystem(SaveInfManager.class).saveInfMap(infMap);
+    }
+
     public World getWorld() {
         return world;
     }

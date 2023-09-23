@@ -105,7 +105,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
     private ClickListener loadSaveButton(final File file) {
         return new OnClick((event, x, y) -> {
             try {
-                context.loadInfFile(file.toPath());
+                context.loadInfFile(file.getName());
                 context.setScreen(ScreenType.GAME_SCREEN);
             } catch (Exception e) {
                 Gdx.app.error(TAG, e.getMessage(), e);

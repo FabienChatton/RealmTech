@@ -60,7 +60,7 @@ public class SaveInfManager extends Manager {
         List<File> listSauvegarde = listSauvegardeInfinie();
         // la sauvegarde existe déjà
         if (listSauvegarde.stream().map(File::getName).anyMatch(s -> s.equals(saveName))) {
-            mapId = readInfMap(Path.of(saveName));
+            mapId = readInfMap(saveName);
         } else {
             mapId = generateNewSave(saveName);
         }
@@ -88,7 +88,7 @@ public class SaveInfManager extends Manager {
 
     public void saveInfHeaderFile(int infMetaDonneesId, Path rootSaveDirPath) throws IOException {
         InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
-        PositionComponent positionComponentPlayer = world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG).getComponent(PositionComponent.class);
+        //PositionComponent positionComponentPlayer = world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG).getComponent(PositionComponent.class);
         File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath);
         metaDonneesFile.createNewFile();
 
@@ -99,8 +99,8 @@ public class SaveInfManager extends Manager {
             outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
             outputStream.writeLong(System.currentTimeMillis());
             outputStream.writeLong(infMetaDonneesComponent.seed);
-            outputStream.writeFloat(positionComponentPlayer.x);
-            outputStream.writeFloat(positionComponentPlayer.y);
+            //outputStream.writeFloat(positionComponentPlayer.x);
+            //outputStream.writeFloat(positionComponentPlayer.y);
             outputStream.flush();
         }
     }
@@ -132,8 +132,9 @@ public class SaveInfManager extends Manager {
     /**
      * @return l'id du monde
      */
-    public int readInfMap(Path rootSaveDirPath) throws IOException {
+    public int readInfMap(String saveName) throws IOException {
         int worldId = world.create();
+        Path rootSaveDirPath = Path.of(DataCtrl.ROOT_PATH + "/" + ROOT_PATH_SAVES + "/" + saveName);
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
         int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath);
         InfMetaDonneesComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
@@ -163,10 +164,10 @@ public class SaveInfManager extends Manager {
             }
             long dateSauvegarde = buffer.getLong();
             long seed = buffer.getLong();
-            float playerPosX = buffer.getFloat();
-            float playerPosY = buffer.getFloat();
+            //float playerPosX = buffer.getFloat();
+            //float playerPosY = buffer.getFloat();
             int metaDonnesId = world.create();
-            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, playerPosX, playerPosY, saveName, world);
+            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, 0, 0, saveName, world);
             return metaDonnesId;
         }
     }
