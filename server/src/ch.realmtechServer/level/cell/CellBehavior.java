@@ -96,7 +96,7 @@ public class CellBehavior {
         }
 
         public CellBehaviorBuilder dropOnBreak(String dropItemRegistryName) {
-            Gdx.app.postRunnable(() -> cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry()));
+            // cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry());
             return this;
         }
 

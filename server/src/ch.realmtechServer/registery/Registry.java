@@ -1,12 +1,15 @@
 package ch.realmtechServer.registery;
 
 import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Registry<T extends Entry<T>> {
+    private final static Logger logger = LoggerFactory.getLogger(Registry.class);
     private final static String TAG = Registry.class.getSimpleName();
     private final Registry<T> parent;
     private final String name;
@@ -46,10 +49,9 @@ public class Registry<T extends Entry<T>> {
         try {
             return getEnfants().get(getEnfantsId().indexOf(id));
         } catch (Exception e) {
-            Gdx.app.error(TAG, "On dirait que cette id n'existe pas : \"" + id + "\" Tous les enfants de ce registre :" +
-                    getEnfants().stream()
-                            .map(Registry::toString)
-                            .reduce("", (s, s2) -> s + '\n' + s2), e);
+            logger.error("On dirait que cette id n'existe pas : {} Tous les enfants de ce registre : {}", id, getEnfants().stream()
+                    .map(Registry::toString)
+                    .reduce("", (s, s2) -> s + '\n' + s2));
             throw new RuntimeException(e);
         }
     }

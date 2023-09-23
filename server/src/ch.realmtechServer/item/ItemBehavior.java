@@ -65,7 +65,7 @@ public class ItemBehavior {
         }
 
         public ItemBehaviorBuilder placeCell(String cellRegistryName) {
-            Gdx.app.postRunnable(() -> itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry());
+            // itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry();
             return this;
         }
 

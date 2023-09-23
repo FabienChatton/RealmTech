@@ -82,7 +82,7 @@ public class SaveInfManager extends Manager {
         InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
         InfMetaDonneesComponent infMetaDonneesComponent = world.edit(metaDonneesId).create(InfMetaDonneesComponent.class);
         infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, saveName, world);
-        infMapComponent.infMetaDonnees = metaDonneesId;
+        infMapComponent.set(new int[0], metaDonneesId);
         return mapId;
     }
 

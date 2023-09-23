@@ -13,8 +13,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 
 public class RealmTechCoreMod extends ModInitializerManager {
-    @Wire
-    private TextureAtlas textureAtlas;
 
     public final static String MOD_ID = "realmtech";
     public final static Registry<CellRegisterEntry> CELLS = Registry.create(MOD_ID);

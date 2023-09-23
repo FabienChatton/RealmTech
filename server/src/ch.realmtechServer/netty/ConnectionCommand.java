@@ -11,7 +11,7 @@ public class ConnectionCommand implements Callable<ConnectionBuilder> {
     @Option(names = {"-p", "--port"}, description = "Le port", defaultValue = "25533")
     private int port;
 
-    @Option(names = {"-s", "--saveName"}, description = "Quel carte sera chargé par le serveur", defaultValue = "default")
+    @Option(names = {"-s", "--saveName"}, description = "Quel carte sera chargée par le serveur", defaultValue = "default")
     private String saveName;
 
     @Override

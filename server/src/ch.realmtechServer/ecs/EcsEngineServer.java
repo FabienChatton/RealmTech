@@ -82,7 +82,7 @@ public final class EcsEngineServer {
         logger.info("Chargement de la carte \"{}\"", saveName);
         int mapId = world.getSystem(SaveInfManager.class).generateOrLoadSave(saveName);
         world.getSystem(TagManager.class).register("infMap", mapId);
-        logger.info("La carte \"{}\" à chargé", saveName);
+        logger.info("La carte \"{}\" a été chargée", saveName);
     }
 
     public World getWorld() {
