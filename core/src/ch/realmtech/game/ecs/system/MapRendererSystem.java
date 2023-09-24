@@ -4,7 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfChunkComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
-import ch.realmtechServer.ecs.system.MapSystem;
+import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.level.map.WorldMap;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -60,8 +60,8 @@ public class MapRendererSystem extends IteratingSystem {
                 if (infCellComponents != null) {
                     for (InfCellComponent infCellComponent : infCellComponents) {
                         InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
-                        int worldX = MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
-                        int worldY = MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
+                        int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
+                        int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
                         TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
                         gameStage.getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
                     }

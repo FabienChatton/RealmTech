@@ -2,7 +2,7 @@ package ch.realmtech.screen;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
-import ch.realmtechServer.ecs.system.MapSystem;
+import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -91,8 +91,8 @@ public class GameScreen extends AbstractScreen {
 
         fpsLabel.setText(String.format("FPS : %d", Gdx.graphics.getFramesPerSecond()));
         gameCoo.setText(String.format("Game X : %f\nGame Y : %f", gameCamera.position.x, gameCamera.position.y));
-        chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapSystem.getChunkPos(gameCamera.position.x), MapSystem.getChunkPos(gameCamera.position.y)));
-        innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapSystem.getInnerChunk(gameCamera.position.x), MapSystem.getInnerChunk(gameCamera.position.y)));
+        chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapManager.getChunkPos(gameCamera.position.x), MapManager.getChunkPos(gameCamera.position.y)));
+        innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapManager.getInnerChunk(gameCamera.position.x), MapManager.getInnerChunk(gameCamera.position.y)));
     }
 
     @Override

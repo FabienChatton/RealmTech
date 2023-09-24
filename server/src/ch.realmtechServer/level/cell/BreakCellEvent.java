@@ -3,7 +3,7 @@ package ch.realmtechServer.level.cell;
 import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfChunkComponent;
 import ch.realmtechServer.ecs.system.ItemManager;
-import ch.realmtechServer.ecs.system.MapSystem;
+import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.item.ItemType;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 
@@ -21,11 +21,11 @@ public class BreakCellEvent {
                     if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS
                             || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemTypeUse) {
                         world.getSystem(ItemManager.class).newItemOnGround(
-                                MapSystem.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX()),
-                                MapSystem.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY()),
+                                MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX()),
+                                MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY()),
                                 itemRegisterEntry
                         );
-                        world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
+                        world.getSystem(MapManager.class).damneCell(chunkId, cellId);
                         return true;
                     }
                 }
@@ -36,7 +36,7 @@ public class BreakCellEvent {
 
     public BreakCell dropNothing() {
         return (world, chunkId, cellId, itemComponent, playerComponent) -> {
-            world.getSystem(MapSystem.class).damneCell(chunkId, cellId);
+            world.getSystem(MapManager.class).damneCell(chunkId, cellId);
             return true;
         };
     }

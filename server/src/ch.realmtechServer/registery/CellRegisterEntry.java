@@ -24,7 +24,8 @@ public class CellRegisterEntry implements Entry<CellRegisterEntry> {
                 return RealmTechCoreMod.CELLS.get(id).getEntry();
             }
         }
-        throw new IllegalArgumentException("Aucun registre ne correspond au hash " + cellRegisterHash + ". La carte a été corrompue");
+        return RealmTechCoreMod.GRASS_CELL;
+//        throw new IllegalArgumentException("Aucun registre ne correspond au hash " + cellRegisterHash + ". La carte a été corrompue");
     }
 
     public static int getHash(CellRegisterEntry cellRegisterEntry) {

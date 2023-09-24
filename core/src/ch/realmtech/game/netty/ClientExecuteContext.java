@@ -4,6 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
+import ch.realmtechServer.ecs.system.SaveInfManager;
 import com.badlogic.gdx.Gdx;
 
 import java.util.HashMap;
@@ -30,5 +31,10 @@ public class ClientExecuteContext implements ClientExecute {
             context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
         }
         context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
+    }
+
+    @Override
+    public void chunkAMounter(int chunkPosX, int chunkPosY, UUID uuid, byte[] chunkBytes) {
+        context.getEcsEngine().getSystem(SaveInfManager.class).readChunkFromBytes(chunkPosX, chunkPosY, chunkBytes);
     }
 }

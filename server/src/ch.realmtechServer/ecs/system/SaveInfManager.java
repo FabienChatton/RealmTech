@@ -7,9 +7,9 @@ import ch.realmtechServer.registery.CellRegisterEntry;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
-import com.artemis.managers.TagManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -18,8 +18,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class SaveInfManager extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(SaveInfManager.class);
     private final static int SAVE_PROTOCOLE_VERSION = 8;
     public final static String ROOT_PATH_SAVES = "saves";
     private final static String TAG = SaveInfManager.class.getSimpleName();
@@ -122,6 +124,8 @@ public class SaveInfManager extends Manager {
         // Métadonnées
         byteBuffer.putInt(SAVE_PROTOCOLE_VERSION);
         // Header
+        byteBuffer.putLong(infChunkComponent.uuid.getMostSignificantBits());
+        byteBuffer.putLong(infChunkComponent.uuid.getLeastSignificantBits());
         byteBuffer.putShort((short) infChunkComponent.infCellsId.length);
         // body
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
@@ -180,37 +184,36 @@ public class SaveInfManager extends Manager {
         }
     }
 
-    /**
-     *
-     * @param chunkPosX
-     * @param chunkPosY
-     * @param saveName
-     * @return donne l'id du nouveau chunk
-     */
+    public int readChunkFromBytes(int chunkPosX, int chunkPosY, byte[] bytes) {
+        ByteBuffer inputWrap = ByteBuffer.wrap(bytes);
+        int versionProtocole = inputWrap.getInt();
+        if (versionProtocole != SAVE_PROTOCOLE_VERSION) {
+            logger.error("La version de la sauvegarde ne correspond pas. Fichier : {}. Jeu : {}", versionProtocole, SAVE_PROTOCOLE_VERSION);
+        }
+        // Header
+        long uuidMsb = inputWrap.getLong();
+        long uuidLsm = inputWrap.getLong();
+        UUID uuid = new UUID(uuidMsb, uuidLsm);
+        short nombreDeCellule = inputWrap.getShort();
+        // Body
+        int[] cellulesId = new int[nombreDeCellule];
+        int chunkId = world.create();
+        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId, uuid);
+        for (int i = 0; i < cellulesId.length; i++) {
+            int hashRegistry = inputWrap.getInt();
+            byte pos = inputWrap.get();
+            byte posX = Cells.getInnerChunkPosX(pos);
+            byte posY = Cells.getInnerChunkPosY(pos);
+            final CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(hashRegistry);
+            cellulesId[i] = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, posX, posY, cellRegisterEntry);
+        }
+        return chunkId;
+    }
+
     public int readSavedInfChunk(int chunkPosX, int chunkPosY, String saveName) throws IOException {
         File chunksFile = getChunkFile(chunkPosX, chunkPosY, getSavePath(saveName));
         try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(chunksFile)))) {
-            // Métadonnées
-            ByteBuffer inputWrap = ByteBuffer.wrap(inputStream.readAllBytes());
-            int versionProtocole = inputWrap.getInt();
-            if (versionProtocole != SAVE_PROTOCOLE_VERSION) {
-                Gdx.app.error(TAG, "La version de la sauvegarde ne correspond pas. Fichier :" + versionProtocole + ". Jeu :" + SAVE_PROTOCOLE_VERSION);
-            }
-            // Header
-            short nombreDeCellule = inputWrap.getShort();
-            // Body
-            int[] cellulesId = new int[nombreDeCellule];
-            int chunkId = world.create();
-            world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId);
-            for (int i = 0; i < cellulesId.length; i++) {
-                int hashRegistry = inputWrap.getInt();
-                byte pos = inputWrap.get();
-                byte posX = Cells.getInnerChunkPosX(pos);
-                byte posY = Cells.getInnerChunkPosY(pos);
-                final CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(hashRegistry);
-                cellulesId[i] = world.getSystem(MapSystem.class).newCell(chunkId, chunkPosX, chunkPosY, posX, posY, cellRegisterEntry);
-            }
-            return chunkId;
+            return readChunkFromBytes(chunkPosX, chunkPosY, inputStream.readAllBytes());
         }
     }
 

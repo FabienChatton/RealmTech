@@ -43,7 +43,7 @@ public final class EcsEngineServer {
                 .with(new SaveInfManager())
 
                 // system
-                .with(new MapSystem())
+                .with(new MapSystemServer())
                 .with(new CraftingPlayerSystem())
 //                .with(new ItemBeingPickAnimationSystem())
                 .with(new PickUpOnGroundItemSystem())
@@ -67,6 +67,7 @@ public final class EcsEngineServer {
                 //.with(new PhysiqueWorldStepSystem())
                 .with(new FurnaceSystem())
 
+                .with(new MapManager())
                 .with(new PlayerManagerServer())
                 .build();
         worldConfiguration.register("serverContext", serverContext);

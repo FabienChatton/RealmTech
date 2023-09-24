@@ -1,5 +1,6 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechCommuns.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.component.*;
@@ -27,9 +28,9 @@ import java.io.IOException;
 import java.util.*;
 
 @All(InfMapComponent.class)
-public class MapSystem extends DelayedIteratingSystem {
-    private final static String TAG = MapSystem.class.getSimpleName();
-    private final static Logger logger = LoggerFactory.getLogger(MapSystem.class);
+public class MapSystemServer extends DelayedIteratingSystem {
+    private final static String TAG = MapSystemServer.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(MapSystemServer.class);
 //    @Wire
 //    private SoundManager soundManager;
     @Wire(name = "serverContext")
@@ -67,8 +68,8 @@ public class MapSystem extends DelayedIteratingSystem {
             PositionComponent positionPlayerComponent = mPosition.get(playerId);
             PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
             int[] ancienChunkPos = playerConnexionComponent.ancienChunkPos;
-            int chunkPosX = getChunkPos((int) positionPlayerComponent.x);
-            int chunkPosY = getChunkPos((int) positionPlayerComponent.y);
+            int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
+            int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
             if (ancienChunkPos == null || !(ancienChunkPos[0] == chunkPosX && ancienChunkPos[1] == chunkPosY)) {
                 List<Integer> chunkADamner = trouveChunkADamner(infMapComponent, chunkPosX, chunkPosY);
 
@@ -78,6 +79,8 @@ public class MapSystem extends DelayedIteratingSystem {
                         final boolean changement = chunkSansChangement(infMapComponent, i, j);
                         if (changement) {
                             int newChunkId = getOrGenerateChunk(mapId, i, j);
+                            InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
+                            serverContext.getServerHandler().broadCastPacket(new ChunkAMonterPacket(infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, infChunkComponent.uuid, world.getSystem(SaveInfManager.class).getBytesFromChunk(infChunkComponent)));
                             if (indexDamner < chunkADamner.size()) {
                                 Integer oldChunk = chunkADamner.get(indexDamner++);
                                 replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
@@ -142,25 +145,8 @@ public class MapSystem extends DelayedIteratingSystem {
         }
         world.delete(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            supprimeCell(infChunkComponent.infCellsId[i]);
+            world.getSystem(MapManager.class).supprimeCell(infChunkComponent.infCellsId[i]);
         }
-    }
-
-    public void damneCell(int chunkId, int cellId) {
-        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int indexCell = -1;
-        int[] cellIds = infChunkComponent.infCellsId;
-        for (int i = 0; i < cellIds.length; i++) {
-            if (cellId == cellIds[i]) {
-                indexCell = i;
-                break;
-            }
-        }
-        int[] newCellIds = new int[cellIds.length - 1];
-        System.arraycopy(cellIds, 0, newCellIds, 0, indexCell);
-        System.arraycopy(cellIds, indexCell + 1, newCellIds, indexCell, newCellIds.length - indexCell);
-        infChunkComponent.infCellsId = newCellIds;
-        supprimeCell(cellId);
     }
 
     private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
@@ -177,7 +163,7 @@ public class MapSystem extends DelayedIteratingSystem {
         try {
             chunkId = world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
         } catch (FileNotFoundException e) {
-            chunkId = generateNewChunk(mapId, chunkX, chunkY);
+            chunkId = world.getSystem(MapManager.class).generateNewChunk(mapId, chunkX, chunkY);
             try {
                 world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
             } catch (IOException ex) {
@@ -191,134 +177,13 @@ public class MapSystem extends DelayedIteratingSystem {
         return chunkId;
     }
 
-    public static int getWorldPos(int chunkPos, int innerChunk) {
-        return chunkPos * WorldMap.CHUNK_SIZE + innerChunk;
-    }
-
-    /**
-     * @param chunkPosX La position X du chunk
-     * @param chunkPosY La position Y du chunk
-     * @return l'id du nouveau chunk
-     */
-    public int generateNewChunk(int mapId, int chunkPosX, int chunkPosY) {
-        int chunkId = world.create();
-        InfMapComponent infMapComponent = mInfMap.get(mapId);
-        List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
-        for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
-            int[] cells = generateNewCells(infMapComponent.infMetaDonnees, chunkId, chunkPosX, chunkPosY, i);
-            for (int j = 0; j < cells.length; j++) {
-                cellsId.add(cells[j]);
-            }
-        }
-        InfChunkComponent infChunkComponent = world.edit(chunkId).create(InfChunkComponent.class);
-        infChunkComponent.set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
-        return chunkId;
-    }
-
-    public int newCell(int chunkId, int chunkPosX, int chunkPosY, byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
-        int cellId = world.create();
-        world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
-        if (cellRegisterEntry.getCellBehavior().getEditEntity() != null) {
-            cellRegisterEntry.getCellBehavior().getEditEntity().accept(world, cellId);
-        }
-        if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
-            CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
-                    .getCellBehavior()
-                    .getCreateBody()
-                    .createPhysiqueBody(
-                            physicWorld,
-                            bodyDef,
-                            fixtureDef,
-                            getWorldPos(chunkPosX, innerX),
-                            getWorldPos(chunkPosY, innerY)
-                    );
-            world.edit(cellId).create(Box2dComponent.class).set(physiqueBody.with(), physiqueBody.height(), physiqueBody.body());
-            PhysiqueWorldHelper.resetBodyDef(bodyDef);
-            PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
-        }
-        return cellId;
-    }
-
-    private void supprimeCell(int cellId) {
-        InfCellComponent infCellComponent = mCell.get(cellId);
-        if (infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
-            Box2dComponent box2dComponent = mBox2d.get(cellId);
-            Body body = box2dComponent.body;
-            infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
-        }
-        world.delete(cellId);
-    }
-
-    private int[] generateNewCells(int metaDonnees, int chunkId, int chunkPosX, int chunkPosY, short index) {
-        byte innerChunkX = getInnerChunkX(index);
-        byte innerChunkY = getInnerChunkY(index);
-        int worldX = getWorldPos(chunkPosX, innerChunkX);
-        int worldY = getWorldPos(chunkPosY, innerChunkY);
-        PerlinNoise perlinNoise = mMetaDonnees.get(metaDonnees).perlinNoise;
-        final CellRegisterEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
-        final int[] cellIds = new int[(int) Arrays.stream(cellRegisterEntries).filter(Objects::nonNull).count()];
-        for (int i = 0; i < cellRegisterEntries.length; i++) {
-            CellRegisterEntry cellRegisterEntry = cellRegisterEntries[i];
-            if (cellRegisterEntry != null) {
-                cellIds[i] = newCell(chunkId, chunkPosX, chunkPosY, innerChunkX, innerChunkY, cellRegisterEntry);
-            }
-        }
-        return cellIds;
-    }
-
     private void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
+        int cellId = world.getSystem(MapManager.class).newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
         System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
         newCellsArray[newCellsArray.length - 1] = cellId;
         infChunkComponent.infCellsId = newCellsArray;
-    }
-
-    /**
-     * Récupère une position dans un chunk via la position du monde.
-     *
-     * @param world La position dans le monde.
-     * @return La position dans le chunk.
-     */
-    public static byte getInnerChunk(int world) {
-        if (world < 0) {
-            return (byte) ((byte) (world % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE) - 1);
-        } else {
-            return (byte) (world % WorldMap.CHUNK_SIZE);
-        }
-    }
-
-    /**
-     * @param index l'index d'un tableau
-     * @return la position x dans le chunk
-     */
-    public static byte getInnerChunkX(short index) {
-        return (byte) Math.abs(index % WorldMap.CHUNK_SIZE);
-    }
-
-    public static byte getInnerChunkY(short index) {
-        return (byte) Math.abs(index / WorldMap.CHUNK_SIZE);
-    }
-
-    public static byte getInnerChunk(float gameCoordinate) {
-        if (gameCoordinate > -1 && gameCoordinate < 0) {
-            return 15;
-        } else {
-            return getInnerChunk((int) gameCoordinate);
-        }
-    }
-
-    public static int getChunkPos(int worldPos) {
-        return (worldPos < 0 ? worldPos - WorldMap.CHUNK_SIZE : worldPos) / WorldMap.CHUNK_SIZE;
-    }
-
-    public static int getChunkPos(float gameCoordinate) {
-        if (gameCoordinate > -1 && gameCoordinate < 0) {
-            return -1;
-        } else {
-            return getChunkPos((int) gameCoordinate);
-        }
     }
 
     public int getCell(int[] chunks, int worldPosX, int worldPosY, byte layer) {
@@ -333,8 +198,8 @@ public class MapSystem extends DelayedIteratingSystem {
     public int getCell(int chunkId, int worldPosX, int worldPosY, byte layer) {
         int ret = -1;
         int[] cells = mChunk.get(chunkId).infCellsId;
-        byte innerChunkX = getInnerChunk(worldPosX);
-        byte innerChunkY = getInnerChunk(worldPosY);
+        byte innerChunkX = MapManager.getInnerChunk(worldPosX);
+        byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         for (int i = 0; i < cells.length; i++) {
             InfCellComponent infCellComponent = mCell.get(cells[i]);
             if (infCellComponent.getInnerPosX() == innerChunkX && infCellComponent.getInnerPosY() == innerChunkY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
@@ -375,8 +240,8 @@ public class MapSystem extends DelayedIteratingSystem {
      */
     public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
         int ret = -1;
-        int chunkX = getChunkPos(worldPosX);
-        int chunkY = getChunkPos(worldPosY);
+        int chunkX = MapManager.getChunkPos(worldPosX);
+        int chunkY = MapManager.getChunkPos(worldPosY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
             if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
@@ -389,8 +254,8 @@ public class MapSystem extends DelayedIteratingSystem {
 
     public int getChunk(int[] chunks, float gameCoordinateX, float gameCoordinateY) {
         int ret = -1;
-        int chunkX = getChunkPos(gameCoordinateX);
-        int chunkY = getChunkPos(gameCoordinateY);
+        int chunkX = MapManager.getChunkPos(gameCoordinateX);
+        int chunkY = MapManager.getChunkPos(gameCoordinateY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
             if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
@@ -446,7 +311,7 @@ public class MapSystem extends DelayedIteratingSystem {
     public int getTopCell(int chunk, byte innerX, byte innerY) {
         int ret = -1;
         for (byte i = Cells.Layer.BUILD_DECO.layer; i >= 0; i--) {
-            int cellId = world.getSystem(MapSystem.class).getCell(chunk, innerX, innerY, i);
+            int cellId = world.getSystem(MapSystemServer.class).getCell(chunk, innerX, innerY, i);
             if (cellId != -1) {
                 ret = cellId;
                 break;

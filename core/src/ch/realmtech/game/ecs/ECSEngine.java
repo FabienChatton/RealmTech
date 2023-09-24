@@ -54,6 +54,7 @@ public final class ECSEngine implements Disposable {
                 .withClient(new InventoryManager())
                 .withClient(new PhysiqueContactListenerManager())
                 .withClient(new SaveInfManager())
+                .withClient(new MapManager())
 
                 // system
                 .withClient(new PlayerInputSystem())
@@ -67,7 +68,7 @@ public final class ECSEngine implements Disposable {
                 .withClient(new PlayerTextureAnimated())
                 .withClient(new UpdateBox2dWithPosition())
                 .withClient(new CameraFollowPlayerSystem())
-//                .withClient(new MapRendererSystem())
+                .withClient(new ChunkRendererSystem())
                 .withClient(new CellBeingMineRenderSystem())
 //                .withClient(new CellHoverEtWailaSystem())
                 .withClient(new TextureRenderer())
@@ -170,7 +171,7 @@ public final class ECSEngine implements Disposable {
     public void generateNewSave(String name) throws IOException {
         int mapId = world.getSystem(SaveInfManager.class).generateNewSave(name);
         InfMapComponent infMapComponent = world.getMapper(InfMapComponent.class).get(mapId);
-        int chunkId = world.getSystem(MapSystem.class).generateNewChunk(mapId, 0, 0);
+        int chunkId = world.getSystem(MapManager.class).generateNewChunk(mapId, 0, 0);
         infMapComponent.infChunks = new int[]{chunkId};
         mapRequirementBeforeShow(mapId);
         world.getSystem(SaveInfManager.class).saveInfMap(mapId);
@@ -206,7 +207,7 @@ public final class ECSEngine implements Disposable {
      * @return l'id de la cellule ou -1 si pas trouvé.
      */
     public int getCell(float worldPosX, float worldPosY, byte layer) {
-        return world.getSystem(MapSystem.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks, (int) worldPosX, (int) worldPosY, layer);
+        return world.getSystem(MapSystemServer.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks, (int) worldPosX, (int) worldPosY, layer);
     }
 
     public void playFootStep(PlayerFootStepSound footStep) {

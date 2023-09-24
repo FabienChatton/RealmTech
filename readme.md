@@ -210,13 +210,14 @@ des celles pour éviter de les hash soit pour chaque cellule dans le fichier.
 Métadonnées
     - version du protocole, int
 Header
+    - UUID du chunk, 2x long
     - nombre de cellule que contient le chunk, short
 Body
     pour chaque cellule :
         - hash du cellRegisterEntry, int
         - position dans le chunk, byte
 ```
-Un chunk fait <code>version protocole (int) + nombre de cells * taille cell (short) + chunkPosX (int) + chunkPosY (int)</code>.
+Un chunk fait <code>version protocole (int) + UUID 2x long + nombre de cells * taille cell (short) + chunkPosX (int) + chunkPosY (int)</code>.
 
 Une cellule fait <code>6 bytes</code>.
 #### Fichier .psi
