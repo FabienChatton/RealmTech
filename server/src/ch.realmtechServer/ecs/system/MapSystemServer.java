@@ -80,13 +80,18 @@ public class MapSystemServer extends DelayedIteratingSystem {
                         if (changement) {
                             int newChunkId = getOrGenerateChunk(mapId, i, j);
                             InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
-                            serverContext.getServerHandler().broadCastPacket(new ChunkAMonterPacket(infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, infChunkComponent.uuid, world.getSystem(SaveInfManager.class).getBytesFromChunk(infChunkComponent)));
+                            serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
+                                    infChunkComponent.chunkPosX,
+                                    infChunkComponent.chunkPosY,
+                                    infChunkComponent.toBytes(mCell)),
+                                    playerConnexionComponent.channel
+                            );
                             if (indexDamner < chunkADamner.size()) {
                                 Integer oldChunk = chunkADamner.get(indexDamner++);
                                 replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
                                 damneChunk(oldChunk, infMapComponent);
                             } else {
-                                infMapComponent.infChunks = ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
+                                infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
                             }
                         }
                         // la limite d'update de chunk pour ce process est atteint
@@ -99,7 +104,7 @@ public class MapSystemServer extends DelayedIteratingSystem {
                     for (int i = indexDamner; i < chunkADamner.size(); i++) {
                         final int chunkId = chunkADamner.get(i);
                         damneChunk(chunkId, infMapComponent);
-                        infMapComponent.infChunks = supprimerChunkAMap(mapId, chunkId);
+                        infMapComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(infMapComponent.infChunks, chunkId);
                     }
                 }
             }
@@ -137,17 +142,16 @@ public class MapSystemServer extends DelayedIteratingSystem {
     }
 
     private void damneChunk(int chunkId, InfMapComponent infMapComponent) {
-        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         try {
             world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName));
         } catch (IOException e) {
+            InfChunkComponent infChunkComponent = mChunk.get(chunkId);
             logger.error("Le chunk {},{} n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
         }
-        world.delete(chunkId);
-        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            world.getSystem(MapManager.class).supprimeCell(infChunkComponent.infCellsId[i]);
-        }
+        world.getSystem(MapManager.class).supprimeChunk(chunkId);
     }
+
+
 
     private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
@@ -272,24 +276,6 @@ public class MapSystemServer extends DelayedIteratingSystem {
                 return;
             }
         }
-    }
-
-    private int[] ajouterChunkAMap(int[] infChunks, int chunkId) {
-        int[] ret = new int[infChunks.length + 1];
-        System.arraycopy(infChunks, 0, ret, 0, infChunks.length);
-        ret[infChunks.length] = chunkId;
-        return ret;
-    }
-
-    private int[] supprimerChunkAMap(int mapId, int chunkId) {
-        int[] infChunks = mInfMap.get(mapId).infChunks;
-        int[] ret = new int[infChunks.length - 1];
-        for (int i = 0, j = 0; i < infChunks.length; i++) {
-            if (infChunks[i] != chunkId) {
-                ret[j++] = infChunks[i];
-            }
-        }
-        return ret;
     }
 
     @Override

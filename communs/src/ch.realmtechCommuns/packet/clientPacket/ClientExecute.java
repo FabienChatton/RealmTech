@@ -7,5 +7,7 @@ public interface ClientExecute {
 
     void autreJoueur(float x, float y, UUID uuid);
 
-    void chunkAMounter(int chunkPosX, int chunkPosY, UUID uuid, byte[] chunkBytes);
+    void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes);
+
+    void chunkADamner(int chunkPosX, int chunkPosY);
 }

@@ -2,6 +2,7 @@ package ch.realmtechServer;
 
 import ch.realmtechCommuns.packet.PacketMap;
 import ch.realmtechCommuns.packet.ServerResponseHandler;
+import ch.realmtechCommuns.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtechCommuns.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtechCommuns.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
@@ -35,6 +36,7 @@ public class ServerContext {
                 .put(TousLesJoueurPacket.class, TousLesJoueurPacket::new)
                 .put(PlayerMovePacket.class, PlayerMovePacket::new)
                 .put(ChunkAMonterPacket.class, ChunkAMonterPacket::new)
+                .put(ChunkADamnePacket.class, ChunkADamnePacket::new)
         ;
     }
 

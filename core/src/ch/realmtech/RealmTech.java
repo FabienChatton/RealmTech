@@ -9,6 +9,7 @@ import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
+import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnexionJoueurPacket;
@@ -234,9 +235,17 @@ public final class RealmTech extends Game{
     }
 
     public void rejoindreMulti(String host, int port) throws IOException {
-        RealmtechClientConnexionHandler clientconnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute);
-        nouveauECS(clientconnexionHandler);
-        clientconnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute);
+        nouveauECS(clientConnexionHandler);
+        clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+    }
+
+    public void rejoindreSoloServeur(String saveName) throws Exception {
+        ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
+        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute);
+        new ServerContext(connexionBuilder);
+        nouveauECS(clientConnexionHandler);
+        clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
     }
 
     public void generateNewSave(String name) throws IOException {

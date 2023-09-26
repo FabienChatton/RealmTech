@@ -4,7 +4,12 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
-import ch.realmtechServer.ecs.system.SaveInfManager;
+import ch.realmtechServer.ecs.component.InfChunkComponent;
+import ch.realmtechServer.ecs.component.InfMapComponent;
+import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.ecs.system.MapSystemServer;
+import com.artemis.Entity;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 
 import java.util.HashMap;
@@ -34,7 +39,14 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void chunkAMounter(int chunkPosX, int chunkPosY, UUID uuid, byte[] chunkBytes) {
-        context.getEcsEngine().getSystem(SaveInfManager.class).readChunkFromBytes(chunkPosX, chunkPosY, chunkBytes);
+    public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
+        int chunkId = InfChunkComponent.fromByte(context.getEcsEngine().getWorld(), chunkBytes, chunkPosX, chunkPosY);
+        Entity infMapEntity = context.getEcsEngine().getSystem(TagManager.class).getEntity("infMap");
+        context.getEcsEngine().getSystem(MapManager.class).ajouterChunkAMap(infMapEntity.getComponent(InfMapComponent.class).infChunks, chunkId);
+    }
+
+    @Override
+    public void chunkADamner(int chunkPosX, int chunkPosY) {
+        context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY);
     }
 }

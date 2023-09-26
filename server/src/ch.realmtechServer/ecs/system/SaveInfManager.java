@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public class SaveInfManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(SaveInfManager.class);
-    private final static int SAVE_PROTOCOLE_VERSION = 8;
+    public final static int SAVE_PROTOCOLE_VERSION = 8;
     public final static String ROOT_PATH_SAVES = "saves";
     private final static String TAG = SaveInfManager.class.getSimpleName();
     private ComponentMapper<InfMapComponent> mInfMap;
@@ -114,31 +114,9 @@ public class SaveInfManager extends Manager {
         }
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(chunksFile)))) {
-            outputStream.write(getBytesFromChunk(infChunkComponent));
+            outputStream.write(infChunkComponent.toBytes(mCell));
             outputStream.flush();
         }
-    }
-
-    public byte[] getBytesFromChunk(InfChunkComponent infChunkComponent) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(infChunkComponent.getTailleBytes());
-        // Métadonnées
-        byteBuffer.putInt(SAVE_PROTOCOLE_VERSION);
-        // Header
-        byteBuffer.putLong(infChunkComponent.uuid.getMostSignificantBits());
-        byteBuffer.putLong(infChunkComponent.uuid.getLeastSignificantBits());
-        byteBuffer.putShort((short) infChunkComponent.infCellsId.length);
-        // body
-        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            byteBuffer.put(getBytesFromCell(mCell.get(infChunkComponent.infCellsId[i])));
-        }
-        return byteBuffer.array();
-    }
-
-    public byte[] getBytesFromCell(InfCellComponent infCellComponent) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(InfCellComponent.TAILLE_BYTES);
-        byteBuffer.putInt(CellRegisterEntry.getHash(infCellComponent.cellRegisterEntry));
-        byteBuffer.put(Cells.getInnerChunkPos(infCellComponent.getInnerPosX(), infCellComponent.getInnerPosY()));
-        return byteBuffer.array();
     }
 
     /**
@@ -191,21 +169,16 @@ public class SaveInfManager extends Manager {
             logger.error("La version de la sauvegarde ne correspond pas. Fichier : {}. Jeu : {}", versionProtocole, SAVE_PROTOCOLE_VERSION);
         }
         // Header
-        long uuidMsb = inputWrap.getLong();
-        long uuidLsm = inputWrap.getLong();
-        UUID uuid = new UUID(uuidMsb, uuidLsm);
         short nombreDeCellule = inputWrap.getShort();
         // Body
         int[] cellulesId = new int[nombreDeCellule];
         int chunkId = world.create();
-        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId, uuid);
+        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId);
         for (int i = 0; i < cellulesId.length; i++) {
-            int hashRegistry = inputWrap.getInt();
-            byte pos = inputWrap.get();
-            byte posX = Cells.getInnerChunkPosX(pos);
-            byte posY = Cells.getInnerChunkPosY(pos);
-            final CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(hashRegistry);
-            cellulesId[i] = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, posX, posY, cellRegisterEntry);
+            byte[] cellBuff = new byte[InfCellComponent.TAILLE_BYTES];
+            inputWrap.get(cellBuff);
+            InfCellComponent.FromBytesArgs cellFromArgs = InfCellComponent.fromBytes(cellBuff);
+            cellulesId[i] = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, cellFromArgs.posX(), cellFromArgs.posY(), cellFromArgs.cellRegisterEntry());
         }
         return chunkId;
     }
@@ -213,7 +186,7 @@ public class SaveInfManager extends Manager {
     public int readSavedInfChunk(int chunkPosX, int chunkPosY, String saveName) throws IOException {
         File chunksFile = getChunkFile(chunkPosX, chunkPosY, getSavePath(saveName));
         try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(chunksFile)))) {
-            return readChunkFromBytes(chunkPosX, chunkPosY, inputStream.readAllBytes());
+            return InfChunkComponent.fromByte(world, inputStream.readAllBytes(), chunkPosX, chunkPosY);
         }
     }
 

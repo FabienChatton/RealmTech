@@ -36,7 +36,7 @@ public class RejoindreMulti extends AbstractScreen {
     public void rejoindre(String host, int port) {
         try {
             context.rejoindreMulti(host, port);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Gdx.app.error(TAG, e.getMessage(), e);
             Popup.popupErreur(context, e.getMessage(), uiStage);
         }

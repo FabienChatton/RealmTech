@@ -42,6 +42,10 @@ public class PlayerManagerClient extends Manager {
         int playerId = world.create();
         if (!world.getSystem(TagManager.class).isRegistered("MAIN_PLAYER")) {
             world.getSystem(TagManager.class).register("MAIN_PLAYER", playerId);
+            int mapId = world.create();
+            InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
+            infMapComponent.infChunks = new int[0];
+            world.getSystem(TagManager.class).register("infMap", mapId);
         }
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);

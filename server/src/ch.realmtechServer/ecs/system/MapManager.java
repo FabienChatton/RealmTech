@@ -89,6 +89,16 @@ public class MapManager extends Manager {
         }
     }
 
+    public int getChunk(int chunkPosX, int chunkPosY, int[] infChunks) {
+        for (int infChunk : infChunks) {
+            InfChunkComponent infChunkComponent = mChunk.get(infChunk);
+            if (chunkPosX == infChunkComponent.chunkPosX && chunkPosY == infChunkComponent.chunkPosY) {
+                return infChunk;
+            }
+        }
+        throw new NoSuchElementException("Il n'existe pas de chunk à la position " + chunkPosX + "," + chunkPosY + " dans cette map");
+    }
+
     public void damneCell(int chunkId, int cellId) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int indexCell = -1;
@@ -117,7 +127,7 @@ public class MapManager extends Manager {
             }
         }
         InfChunkComponent infChunkComponent = world.edit(chunkId).create(InfChunkComponent.class);
-        infChunkComponent.set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray(), UUID.randomUUID());
+        infChunkComponent.set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
         return chunkId;
     }
     private int[] generateNewCells(int metaDonnees, int chunkId, int chunkPosX, int chunkPosY, short index) {
@@ -169,5 +179,37 @@ public class MapManager extends Manager {
             infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
         }
         world.delete(cellId);
+    }
+
+    public void damneChunkClient(int chunkPosX, int chunkPosY) {
+        InfMapComponent infMapComponent = mInfMap.get(world.getRegistered("infMap"));
+        int chunkId = getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
+        supprimerChunkAMap(infMapComponent.infChunks, chunkId);
+        supprimeChunk(chunkId);
+    }
+
+    public void supprimeChunk(int chunkId) {
+        world.delete(chunkId);
+        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
+            world.getSystem(MapManager.class).supprimeCell(infChunkComponent.infCellsId[i]);
+        }
+    }
+
+    public int[] ajouterChunkAMap(int[] infChunks, int chunkId) {
+        int[] ret = new int[infChunks.length + 1];
+        System.arraycopy(infChunks, 0, ret, 0, infChunks.length);
+        ret[infChunks.length] = chunkId;
+        return ret;
+    }
+
+    public int[] supprimerChunkAMap(int[] infChunks, int chunkId) {
+        int[] ret = new int[infChunks.length - 1];
+        for (int i = 0, j = 0; i < infChunks.length; i++) {
+            if (infChunks[i] != chunkId) {
+                ret[j++] = infChunks[i];
+            }
+        }
+        return ret;
     }
 }
