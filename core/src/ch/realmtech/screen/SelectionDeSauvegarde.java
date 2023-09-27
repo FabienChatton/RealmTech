@@ -84,7 +84,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             try {
                 context.generateNewSave(nouvelleCarteTextField.getText());
                 context.setScreen(ScreenType.GAME_SCREEN);
-            } catch (IOException | IllegalArgumentException e) {
+            } catch (Exception e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
             }
         }));

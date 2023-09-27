@@ -202,18 +202,18 @@ public final class RealmTech extends Game{
         }
     }
 
-    public void nouveauECS() throws IOException {
+    public void nouveauECS(String saveName) throws Exception {
         if (ecsEngine != null) {
             supprimeECS();
         }
         try {
-            ecsEngine = new ECSEngine(this);
-        } catch (IOException e) {
+            RealmtechClientConnexionHandler connexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setSaveName(saveName), clientExecute, false);
+            ecsEngine = new ECSEngine(this, connexionHandler);
+        } catch (Exception e) {
             supprimeECS();
             throw e;
         }
     }
-
     public void nouveauECS(RealmtechClientConnexionHandler clientConnexionHandler) throws IOException {
         if (ecsEngine != null) {
             supprimeECS();
@@ -229,13 +229,8 @@ public final class RealmTech extends Game{
         ecsEngine = null;
     }
 
-    public void loadInfFile(String saveName) throws IOException {
-        nouveauECS();
-        ecsEngine.loadInfFile(saveName);
-    }
-
     public void rejoindreMulti(String host, int port) throws Exception {
-        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute);
+        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false);
         nouveauECS(clientConnexionHandler);
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
     }
@@ -243,14 +238,14 @@ public final class RealmTech extends Game{
     public void rejoindreSoloServeur(String saveName) throws Exception {
         ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
         new ServerContext(connexionBuilder);
-        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute);
+        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute, true);
         nouveauECS(clientConnexionHandler);
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
     }
 
-    public void generateNewSave(String name) throws IOException {
-        nouveauECS();
-        ecsEngine.generateNewSave(name);
+    public void generateNewSave(String saveName) throws Exception {
+        nouveauECS(saveName);
+        ecsEngine.generateNewSave(saveName);
     }
 
     public DataCtrl getDataCtrl() {

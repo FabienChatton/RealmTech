@@ -43,13 +43,18 @@ public class RealmtechClient {
                         ch.pipeline().addLast(new ClientHandler(clientExecute));
                     }
                 });
-        channel = b.connect(connexionBuilder.getHost(), connexionBuilder.getPort()).sync().channel();
+        try {
+            channel = b.connect(connexionBuilder.getHost(), connexionBuilder.getPort()).sync().channel();
+        } catch (Exception e) {
+            close();
+            throw e;
+        }
         channel.closeFuture().addListener(ChannelFutureListener.CLOSE);
     }
 
-    public ChannelFuture close() {
+    public void close() {
         group.shutdownGracefully();
-        return channel.close();
+        if (channel != null) channel.close();
     }
 
     public Channel getChannel() {

@@ -15,29 +15,28 @@ public class RealmtechClientConnexionHandler implements Closeable {
     private final RealmtechClient client;
 
 
-    public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws Exception {
-        try {
-            client = new RealmtechClient(connexionBuilder, clientExecute);
-        } catch (Exception e) {
-            close();
-            if (server != null) server.close();
-            throw e;
-        }
-    }
-
-    public RealmtechClientConnexionHandler(ClientExecute clientExecute) throws IOException {
-        try {
-            ConnexionBuilder connexionBuilder = ServerContext.builder();
-            if (!ServerNetty.isPortAvailable(connexionBuilder.getPort())) {
-                byte limite = 0;
-                do {
-                    connexionBuilder.setPort(new Random().nextInt(1024, 65565));
-                } while (!ServerNetty.isPortAvailable(connexionBuilder.getPort()) || ++limite < 10);
+    public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute, boolean ouvrirServeur) throws Exception {
+        if (ouvrirServeur) {
+            try {
+                client = new RealmtechClient(connexionBuilder, clientExecute);
+            } catch (Exception e) {
+                close();
+                if (server != null) server.close();
+                throw e;
             }
-            server = new ServerContext(connexionBuilder);
-            client = new RealmtechClient(connexionBuilder, clientExecute);
-        } catch (Exception e) {
-            throw new IOException(e);
+        } else {
+            try {
+                if (!ServerNetty.isPortAvailable(connexionBuilder.getPort())) {
+                    byte limite = 0;
+                    do {
+                        connexionBuilder.setPort(new Random().nextInt(1024, 65565));
+                    } while (!ServerNetty.isPortAvailable(connexionBuilder.getPort()) || ++limite < 10);
+                }
+                server = new ServerContext(connexionBuilder.setSaveName("default"));
+                client = new RealmtechClient(connexionBuilder, clientExecute);
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
         }
     }
 
