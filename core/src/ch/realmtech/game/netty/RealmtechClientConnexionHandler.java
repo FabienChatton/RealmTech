@@ -14,20 +14,17 @@ public class RealmtechClientConnexionHandler implements Closeable {
     private ServerContext server;
     private final RealmtechClient client;
 
-    /**
-     * Pour une connexion en multi
-     */
-    public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws IOException {
+
+    public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws Exception {
         try {
             client = new RealmtechClient(connexionBuilder, clientExecute);
         } catch (Exception e) {
-            throw new IOException(e);
+            close();
+            if (server != null) server.close();
+            throw e;
         }
     }
 
-    /**
-     * Destiner pour une connexion en solo
-     */
     public RealmtechClientConnexionHandler(ClientExecute clientExecute) throws IOException {
         try {
             ConnexionBuilder connexionBuilder = ServerContext.builder();
@@ -47,7 +44,7 @@ public class RealmtechClientConnexionHandler implements Closeable {
     @Override
     public void close() throws IOException {
         try {
-            client.close();
+            if (client != null) client.close();
             if (server != null) server.close();
         } catch (InterruptedException e) {
             throw new IOException(e);

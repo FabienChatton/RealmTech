@@ -234,7 +234,7 @@ public final class RealmTech extends Game{
         ecsEngine.loadInfFile(saveName);
     }
 
-    public void rejoindreMulti(String host, int port) throws IOException {
+    public void rejoindreMulti(String host, int port) throws Exception {
         RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute);
         nouveauECS(clientConnexionHandler);
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
@@ -242,8 +242,8 @@ public final class RealmTech extends Game{
 
     public void rejoindreSoloServeur(String saveName) throws Exception {
         ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
-        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute);
         new ServerContext(connexionBuilder);
+        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute);
         nouveauECS(clientConnexionHandler);
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
     }

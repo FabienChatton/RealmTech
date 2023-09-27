@@ -1,5 +1,6 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechCommuns.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtechCommuns.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ServerContext;
@@ -14,6 +15,7 @@ import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.TagManager;
 import com.artemis.systems.DelayedIteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -27,7 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
-@All(InfMapComponent.class)
+@All(PlayerConnexionComponent.class)
 public class MapSystemServer extends DelayedIteratingSystem {
     private final static String TAG = MapSystemServer.class.getSimpleName();
     private final static Logger logger = LoggerFactory.getLogger(MapSystemServer.class);
@@ -59,61 +61,66 @@ public class MapSystemServer extends DelayedIteratingSystem {
     private final static float INITALE_DELAY = 0.005f;
     private float delay = INITALE_DELAY;
 
-    protected void process(int mapId) {
-        IntBag players = world.getSystem(PlayerManagerServer.class).getPlayers();
-        int[] playersData = players.getData();
-        for (int p = 0; p < players.size(); p++) {
-            int playerId = playersData[p];
-            InfMapComponent infMapComponent = mInfMap.get(mapId);
-            PositionComponent positionPlayerComponent = mPosition.get(playerId);
-            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-            int[] ancienChunkPos = playerConnexionComponent.ancienChunkPos;
-            int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
-            int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
-            if (ancienChunkPos == null || !(ancienChunkPos[0] == chunkPosX && ancienChunkPos[1] == chunkPosY)) {
-                List<Integer> chunkADamner = trouveChunkADamner(infMapComponent, chunkPosX, chunkPosY);
+    protected void process(int playerId) {
+        int mapId = world.getSystem(TagManager.class).getEntityId("infMap");
+        InfMapComponent infMapComponent = mInfMap.get(mapId);
+        PositionComponent positionPlayerComponent = mPosition.get(playerId);
+        PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+        int[] ancienChunkPos = playerConnexionComponent.ancienChunkPos;
+        int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
+        int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
+        if (ancienChunkPos == null || !(ancienChunkPos[0] == chunkPosX && ancienChunkPos[1] == chunkPosY)) {
+            List<Integer> chunkADamner = trouveChunkADamner(infMapComponent, chunkPosX, chunkPosY);
 
-                int indexDamner = 0;
-                for (int i = -dataCtrl.option.renderDistance.get() + chunkPosX; i <= dataCtrl.option.renderDistance.get() + chunkPosX; i++) {
-                    for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
-                        final boolean changement = chunkSansChangement(infMapComponent, i, j);
-                        if (changement) {
-                            int newChunkId = getOrGenerateChunk(mapId, i, j);
-                            InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
+            int indexDamner = 0;
+            for (int i = -dataCtrl.option.renderDistance.get() + chunkPosX; i <= dataCtrl.option.renderDistance.get() + chunkPosX; i++) {
+                for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
+                    final boolean changement = chunkSansChangement(infMapComponent, i, j);
+                    if (changement) {
+                        int newChunkId = getOrGenerateChunk(mapId, i, j);
+                        InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
+                        if (indexDamner < chunkADamner.size()) {
+                            Integer oldChunk = chunkADamner.get(indexDamner++);
+                            InfChunkComponent infChunkComponentOld = mChunk.get(oldChunk);
+                            serverContext.getServerHandler().sendPacketTo(new ChunkADamnePacket(
+                                    infChunkComponentOld.chunkPosX,
+                                    infChunkComponentOld.chunkPosY
+                            ), playerConnexionComponent.channel);
                             serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
                                     infChunkComponent.chunkPosX,
                                     infChunkComponent.chunkPosY,
-                                    infChunkComponent.toBytes(mCell)),
-                                    playerConnexionComponent.channel
-                            );
-                            if (indexDamner < chunkADamner.size()) {
-                                Integer oldChunk = chunkADamner.get(indexDamner++);
-                                replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
-                                damneChunk(oldChunk, infMapComponent);
-                            } else {
-                                infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
-                            }
-                        }
-                        // la limite d'update de chunk pour ce process est atteint
-                        if (indexDamner >= dataCtrl.option.chunkParUpdate.get()) {
-                            return;
+                                    infChunkComponent.toBytes(mCell)
+                            ), playerConnexionComponent.channel);
+                            replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
+                            damneChunk(oldChunk, infMapComponent);
+                        } else {
+                            serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
+                                    infChunkComponent.chunkPosX,
+                                    infChunkComponent.chunkPosY,
+                                    infChunkComponent.toBytes(mCell)
+                            ), playerConnexionComponent.channel);
+                            infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
                         }
                     }
-                }
-                if (indexDamner < chunkADamner.size()) {
-                    for (int i = indexDamner; i < chunkADamner.size(); i++) {
-                        final int chunkId = chunkADamner.get(i);
-                        damneChunk(chunkId, infMapComponent);
-                        infMapComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(infMapComponent.infChunks, chunkId);
+                    // la limite d'update de chunk pour ce process est atteint
+                    if (indexDamner >= dataCtrl.option.chunkParUpdate.get()) {
+                        return;
                     }
                 }
             }
-            if (ancienChunkPos == null) {
-                ancienChunkPos = new int[2];
+            if (indexDamner < chunkADamner.size()) {
+                for (int i = indexDamner; i < chunkADamner.size(); i++) {
+                    final int chunkId = chunkADamner.get(i);
+                    damneChunk(chunkId, infMapComponent);
+                    infMapComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(infMapComponent.infChunks, chunkId);
+                }
             }
-            ancienChunkPos[0] = chunkPosX;
-            ancienChunkPos[1] = chunkPosY;
         }
+        if (ancienChunkPos == null) {
+            ancienChunkPos = new int[2];
+        }
+        ancienChunkPos[0] = chunkPosX;
+        ancienChunkPos[1] = chunkPosY;
     }
 
     /**
