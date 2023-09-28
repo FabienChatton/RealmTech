@@ -24,6 +24,7 @@ public class ChunkADamnePacket implements ClientPacket {
 
     @Override
     public void write(ByteBuf byteBuf) {
-
+        byteBuf.writeInt(chunkPosX);
+        byteBuf.writeInt(chunkPosY);
     }
 }
