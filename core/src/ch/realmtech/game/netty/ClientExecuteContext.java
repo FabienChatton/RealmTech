@@ -40,13 +40,18 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
-        int chunkId = InfChunkComponent.fromByte(context.getEcsEngine().getWorld(), chunkBytes, chunkPosX, chunkPosY);
-        Entity infMapEntity = context.getEcsEngine().getSystem(TagManager.class).getEntity("infMap");
-        context.getEcsEngine().getSystem(MapManager.class).ajouterChunkAMap(infMapEntity.getComponent(InfMapComponent.class).infChunks, chunkId);
+        Gdx.app.postRunnable(() -> {
+            int chunkId = InfChunkComponent.fromByte(context.getEcsEngine().getWorld(), chunkBytes, chunkPosX, chunkPosY);
+            Entity infMapEntity = context.getEcsEngine().getSystem(TagManager.class).getEntity("infMap");
+            InfMapComponent infMapComponent = infMapEntity.getComponent(InfMapComponent.class);
+            infMapComponent.infChunks = context.getEcsEngine().getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, chunkId);
+        });
     }
 
     @Override
     public void chunkADamner(int chunkPosX, int chunkPosY) {
-        context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY);
+        Gdx.app.postRunnable(() -> {
+            context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY);
+        });
     }
 }

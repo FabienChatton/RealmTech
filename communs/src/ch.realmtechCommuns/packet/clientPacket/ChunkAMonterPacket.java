@@ -26,7 +26,7 @@ public class ChunkAMonterPacket implements ClientPacket {
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        Gdx.app.postRunnable(() -> clientExecute.chunkAMounter(chunkPosX, chunkPosY, chunkBytes));
+        clientExecute.chunkAMounter(chunkPosX, chunkPosY, chunkBytes);
     }
 
     @Override

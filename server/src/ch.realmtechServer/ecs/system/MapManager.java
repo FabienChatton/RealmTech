@@ -10,6 +10,7 @@ import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -182,9 +183,9 @@ public class MapManager extends Manager {
     }
 
     public void damneChunkClient(int chunkPosX, int chunkPosY) {
-        InfMapComponent infMapComponent = mInfMap.get(world.getRegistered("infMap"));
+        InfMapComponent infMapComponent = mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap"));
         int chunkId = getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
-        supprimerChunkAMap(infMapComponent.infChunks, chunkId);
+        infMapComponent.infChunks = supprimerChunkAMap(infMapComponent.infChunks, chunkId);
         supprimeChunk(chunkId);
     }
 
