@@ -17,6 +17,7 @@ import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.DelayedIteratingSystem;
+import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 @All(PlayerConnexionComponent.class)
-public class MapSystemServer extends DelayedIteratingSystem {
+public class MapSystemServer extends IteratingSystem {
     private final static String TAG = MapSystemServer.class.getSimpleName();
     private final static Logger logger = LoggerFactory.getLogger(MapSystemServer.class);
 //    @Wire
@@ -58,21 +59,19 @@ public class MapSystemServer extends DelayedIteratingSystem {
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
-    private final static float INITALE_DELAY = 0.005f;
-    private float delay = INITALE_DELAY;
 
     protected void process(int playerId) {
         int mapId = world.getSystem(TagManager.class).getEntityId("infMap");
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-        int[] ancienChunkPos = playerConnexionComponent.ancienChunkPos;
         int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
         int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
-        if (ancienChunkPos == null || !(ancienChunkPos[0] == chunkPosX && ancienChunkPos[1] == chunkPosY)) {
+        if (playerConnexionComponent.ancienChunkPos == null || !(playerConnexionComponent.ancienChunkPos[0] == chunkPosX && playerConnexionComponent.ancienChunkPos[1] == chunkPosY)) {
             List<Integer> chunkADamner = trouveChunkADamner(infMapComponent, chunkPosX, chunkPosY);
 
             int indexDamner = 0;
+            stop:
             for (int i = -dataCtrl.option.renderDistance.get() + chunkPosX; i <= dataCtrl.option.renderDistance.get() + chunkPosX; i++) {
                 for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
                     final boolean changement = chunkSansChangement(infMapComponent, i, j);
@@ -104,7 +103,7 @@ public class MapSystemServer extends DelayedIteratingSystem {
                     }
                     // la limite d'update de chunk pour ce process est atteint
                     if (indexDamner >= dataCtrl.option.chunkParUpdate.get()) {
-                        return;
+                        break stop;
                     }
                 }
             }
@@ -115,12 +114,12 @@ public class MapSystemServer extends DelayedIteratingSystem {
                     infMapComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(infMapComponent.infChunks, chunkId);
                 }
             }
+            if (playerConnexionComponent.ancienChunkPos == null) {
+                playerConnexionComponent.ancienChunkPos = new int[2];
+            }
+            playerConnexionComponent.ancienChunkPos[0] = chunkPosX;
+            playerConnexionComponent.ancienChunkPos[1] = chunkPosY;
         }
-        if (ancienChunkPos == null) {
-            ancienChunkPos = new int[2];
-        }
-        ancienChunkPos[0] = chunkPosX;
-        ancienChunkPos[1] = chunkPosY;
     }
 
     /**
@@ -283,22 +282,6 @@ public class MapSystemServer extends DelayedIteratingSystem {
                 return;
             }
         }
-    }
-
-    @Override
-    protected float getRemainingDelay(int entityId) {
-        return delay;
-    }
-
-    @Override
-    protected void processDelta(int entityId, float accumulatedDelta) {
-        delay -= accumulatedDelta;
-    }
-
-    @Override
-    protected void processExpired(int mapId) {
-        process(mapId);
-        offerDelay(INITALE_DELAY);
     }
 
     public int getTopCell(int chunk, byte innerX, byte innerY) {
