@@ -137,13 +137,6 @@ public class PlayerManagerServer extends BaseSystem {
     public void playerMove(Channel clientChannel, float impulseX, float impulseY, Vector2 pos) {
         int playerId = getPlayerByChannel(clientChannel);
         Box2dComponent box2dComponent = mBox2d.get(playerId);
-        Vector2 worldCenter = box2dComponent.body.getWorldCenter();
-        box2dComponent.body.applyLinearImpulse(
-                impulseX,
-                impulseY,
-                worldCenter.x,
-                worldCenter.y,
-                true
-        );
+        box2dComponent.body.setTransform(pos.x, pos.y, box2dComponent.body.getAngle());
     }
 }
