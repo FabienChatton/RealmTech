@@ -2,24 +2,17 @@ package ch.realmtechServer.ecs.system;
 
 import ch.realmtechCommuns.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtechCommuns.packet.clientPacket.ChunkAMonterPacket;
-import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.level.cell.Cells;
-import ch.realmtechServer.level.cell.CreatePhysiqueBody;
-import ch.realmtechServer.level.map.WorldMap;
-import ch.realmtechServer.level.worldGeneration.PerlinNoise;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
-import com.artemis.systems.DelayedIteratingSystem;
 import com.artemis.systems.IteratingSystem;
-import com.artemis.utils.IntBag;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -28,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.util.*;
 
 @All(PlayerConnexionComponent.class)
@@ -172,7 +166,8 @@ public class MapSystemServer extends IteratingSystem {
         int chunkId;
         try {
             chunkId = world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | BufferUnderflowException e) {
+            if (e instanceof BufferUnderflowException) logger.error("Le chunk {},{} est corrompu", chunkX, chunkY);
             chunkId = world.getSystem(MapManager.class).generateNewChunk(mapId, chunkX, chunkY);
             try {
                 world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));

@@ -23,7 +23,7 @@ public class CommandThread extends Thread implements Closeable {
     @Override
     public void run() {
         while (run) {
-            if (scanner.hasNext()) {
+            if (scanner.hasNextLine()) {
                 String commande = scanner.next();
                 MasterCommand masterCommand = new MasterCommand(serverContext);
                 CommandLine commandLine = new CommandLine(masterCommand);

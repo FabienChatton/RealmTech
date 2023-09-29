@@ -69,7 +69,7 @@ public final class ECSEngine implements Disposable {
                 .withClient(new PlayerTextureAnimated())
                 .withClient(new UpdateBox2dWithPosition())
                 .withClient(new CameraFollowPlayerSystem())
-                .withClient(new ChunkRendererSystem())
+                .withClient(new MapRendererSystem())
                 .withClient(new CellBeingMineRenderSystem())
 //                .withClient(new CellHoverEtWailaSystem())
                 .withClient(new TextureRenderer())

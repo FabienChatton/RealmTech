@@ -89,6 +89,7 @@ public final class EcsEngineServer {
     public void saveMap() throws IOException {
         int infMap = world.getSystem(TagManager.class).getEntityId("infMap");
         world.getSystem(SaveInfManager.class).saveInfMap(infMap);
+        logger.info("carte sauvegarde");
     }
 
     public World getWorld() {

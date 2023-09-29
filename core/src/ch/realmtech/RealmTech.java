@@ -237,7 +237,6 @@ public final class RealmTech extends Game{
 
     public void rejoindreSoloServeur(String saveName) throws Exception {
         ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
-        new ServerContext(connexionBuilder);
         RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute, true);
         nouveauECS(clientConnexionHandler);
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());

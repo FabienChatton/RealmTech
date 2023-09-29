@@ -16,12 +16,11 @@ public class RealmtechClientConnexionHandler implements Closeable {
 
 
     public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute, boolean ouvrirServeur) throws Exception {
-        if (ouvrirServeur) {
+        if (!ouvrirServeur) {
             try {
                 client = new RealmtechClient(connexionBuilder, clientExecute);
             } catch (Exception e) {
                 close();
-                if (server != null) server.close();
                 throw e;
             }
         } else {
