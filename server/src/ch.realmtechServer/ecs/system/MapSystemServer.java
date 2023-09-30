@@ -156,8 +156,7 @@ public class MapSystemServer extends IteratingSystem {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int dstX = Math.abs(posX - infChunkComponent.chunkPosX);
         int dstY = Math.abs(posY - infChunkComponent.chunkPosY);
-        // à remplacer pour une valuer dans une configuration
-        return dstX <= 4 /*dataCtrl.option.renderDistance.get()*/ && dstY <= 4 /*dataCtrl.option.renderDistance.get()*/;
+        return dstX <=dataCtrl.option.renderDistance.get() && dstY <= dataCtrl.option.renderDistance.get();
     }
 
     private int getOrGenerateChunk(int mapId, int chunkX, int chunkY) {
