@@ -242,11 +242,6 @@ public final class RealmTech extends Game{
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
     }
 
-    public void generateNewSave(String saveName) throws Exception {
-        nouveauECS(saveName);
-        ecsEngine.generateNewSave(saveName);
-    }
-
     public DataCtrl getDataCtrl() {
         return dataCtrl;
     }

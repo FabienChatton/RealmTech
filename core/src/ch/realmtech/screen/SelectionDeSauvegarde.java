@@ -82,8 +82,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
                 return;
             }
             try {
-                context.generateNewSave(nouvelleCarteTextField.getText());
-                context.setScreen(ScreenType.GAME_SCREEN);
+                context.rejoindreSoloServeur(nouvelleCarteTextField.getText());
             } catch (Exception e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
             }
