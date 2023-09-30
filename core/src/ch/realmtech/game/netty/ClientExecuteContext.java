@@ -4,12 +4,7 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
-import ch.realmtechServer.ecs.component.InfChunkComponent;
-import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
-import ch.realmtechServer.ecs.system.MapSystemServer;
-import com.artemis.Entity;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 
 import java.util.HashMap;
@@ -40,18 +35,16 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
-        Gdx.app.postRunnable(() -> {
-            int chunkId = InfChunkComponent.fromByte(context.getEcsEngine().getWorld(), chunkBytes, chunkPosX, chunkPosY);
-            Entity infMapEntity = context.getEcsEngine().getSystem(TagManager.class).getEntity("infMap");
-            InfMapComponent infMapComponent = infMapEntity.getComponent(InfMapComponent.class);
-            infMapComponent.infChunks = context.getEcsEngine().getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, chunkId);
-        });
+        Gdx.app.postRunnable(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(chunkPosX, chunkPosY, chunkBytes));
     }
 
     @Override
     public void chunkADamner(int chunkPosX, int chunkPosY) {
-        Gdx.app.postRunnable(() -> {
-            context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY);
-        });
+        Gdx.app.postRunnable(() -> context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY));
+    }
+
+    @Override
+    public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
+        context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY);
     }
 }

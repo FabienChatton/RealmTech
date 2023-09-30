@@ -8,6 +8,7 @@ import ch.realmtechServer.level.worldGeneration.PerlinNoise;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
+import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
@@ -183,10 +184,14 @@ public class MapManager extends Manager {
     }
 
     public void damneChunkClient(int chunkPosX, int chunkPosY) {
-        InfMapComponent infMapComponent = mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap"));
+        InfMapComponent infMapComponent = getInfMap();
         int chunkId = getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
         infMapComponent.infChunks = supprimerChunkAMap(infMapComponent.infChunks, chunkId);
         supprimeChunk(chunkId);
+    }
+
+    private InfMapComponent getInfMap() {
+        return mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap"));
     }
 
     public void supprimeChunk(int chunkId) {
@@ -204,6 +209,22 @@ public class MapManager extends Manager {
         return ret;
     }
 
+    public void replaceChunk(int[] chunks, int oldChunk, int newChunkId) {
+        for (int i = 0; i < chunks.length; i++) {
+            if (chunks[i] == oldChunk) {
+                chunks[i] = newChunkId;
+                return;
+            }
+        }
+    }
+
+    public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
+        int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
+        Entity infMapEntity = world.getSystem(TagManager.class).getEntity("infMap");
+        InfMapComponent infMapComponent = infMapEntity.getComponent(InfMapComponent.class);
+        infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, chunkId);
+    }
+
     public int[] supprimerChunkAMap(int[] infChunks, int chunkId) {
         int[] ret = new int[infChunks.length - 1];
         for (int i = 0, j = 0; i < infChunks.length; i++) {
@@ -212,5 +233,13 @@ public class MapManager extends Manager {
             }
         }
         return ret;
+    }
+
+    public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
+        InfMapComponent infMap = getInfMap();
+        int oldChunkId = getChunk(oldChunkPosX, oldChunkPosY, infMap.infChunks);
+        int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
+        replaceChunk(infMap.infChunks, oldChunkId, chunkId);
+        supprimeChunk(oldChunkId);
     }
 }

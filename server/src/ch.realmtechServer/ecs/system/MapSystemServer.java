@@ -2,6 +2,7 @@ package ch.realmtechServer.ecs.system;
 
 import ch.realmtechCommuns.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtechCommuns.packet.clientPacket.ChunkAMonterPacket;
+import ch.realmtechCommuns.packet.clientPacket.ChunkAReplacePacket;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.level.cell.BreakCell;
@@ -75,16 +76,14 @@ public class MapSystemServer extends IteratingSystem {
                         if (indexDamner < chunkADamner.size()) {
                             Integer oldChunk = chunkADamner.get(indexDamner++);
                             InfChunkComponent infChunkComponentOld = mChunk.get(oldChunk);
-                            serverContext.getServerHandler().sendPacketTo(new ChunkADamnePacket(
+                            serverContext.getServerHandler().sendPacketTo(new ChunkAReplacePacket(
+                                    infChunkComponent.chunkPosX,
+                                    infChunkComponent.chunkPosY,
+                                    infChunkComponent.toBytes(mCell),
                                     infChunkComponentOld.chunkPosX,
                                     infChunkComponentOld.chunkPosY
                             ), playerConnexionComponent.channel);
-                            serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
-                                    infChunkComponent.chunkPosX,
-                                    infChunkComponent.chunkPosY,
-                                    infChunkComponent.toBytes(mCell)
-                            ), playerConnexionComponent.channel);
-                            replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
+                            world.getSystem(MapManager.class).replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
                             damneChunk(oldChunk, infMapComponent);
                         } else {
                             serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
@@ -269,14 +268,6 @@ public class MapSystemServer extends IteratingSystem {
             }
         }
         return ret;
-    }
-    private void replaceChunk(int[] chunks, int oldChunk, int newChunkId) {
-        for (int i = 0; i < chunks.length; i++) {
-            if (chunks[i] == oldChunk) {
-                chunks[i] = newChunkId;
-                return;
-            }
-        }
     }
 
     public int getTopCell(int chunk, byte innerX, byte innerY) {
