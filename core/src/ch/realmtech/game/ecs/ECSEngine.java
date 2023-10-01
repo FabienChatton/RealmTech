@@ -160,30 +160,6 @@ public final class ECSEngine implements Disposable {
         world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
     }
 
-    public void loadInfFile(String saveName) throws IOException {
-        int mapId = world.getSystem(SaveInfManager.class).readInfMap(saveName);
-        mapRequirementBeforeShow(mapId);
-    }
-
-    public void generateNewSave(String name) throws IOException {
-        int mapId = world.getSystem(SaveInfManager.class).generateNewSave(name);
-        InfMapComponent infMapComponent = world.getMapper(InfMapComponent.class).get(mapId);
-        int chunkId = world.getSystem(MapManager.class).generateNewChunk(mapId, 0, 0);
-        infMapComponent.infChunks = new int[]{chunkId};
-        mapRequirementBeforeShow(mapId);
-        world.getSystem(SaveInfManager.class).saveInfMap(mapId);
-    }
-
-    public void mapRequirementBeforeShow(int mapId) {
-        world.getSystem(TagManager.class).register("infMap", mapId);
-        InfMetaDonneesComponent metaDonnesComponent = world.getMapper(InfMapComponent.class).get(mapId).getMetaDonnesComponent(world);
-        int playerId = createPlayer(metaDonnesComponent.playerPositionX, metaDonnesComponent.playerPositionY);
-        Entity playerEntity = world.getEntity(playerId);
-        PositionComponent playerPositionComponent = playerEntity.getComponent(PositionComponent.class);
-        //connexionHandler.sendAndFlushPacketToServer(new PlayerconnexionPacket(playerPositionComponent.x, playerPositionComponent.y));
-
-    }
-
     public void saveInfMap() throws IOException {
         int mapId = getMapId();
         world.getSystem(SaveInfManager.class).saveInfMap(mapId);

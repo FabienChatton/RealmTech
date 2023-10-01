@@ -56,22 +56,21 @@ public class MapSystemServer extends IteratingSystem {
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     protected void process(int playerId) {
-        int mapId = world.getSystem(TagManager.class).getEntityId("infMap");
-        InfMapComponent infMapComponent = mInfMap.get(mapId);
+        InfMetaDonneesComponent infMetaDonnesComponent = mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap")).getMetaDonnesComponent(world);
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
         int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
         if (playerConnexionComponent.ancienChunkPos == null || !(playerConnexionComponent.ancienChunkPos[0] == chunkPosX && playerConnexionComponent.ancienChunkPos[1] == chunkPosY)) {
-            List<Integer> chunkADamner = trouveChunkADamner(infMapComponent, chunkPosX, chunkPosY);
+            List<Integer> chunkADamner = trouveChunkADamner(playerConnexionComponent.infChunks, chunkPosX, chunkPosY);
 
             int indexDamner = 0;
             stop:
             for (int i = -dataCtrl.option.renderDistance.get() + chunkPosX; i <= dataCtrl.option.renderDistance.get() + chunkPosX; i++) {
                 for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
-                    final boolean changement = chunkSansChangement(infMapComponent, i, j);
+                    final boolean changement = chunkSansChangement(playerConnexionComponent.infChunks, i, j);
                     if (changement) {
-                        int newChunkId = getOrGenerateChunk(mapId, i, j);
+                        int newChunkId = getOrGenerateChunk(infMetaDonnesComponent, i, j);
                         InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
                         if (indexDamner < chunkADamner.size()) {
                             Integer oldChunk = chunkADamner.get(indexDamner++);
@@ -83,15 +82,15 @@ public class MapSystemServer extends IteratingSystem {
                                     infChunkComponentOld.chunkPosX,
                                     infChunkComponentOld.chunkPosY
                             ), playerConnexionComponent.channel);
-                            world.getSystem(MapManager.class).replaceChunk(infMapComponent.infChunks, oldChunk, newChunkId);
-                            damneChunk(oldChunk, infMapComponent);
+                            world.getSystem(MapManager.class).replaceChunk(playerConnexionComponent.infChunks, oldChunk, newChunkId);
+                            damneChunk(oldChunk, infMetaDonnesComponent);
                         } else {
                             serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
                                     infChunkComponent.chunkPosX,
                                     infChunkComponent.chunkPosY,
                                     infChunkComponent.toBytes(mCell)
                             ), playerConnexionComponent.channel);
-                            infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
+                            playerConnexionComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(playerConnexionComponent.infChunks, newChunkId);
                         }
                     }
                     // la limite d'update de chunk pour ce process est atteint
@@ -103,8 +102,8 @@ public class MapSystemServer extends IteratingSystem {
             if (indexDamner < chunkADamner.size()) {
                 for (int i = indexDamner; i < chunkADamner.size(); i++) {
                     final int chunkId = chunkADamner.get(i);
-                    damneChunk(chunkId, infMapComponent);
-                    infMapComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(infMapComponent.infChunks, chunkId);
+                    damneChunk(chunkId, infMetaDonnesComponent);
+                    playerConnexionComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(playerConnexionComponent.infChunks, chunkId);
                 }
             }
             if (playerConnexionComponent.ancienChunkPos == null) {
@@ -118,10 +117,10 @@ public class MapSystemServer extends IteratingSystem {
     /**
      * Permet de savoir si le chunk n'a pas besoin d'être changé
      */
-    private boolean chunkSansChangement(InfMapComponent infMapComponent, int i, int j) {
+    private boolean chunkSansChangement(int[] infChunks, int i, int j) {
         boolean trouve = false;
-        for (int k = 0; k < infMapComponent.infChunks.length; k++) {
-            InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[k]);
+        for (int k = 0; k < infChunks.length; k++) {
+            InfChunkComponent infChunkComponent = mChunk.get(infChunks[k]);
             if (infChunkComponent.chunkPosX == i && infChunkComponent.chunkPosY == j) {
                 trouve = true;
                 break;
@@ -130,19 +129,19 @@ public class MapSystemServer extends IteratingSystem {
         return !trouve;
     }
 
-    private List<Integer> trouveChunkADamner(InfMapComponent infMapComponent, int chunkPosX, int chunkPosY) {
+    private List<Integer> trouveChunkADamner(int[] infChunks, int chunkPosX, int chunkPosY) {
         List<Integer> ret = new ArrayList<>(2 * dataCtrl.option.renderDistance.get() + 1);
-        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-            if (!chunkEstDansLaRenderDistance(infMapComponent.infChunks[i], chunkPosX, chunkPosY)) {
-                ret.add(infMapComponent.infChunks[i]);
+        for (int i = 0; i < infChunks.length; i++) {
+            if (!chunkEstDansLaRenderDistance(infChunks[i], chunkPosX, chunkPosY)) {
+                ret.add(infChunks[i]);
             }
         }
         return ret;
     }
 
-    private void damneChunk(int chunkId, InfMapComponent infMapComponent) {
+    private void damneChunk(int chunkId, InfMetaDonneesComponent infMetaDonneesComponent) {
         try {
-            world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(mMetaDonnees.get(infMapComponent.infMetaDonnees).saveName));
+            world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
         } catch (IOException e) {
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
             logger.error("Le chunk {},{} n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
@@ -159,14 +158,13 @@ public class MapSystemServer extends IteratingSystem {
         return dstX <=dataCtrl.option.renderDistance.get() && dstY <= dataCtrl.option.renderDistance.get();
     }
 
-    private int getOrGenerateChunk(int mapId, int chunkX, int chunkY) {
-        InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(mInfMap.get(mapId).infMetaDonnees);
+    private int getOrGenerateChunk(InfMetaDonneesComponent infMetaDonneesComponent, int chunkX, int chunkY) {
         int chunkId;
         try {
             chunkId = world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
         } catch (FileNotFoundException | BufferUnderflowException e) {
             if (e instanceof BufferUnderflowException) logger.error("Le chunk {},{} est corrompu", chunkX, chunkY);
-            chunkId = world.getSystem(MapManager.class).generateNewChunk(mapId, chunkX, chunkY);
+            chunkId = world.getSystem(MapManager.class).generateNewChunk(infMetaDonneesComponent, chunkX, chunkY);
             try {
                 world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
             } catch (IOException ex) {

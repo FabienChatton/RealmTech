@@ -6,11 +6,15 @@ import ch.realmtech.screen.ScreenType;
 import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.ecs.system.MapManager;
 import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class ClientExecuteContext implements ClientExecute {
+    private final static Logger logger = LoggerFactory.getLogger(ClientExecuteContext.class);
     private final RealmTech context;
 
     public ClientExecuteContext(RealmTech context) {
@@ -45,6 +49,10 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
-        context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY);
+        try {
+            context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY);
+        } catch (NoSuchElementException e) {
+            logger.error(e.toString(), e);
+        }
     }
 }

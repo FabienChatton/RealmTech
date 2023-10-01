@@ -118,12 +118,11 @@ public class MapManager extends Manager {
         supprimeCell(cellId);
     }
 
-    public int generateNewChunk(int mapId, int chunkPosX, int chunkPosY) {
+    public int generateNewChunk(InfMetaDonneesComponent infMetaDonneesComponent, int chunkPosX, int chunkPosY) {
         int chunkId = world.create();
-        InfMapComponent infMapComponent = mInfMap.get(mapId);
         List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
         for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
-            int[] cells = generateNewCells(infMapComponent.infMetaDonnees, chunkId, chunkPosX, chunkPosY, i);
+            int[] cells = generateNewCells(infMetaDonneesComponent, chunkId, chunkPosX, chunkPosY, i);
             for (int j = 0; j < cells.length; j++) {
                 cellsId.add(cells[j]);
             }
@@ -132,12 +131,12 @@ public class MapManager extends Manager {
         infChunkComponent.set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
         return chunkId;
     }
-    private int[] generateNewCells(int metaDonnees, int chunkId, int chunkPosX, int chunkPosY, short index) {
+    private int[] generateNewCells(InfMetaDonneesComponent infMetaDonneesComponent, int chunkId, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = MapManager.getInnerChunkX(index);
         byte innerChunkY = MapManager.getInnerChunkY(index);
         int worldX = MapManager.getWorldPos(chunkPosX, innerChunkX);
         int worldY = MapManager.getWorldPos(chunkPosY, innerChunkY);
-        PerlinNoise perlinNoise = mMetaDonnees.get(metaDonnees).perlinNoise;
+        PerlinNoise perlinNoise = infMetaDonneesComponent.perlinNoise;
         final CellRegisterEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
         final int[] cellIds = new int[(int) Arrays.stream(cellRegisterEntries).filter(Objects::nonNull).count()];
         for (int i = 0; i < cellRegisterEntries.length; i++) {

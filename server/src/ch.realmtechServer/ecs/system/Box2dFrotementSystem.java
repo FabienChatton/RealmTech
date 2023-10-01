@@ -16,6 +16,7 @@ public class Box2dFrotementSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         Box2dComponent box2dComponent = mBox2d.get(entityId);
+        if (box2dComponent == null ||box2dComponent.body == null) return;
         Vector2 linearVelocity = box2dComponent.body.getLinearVelocity();
         Vector2 worldCenter = box2dComponent.body.getWorldCenter();
         box2dComponent.body.applyLinearImpulse(new Vector2(-linearVelocity.x / 10, -linearVelocity.y / 10), worldCenter, true);
