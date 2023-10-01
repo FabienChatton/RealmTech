@@ -33,9 +33,7 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void playerMove(Channel clientChannel, float impulseX, float impulseY, Vector2 pos) {
         serverContext.nextTick(() -> {
-            System.out.println("debut");
             serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).playerMove(clientChannel, impulseX, impulseY, pos);
-            System.out.println("fin");
         });
     }
 }

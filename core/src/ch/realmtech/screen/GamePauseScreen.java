@@ -51,14 +51,15 @@ public class GamePauseScreen extends AbstractScreen {
     @Override
     public void hide() {
         super.hide();
-        context.getEcsEngine().getInGameSystemOnInventoryOpen().activeInGameSystemOnPause(context.getEcsEngine().getWorld());
+        if (context.getEcsEngine() != null) context.getEcsEngine().getInGameSystemOnInventoryOpen().activeInGameSystemOnPause(context.getEcsEngine().getWorld());
     }
 
     private ClickListener quiteAndSave() {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                context.quiteAndSave();
+                context.supprimeECS();
+                context.setScreen(ScreenType.MENU);
             }
         };
     }

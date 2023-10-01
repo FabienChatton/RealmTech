@@ -92,8 +92,8 @@ public final class ECSEngine implements Disposable {
                 PlayerInputSystem.class,
                 PhysiqueWorldStepSystem.class,
                 CellBeingMineSystem.class,
-                CellBeingMineRenderSystem.class,
-                CellHoverEtWailaSystem.class
+                CellBeingMineRenderSystem.class
+//                CellHoverEtWailaSystem.class
         );
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
