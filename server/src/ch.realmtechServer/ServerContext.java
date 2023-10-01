@@ -101,4 +101,7 @@ public class ServerContext {
     public ServerResponseHandler getServerHandler() {
         return serverResponseHandler;
     }
+    public void nextTick(Runnable runnable) {
+        ecsEngineServer.nextTickServer(runnable);
+    }
 }

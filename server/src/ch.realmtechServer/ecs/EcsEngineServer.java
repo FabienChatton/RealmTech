@@ -17,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class EcsEngineServer {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
@@ -24,6 +27,7 @@ public final class EcsEngineServer {
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
+    private final List<Runnable> nextTickServer;
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
@@ -32,6 +36,7 @@ public final class EcsEngineServer {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
+        nextTickServer = Collections.synchronizedList(new ArrayList<>());
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
 
@@ -94,5 +99,13 @@ public final class EcsEngineServer {
 
     public World getWorld() {
         return world;
+    }
+    public void processNextTickRunnable() {
+        nextTickServer.forEach(Runnable::run);
+        nextTickServer.clear();
+    }
+
+    public void nextTickServer(Runnable runnable) {
+        nextTickServer.add(runnable);
     }
 }

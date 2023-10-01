@@ -29,12 +29,13 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void autreJoueur(float x, float y, UUID uuid) {
-        if (context.getEcsEngine() == null) return;
-        HashMap<UUID, Integer> players = context.getEcsEngine().getSystem(PlayerManagerClient.class).getPlayers();
-        if (!players.containsKey(uuid)) {
-            context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
-        }
-        context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
+        context.nextTick(() -> {
+            HashMap<UUID, Integer> players = context.getEcsEngine().getSystem(PlayerManagerClient.class).getPlayers();
+            if (!players.containsKey(uuid)) {
+                context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
+            }
+            context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
+        });
     }
 
     @Override
