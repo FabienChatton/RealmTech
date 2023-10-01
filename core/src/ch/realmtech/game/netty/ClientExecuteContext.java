@@ -39,20 +39,19 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
-        Gdx.app.postRunnable(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(chunkPosX, chunkPosY, chunkBytes));
+        logger.debug("chunk à mounter {},{}", chunkPosX, chunkPosY);
+        context.nextTick(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(chunkPosX, chunkPosY, chunkBytes));
     }
 
     @Override
     public void chunkADamner(int chunkPosX, int chunkPosY) {
-        Gdx.app.postRunnable(() -> context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY));
+        logger.debug("chunk à damner {},{}", chunkPosX, chunkPosY);
+        context.nextTick(() -> context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY));
     }
 
     @Override
     public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
-        try {
-            context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY);
-        } catch (NoSuchElementException e) {
-            logger.error(e.toString(), e);
-        }
+        logger.debug("chunk à remplacer old {},{}. new {},{} ", oldChunkPosX, oldChunkPosY, chunkPosX, chunkPosY);
+        context.nextTick(() -> context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY));
     }
 }

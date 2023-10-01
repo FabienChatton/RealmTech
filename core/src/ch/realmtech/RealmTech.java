@@ -260,4 +260,7 @@ public final class RealmTech extends Game{
     public RealmtechClientConnexionHandler getConnexionHandler() {
         return ecsEngine.getConnexionHandler();
     }
+    public void nextTick(Runnable runnable) {
+        ecsEngine.nextTick(runnable);
+    }
 }

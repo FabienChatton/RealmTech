@@ -24,6 +24,9 @@ import com.badlogic.gdx.utils.Disposable;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class ECSEngine implements Disposable {
     private final static String TAG = ECSEngine.class.getSimpleName();
@@ -37,6 +40,7 @@ public final class ECSEngine implements Disposable {
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private final ServerInvocationStrategy serverInvocationStrategy;
     private final RealmtechClientConnexionHandler connexionHandler;
+    private final List<Runnable> nextTickRunnable;
 
     public ECSEngine(final RealmTech context, RealmtechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -45,6 +49,7 @@ public final class ECSEngine implements Disposable {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
+        nextTickRunnable = Collections.synchronizedList(new ArrayList<>());
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 .withClient(new PlayerManagerClient())
@@ -113,6 +118,8 @@ public final class ECSEngine implements Disposable {
     public void process(float delta) {
         world.setDelta(delta);
         world.process();
+        nextTickRunnable.forEach(Runnable::run);
+        nextTickRunnable.clear();
     }
 
     @Deprecated
@@ -232,5 +239,9 @@ public final class ECSEngine implements Disposable {
     }
     public RealmtechClientConnexionHandler getConnexionHandler() {
         return connexionHandler;
+    }
+
+    public void nextTick(Runnable runnable) {
+        nextTickRunnable.add(runnable);
     }
 }

@@ -16,10 +16,14 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MapManager extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(MapManager.class);
     @Wire(name = "physicWorld")
     private World physicWorld;
     @Wire
@@ -235,10 +239,17 @@ public class MapManager extends Manager {
     }
 
     public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
-        InfMapComponent infMap = getInfMap();
-        int oldChunkId = getChunk(oldChunkPosX, oldChunkPosY, infMap.infChunks);
-        int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
-        replaceChunk(infMap.infChunks, oldChunkId, chunkId);
-        supprimeChunk(oldChunkId);
+        try {
+            InfMapComponent infMap = getInfMap();
+            int oldChunkId = getChunk(oldChunkPosX, oldChunkPosY, infMap.infChunks);
+            int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
+            replaceChunk(infMap.infChunks, oldChunkId, chunkId);
+            supprimeChunk(oldChunkId);
+        } catch (NoSuchElementException e) {
+            logger.error("Le chunk {},{} n'a pas pu être remplacer par {},{}. Tous les chunks {}", oldChunkPosX, oldChunkPosY, chunkPosX, chunkPosY, Arrays.stream(getInfMap().infChunks).mapToObj(chunkId -> {
+                InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+                return infChunkComponent.chunkPosX + "," + infChunkComponent.chunkPosY;
+            }).collect(Collectors.toList()));
+        }
     }
 }

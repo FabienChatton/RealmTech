@@ -27,7 +27,6 @@ import java.util.*;
 
 @All(PlayerConnexionComponent.class)
 public class MapSystemServer extends IteratingSystem {
-    private final static String TAG = MapSystemServer.class.getSimpleName();
     private final static Logger logger = LoggerFactory.getLogger(MapSystemServer.class);
 //    @Wire
 //    private SoundManager soundManager;
@@ -94,18 +93,18 @@ public class MapSystemServer extends IteratingSystem {
                         }
                     }
                     // la limite d'update de chunk pour ce process est atteint
-                    if (indexDamner >= dataCtrl.option.chunkParUpdate.get()) {
-                        break stop;
-                    }
+//                    if (indexDamner >= dataCtrl.option.chunkParUpdate.get()) {
+//                        break stop;
+//                    }
                 }
             }
-            if (indexDamner < chunkADamner.size()) {
-                for (int i = indexDamner; i < chunkADamner.size(); i++) {
-                    final int chunkId = chunkADamner.get(i);
-                    damneChunk(chunkId, infMetaDonnesComponent);
-                    playerConnexionComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(playerConnexionComponent.infChunks, chunkId);
-                }
-            }
+//            if (indexDamner < chunkADamner.size()) {
+//                for (int i = indexDamner; i < chunkADamner.size(); i++) {
+//                    final int chunkId = chunkADamner.get(i);
+//                    damneChunk(chunkId, infMetaDonnesComponent);
+//                    playerConnexionComponent.infChunks = world.getSystem(MapManager.class).supprimerChunkAMap(playerConnexionComponent.infChunks, chunkId);
+//                }
+//            }
             if (playerConnexionComponent.ancienChunkPos == null) {
                 playerConnexionComponent.ancienChunkPos = new int[2];
             }
@@ -114,9 +113,6 @@ public class MapSystemServer extends IteratingSystem {
         }
     }
 
-    /**
-     * Permet de savoir si le chunk n'a pas besoin d'être changé
-     */
     private boolean chunkSansChangement(int[] infChunks, int i, int j) {
         boolean trouve = false;
         for (int k = 0; k < infChunks.length; k++) {
