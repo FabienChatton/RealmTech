@@ -1,7 +1,6 @@
 package ch.realmtechServer.ecs.component;
 
 import ch.realmtechServer.ecs.system.MapManager;
-import ch.realmtechServer.ecs.system.SaveInfManager;
 import com.artemis.ComponentMapper;
 import com.artemis.PooledComponent;
 import com.artemis.World;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
-import java.util.UUID;
 
 import static ch.realmtechServer.ecs.system.SaveInfManager.SAVE_PROTOCOLE_VERSION;
 

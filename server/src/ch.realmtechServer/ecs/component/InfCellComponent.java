@@ -3,11 +3,8 @@ package ch.realmtechServer.ecs.component;
 import ch.realmtechServer.level.cell.Cells;
 import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
-import com.artemis.World;
 
 import java.nio.ByteBuffer;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
 
 public class InfCellComponent extends PooledComponent {
     public final static Byte TAILLE_BYTES = 6;

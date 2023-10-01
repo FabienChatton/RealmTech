@@ -8,8 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
-import java.io.IOException;
-
 public class RejoindreMulti extends AbstractScreen {
     public static final String TAG = RejoindreMulti.class.getSimpleName();
 

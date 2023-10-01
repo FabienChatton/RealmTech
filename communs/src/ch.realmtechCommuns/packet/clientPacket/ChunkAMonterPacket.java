@@ -1,7 +1,7 @@
 package ch.realmtechCommuns.packet.clientPacket;
 
-import ch.realmtechCommuns.packet.data.ChunkDataPacket;
 import ch.realmtechCommuns.packet.ClientPacket;
+import ch.realmtechCommuns.packet.data.ChunkDataPacket;
 import io.netty.buffer.ByteBuf;
 
 public class ChunkAMonterPacket implements ClientPacket {

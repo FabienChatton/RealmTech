@@ -8,8 +8,6 @@ import ch.realmtechServer.level.cell.CellBehavior;
 import ch.realmtechServer.level.cell.Cells;
 import ch.realmtechServer.level.cell.CreatePhysiqueBody;
 import ch.realmtechServer.registery.*;
-import com.artemis.annotations.Wire;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 
 public class RealmTechCoreMod extends ModInitializerManager {

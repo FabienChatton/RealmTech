@@ -1,10 +1,9 @@
 package ch.realmtechServer.ecs;
 
+import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
 import ch.realmtechServer.options.DataCtrl;
-import ch.realmtechServer.ServerContext;
-import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;

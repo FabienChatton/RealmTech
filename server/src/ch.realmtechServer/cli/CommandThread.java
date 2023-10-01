@@ -1,8 +1,6 @@
 package ch.realmtechServer.cli;
 
 import ch.realmtechServer.ServerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.io.Closeable;

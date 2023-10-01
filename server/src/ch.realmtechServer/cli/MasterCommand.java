@@ -4,7 +4,7 @@ import ch.realmtechServer.ServerContext;
 
 import java.util.concurrent.Callable;
 
-import static picocli.CommandLine.*;
+import static picocli.CommandLine.Command;
 
 @Command(subcommands = {
         StopCommand.class,

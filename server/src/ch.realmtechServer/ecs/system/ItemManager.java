@@ -1,11 +1,11 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ecs.component.Box2dComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.PositionComponent;
 import ch.realmtechServer.ecs.component.TextureComponent;
 import ch.realmtechServer.registery.ItemRegisterEntry;
-import ch.realmtechServer.PhysiqueWorldHelper;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
 import com.artemis.Manager;

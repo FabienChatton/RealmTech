@@ -1,8 +1,6 @@
 package ch.realmtechServer.item;
 
-import ch.realmtechServer.mod.RealmTechCoreMod;
 import ch.realmtechServer.registery.CellRegisterEntry;
-import com.badlogic.gdx.Gdx;
 
 public class ItemBehavior {
     private int attackDommage;

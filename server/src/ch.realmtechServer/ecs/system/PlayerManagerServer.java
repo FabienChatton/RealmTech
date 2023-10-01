@@ -1,10 +1,10 @@
 package ch.realmtechServer.ecs.system;
 
-import ch.realmtechServer.PhysiqueWorldHelper;
-import ch.realmtechServer.ecs.component.*;
 import ch.realmtechCommuns.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechCommuns.packet.clientPacket.TousLesJoueurPacket;
+import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ecs.component.*;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;

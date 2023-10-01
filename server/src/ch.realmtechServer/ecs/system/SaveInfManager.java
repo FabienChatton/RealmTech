@@ -1,9 +1,7 @@
 package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.ecs.component.*;
-import ch.realmtechServer.level.cell.Cells;
 import ch.realmtechServer.options.DataCtrl;
-import ch.realmtechServer.registery.CellRegisterEntry;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -18,7 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class SaveInfManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(SaveInfManager.class);

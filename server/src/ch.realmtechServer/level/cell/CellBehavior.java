@@ -2,8 +2,6 @@ package ch.realmtechServer.level.cell;
 
 import ch.realmtechServer.item.ItemType;
 import ch.realmtechServer.mod.PlayerFootStepSound;
-import ch.realmtechServer.mod.RealmTechCoreMod;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
