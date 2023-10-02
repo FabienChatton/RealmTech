@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class CommandThread extends Thread implements Closeable {
     private final ServerContext serverContext;
     private final Scanner scanner;
-    private boolean run = true;
+    private volatile boolean run = true;
 
     public CommandThread(ServerContext serverContext) {
         super("Command Thread");

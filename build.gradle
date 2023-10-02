@@ -56,27 +56,7 @@ project(":server") {
     apply plugin: "java-library"
 
     dependencies {
-        implementation project(":communs")
         api 'info.picocli:picocli:4.7.5'
-    }
-}
-
-project(":core") {
-    apply plugin: "java-library"
-
-
-    dependencies {
-        implementation project(":communs")
-        implementation project(":server")
-        api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
-        api 'club.minnced:java-discord-rpc:2.0.1'
-    }
-}
-
-project(":communs") {
-    apply plugin: "java-library"
-
-    dependencies {
         api 'io.netty:netty-all:4.1.97.Final'
         api "net.onedaybeard.artemis:artemis-odb:2.3.0"
         api "net.mostlyoriginal.artemis-odb:contrib-core:2.4.0"
@@ -89,5 +69,16 @@ project(":communs") {
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+    }
+}
+
+project(":core") {
+    apply plugin: "java-library"
+
+
+    dependencies {
+        implementation project(":server")
+        api 'club.minnced:java-discord-rpc:2.0.1'
     }
 }

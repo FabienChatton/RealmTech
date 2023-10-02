@@ -1,6 +1,7 @@
-package ch.realmtechCommuns.packet;
+package ch.realmtechServer.packet;
 
-import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
+
+import ch.realmtechServer.packet.clientPacket.ClientExecute;
 
 public interface ClientPacket extends Packet {
     void executeOnClient(ClientExecute clientExecute);

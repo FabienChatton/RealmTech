@@ -1,6 +1,6 @@
-package ch.realmtechCommuns.packet.serverPacket;
+package ch.realmtechServer.packet.serverPacket;
 
-import ch.realmtechCommuns.packet.ServerPacket;
+import ch.realmtechServer.packet.ServerPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 

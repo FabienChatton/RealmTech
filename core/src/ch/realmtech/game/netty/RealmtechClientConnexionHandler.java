@@ -1,10 +1,10 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtechCommuns.packet.ServerPacket;
-import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.netty.ConnexionBuilder;
 import ch.realmtechServer.netty.ServerNetty;
+import ch.realmtechServer.packet.ServerPacket;
+import ch.realmtechServer.packet.clientPacket.ClientExecute;
 
 import java.io.Closeable;
 import java.io.IOException;

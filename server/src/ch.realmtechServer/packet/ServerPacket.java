@@ -1,6 +1,6 @@
-package ch.realmtechCommuns.packet;
+package ch.realmtechServer.packet;
 
-import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
+import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import io.netty.channel.Channel;
 
 public interface ServerPacket extends Packet {

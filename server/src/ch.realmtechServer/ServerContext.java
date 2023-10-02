@@ -1,14 +1,14 @@
 package ch.realmtechServer;
 
-import ch.realmtechCommuns.packet.PacketMap;
-import ch.realmtechCommuns.packet.ServerResponseHandler;
-import ch.realmtechCommuns.packet.clientPacket.*;
-import ch.realmtechCommuns.packet.serverPacket.DemandeDeConnexionJoueurPacket;
-import ch.realmtechCommuns.packet.serverPacket.PlayerMovePacket;
-import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.cli.CommandThread;
 import ch.realmtechServer.ecs.EcsEngineServer;
 import ch.realmtechServer.netty.*;
+import ch.realmtechServer.packet.PacketMap;
+import ch.realmtechServer.packet.ServerResponseHandler;
+import ch.realmtechServer.packet.clientPacket.*;
+import ch.realmtechServer.packet.serverPacket.DemandeDeConnexionJoueurPacket;
+import ch.realmtechServer.packet.serverPacket.PlayerMovePacket;
+import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.tick.TickThread;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;

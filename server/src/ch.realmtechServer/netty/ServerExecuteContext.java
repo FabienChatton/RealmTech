@@ -1,9 +1,9 @@
 package ch.realmtechServer.netty;
 
-import ch.realmtechCommuns.packet.clientPacket.ConnexionJoueurReussitPacket;
-import ch.realmtechCommuns.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
+import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 

@@ -1,6 +1,6 @@
 package ch.realmtechServer.netty;
 
-import ch.realmtechCommuns.packet.Packet;
+import ch.realmtechServer.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;

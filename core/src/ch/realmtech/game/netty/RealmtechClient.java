@@ -1,9 +1,9 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.netty.ConnexionBuilder;
 import ch.realmtechServer.netty.PacketDecoder;
 import ch.realmtechServer.netty.PacketEncoder;
+import ch.realmtechServer.packet.clientPacket.ClientExecute;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;

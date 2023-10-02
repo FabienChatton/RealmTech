@@ -1,7 +1,7 @@
 package ch.realmtechServer.netty;
 
-import ch.realmtechCommuns.packet.ClientPacket;
-import ch.realmtechCommuns.packet.ServerResponseHandler;
+import ch.realmtechServer.packet.ClientPacket;
+import ch.realmtechServer.packet.ServerResponseHandler;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
-package ch.realmtechCommuns.packet.clientPacket;
+package ch.realmtechServer.packet.clientPacket;
 
-import ch.realmtechCommuns.packet.ClientPacket;
+import ch.realmtechServer.packet.ClientPacket;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.buffer.ByteBuf;
 

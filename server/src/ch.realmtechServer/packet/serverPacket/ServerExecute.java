@@ -1,4 +1,4 @@
-package ch.realmtechCommuns.packet.serverPacket;
+package ch.realmtechServer.packet.serverPacket;
 
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;

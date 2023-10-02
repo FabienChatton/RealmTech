@@ -1,4 +1,4 @@
-package ch.realmtechCommuns.packet.clientPacket;
+package ch.realmtechServer.packet.clientPacket;
 
 import java.util.UUID;
 

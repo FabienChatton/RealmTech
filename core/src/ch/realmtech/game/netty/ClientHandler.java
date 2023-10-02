@@ -1,7 +1,7 @@
 package ch.realmtech.game.netty;
 
-import ch.realmtechCommuns.packet.ClientPacket;
-import ch.realmtechCommuns.packet.clientPacket.ClientExecute;
+import ch.realmtechServer.packet.ClientPacket;
+import ch.realmtechServer.packet.clientPacket.ClientExecute;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

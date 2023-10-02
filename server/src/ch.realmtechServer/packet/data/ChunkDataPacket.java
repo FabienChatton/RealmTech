@@ -1,4 +1,4 @@
-package ch.realmtechCommuns.packet.data;
+package ch.realmtechServer.packet.data;
 
 import io.netty.buffer.ByteBuf;
 
