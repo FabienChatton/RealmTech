@@ -7,7 +7,7 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 public class Discord {
     private final Thread mainThread;
     private Thread discordThread;
-    private boolean discordThreadRunning;
+    private volatile boolean discordThreadRunning;
 
     public Discord(Thread mainThread) {
         this.mainThread = mainThread;
@@ -36,6 +36,7 @@ public class Discord {
             }
         }, "RPC-Callback-Handler");
         discordThreadRunning = true;
+        discordThread.setDaemon(true);
         discordThread.start();
     }
 

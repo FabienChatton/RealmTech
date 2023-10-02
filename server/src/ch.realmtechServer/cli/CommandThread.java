@@ -9,13 +9,14 @@ import java.util.Scanner;
 
 public class CommandThread extends Thread implements Closeable {
     private final ServerContext serverContext;
-    private boolean run = true;
     private final Scanner scanner;
+    private boolean run = true;
 
     public CommandThread(ServerContext serverContext) {
         super("Command Thread");
         this.serverContext = serverContext;
         this.scanner = new Scanner(System.in);
+        this.setDaemon(true);
     }
 
     @Override
