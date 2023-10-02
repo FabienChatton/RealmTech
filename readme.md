@@ -40,13 +40,12 @@ Et importé la configuration dans le dossier .run
 6. [x] récupérer resources avec outils
 7. [x] system de craft
 8. [x] generation des minerais
-9. [ ] machine basique
+9. [x] machine basique
 
 ### infdev
 
 1. [x] carte infinie
-2. [ ] cycle jour, nuit
-3. [ ] spawn enemies
+2. [ ] serveur interne
 
 ### alpha
 
@@ -143,7 +142,7 @@ classDiagram
 Les inventaires permettent de stocker des items.
 Les inventaires sont un tableau de deux dimensions, représentant dans la
 première dimension, l'index de l'inventaire, et dans la deuxième,
-le nombre d'item (pas encore implémenté). L'inventaire peut être lié
+le nombre d'item. L'inventaire peut être lié
 à un system de craft pour qu'il puisse réaliser les crafts possibles.
 
 ## RealmTechData
@@ -202,10 +201,7 @@ seed, long
 #### Fichier .rsc
 Le nom du fichier qui correspond à un fichier .rsc, correspond à la position
 du chunk en jeu. Le nom du fichier contient la position X du chunk, un "," et
-La position Y du chunk. 12,23.rsc. Chaque fichier contient un petit header pour
-specifier la version du protocole de sauvegarde. Le header contient aussi
-un "tableau associatif" entre hash (int) et id (byte) des entrées des registres
-des celles pour éviter de les hash soit pour chaque cellule dans le fichier.
+La position Y du chunk, par exemple 12,-23.rsc. Chaque fichier la version du protocole de sauvegarde.
 ```text
 Métadonnées
     - version du protocole, int
@@ -221,7 +217,7 @@ Un chunk fait <code>version protocole (int) + nombre de cells * taille cell (sho
 Une cellule fait <code>6 bytes</code>.
 #### Fichier .psi
 
-Le fichier contient l'inventaire du joueur
+Le fichier contient l'inventaire du joueur (pas utilisé par le serveur)
 
 ```text
 Métadonnées
