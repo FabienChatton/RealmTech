@@ -8,4 +8,18 @@ dependencies {
 
 sourceSets.main.java.srcDirs = ["src/"]
 
+project.ext.mainClassName = "ch.realmtechServer.ServerContext"
+
+task run(dependsOn: classes, type: JavaExec) {
+    mainClass = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    ignoreExitValue = true
+
+    if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
+        // Required to run on macOS
+        jvmArgs += "-XstartOnFirstThread"
+    }
+}
+
 eclipse.project.name = appName + "-core"

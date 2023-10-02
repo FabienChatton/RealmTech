@@ -32,7 +32,6 @@ allprojects {
         mavenCentral()
         google()
         gradlePluginPortal()
-        jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }

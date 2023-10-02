@@ -1,8 +1,9 @@
 package ch.realmtechServer.options;
 
 import ch.realmtechServer.ecs.system.SaveInfManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DataCtrl {
-    private final static String TAG = DataCtrl.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(DataCtrl.class);
     public final static String ROOT_PATH = "RealmTechData";
     private final static String PATH_PROPERTIES = "properties";
     private final static String OPTIONS_FILE = "options.cfg";
@@ -38,7 +39,7 @@ public class DataCtrl {
     private static Option creerDefaultOption(final Properties propertiesFile) throws IOException {
         final Option option = new Option();
         saveOptionFile(propertiesFile, option);
-        Gdx.app.log(TAG, "fichier de configuration créé avec success");
+        logger.info("fichier de configuration créé avec success");
         return option;
     }
 

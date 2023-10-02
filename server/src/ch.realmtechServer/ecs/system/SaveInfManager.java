@@ -122,6 +122,7 @@ public class SaveInfManager extends Manager {
     public int readInfMap(String saveName) throws IOException {
         int worldId = world.create();
         Path rootSaveDirPath = Path.of(DataCtrl.ROOT_PATH + "/" + ROOT_PATH_SAVES + "/" + saveName);
+        logger.info("Lecture de la carte \"{}\"", rootSaveDirPath.toAbsolutePath());
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
         int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath);
         InfMetaDonneesComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
@@ -253,6 +254,7 @@ public class SaveInfManager extends Manager {
 
     private static void creerHiearchieDUneSave(String saveName) throws IOException {
         Path savePath = getSavePath(saveName);
+        logger.info("création de la sauvegarde \"{}\"", savePath.toAbsolutePath());
         creerHiearchieLevel(savePath);
         creerHiearchieChunk(savePath);
     }
