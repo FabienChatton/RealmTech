@@ -91,11 +91,13 @@ public final class ECSEngine implements Disposable {
                 .withServer(new FurnaceSystem())
                 .build();
         inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
-                PlayerInputSystem.class,
-                PhysiqueWorldStepSystem.class,
-                CellBeingMineSystem.class,
-                CellBeingMineRenderSystem.class
-//                CellHoverEtWailaSystem.class
+                new ArrayList<>(List.of(
+                        PlayerInputSystem.class,
+                        PhysiqueWorldStepSystem.class,
+                        CellBeingMineSystem.class,
+                        CellBeingMineRenderSystem.class
+//                        CellHoverEtWailaSystem.class
+                ))
         );
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
