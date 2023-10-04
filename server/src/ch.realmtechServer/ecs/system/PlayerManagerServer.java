@@ -123,6 +123,11 @@ public class PlayerManagerServer extends BaseSystem {
         throw new NoSuchElementException("Le player au channel " + clientChannel.toString() + " n'est pas dans la liste des joueurs");
     }
 
+    public PlayerConnexionComponent getPlayerConnexionComponentByChannel(Channel clientChannel) {
+        int playerId = getPlayerByChannel(clientChannel);
+        return mPlayerConnexion.get(playerId);
+    }
+
     public void removePlayer(Channel channel) {
         int[] playersConnexionData = players.getData();
         for (int i = 0; i < playersConnexionData.length; i++) {

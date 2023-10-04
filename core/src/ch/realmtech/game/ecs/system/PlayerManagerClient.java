@@ -130,4 +130,8 @@ public class PlayerManagerClient extends Manager {
             box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
         }
     }
+
+    public void removePlayer(UUID uuid) {
+        world.delete(getPlayers().get(uuid));
+    }
 }

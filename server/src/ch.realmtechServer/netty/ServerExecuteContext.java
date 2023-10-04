@@ -1,8 +1,10 @@
 package ch.realmtechServer.netty;
 
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtechServer.packet.clientPacket.DeconnectionJoueurPacket;
 import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
@@ -27,7 +29,9 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void removePlayer(Channel channel) {
+        PlayerConnexionComponent playerConnexionComponentChannel = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(channel);
         serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
+        serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(playerConnexionComponentChannel.uuid), channel);
     }
 
     @Override

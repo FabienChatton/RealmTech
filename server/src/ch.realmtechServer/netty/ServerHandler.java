@@ -35,8 +35,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> {
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         Channel incomingChannel = ctx.channel();
         logger.info("{} c'est déconnecté du serveur", incomingChannel.remoteAddress());
+        serverExecute.removePlayer(incomingChannel);
         channels.remove(incomingChannel);
-        serverExecute.removePlayer(ctx.channel());
     }
 
     @Override

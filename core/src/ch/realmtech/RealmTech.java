@@ -123,6 +123,10 @@ public final class RealmTech extends Game{
         }
     }
 
+    public ScreenType getScreenType() {
+        return currentScreenType;
+    }
+
 	public Skin getSkin() {
 		return skin;
 	}

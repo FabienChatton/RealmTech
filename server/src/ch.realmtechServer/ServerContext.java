@@ -35,6 +35,7 @@ public class ServerContext {
                 .put(ChunkAMonterPacket.class, ChunkAMonterPacket::new)
                 .put(ChunkADamnePacket.class, ChunkADamnePacket::new)
                 .put(ChunkAReplacePacket.class, ChunkAReplacePacket::new)
+                .put(DeconnectionJoueurPacket.class, DeconnectionJoueurPacket::new)
         ;
     }
 

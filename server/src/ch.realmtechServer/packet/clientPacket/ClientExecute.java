@@ -12,4 +12,8 @@ public interface ClientExecute {
     void chunkADamner(int chunkPosX, int chunkPosY);
 
     void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY);
+
+    void deconnectionJoueur(UUID uuid);
+
+    void clientConnexionRemoved();
 }

@@ -2,8 +2,11 @@ package ch.realmtech.game.netty;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
+import ch.realmtech.helper.Popup;
+import ch.realmtech.screen.GameScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import ch.realmtechServer.packet.clientPacket.ClientExecute;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
@@ -53,5 +56,20 @@ public class ClientExecuteContext implements ClientExecute {
     public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
 //        logger.debug("chunk à remplacer old {},{}. new {},{} ", oldChunkPosX, oldChunkPosY, chunkPosX, chunkPosY);
         context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY));
+    }
+
+    @Override
+    public void deconnectionJoueur(UUID uuid) {
+        context.nextFrame(() -> context.getEcsEngine().getSystem(PlayerManagerClient.class).removePlayer(uuid));
+    }
+
+    @Override
+    public void clientConnexionRemoved() {
+        Gdx.app.postRunnable(() -> {
+            if (context.getScreenType() == ScreenType.GAME_SCREEN) {
+                Gdx.app.postRunnable(() -> Popup.popupErreur(context, "Le serveur est fermé", context.getUiStage()));
+                context.setScreen(ScreenType.MENU);
+            }
+        });
     }
 }

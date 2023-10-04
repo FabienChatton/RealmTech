@@ -13,6 +13,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientPacket> {
     }
 
     @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        super.handlerRemoved(ctx);
+        clientExecute.clientConnexionRemoved();
+    }
+
+    @Override
     protected void channelRead0(ChannelHandlerContext ctx, ClientPacket msg) throws Exception {
         msg.executeOnClient(clientExecute);
     }
