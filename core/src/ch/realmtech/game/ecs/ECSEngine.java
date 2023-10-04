@@ -42,7 +42,7 @@ public final class ECSEngine implements Disposable {
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private final ServerInvocationStrategy serverInvocationStrategy;
     private final RealmtechClientConnexionHandler connexionHandler;
-    private final List<Runnable> nextTickRunnable;
+    private final List<Runnable> nextFrameRunnable;
 
     public ECSEngine(final RealmTech context, RealmtechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -51,7 +51,7 @@ public final class ECSEngine implements Disposable {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
-        nextTickRunnable = Collections.synchronizedList(new ArrayList<>());
+        nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 .withClient(new PlayerManagerClient())
@@ -122,8 +122,8 @@ public final class ECSEngine implements Disposable {
     public void process(float delta) {
         world.setDelta(delta);
         world.process();
-        nextTickRunnable.forEach(Runnable::run);
-        nextTickRunnable.clear();
+        nextFrameRunnable.forEach(Runnable::run);
+        nextFrameRunnable.clear();
     }
 
     @Deprecated
@@ -245,7 +245,7 @@ public final class ECSEngine implements Disposable {
         return connexionHandler;
     }
 
-    public void nextTick(Runnable runnable) {
-        nextTickRunnable.add(runnable);
+    public void nextFrame(Runnable runnable) {
+        nextFrameRunnable.add(runnable);
     }
 }
