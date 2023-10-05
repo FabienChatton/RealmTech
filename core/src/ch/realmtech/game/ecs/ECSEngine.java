@@ -7,7 +7,6 @@ import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
-import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.PlayerFootStepSound;
@@ -178,15 +177,6 @@ public final class ECSEngine implements Disposable {
     }
 
 
-    /**
-     * Donne l'id de la cellule via ses cordonnées dans le monde.
-     *
-     * @return l'id de la cellule ou -1 si pas trouvé.
-     */
-    public int getCell(float worldPosX, float worldPosY, byte layer) {
-        return world.getSystem(MapSystemServer.class).getCell(world.getMapper(InfMapComponent.class).get(world.getSystem(TagManager.class).getEntityId("infMap")).infChunks, (int) worldPosX, (int) worldPosY, layer);
-    }
-
     public void playFootStep(PlayerFootStepSound footStep) {
         context.getSoundManager().playFootStep(footStep.playerFootStepSound(), footStep.volume());
     }
@@ -231,7 +221,13 @@ public final class ECSEngine implements Disposable {
     public RealmtechClientConnexionHandler getConnexionHandler() {
         return connexionHandler;
     }
-
+    public Vector3 getGameCoordinate(Vector2 screenCoordinate) {
+        return context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
+    }
+    public int getTopCell(int chunk, Vector2 screenCoordinate) {
+        Vector3 gameCoordinate = getGameCoordinate(screenCoordinate);
+        return getWorld().getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(gameCoordinate.x), MapManager.getInnerChunk(gameCoordinate.y));
+    }
     public void nextFrame(Runnable runnable) {
         nextFrameRunnable.add(runnable);
     }

@@ -2,6 +2,8 @@ package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ecs.component.*;
+import ch.realmtechServer.level.cell.BreakCell;
+import ch.realmtechServer.level.cell.Cells;
 import ch.realmtechServer.level.cell.CreatePhysiqueBody;
 import ch.realmtechServer.level.map.WorldMap;
 import ch.realmtechServer.level.worldGeneration.PerlinNoise;
@@ -103,6 +105,132 @@ public class MapManager extends Manager {
             }
         }
         throw new NoSuchElementException("Il n'existe pas de chunk à la position " + chunkPosX + "," + chunkPosY + " dans cette map");
+    }
+    /**
+     * @return chunk id. -1 si pas trouvé
+     */
+    public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
+        int ret = -1;
+        int chunkX = MapManager.getChunkPos(worldPosX);
+        int chunkY = MapManager.getChunkPos(worldPosY);
+        for (int i = 0; i < chunks.length; i++) {
+            InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
+            if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
+                ret = chunks[i];
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public int getChunk(int[] chunks, float gameCoordinateX, float gameCoordinateY) {
+        int ret = -1;
+        int chunkX = MapManager.getChunkPos(gameCoordinateX);
+        int chunkY = MapManager.getChunkPos(gameCoordinateY);
+        for (int i = 0; i < chunks.length; i++) {
+            InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
+            if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
+                ret = chunks[i];
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public int getTopCell(int chunk, byte innerX, byte innerY) {
+        int ret = -1;
+        for (byte i = Cells.Layer.BUILD_DECO.layer; i >= 0; i--) {
+            int cellId = getCell(chunk, innerX, innerY, i);
+            if (cellId != -1) {
+                ret = cellId;
+                break;
+            }
+        }
+        return ret;
+    }
+
+
+    public void breakCell(int chunk, int cellId, int playerId) {
+        InfCellComponent infCellComponent = mCell.get(cellId);
+        BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+        if (breakCellEvent != null) {
+//            if (breakCellEvent.breakCell(world, chunk, cellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId))) {
+//                soundManager.playCellBreak();
+//            }
+        }
+    }
+
+    public int getCell(int chunk, byte innerX, byte innerY, byte layer) {
+        int ret = -1;
+        int[] cells = mChunk.get(chunk).infCellsId;
+        for (int i = 0; i < cells.length; i++) {
+            InfCellComponent infCellComponent = mCell.get(cells[i]);
+            if (infCellComponent.getInnerPosX() == innerX && infCellComponent.getInnerPosY() == innerY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
+                ret = cells[i];
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public int getCell(int chunkId, int worldPosX, int worldPosY, byte layer) {
+        int ret = -1;
+        int[] cells = mChunk.get(chunkId).infCellsId;
+        byte innerChunkX = MapManager.getInnerChunk(worldPosX);
+        byte innerChunkY = MapManager.getInnerChunk(worldPosY);
+        for (int i = 0; i < cells.length; i++) {
+            InfCellComponent infCellComponent = mCell.get(cells[i]);
+            if (infCellComponent.getInnerPosX() == innerChunkX && infCellComponent.getInnerPosY() == innerChunkY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
+                ret = cells[i];
+                break;
+            }
+        }
+        return ret;
+    }
+    private void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
+        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+        int cellId = world.getSystem(MapManager.class).newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
+        int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
+        System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
+        newCellsArray[newCellsArray.length - 1] = cellId;
+        infChunkComponent.infCellsId = newCellsArray;
+    }
+
+    public int findChunk(int[] chunks, int cellId) {
+        for (int chunk : chunks) {
+            InfChunkComponent infChunkComponent = mChunk.get(chunk);
+            for (int cell : infChunkComponent.infCellsId) {
+                if (cell == cellId) {
+                    return chunk;
+                }
+            }
+        }
+        throw new NoSuchElementException("Le chunk qui correspond à la cellule n'a pas été trouvé");
+    }
+
+    public boolean placeItemToBloc(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY, int selectedItem) {
+//        if (selectedItem > 0) {
+//            final ItemRegisterEntry selectedItemEntry = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()).itemRegisterEntry;
+//            if (selectedItemEntry.getItemBehavior().getPlaceCell() != null) {
+//                final byte innerX = getInnerChunk(gameCoordinateX);
+//                final byte innerY = getInnerChunk(gameCoordinateY);
+//                final int chunkId = getChunk(chunks, gameCoordinateX, gameCoordinateY);
+//                if (getCell(chunkId, innerX, innerY, selectedItemEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) == -1) {
+//                    newCellInChunk(chunkId, selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
+//                    return true;
+//                }
+//            }
+//        }
+        return false;
+    }
+
+    public boolean addCellBeingMine(int cellId) {
+        boolean ret = false;
+        if (!mCellBeingMine.has(cellId)) {
+            mCellBeingMine.create(cellId).set(0, mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakStepNeed());
+            ret = true;
+        }
+        return ret;
     }
 
     public void damneCell(int chunkId, int cellId) {
