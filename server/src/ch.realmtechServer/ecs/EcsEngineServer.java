@@ -4,6 +4,7 @@ import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
 import ch.realmtechServer.options.DataCtrl;
+import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class EcsEngineServer {
+public final class EcsEngineServer implements RealmtechECS {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
     private World world;
     private com.badlogic.gdx.physics.box2d.World physicWorld;
@@ -102,6 +103,10 @@ public final class EcsEngineServer {
     public void processNextTickRunnable() {
         nextTickServer.forEach(Runnable::run);
         nextTickServer.clear();
+    }
+    @Override
+    public Entity getMapEntity() {
+        return world.getSystem(TagManager.class).getEntity("infMap");
     }
 
     public void nextTickServer(Runnable runnable) {

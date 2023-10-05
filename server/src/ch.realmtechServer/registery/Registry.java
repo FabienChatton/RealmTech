@@ -48,7 +48,7 @@ public class Registry<T extends Entry<T>> {
         try {
             return getEnfants().get(getEnfantsId().indexOf(id));
         } catch (Exception e) {
-            logger.error("On dirait que cette id n'existe pas : {} Tous les enfants de ce registre : {}", id, getEnfants().stream()
+            logger.error("On dirait que cet id n'existe pas : {} Tous les enfants de ce registre : {}", id, getEnfants().stream()
                     .map(Registry::toString)
                     .reduce("", (s, s2) -> s + '\n' + s2));
             throw new RuntimeException(e);

@@ -9,6 +9,7 @@ import ch.realmtechServer.level.map.WorldMap;
 import ch.realmtechServer.level.worldGeneration.PerlinNoise;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechServer.registery.CellRegisterEntry;
+import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
@@ -106,21 +107,17 @@ public class MapManager extends Manager {
         }
         throw new NoSuchElementException("Il n'existe pas de chunk à la position " + chunkPosX + "," + chunkPosY + " dans cette map");
     }
-    /**
-     * @return chunk id. -1 si pas trouvé
-     */
+
     public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
-        int ret = -1;
         int chunkX = MapManager.getChunkPos(worldPosX);
         int chunkY = MapManager.getChunkPos(worldPosY);
         for (int i = 0; i < chunks.length; i++) {
             InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
             if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
-                ret = chunks[i];
-                break;
+                return chunks[i];
             }
         }
-        return ret;
+        throw new NoSuchElementException("Il n'existe pas de chunk à la position " + worldPosX + "," + worldPosY + " dans cette map");
     }
 
     public int getChunk(int[] chunks, float gameCoordinateX, float gameCoordinateY) {
@@ -150,14 +147,23 @@ public class MapManager extends Manager {
     }
 
 
-    public void breakCell(int chunk, int cellId, int playerId) {
+    public boolean breakCellServer(int chunkId, int cellId, int playerId, ItemRegisterEntry itemUseByPlayer) {
         InfCellComponent infCellComponent = mCell.get(cellId);
         BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
         if (breakCellEvent != null) {
-//            if (breakCellEvent.breakCell(world, chunk, cellId, mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()), mPlayer.get(playerId))) {
-//                soundManager.playCellBreak();
-//            }
+            boolean cellCasse = breakCellEvent.breakCell(world, chunkId, cellId, itemUseByPlayer);
+            if (cellCasse) {
+                supprimeCell(cellId);
+            }
+            return cellCasse;
+        } else {
+            return false;
         }
+    }
+
+    public void breakCellClient(int chunkId, int cellId, int playerId, int itemUsedByPlayerHash) {
+        BreakCell breakCellEvent = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+        breakCellEvent.breakCell(world, chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
     }
 
     public int getCell(int chunk, byte innerX, byte innerY, byte layer) {
@@ -172,7 +178,6 @@ public class MapManager extends Manager {
         }
         return ret;
     }
-
     public int getCell(int chunkId, int worldPosX, int worldPosY, byte layer) {
         int ret = -1;
         int[] cells = mChunk.get(chunkId).infCellsId;
@@ -187,6 +192,7 @@ public class MapManager extends Manager {
         }
         return ret;
     }
+
     private void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int cellId = world.getSystem(MapManager.class).newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
@@ -249,7 +255,6 @@ public class MapManager extends Manager {
         infChunkComponent.infCellsId = newCellIds;
         supprimeCell(cellId);
     }
-
     public int generateNewChunk(InfMetaDonneesComponent infMetaDonneesComponent, int chunkPosX, int chunkPosY) {
         int chunkId = world.create();
         List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
@@ -263,6 +268,7 @@ public class MapManager extends Manager {
         infChunkComponent.set(chunkPosX, chunkPosY, cellsId.stream().mapToInt(x -> x).toArray());
         return chunkId;
     }
+
     private int[] generateNewCells(InfMetaDonneesComponent infMetaDonneesComponent, int chunkId, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = MapManager.getInnerChunkX(index);
         byte innerChunkY = MapManager.getInnerChunkY(index);

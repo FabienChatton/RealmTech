@@ -7,6 +7,7 @@ import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
+import ch.realmtechServer.ecs.RealmtechECS;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.PlayerFootStepSound;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class ECSEngine implements Disposable {
+public final class ECSEngine implements Disposable, RealmtechECS {
     private final static String TAG = ECSEngine.class.getSimpleName();
 
     private final RealmTech context;
@@ -51,41 +52,41 @@ public final class ECSEngine implements Disposable {
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
-                .withClient(new PlayerManagerClient())
+                .withFrame(new PlayerManagerClient())
 
                 // manageur
-                .withClient(new TagManager())
-                .withClient(new ItemManager())
-                .withClient(new InventoryManager())
-                .withClient(new PhysiqueContactListenerManager())
-                .withClient(new SaveInfManager())
-                .withClient(new MapManager())
+                .withFrame(new TagManager())
+                .withFrame(new ItemManager())
+                .withFrame(new InventoryManager())
+                .withFrame(new PhysiqueContactListenerManager())
+                .withFrame(new SaveInfManager())
+                .withFrame(new MapManager())
 
                 // system
-                .withClient(new PlayerInputSystem())
+                .withFrame(new PlayerInputSystem())
 //                .withClient(new MapSystem())
-                .withClient(new CraftingPlayerSystem())
-                .withClient(new ItemBeingPickAnimationSystem())
-                .withClient(new PickUpOnGroundItemSystem())
-                .withClient(new PlayerMouvementSystem())
-                .withClient(new Box2dFrotementSystem())
+                .withFrame(new CraftingPlayerSystem())
+                .withFrame(new ItemBeingPickAnimationSystem())
+                .withFrame(new PickUpOnGroundItemSystem())
+                .withFrame(new PlayerMouvementSystem())
+                .withFrame(new Box2dFrotementSystem())
                 // render
-                .withClient(new PlayerTextureAnimated())
-                .withClient(new UpdateBox2dWithPosition())
-                .withClient(new CameraFollowPlayerSystem())
-                .withClient(new MapRendererSystem())
-                .withClient(new CellBeingMineRenderSystem())
+                .withFrame(new PlayerTextureAnimated())
+                .withFrame(new UpdateBox2dWithPosition())
+                .withFrame(new CameraFollowPlayerSystem())
+                .withFrame(new MapRendererSystem())
+                .withFrame(new CellBeingMineRenderSystem())
 //                .withClient(new CellHoverEtWailaSystem())
-                .withClient(new TextureRenderer())
+                .withFrame(new TextureRenderer())
 
                 // ui
-                .withClient(new PlayerInventorySystem())
+                .withFrame(new PlayerInventorySystem())
 //                .withClient(new ItemBarManager())
 
                 // server
-                .withServer(new CellBeingMineSystem())
-                .withServer(new PhysiqueWorldStepSystem())
-                .withServer(new FurnaceSystem())
+                .withTick(new CellBeingMineSystem())
+                .withTick(new PhysiqueWorldStepSystem())
+                .withTick(new FurnaceSystem())
                 .build();
         inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
                 new ArrayList<>(List.of(
@@ -155,23 +156,14 @@ public final class ECSEngine implements Disposable {
         return world;
     }
 
-    public ItemManager getItemManager() {
-        return world.getSystem(ItemManager.class);
-    }
-
     public void togglePlayerInventoryWindow() {
         world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
-    }
-
-    public void saveInfMap() throws IOException {
-        int mapId = getMapId();
-        world.getSystem(SaveInfManager.class).saveInfMap(mapId);
     }
 
     public int getMapId() {
         return world.getSystem(TagManager.class).getEntityId("infMap");
     }
-
+    @Override
     public Entity getMapEntity() {
         return world.getSystem(TagManager.class).getEntity("infMap");
     }

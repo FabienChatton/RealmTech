@@ -34,8 +34,8 @@ public class CellBeingMineSystem extends IteratingSystem {
             context.getSoundManager().playBreakingCell();
             if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) return;
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
-                world.getSystem(MapManager.class).breakCell(chunk, entityId, context.getEcsEngine().getPlayerId());
-                remove(entityId);
+//                world.getSystem(MapManager.class).breakCellServer(chunk, entityId, context.getEcsEngine().getPlayerId());
+//                remove(entityId);
             }
         } else {
             remove(entityId);

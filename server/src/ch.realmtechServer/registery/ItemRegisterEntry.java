@@ -73,7 +73,7 @@ public class ItemRegisterEntry implements Entry<ItemRegisterEntry> {
         return RealmTechCoreMod.ITEMS.getEnfants().stream()
                 .filter(itemRegisterEntryRegistryEntry -> itemRegisterEntryRegistryEntry.getID().hashCode() == itemModIdHash)
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("On dirait qu'un item est présente dans la sauvegarde mais dans le jeu. La sauvegarde n'a pas pu être chargé. Hash de l'item en question \"" + itemModIdHash + "\""))
+                .orElseThrow(() -> new NoSuchElementException("On dirait qu'un item est présente dans le jeu. Hash de l'item en question \"" + itemModIdHash + "\""))
                 .getEntry();
     }
 

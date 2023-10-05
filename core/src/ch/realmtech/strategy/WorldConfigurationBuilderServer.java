@@ -13,17 +13,17 @@ public class WorldConfigurationBuilderServer {
         this.invocationStrategyServer = invocationStrategyServer;
     }
 
-    public WorldConfigurationBuilderServer dependsOn(Class type) {
+    public WorldConfigurationBuilderServer dependsOn(Class<?> type) {
         worldConfigurationBuilder.dependsOn(type);
         return this;
     }
 
-    public WorldConfigurationBuilderServer withClient(BaseSystem clientSystem) {
+    public WorldConfigurationBuilderServer withFrame(BaseSystem clientSystem) {
         worldConfigurationBuilder.with(clientSystem);
         return this;
     }
 
-    public WorldConfigurationBuilderServer withServer(BaseSystem serverSystem) {
+    public WorldConfigurationBuilderServer withTick(BaseSystem serverSystem) {
         worldConfigurationBuilder.with(serverSystem);
         invocationStrategyServer.registerServerSystem(serverSystem);
         return this;

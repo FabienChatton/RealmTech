@@ -3,10 +3,9 @@ package ch.realmtech.game.netty;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.helper.Popup;
-import ch.realmtech.screen.GameScreen;
 import ch.realmtech.screen.ScreenType;
+import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
-import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import ch.realmtechServer.packet.clientPacket.ClientExecute;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
@@ -70,6 +69,17 @@ public class ClientExecuteContext implements ClientExecute {
                 Gdx.app.postRunnable(() -> Popup.popupErreur(context, "Le serveur est fermé", context.getUiStage()));
                 context.setScreen(ScreenType.MENU);
             }
+        });
+    }
+
+    @Override
+    public void cellBreak(int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, UUID playerUUID, int itemUsedByPlayerHash) {
+        context.nextFrame(() -> {
+            int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+            int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
+            int cellId = context.getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
+            int playerId = context.getSystem(PlayerManagerClient.class).getPlayers().get(playerUUID);
+            context.getSystem(MapManager.class).breakCellClient(chunkId, cellId, playerId, itemUsedByPlayerHash);
         });
     }
 }

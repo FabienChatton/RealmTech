@@ -10,13 +10,13 @@ import ch.realmtechServer.registery.ItemRegisterEntry;
 public class BreakCellEvent {
 
     public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntry) {
-        return (world, chunkId, cellId, itemUse, playerComponent) -> {
+        return (world, chunkId, cellId, itemUseByPlayer) -> {
             if (itemRegisterEntry != null) {
                 InfCellComponent cellComponent = world.getMapper(InfCellComponent.class).get(cellId);
                 InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
-                if (cellComponent != null && playerComponent != null) {
-                    final ItemType itemTypeUse = itemUse != null
-                            ? itemUse.itemRegisterEntry.getItemBehavior().getItemType()
+                if (cellComponent != null) {
+                    final ItemType itemTypeUse = itemUseByPlayer != null
+                            ? itemUseByPlayer.getItemBehavior().getItemType()
                             : ItemType.TOUS;
                     if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS
                             || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemTypeUse) {
@@ -35,7 +35,7 @@ public class BreakCellEvent {
     }
 
     public BreakCell dropNothing() {
-        return (world, chunkId, cellId, itemComponent, playerComponent) -> {
+        return (world, chunkId, cellId, itemUseByPlayer) -> {
             world.getSystem(MapManager.class).damneCell(chunkId, cellId);
             return true;
         };

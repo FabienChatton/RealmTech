@@ -24,39 +24,6 @@ public class RealmTechCoreMod extends ModInitializerManager {
         RealmTechCoreCraftingRecipe.initFurnaceRecipe(FURNACE_RECIPE);
     }
 
-    //<editor-fold desc="registre des cellules">
-    public final static CellRegisterEntry GRASS_CELL = registerCell("grass", new CellRegisterEntry(
-            "grass-01",
-            CellBehavior.builder(Cells.Layer.GROUND)
-                    //.playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
-                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
-                    .build()
-    ));
-    public final static CellRegisterEntry SAND_CELL = registerCell("sand", new CellRegisterEntry(
-            "sand-01",
-            CellBehavior.builder(Cells.Layer.GROUND)
-                    //.playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
-                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
-                    .build()
-    ));
-    public final static CellRegisterEntry WATER_CELL = registerCell("water", new CellRegisterEntry(
-            "water-01",
-            CellBehavior.builder(Cells.Layer.GROUND)
-                    .speedEffect(0.5f)
-                    //.playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
-                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
-                    .build()
-    ));
-    public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
-            "tree-02",
-            CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.TOUS, "realmtech.buche")
-                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .build()
-    ));
-    //</editor-fold>
-
-
     //<editor-fold desc="registre des items">
     public final static ItemRegisterEntry NO_ITEM = registerItem("noitem", new ItemRegisterEntry(
             "default-texture",
@@ -144,6 +111,38 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static ItemRegisterEntry ICON_FURNACE_ARROW_08 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-08", ItemBehavior.builder().icon().build()));
     public final static ItemRegisterEntry ICON_FURNACE_ARROW_09 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-09", ItemBehavior.builder().icon().build()));
     public final static ItemRegisterEntry ICON_FURNACE_ARROW_10 = registerItem("iconFurnaceArrow", new ItemRegisterEntry("furnace-arrow-10", ItemBehavior.builder().icon().build()));
+    //</editor-fold>
+
+    //<editor-fold desc="registre des cellules">
+    public final static CellRegisterEntry GRASS_CELL = registerCell("grass", new CellRegisterEntry(
+            "grass-01",
+            CellBehavior.builder(Cells.Layer.GROUND)
+                    //.playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
+                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
+                    .build()
+    ));
+    public final static CellRegisterEntry SAND_CELL = registerCell("sand", new CellRegisterEntry(
+            "sand-01",
+            CellBehavior.builder(Cells.Layer.GROUND)
+                    //.playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
+                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
+                    .build()
+    ));
+    public final static CellRegisterEntry WATER_CELL = registerCell("water", new CellRegisterEntry(
+            "water-01",
+            CellBehavior.builder(Cells.Layer.GROUND)
+                    .speedEffect(0.5f)
+                    //.playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
+                    .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
+                    .build()
+    ));
+    public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
+            "tree-02",
+            CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                    .breakWith(ItemType.TOUS, "realmtech.buche")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .build()
+    ));
     //</editor-fold>
 
 

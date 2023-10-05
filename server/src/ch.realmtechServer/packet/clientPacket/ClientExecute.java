@@ -16,4 +16,6 @@ public interface ClientExecute {
     void deconnectionJoueur(UUID uuid);
 
     void clientConnexionRemoved();
+
+    void cellBreak(int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, UUID playerUUID, int itemUsedByPlayerHash);
 }
