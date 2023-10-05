@@ -168,19 +168,6 @@ public final class RealmTech extends Game{
         return textureAtlas;
     }
 
-    public void quiteAndSave() {
-        try {
-            ecsEngine.saveInfMap();
-            ecsEngine.savePlayerInventory();
-        } catch (IOException e) {
-            Gdx.app.error(TAG, "impossible de sauvegarder", e);
-        } finally {
-            setScreen(ScreenType.MENU);
-            gameScreen = null;
-            supprimeECS();
-        }
-    }
-
     public void drawGameScreen() {
         if (gameScreen != null) {
             gameScreen.draw();
@@ -205,18 +192,6 @@ public final class RealmTech extends Game{
         }
     }
 
-    public void nouveauECS(String saveName) throws Exception {
-        if (ecsEngine != null) {
-            supprimeECS();
-        }
-        try {
-            RealmtechClientConnexionHandler connexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setSaveName(saveName), clientExecute, false);
-            ecsEngine = new ECSEngine(this, connexionHandler);
-        } catch (Exception e) {
-            supprimeECS();
-            throw e;
-        }
-    }
     public void nouveauECS(RealmtechClientConnexionHandler clientConnexionHandler) throws IOException {
         if (ecsEngine != null) {
             supprimeECS();

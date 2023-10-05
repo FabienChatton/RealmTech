@@ -30,6 +30,7 @@ public class PlayerManagerClient extends Manager {
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
     private final HashMap<UUID, Integer> players;
+    public final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
 
     {
         players = new HashMap<>();
@@ -40,8 +41,8 @@ public class PlayerManagerClient extends Manager {
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
-        if (!world.getSystem(TagManager.class).isRegistered("MAIN_PLAYER")) {
-            world.getSystem(TagManager.class).register("MAIN_PLAYER", playerId);
+        if (!world.getSystem(TagManager.class).isRegistered(MAIN_PLAYER_TAG)) {
+            world.getSystem(TagManager.class).register(MAIN_PLAYER_TAG, playerId);
             int mapId = world.create();
             InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
             infMapComponent.infChunks = new int[0];

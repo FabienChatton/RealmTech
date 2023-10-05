@@ -61,7 +61,7 @@ public class GameScreen extends AbstractScreen {
         }
         // open inventory
         if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get())) {
-//            context.getEcsEngine().togglePlayerInventoryWindow();
+            context.getEcsEngine().togglePlayerInventoryWindow();
         }
 
         if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.keyDropItem.get())) {

@@ -3,7 +3,6 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
-import ch.realmtechServer.ecs.component.PlayerComponent;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -44,7 +43,7 @@ public class ItemBarManager extends BaseSystem {
 
     public void displayPlayerItemBar() {
         itemBar.clear();
-        int player = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+        int player = world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         final InventoryComponent inventoryComponent = mInventory.get(player);
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
@@ -68,7 +67,7 @@ public class ItemBarManager extends BaseSystem {
     }
 
     public void setSlotSelected(byte newSlotDesired) {
-        int player = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+        int player = world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
         byte newSlot = newSlotDesired;
         int numberOfSlotParRow = mInventory.get(player).numberOfSlotParRow;
         if (newSlotDesired >= numberOfSlotParRow) {
@@ -89,7 +88,7 @@ public class ItemBarManager extends BaseSystem {
     }
 
     public int[][] getItemBarItems() {
-        int player = world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+        int player = world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
         int[][] inventory = mInventory.get(player).inventory;
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         int[][] ret = new int[InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW][InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW];

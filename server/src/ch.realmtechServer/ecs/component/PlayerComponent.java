@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 
 public class PlayerComponent extends Component {
-    public final static String TAG = "PLAYER";
     public boolean moveUp;
     public boolean moveDown;
     public boolean moveLeft;
@@ -29,9 +28,5 @@ public class PlayerComponent extends Component {
      */
     public static boolean isMainPlayer(int playerId, World world) {
         return world.getSystem(TagManager.class).getEntityId("MAIN_PLAYER") == playerId;
-    }
-
-    public static int getMainPlayer(World world) {
-        return world.getSystem(TagManager.class).getEntityId("MAIN_PLAYER");
     }
 }

@@ -8,9 +8,7 @@ import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
 import ch.realmtechServer.ecs.component.InfMapComponent;
-import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
-import ch.realmtechServer.ecs.component.PlayerComponent;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.PlayerFootStepSound;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
@@ -126,11 +124,6 @@ public final class ECSEngine implements Disposable {
         nextFrameRunnable.clear();
     }
 
-    @Deprecated
-    public int createPlayer(float x, float y) {
-        return 0;
-    }
-
     @Override
     public void dispose() {
         world.dispose();
@@ -151,11 +144,11 @@ public final class ECSEngine implements Disposable {
     }
 
     public int getPlayerId() {
-        return world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG);
+        return world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
     }
 
     public Entity getPlayerEntity() {
-        return world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG);
+        return world.getSystem(TagManager.class).getEntity(PlayerManagerClient.MAIN_PLAYER_TAG);
     }
 
 
@@ -204,12 +197,6 @@ public final class ECSEngine implements Disposable {
 
     public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {
         world.getSystem(SaveInfManager.class).saveInfChunk(infChunkId, rootSaveDirPath);
-    }
-
-    public void savePlayerInventory() throws IOException {
-        InventoryComponent playerInventory = getPlayerEntity().getComponent(InventoryComponent.class);
-        int mapId = getMapId();
-        world.getSystem(SaveInfManager.class).savePlayerInventory(playerInventory, mapId);
     }
 
     public void dropCurentPlayerItem() {

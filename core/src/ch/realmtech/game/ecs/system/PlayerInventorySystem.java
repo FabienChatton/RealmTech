@@ -196,9 +196,9 @@ public class PlayerInventorySystem extends BaseSystem {
 
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
                     DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
-                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingInventory), craftingInventory)
+                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).craftingInventory), craftingInventory)
                             .build(),
-                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).craftingResultInventory), craftingResultInventory)
+                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).craftingResultInventory), craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
             });

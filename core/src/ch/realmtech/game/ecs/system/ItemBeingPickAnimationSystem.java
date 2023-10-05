@@ -2,12 +2,10 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtechServer.ecs.component.Box2dComponent;
 import ch.realmtechServer.ecs.component.ItemBeingPickComponent;
-import ch.realmtechServer.ecs.component.PlayerComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Body;
 
 @All({ItemBeingPickComponent.class, Box2dComponent.class})
@@ -22,7 +20,7 @@ public class ItemBeingPickAnimationSystem extends IteratingSystem {
         ItemBeingPickComponent itemBeingPickComponent = mItemPick.get(itemId);
         Box2dComponent box2dComponent = mBox2D.get(itemId);
         Body itemBody = box2dComponent.body;
-        Body playerBody = mBox2D.get(world.getSystem(TagManager.class).getEntityId(PlayerComponent.TAG)).body;
+        Body playerBody = mBox2D.get(world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).body;
         itemBody.applyLinearImpulse(
                 (playerBody.getWorldCenter().x - itemBody.getWorldCenter().x) * FORCE_D_ATTRACTION,
                 (playerBody.getWorldCenter().y - itemBody.getWorldCenter().y) * FORCE_D_ATTRACTION,
@@ -30,6 +28,5 @@ public class ItemBeingPickAnimationSystem extends IteratingSystem {
                 itemBody.getWorldCenter().y,
                 true
         );
-        Gdx.app.debug(TAG, "l'item (" + itemId + ") est attire vers l'entite (" + itemBeingPickComponent.picker +")");
     }
 }
