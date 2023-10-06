@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class EcsEngineServer implements RealmtechECS {
+public final class EcsEngineServer {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
     private World world;
     private com.badlogic.gdx.physics.box2d.World physicWorld;
@@ -103,10 +103,6 @@ public final class EcsEngineServer implements RealmtechECS {
     public void processNextTickRunnable() {
         nextTickServer.forEach(Runnable::run);
         nextTickServer.clear();
-    }
-    @Override
-    public Entity getMapEntity() {
-        return world.getSystem(TagManager.class).getEntity("infMap");
     }
 
     public void nextTickServer(Runnable runnable) {

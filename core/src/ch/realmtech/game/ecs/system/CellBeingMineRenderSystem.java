@@ -59,7 +59,7 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
         if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) {
             pourQuinze = 1;
         } else {
-            pourQuinze = Math.max((int) ((cellBeingMineComponent.currentStep) * 15f / (float) cellBeingMineComponent.step), 1);
+            pourQuinze = Math.min(15, Math.max((int) ((cellBeingMineComponent.currentStep) * 15f / (float) cellBeingMineComponent.step), 1));
         }
         String textureFormat;
         if (pourQuinze < 10) {

@@ -4,6 +4,8 @@ import ch.realmtech.RealmTech;
 import ch.realmtechServer.ecs.component.CellBeingMineComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.mod.RealmTechCoreMod;
+import ch.realmtechServer.packet.serverPacket.CellBreakRequestPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -34,6 +36,11 @@ public class CellBeingMineSystem extends IteratingSystem {
             context.getSoundManager().playBreakingCell();
             if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) return;
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
+                int chunkPosX = MapManager.getChunkPos(gameCoordinate.x);
+                int chunkPosY = MapManager.getChunkPos(gameCoordinate.y);
+                byte innerChunkX = MapManager.getInnerChunk(gameCoordinate.x);
+                byte innerChunkY = MapManager.getInnerChunk(gameCoordinate.y);
+                context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, RealmTechCoreMod.NO_ITEM));
 //                world.getSystem(MapManager.class).breakCellServer(chunk, entityId, context.getEcsEngine().getPlayerId());
 //                remove(entityId);
             }

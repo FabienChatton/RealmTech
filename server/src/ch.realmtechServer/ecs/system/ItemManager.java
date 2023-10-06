@@ -17,7 +17,9 @@ public class ItemManager extends Manager {
     private final static String TAG = ItemManager.class.getSimpleName();
     @Wire(name = "physicWorld")
     private World physicWorld;
+    @Wire
     private BodyDef bodyDef;
+    @Wire
     private FixtureDef fixtureDef;
     private Archetype defaultItemGroundArchetype;
     private Archetype defaultItemInventoryArchetype;
@@ -93,7 +95,7 @@ public class ItemManager extends Manager {
         Body itemBody = physicWorld.createBody(bodyDef);
         itemBody.setUserData(itemId);
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(texture.getRegionWidth() / 1 /*RealmTech.PPM*/, texture.getRegionHeight() / 1 /*RealmTech.PPM*/);
+        polygonShape.setAsBox(32, 32);
         fixtureDef.shape = polygonShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
         fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT | PhysiqueWorldHelper.BIT_PLAYER;

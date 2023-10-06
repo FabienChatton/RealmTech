@@ -50,7 +50,7 @@ public class ServerExecuteContext implements ServerExecute {
         serverContext.nextTick(() -> {
             int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
-            int[] infChunks = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+            int[] infChunks = playerConnexionComponent.infChunks;
             int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
             int cellId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
             if (serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).breakCellServer(chunkId, cellId, playerId, ItemRegisterEntry.getItemByHash(itemUseByPlayerHash))) {

@@ -21,6 +21,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Disposable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class ECSEngine implements Disposable, RealmtechECS {
-    private final static String TAG = ECSEngine.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(ECSEngine.class);
 
     private final RealmTech context;
 
@@ -131,7 +133,7 @@ public final class ECSEngine implements Disposable, RealmtechECS {
         try {
             connexionHandler.close();
         } catch (IOException e) {
-            Gdx.app.error(TAG, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         System.gc();
     }

@@ -13,12 +13,12 @@ public class CellBreakRequestPacket implements ServerPacket {
     private final byte innerChunkY;
     private final int itemUseByPlayerHash;
 
-    public CellBreakRequestPacket(int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, int itemUseByPlayerHash) {
+    public CellBreakRequestPacket(int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, ItemRegisterEntry itemUseByPlayerHash) {
         this.chunkPosX = chunkPosX;
         this.chunkPosY = chunkPosY;
         this.innerChunkX = innerChunkX;
         this.innerChunkY = innerChunkY;
-        this.itemUseByPlayerHash = itemUseByPlayerHash;
+        this.itemUseByPlayerHash = itemUseByPlayerHash.getHash();
     }
 
     public CellBreakRequestPacket(ByteBuf byteBuf) {

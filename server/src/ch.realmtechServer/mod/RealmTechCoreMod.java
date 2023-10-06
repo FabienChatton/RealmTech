@@ -27,7 +27,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     //<editor-fold desc="registre des items">
     public final static ItemRegisterEntry NO_ITEM = registerItem("noitem", new ItemRegisterEntry(
             "default-texture",
-            ItemBehavior.builder().build()
+            ItemBehavior.builder().setItemType(ItemType.TOUS).build()
     ));
     public final static ItemRegisterEntry PIOCHE_BOIS_ITEM = registerItem("piocheBois", new ItemRegisterEntry(
             "pioche-bois-01",
