@@ -4,7 +4,6 @@ import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
 import ch.realmtechServer.options.DataCtrl;
-import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -101,8 +100,10 @@ public final class EcsEngineServer {
         return world;
     }
     public void processNextTickRunnable() {
-        nextTickServer.forEach(Runnable::run);
-        nextTickServer.clear();
+        synchronized (nextTickServer) {
+            nextTickServer.forEach(Runnable::run);
+            nextTickServer.clear();
+        }
     }
 
     public void nextTickServer(Runnable runnable) {

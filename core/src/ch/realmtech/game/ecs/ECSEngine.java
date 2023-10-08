@@ -122,8 +122,10 @@ public final class ECSEngine implements Disposable, RealmtechECS {
     public void process(float delta) {
         world.setDelta(delta);
         world.process();
-        nextFrameRunnable.forEach(Runnable::run);
-        nextFrameRunnable.clear();
+        synchronized (nextFrameRunnable) {
+            nextFrameRunnable.forEach(Runnable::run);
+            nextFrameRunnable.clear();
+        }
     }
 
     @Override
