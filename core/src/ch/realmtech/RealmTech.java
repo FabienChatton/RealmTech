@@ -42,7 +42,7 @@ public final class RealmTech extends Game{
     private Stage gameStage;
     private Stage uiStage;
     private Skin skin;
-    private ECSEngine ecsEngine;
+    private volatile ECSEngine ecsEngine;
     private Discord discord;
 
     private TextureAtlas textureAtlas;
@@ -208,16 +208,24 @@ public final class RealmTech extends Game{
     }
 
     public void rejoindreMulti(String host, int port) throws Exception {
-        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false);
-        nouveauECS(clientConnexionHandler);
-        clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+        synchronized (this) {
+            if (ecsEngine == null) {
+                RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false);
+                nouveauECS(clientConnexionHandler);
+                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+            }
+        }
     }
 
     public void rejoindreSoloServeur(String saveName) throws Exception {
-        ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
-        RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute, true);
-        nouveauECS(clientConnexionHandler);
-        clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+        synchronized (this) {
+            if (ecsEngine == null) {
+                ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
+                RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute, true);
+                nouveauECS(clientConnexionHandler);
+                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+            }
+        }
     }
 
     public DataCtrl getDataCtrl() {
