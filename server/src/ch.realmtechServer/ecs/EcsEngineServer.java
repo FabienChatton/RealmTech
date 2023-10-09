@@ -99,8 +99,10 @@ public final class EcsEngineServer {
         return world;
     }
     public void processNextTickRunnable() {
-        nextTickServer.forEach(Runnable::run);
-        nextTickServer.clear();
+        synchronized (nextTickServer) {
+            nextTickServer.forEach(Runnable::run);
+            nextTickServer.clear();
+        }
     }
 
     public static void nextTickServer(Runnable runnable) {
