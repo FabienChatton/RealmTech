@@ -7,6 +7,7 @@ import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
+import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.PlayerFootStepSound;
@@ -42,6 +43,7 @@ public final class ECSEngine implements Disposable {
     private final ServerInvocationStrategy serverInvocationStrategy;
     private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
+    private final ItemManager itemManager;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -51,13 +53,14 @@ public final class ECSEngine implements Disposable {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
+        itemManager = new ItemManagerClient();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 .withFrame(new PlayerManagerClient())
 
                 // manageur
                 .withFrame(new TagManager())
-                .withFrame(new ItemManager())
+                .withFrame(itemManager)
                 .withFrame(new InventoryManager())
                 .withFrame(new PhysiqueContactListenerManager())
                 .withFrame(new SaveInfManager())
@@ -111,6 +114,7 @@ public final class ECSEngine implements Disposable {
         worldConfiguration.register(context.getDataCtrl());
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
+        worldConfiguration.register(itemManager);
 
         worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);
@@ -189,7 +193,7 @@ public final class ECSEngine implements Disposable {
         if (itemComponent != null) {
             world.getSystem(InventoryManager.class).removeOneItem(world.getSystem(ItemBarManager.class).getSelectStack());
             Vector3 gameCoo = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            world.getSystem(ItemManager.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
+            world.getSystem(ItemManagerClient.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
             context.getSoundManager().playItemDrop();
         }
     }
@@ -216,11 +220,12 @@ public final class ECSEngine implements Disposable {
     public RealmTechClientConnexionHandler getConnexionHandler() {
         return connexionHandler;
     }
-    public Vector3 getGameCoordinate(Vector2 screenCoordinate) {
-        return context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
+    public Vector2 getGameCoordinate(Vector2 screenCoordinate) {
+        Vector3 unproject = context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
+        return new Vector2(unproject.x, unproject.y);
     }
     public int getTopCell(int chunk, Vector2 screenCoordinate) {
-        Vector3 gameCoordinate = getGameCoordinate(screenCoordinate);
+        Vector2 gameCoordinate = getGameCoordinate(screenCoordinate);
         return getWorld().getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(gameCoordinate.x), MapManager.getInnerChunk(gameCoordinate.y));
     }
     public void nextFrame(Runnable runnable) {

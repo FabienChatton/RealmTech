@@ -1,16 +1,19 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ctrl.ItemManagerCommun;
 import ch.realmtechServer.ecs.component.ItemBeingPickComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.PlayerComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PhysiqueContactListenerManager extends Manager implements ContactListener {
-    private final static String TAG = PhysiqueContactListenerManager.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(PhysiqueContactListenerManager.class);
 //    @Wire
 //    private SoundManager soundManager;
     @Wire(name = "physicWorld")
@@ -51,13 +54,13 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
                 if (mItem.has((int) fixtureB.getBody().getUserData())) {
                     contact.setEnabled(false);
                     int itemId = (int) fixtureB.getBody().getUserData();
-                    world.getSystem(ItemManager.class).playerPickUpItem(itemId, playerId);
+                    ItemManagerCommun.playerPickUpItem(world, itemId, playerId);
                     //soundManager.playItemPickUp();
-                    Gdx.app.postRunnable(() -> {
+                    ServerContext.nextTick(() -> {
                         try {
                             world.edit(itemId).remove(ItemBeingPickComponent.class);
                         } catch (NullPointerException e) {
-                            Gdx.app.error(TAG, e.getMessage());
+                            logger.error(e.getMessage(), e);
                         } finally {
                             physicWorld.destroyBody(fixtureB.getBody());
                         }
@@ -65,7 +68,7 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
                 }
             }
         } catch (NullPointerException e) {
-            Gdx.app.error(TAG, e.getLocalizedMessage());
+            logger.error(e.getMessage(), e);
         }
     }
 }

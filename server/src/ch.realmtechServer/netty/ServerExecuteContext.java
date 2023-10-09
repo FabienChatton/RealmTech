@@ -1,14 +1,18 @@
 package ch.realmtechServer.netty;
 
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
+import ch.realmtechServer.ecs.system.ItemManagerServer;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
+import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.clientPacket.CellBreakPacket;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechServer.packet.clientPacket.DeconnectionJoueurPacket;
 import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.registery.ItemRegisterEntry;
+import com.artemis.ComponentMapper;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 
@@ -52,8 +56,13 @@ public class ServerExecuteContext implements ServerExecute {
             int[] infChunks = playerConnexionComponent.infChunks;
             int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
             int cellId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
-            if (serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).breakCellServer(chunkId, cellId, playerId, ItemRegisterEntry.getItemByHash(itemUseByPlayerHash))) {
-                serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, playerConnexionComponent.uuid, itemUseByPlayerHash));
+            ComponentMapper<InfCellComponent> mCell = serverContext.getEcsEngineServer().getWorld().getMapper(InfCellComponent.class);
+            InfCellComponent infCellComponent = mCell.get(cellId);
+            BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+            if (breakCellEvent != null) {
+                if (breakCellEvent.breakCell(serverContext.getSystem(ItemManagerServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUseByPlayerHash))) {
+                    serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, playerConnexionComponent.uuid, itemUseByPlayerHash));
+                }
             }
         });
     }

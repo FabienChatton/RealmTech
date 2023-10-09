@@ -2,7 +2,6 @@ package ch.realmtechServer.level.cell;
 
 import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfChunkComponent;
-import ch.realmtechServer.ecs.system.ItemManager;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.item.ItemType;
 import ch.realmtechServer.registery.ItemRegisterEntry;
@@ -10,7 +9,7 @@ import ch.realmtechServer.registery.ItemRegisterEntry;
 public class BreakCellEvent {
 
     public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntry) {
-        return (world, chunkId, cellId, itemUseByPlayer) -> {
+        return (itemManager, world, chunkId, cellId, itemUseByPlayer) -> {
             if (itemRegisterEntry != null) {
                 InfCellComponent cellComponent = world.getMapper(InfCellComponent.class).get(cellId);
                 InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
@@ -20,7 +19,7 @@ public class BreakCellEvent {
                             : ItemType.TOUS;
                     if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS
                             || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemTypeUse) {
-                        world.getSystem(ItemManager.class).newItemOnGround(
+                        itemManager.newItemOnGround(
                                 MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX()),
                                 MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY()),
                                 itemRegisterEntry
@@ -35,7 +34,7 @@ public class BreakCellEvent {
     }
 
     public BreakCell dropNothing() {
-        return (world, chunkId, cellId, itemUseByPlayer) -> {
+        return (itemManager, world, chunkId, cellId, itemUseByPlayer) -> {
             world.getSystem(MapManager.class).damneCell(chunkId, cellId);
             return true;
         };

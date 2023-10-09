@@ -233,7 +233,7 @@ public class SaveInfManager extends Manager {
                 ItemRegisterEntry itemRegisterEntry = ItemRegisterEntry.getItemByHash(hashModIdItem);
                 int[] stack = inventory[index];
                 for (int j = 0; j < nombre; j++) {
-                    int nouvelItemId = world.getSystem(ItemManager.class).newItemInventory(itemRegisterEntry);
+                    int nouvelItemId = world.getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry);
                     stack[j] = nouvelItemId;
                 }
             }

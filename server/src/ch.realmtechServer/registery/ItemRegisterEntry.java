@@ -77,10 +77,6 @@ public class ItemRegisterEntry implements Entry<ItemRegisterEntry> {
                 .getEntry();
     }
 
-    public TextureRegion getTextureRegion() {
-        return textureRegion;
-    }
-
     public String getTextureRegionName() {
         return textureRegionName;
     }

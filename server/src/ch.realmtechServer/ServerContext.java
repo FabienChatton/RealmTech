@@ -11,6 +11,7 @@ import ch.realmtechServer.packet.serverPacket.DemandeDeConnexionJoueurPacket;
 import ch.realmtechServer.packet.serverPacket.PlayerMovePacket;
 import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.tick.TickThread;
+import com.artemis.BaseSystem;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,5 +108,9 @@ public class ServerContext {
     }
     public static void nextTick(Runnable runnable) {
         EcsEngineServer.nextTickServer(runnable);
+    }
+
+    public <T extends BaseSystem> T getSystem(Class<T> systemClass) {
+        return ecsEngineServer.getWorld().getSystem(systemClass);
     }
 }

@@ -2,14 +2,12 @@ package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ecs.component.*;
-import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.level.cell.Cells;
 import ch.realmtechServer.level.cell.CreatePhysiqueBody;
 import ch.realmtechServer.level.map.WorldMap;
 import ch.realmtechServer.level.worldGeneration.PerlinNoise;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechServer.registery.CellRegisterEntry;
-import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
@@ -55,14 +53,14 @@ public class MapManager extends Manager {
     /**
      * Récupère une position dans un chunk via la position du monde.
      *
-     * @param world La position dans le monde.
+     * @param worldPos La position dans le monde.
      * @return La position dans le chunk.
      */
-    public static byte getInnerChunk(int world) {
-        if (world < 0) {
-            return (byte) ((byte) (world % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE) - 1);
+    public static byte getInnerChunk(int worldPos) {
+        if (worldPos < 0) {
+            return (byte) ((byte) (worldPos % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE) - 1);
         } else {
-            return (byte) (world % WorldMap.CHUNK_SIZE);
+            return (byte) (worldPos % WorldMap.CHUNK_SIZE);
         }
     }
 
@@ -144,26 +142,6 @@ public class MapManager extends Manager {
             }
         }
         return ret;
-    }
-
-
-    public boolean breakCellServer(int chunkId, int cellId, int playerId, ItemRegisterEntry itemUseByPlayer) {
-        InfCellComponent infCellComponent = mCell.get(cellId);
-        BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
-        if (breakCellEvent != null) {
-            boolean cellCasse = breakCellEvent.breakCell(world, chunkId, cellId, itemUseByPlayer);
-            if (cellCasse) {
-                supprimeCell(cellId);
-            }
-            return cellCasse;
-        } else {
-            return false;
-        }
-    }
-
-    public void breakCellClient(int chunkId, int cellId, int playerId, int itemUsedByPlayerHash) {
-        BreakCell breakCellEvent = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakCellEvent();
-        if (breakCellEvent != null) breakCellEvent.breakCell(world, chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
     }
 
     public int getCell(int chunk, byte innerX, byte innerY, byte layer) {

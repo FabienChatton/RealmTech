@@ -1,9 +1,11 @@
 package ch.realmtechServer.ecs;
 
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
 import ch.realmtechServer.options.DataCtrl;
+import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -26,7 +28,8 @@ public final class EcsEngineServer {
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
-    private final static List<Runnable> nextTickServer = Collections.synchronizedList(new ArrayList<>());;
+    private final static List<Runnable> nextTickServer = Collections.synchronizedList(new ArrayList<>());
+    private final ItemManager itemManager;
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
@@ -35,12 +38,13 @@ public final class EcsEngineServer {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
+        itemManager = new ItemManagerServer();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
 
                 // manageur
                 .with(new TagManager())
-                .with(new ItemManager())
+                .with(itemManager)
                 .with(new InventoryManager())
                 .with(new PhysiqueContactListenerManager())
                 .with(new SaveInfManager())
@@ -78,6 +82,7 @@ public final class EcsEngineServer {
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
         worldConfiguration.register(dataCtrl);
+        worldConfiguration.register(itemManager);
         this.world = new World(worldConfiguration);
         logger.trace("fin de l'initialisation du ecs");
     }
@@ -107,5 +112,9 @@ public final class EcsEngineServer {
 
     public static void nextTickServer(Runnable runnable) {
         nextTickServer.add(runnable);
+    }
+
+    public Entity getMapEntity() {
+        return world.getSystem(TagManager.class).getEntity("infMap");
     }
 }

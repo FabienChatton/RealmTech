@@ -2,7 +2,7 @@ package ch.realmtechServer.craft;
 
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.ecs.system.InventoryManager;
-import ch.realmtechServer.ecs.system.ItemManager;
+import ch.realmtechServer.ecs.system.ItemManagerServer;
 import ch.realmtechServer.item.ItemResultCraftPickEvent;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -22,7 +22,7 @@ public interface CraftStrategy {
                 if (isModifierStackItemResultCraftingTable(craftResult, mItem, inventoryResultComponent)) {
                     world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);
                     for (int i = 0; i < craftResult.getNombreResult(); i++) {
-                        int nouvelItemResult = world.getSystem(ItemManager.class).newItemInventory(craftResult.getItemRegisterEntry());
+                        int nouvelItemResult = world.getSystem(ItemManagerServer.class).newItemInventory(craftResult.getItemRegisterEntry());
                         world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(inventoryCraftComponent));
                         world.getSystem(InventoryManager.class).addItemToStack(inventoryResultComponent.inventory[0], nouvelItemResult);
                     }
@@ -73,7 +73,7 @@ public interface CraftStrategy {
             if (furnaceComponent.timeToBurn > 0) {
                 if (furnaceComponent.curentCraftResult != null) {
                     if (++furnaceComponent.curentBurnTime >= furnaceComponent.curentCraftResult.getTimeToProcess()) {
-                        int newItemId = world.getSystem(ItemManager.class).newItemInventory(furnaceComponent.curentCraftResult.getItemRegisterEntry());
+                        int newItemId = world.getSystem(ItemManagerServer.class).newItemInventory(furnaceComponent.curentCraftResult.getItemRegisterEntry());
                         world.getSystem(InventoryManager.class).addItemToStack(inventoryResultComponent.inventory[0], newItemId);
                         furnaceComponent.curentBurnTime = 0;
                         furnaceComponent.curentCraftResult = null;

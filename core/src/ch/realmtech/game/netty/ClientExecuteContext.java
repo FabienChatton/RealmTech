@@ -1,12 +1,17 @@
 package ch.realmtech.game.netty;
 
 import ch.realmtech.RealmTech;
+import ch.realmtech.game.ecs.system.ItemManagerClient;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.screen.ScreenType;
+import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.clientPacket.ClientExecute;
+import ch.realmtechServer.registery.ItemRegisterEntry;
+import com.artemis.ComponentMapper;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +71,10 @@ public class ClientExecuteContext implements ClientExecute {
     public void clientConnexionRemoved() {
         Gdx.app.postRunnable(() -> {
             if (context.getScreenType() == ScreenType.GAME_SCREEN) {
-                Gdx.app.postRunnable(() -> Popup.popupErreur(context, "Le serveur est fermé", context.getUiStage()));
-                context.setScreen(ScreenType.MENU);
+                Gdx.app.postRunnable(() -> {
+                    context.setScreen(ScreenType.MENU);
+                    Popup.popupErreur(context, "Le serveur est fermé", context.getUiStage());
+                });
             }
         });
     }
@@ -79,7 +86,9 @@ public class ClientExecuteContext implements ClientExecute {
             int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
             int cellId = context.getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
             int playerId = context.getSystem(PlayerManagerClient.class).getPlayers().get(playerUUID);
-            context.getSystem(MapManager.class).breakCellClient(chunkId, cellId, playerId, itemUsedByPlayerHash);
+            ComponentMapper<InfCellComponent> mCell = context.getEcsEngine().getWorld().getMapper(InfCellComponent.class);
+            BreakCell breakCellEvent = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakCellEvent();
+            if (breakCellEvent != null) breakCellEvent.breakCell(context.getEcsEngine().getSystem(ItemManagerClient.class), context.getEcsEngine().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
         });
     }
 }

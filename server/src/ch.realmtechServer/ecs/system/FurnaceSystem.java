@@ -1,5 +1,6 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.component.CraftingTableComponent;
 import ch.realmtechServer.ecs.component.FurnaceComponent;
 import ch.realmtechServer.ecs.component.InventoryComponent;
@@ -9,10 +10,13 @@ import ch.realmtechServer.registery.ItemRegisterEntry;
 import ch.realmtechServer.registery.RegistryEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
+import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 
 @All({FurnaceComponent.class, CraftingTableComponent.class})
 public class FurnaceSystem extends IteratingSystem {
+    @Wire
+    private ItemManager itemManager;
     private ComponentMapper<FurnaceComponent> mFurnace;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<InventoryComponent> mInventory;
@@ -47,13 +51,13 @@ public class FurnaceSystem extends IteratingSystem {
             }
             if (itemIconTimeToBurnComponent == null || itemIconTimeToBurnComponent.itemRegisterEntry != iconTimeToBurn) {
                 world.getSystem(InventoryManager.class).removeInventory(iconInventoryCurentBurnTimeComponent.inventory);
-                int iconId = world.getSystem(ItemManager.class).newItemInventory(iconTimeToBurn);
+                int iconId = itemManager.newItemInventory(iconTimeToBurn);
                 world.getSystem(InventoryManager.class).addItemToStack(iconInventoryCurentBurnTimeComponent.inventory[0], iconId);
             }
         } else {
             if (!mItem.has(iconInventoryCurentBurnTimeComponent.inventory[0][0]) || mItem.get(iconInventoryCurentBurnTimeComponent.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
                 world.getSystem(InventoryManager.class).removeInventory(iconInventoryCurentBurnTimeComponent.inventory);
-                int iconId = world.getSystem(ItemManager.class).newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01);
+                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01);
                 world.getSystem(InventoryManager.class).addItemToStack(iconInventoryCurentBurnTimeComponent.inventory[0], iconId);
             }
         }
@@ -75,13 +79,13 @@ public class FurnaceSystem extends IteratingSystem {
                     .orElse(RealmTechCoreMod.NO_ITEM);
             if (itemIconTimeToBurnComponent == null || itemIconTimeToBurnComponent.itemRegisterEntry != iconTimeToBurn) {
                 world.getSystem(InventoryManager.class).removeInventory(iconInventoryTimeToBurnComponent.inventory);
-                int iconId = world.getSystem(ItemManager.class).newItemInventory(iconTimeToBurn);
+                int iconId = itemManager.newItemInventory(iconTimeToBurn);
                 world.getSystem(InventoryManager.class).addItemToStack(iconInventoryTimeToBurnComponent.inventory[0], iconId);
             }
         } else {
             if (!mItem.has(iconInventoryTimeToBurnComponent.inventory[0][0]) || mItem.get(iconInventoryTimeToBurnComponent.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
                 world.getSystem(InventoryManager.class).removeInventory(iconInventoryTimeToBurnComponent.inventory);
-                int iconId = world.getSystem(ItemManager.class).newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01);
+                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01);
                 world.getSystem(InventoryManager.class).addItemToStack(iconInventoryTimeToBurnComponent.inventory[0], iconId);
             }
         }
@@ -104,13 +108,13 @@ public class FurnaceSystem extends IteratingSystem {
                     .orElse(RealmTechCoreMod.NO_ITEM);
             if (iconItem == null || iconItem.itemRegisterEntry != iconTimeToBurn) {
                 world.getSystem(InventoryManager.class).removeInventory(iconInventory.inventory);
-                int iconId = world.getSystem(ItemManager.class).newItemInventory(iconTimeToBurn);
+                int iconId = itemManager.newItemInventory(iconTimeToBurn);
                 world.getSystem(InventoryManager.class).addItemToStack(iconInventory.inventory[0], iconId);
             }
         } else {
             if (!mItem.has(iconInventory.inventory[0][0]) || mItem.get(iconInventory.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
                 world.getSystem(InventoryManager.class).removeInventory(iconInventory.inventory);
-                int iconId = world.getSystem(ItemManager.class).newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01);
+                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01);
                 world.getSystem(InventoryManager.class).addItemToStack(iconInventory.inventory[0], iconId);
             }
         }

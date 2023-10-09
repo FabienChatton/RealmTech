@@ -13,7 +13,6 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 @All({CellBeingMineComponent.class})
 public class CellBeingMineSystem extends IteratingSystem {
@@ -28,7 +27,7 @@ public class CellBeingMineSystem extends IteratingSystem {
 
         // trouve la cellule qui devrait être miné pour être sûr qu'elle est toujours minée
         Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        Vector3 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
+        Vector2 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
         int expectChunk = world.getSystem(MapManager.class).getChunk(infChunks, gameCoordinate.x, gameCoordinate.y);
         int topCell = context.getEcsEngine().getTopCell(expectChunk, screenCoordinate);
         if (topCell == entityId && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
@@ -45,11 +44,7 @@ public class CellBeingMineSystem extends IteratingSystem {
 //                remove(entityId);
             }
         } else {
-            remove(entityId);
+            mCellBeingMine.remove(entityId);
         }
-    }
-
-    private void remove(int entityId) {
-        mCellBeingMine.remove(entityId);
     }
 }
