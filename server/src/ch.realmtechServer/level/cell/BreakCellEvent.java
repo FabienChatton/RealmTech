@@ -33,7 +33,7 @@ public class BreakCellEvent {
         };
     }
 
-    public BreakCell dropNothing() {
+    public static BreakCell dropNothing() {
         return (itemManager, world, chunkId, cellId, itemUseByPlayer) -> {
             world.getSystem(MapManager.class).damneCell(chunkId, cellId);
             return true;

@@ -1,6 +1,5 @@
 package ch.realmtechServer.level.cell;
 
-import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.item.ItemType;
 import ch.realmtechServer.mod.PlayerFootStepSound;
 import ch.realmtechServer.mod.RealmTechCoreMod;
@@ -8,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class CellBehavior {
     private ItemType breakWith;
@@ -15,6 +15,7 @@ public class CellBehavior {
     private PlayerFootStepSound playerFootStepSound;
     private final byte layer;
     private BreakCell breakCellEvent;
+    private Supplier<BreakCell> getBreakCellEvent;
     private int breakStepNeed = 20;
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
@@ -50,6 +51,7 @@ public class CellBehavior {
     }
 
     public BreakCell getBreakCellEvent() {
+        if (breakCellEvent == null) breakCellEvent = getBreakCellEvent.get();
         return breakCellEvent;
     }
 
@@ -96,12 +98,12 @@ public class CellBehavior {
         }
 
         public CellBehaviorBuilder dropOnBreak(String dropItemRegistryName) {
-            ServerContext.nextTick(() -> cellBehavior.breakCellEvent = BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry()));
+            cellBehavior.getBreakCellEvent = () -> BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry());
             return this;
         }
 
         public CellBehaviorBuilder dropNothing() {
-            cellBehavior.breakCellEvent = new BreakCellEvent().dropNothing();
+            cellBehavior.getBreakCellEvent = BreakCellEvent::dropNothing;
             return this;
         }
 
