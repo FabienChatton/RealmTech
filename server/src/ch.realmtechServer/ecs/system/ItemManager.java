@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class ItemManager extends Manager {
-    private final static String TAG = ItemManager.class.getSimpleName();
     @Wire(name = "physicWorld")
     private World physicWorld;
     @Wire
@@ -80,8 +79,8 @@ public class ItemManager extends Manager {
         Box2dComponent box2dComponent = world.edit(itemId).create(Box2dComponent.class);
         Body itemBody = createBox2dItem(itemId, worldPosX, worldPosY, textureComponent.texture);
         box2dComponent.set(
-                1,//textureComponent.texture.getRegionWidth() / RealmTech.PPM,
-                1,//textureComponent.texture.getRegionHeight() / RealmTech.PPM,
+                64,//textureComponent.texture.getRegionWidth() / RealmTech.PPM,
+                64,//textureComponent.texture.getRegionHeight() / RealmTech.PPM,
                 itemBody
         );
     }

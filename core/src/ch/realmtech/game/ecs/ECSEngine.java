@@ -2,12 +2,11 @@ package ch.realmtech.game.ecs;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.*;
-import ch.realmtech.game.netty.RealmtechClientConnexionHandler;
+import ch.realmtech.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
-import ch.realmtechServer.ecs.RealmtechECS;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.PlayerFootStepSound;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class ECSEngine implements Disposable, RealmtechECS {
+public final class ECSEngine implements Disposable {
     private final static Logger logger = LoggerFactory.getLogger(ECSEngine.class);
 
     private final RealmTech context;
@@ -41,10 +40,10 @@ public final class ECSEngine implements Disposable, RealmtechECS {
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
     private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
     private final ServerInvocationStrategy serverInvocationStrategy;
-    private final RealmtechClientConnexionHandler connexionHandler;
+    private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
 
-    public ECSEngine(final RealmTech context, RealmtechClientConnexionHandler connexionHandler) {
+    public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
         this.connexionHandler = connexionHandler;
         this.serverInvocationStrategy = new ServerInvocationStrategy();
@@ -167,7 +166,7 @@ public final class ECSEngine implements Disposable, RealmtechECS {
     public int getMapId() {
         return world.getSystem(TagManager.class).getEntityId("infMap");
     }
-    @Override
+
     public Entity getMapEntity() {
         return world.getSystem(TagManager.class).getEntity("infMap");
     }
@@ -214,7 +213,7 @@ public final class ECSEngine implements Disposable, RealmtechECS {
     public ServerInvocationStrategy getServerInvocationStrategy() {
         return serverInvocationStrategy;
     }
-    public RealmtechClientConnexionHandler getConnexionHandler() {
+    public RealmTechClientConnexionHandler getConnexionHandler() {
         return connexionHandler;
     }
     public Vector3 getGameCoordinate(Vector2 screenCoordinate) {

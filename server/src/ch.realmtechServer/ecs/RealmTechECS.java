@@ -2,6 +2,6 @@ package ch.realmtechServer.ecs;
 
 import com.artemis.Entity;
 
-public interface RealmtechECS {
+public interface RealmTechECS {
     Entity getMapEntity();
 }

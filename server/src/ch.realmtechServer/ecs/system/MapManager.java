@@ -163,7 +163,7 @@ public class MapManager extends Manager {
 
     public void breakCellClient(int chunkId, int cellId, int playerId, int itemUsedByPlayerHash) {
         BreakCell breakCellEvent = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakCellEvent();
-        breakCellEvent.breakCell(world, chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
+        if (breakCellEvent != null) breakCellEvent.breakCell(world, chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
     }
 
     public int getCell(int chunk, byte innerX, byte innerY, byte layer) {

@@ -14,7 +14,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
-public class RealmtechClient {
+public class RealmTechClient {
     private Channel channel;
     private NioEventLoopGroup group;
     private final ClientExecute clientExecute;
@@ -22,7 +22,7 @@ public class RealmtechClient {
     /**
      * Initie directement une connexion
      */
-    public RealmtechClient(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws Exception {
+    public RealmTechClient(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws Exception {
         this.clientExecute = clientExecute;
         run(connexionBuilder);
     }

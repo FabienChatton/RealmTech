@@ -1,7 +1,6 @@
 package ch.realmtechServer.netty;
 
 import ch.realmtechServer.ServerContext;
-import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
@@ -40,14 +39,14 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void playerMove(Channel clientChannel, float impulseX, float impulseY, Vector2 pos) {
-        serverContext.nextTick(() -> {
+        ServerContext.nextTick(() -> {
             serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).playerMove(clientChannel, impulseX, impulseY, pos);
         });
     }
 
     @Override
     public void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, int itemUseByPlayerHash) {
-        serverContext.nextTick(() -> {
+        ServerContext.nextTick(() -> {
             int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
             int[] infChunks = playerConnexionComponent.infChunks;

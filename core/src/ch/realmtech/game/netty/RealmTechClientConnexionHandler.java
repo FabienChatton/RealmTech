@@ -10,15 +10,15 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Random;
 
-public class RealmtechClientConnexionHandler implements Closeable {
+public class RealmTechClientConnexionHandler implements Closeable {
     private ServerContext server;
-    private final RealmtechClient client;
+    private final RealmTechClient client;
 
 
-    public RealmtechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute, boolean ouvrirServeur) throws Exception {
+    public RealmTechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute, boolean ouvrirServeur) throws Exception {
         if (!ouvrirServeur) {
             try {
-                client = new RealmtechClient(connexionBuilder, clientExecute);
+                client = new RealmTechClient(connexionBuilder, clientExecute);
             } catch (Exception e) {
                 close();
                 throw e;
@@ -32,7 +32,7 @@ public class RealmtechClientConnexionHandler implements Closeable {
                     } while (!ServerNetty.isPortAvailable(connexionBuilder.getPort()) || ++limite < 10);
                 }
                 server = new ServerContext(connexionBuilder.setSaveName("default"));
-                client = new RealmtechClient(connexionBuilder, clientExecute);
+                client = new RealmTechClient(connexionBuilder, clientExecute);
             } catch (Exception e) {
                 throw new IOException(e);
             }

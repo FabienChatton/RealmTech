@@ -3,17 +3,20 @@ package ch.realmtech.screen;
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
+import ch.realmtech.helper.Popup;
 import ch.realmtechServer.ecs.system.MapManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class GameScreen extends AbstractScreen {
-    private final static String TAG = GameScreen.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(GameScreen.class);
 
     private final Box2DDebugRenderer box2DDebugRenderer;
     private final Table debugTable;
@@ -97,10 +100,16 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void draw() {
-        context.process(Gdx.graphics.getDeltaTime());
-        uiStage.draw();
-        if (uiStage.isDebugAll()) {
-            box2DDebugRenderer.render(context.getEcsEngine().physicWorld, gameCamera.combined);
+        try {
+            context.process(Gdx.graphics.getDeltaTime());
+            uiStage.draw();
+            if (uiStage.isDebugAll()) {
+                box2DDebugRenderer.render(context.getEcsEngine().physicWorld, gameCamera.combined);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            context.setScreen(ScreenType.MENU);
+            Popup.popupErreur(context, e.getMessage(), context.getUiStage());
         }
     }
 

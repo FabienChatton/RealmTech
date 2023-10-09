@@ -3,7 +3,7 @@ package ch.realmtech;
 import ch.realmtech.discord.Discord;
 import ch.realmtech.game.ecs.ECSEngine;
 import ch.realmtech.game.netty.ClientExecuteContext;
-import ch.realmtech.game.netty.RealmtechClientConnexionHandler;
+import ch.realmtech.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
@@ -26,6 +26,8 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -36,7 +38,7 @@ public final class RealmTech extends Game{
     public final static int SCREEN_HEIGHT = 576;
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
-    private final String TAG = RealmTech.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(RealmTech.class);
     private InputMapper inputMapper;
     private AssetManager assetManager;
     private Stage gameStage;
@@ -58,7 +60,7 @@ public final class RealmTech extends Game{
         try {
             dataCtrl = new DataCtrl();
         } catch (IOException e) {
-            Gdx.app.error(TAG, "La hiérarchie des dossier n'a pas pu être créer correctement", e);
+            logger.error("La hiérarchie des dossier n'a pas pu être créer correctement", e);
             Gdx.app.exit();
         }
         assetManager = new AssetManager();
@@ -96,13 +98,13 @@ public final class RealmTech extends Game{
 		assetManager.load("skin/uiSkinComposer.png", Skin.class);
 		assetManager.finishLoading();
 		skin = assetManager.get("skin/uiSkinComposer.json", Skin.class);
-		Gdx.app.debug(TAG, "skin initialise");
+		logger.trace("skin initialise");
     }
 
     private void initMap() {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
         assetManager.load("texture/atlas/texture.atlas", TextureAtlas.class);
-        Gdx.app.debug(TAG, "atlas chargé");
+        logger.trace("atlas chargé");
     }
 
     private void initSound() {
@@ -119,7 +121,7 @@ public final class RealmTech extends Game{
             }
             currentScreenType = screenType;
         } catch (ReflectiveOperationException e) {
-            Gdx.app.error(TAG, "La class " + screenType + " n'a pas pu etre cree", e);
+            logger.error("La class {} n'a pas pu etre cree", screenType, e);
         }
     }
 
@@ -178,7 +180,7 @@ public final class RealmTech extends Game{
         try {
             ecsEngine.process(deltaTime);
         } catch (Exception e) {
-            Gdx.app.error(TAG, e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             if (uiStage.getBatch().isDrawing()) {
                 uiStage.getBatch().end();
             }
@@ -187,12 +189,11 @@ public final class RealmTech extends Game{
             }
             supprimeECS();
             setScreen(ScreenType.MENU);
-            Gdx.app.error(TAG, e.getMessage(), e);
             Popup.popupErreur(this, e.toString(), uiStage);
         }
     }
 
-    public void nouveauECS(RealmtechClientConnexionHandler clientConnexionHandler) throws IOException {
+    public void nouveauECS(RealmTechClientConnexionHandler clientConnexionHandler) throws IOException {
         if (ecsEngine != null) {
             supprimeECS();
         }
@@ -210,7 +211,7 @@ public final class RealmTech extends Game{
     public void rejoindreMulti(String host, int port) throws Exception {
         synchronized (this) {
             if (ecsEngine == null) {
-                RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false);
+                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false);
                 nouveauECS(clientConnexionHandler);
                 clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
             }
@@ -221,7 +222,7 @@ public final class RealmTech extends Game{
         synchronized (this) {
             if (ecsEngine == null) {
                 ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
-                RealmtechClientConnexionHandler clientConnexionHandler = new RealmtechClientConnexionHandler(connexionBuilder, clientExecute, true);
+                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true);
                 nouveauECS(clientConnexionHandler);
                 clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
             }
@@ -243,7 +244,7 @@ public final class RealmTech extends Game{
     public ClientExecute getClientExecute() {
         return clientExecute;
     }
-    public RealmtechClientConnexionHandler getConnexionHandler() {
+    public RealmTechClientConnexionHandler getConnexionHandler() {
         return ecsEngine.getConnexionHandler();
     }
     public void nextFrame(Runnable runnable) {
