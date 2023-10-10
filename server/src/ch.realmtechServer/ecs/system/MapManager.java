@@ -210,7 +210,7 @@ public class MapManager extends Manager {
 
     public boolean addCellBeingMine(int cellId) {
         boolean ret = false;
-        if (!mCellBeingMine.has(cellId)) {
+        if (cellId != -1 && !mCellBeingMine.has(cellId)) {
             mCellBeingMine.create(cellId).set(0, mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakStepNeed());
             ret = true;
         }

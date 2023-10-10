@@ -51,8 +51,8 @@ public class CellBehavior {
     }
 
     public BreakCell getBreakCellEvent() {
-        if (breakCellEvent == null) breakCellEvent = getBreakCellEvent.get();
-        return breakCellEvent;
+        if (breakCellEvent == null && getBreakCellEvent != null) breakCellEvent = getBreakCellEvent.get();
+        return breakCellEvent != null ? breakCellEvent : BreakCellEvent.dropNothing();
     }
 
     public int getBreakStepNeed() {

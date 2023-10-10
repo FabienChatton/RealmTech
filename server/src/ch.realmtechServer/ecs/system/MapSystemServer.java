@@ -161,7 +161,7 @@ public class MapSystemServer extends IteratingSystem {
             try {
                 world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
             } catch (IOException ex) {
-                logger.error(e.getMessage(), e);
+                logger.error(e.getMessage(), ex);
                 throw new RuntimeException(ex);
             }
         } catch (IOException e) {
