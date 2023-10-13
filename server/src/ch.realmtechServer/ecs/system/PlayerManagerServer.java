@@ -15,6 +15,8 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -96,6 +98,16 @@ public class PlayerManagerServer extends BaseSystem {
 
     public IntBag getPlayers() {
         return players;
+    }
+
+    public List<PlayerConnexionComponent> getPlayersConnexion() {
+        List<PlayerConnexionComponent> ret = new ArrayList<>();
+        IntBag playersIntBag = getPlayers();
+        int[] data = playersIntBag.getData();
+        for (int i = 0; i < playersIntBag.size(); i++) {
+            ret.add(mPlayerConnexion.get(data[i]));
+        }
+        return ret;
     }
 
     public TousLesJoueursArg getTousLesJoueurs() {

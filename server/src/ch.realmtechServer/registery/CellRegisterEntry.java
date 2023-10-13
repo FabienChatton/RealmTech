@@ -1,6 +1,6 @@
 package ch.realmtechServer.registery;
 
-import ch.realmtechServer.anotation.Lazy;
+import ch.realmtechServer.divers.Lazy;
 import ch.realmtechServer.level.cell.CellBehavior;
 import ch.realmtechServer.mod.RealmTechCoreMod;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;

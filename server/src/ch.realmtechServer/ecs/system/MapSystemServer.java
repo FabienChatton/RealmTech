@@ -1,6 +1,7 @@
 package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.divers.Position;
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.options.DataCtrl;
 import ch.realmtechServer.packet.clientPacket.ChunkAMonterPacket;
@@ -52,41 +53,46 @@ public class MapSystemServer extends IteratingSystem {
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     protected void process(int playerId) {
-        InfMetaDonneesComponent infMetaDonnesComponent = mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap")).getMetaDonnesComponent(world);
+        InfMapComponent infMapComponent = mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap"));
+        int[] infChunks = infMapComponent.infChunks;
+        InfMetaDonneesComponent infMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
         int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
         if (playerConnexionComponent.ancienChunkPos == null || !(playerConnexionComponent.ancienChunkPos[0] == chunkPosX && playerConnexionComponent.ancienChunkPos[1] == chunkPosY)) {
-            List<Integer> chunkADamner = trouveChunkADamner(playerConnexionComponent.infChunks, chunkPosX, chunkPosY);
+            List<Position> chunkADamnerPos = trouveChunkADamner(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY);
 
             int indexDamner = 0;
-            stop:
             for (int i = -dataCtrl.option.renderDistance.get() + chunkPosX; i <= dataCtrl.option.renderDistance.get() + chunkPosX; i++) {
                 for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
-                    final boolean changement = chunkSansChangement(playerConnexionComponent.infChunks, i, j);
+                    final boolean changement = chunkSansChangement(playerConnexionComponent.chunkPoss, i, j);
                     if (changement) {
                         int newChunkId = getOrGenerateChunk(infMetaDonnesComponent, i, j);
                         InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
-                        if (indexDamner < chunkADamner.size()) {
-                            Integer oldChunk = chunkADamner.get(indexDamner++);
+                        int newChunkPosX = infChunkComponent.chunkPosX;
+                        int newChunkPosY = infChunkComponent.chunkPosY;
+                        if (indexDamner < chunkADamnerPos.size()) {
+                            Position chunkPos = chunkADamnerPos.get(indexDamner++);
+                            int oldChunk = world.getSystem(MapManager.class).getChunk(infChunks, chunkPos.x(), chunkPos.y());
                             InfChunkComponent infChunkComponentOld = mChunk.get(oldChunk);
+                            int oldChunkPosX = infChunkComponentOld.chunkPosX;
+                            int oldChunkPosy = infChunkComponentOld.chunkPosY;
                             serverContext.getServerHandler().sendPacketTo(new ChunkAReplacePacket(
-                                    infChunkComponent.chunkPosX,
-                                    infChunkComponent.chunkPosY,
+                                    newChunkPosX,
+                                    newChunkPosY,
                                     infChunkComponent.toBytes(mCell),
-                                    infChunkComponentOld.chunkPosX,
-                                    infChunkComponentOld.chunkPosY
+                                    oldChunkPosX,
+                                    oldChunkPosy
                             ), playerConnexionComponent.channel);
-                            world.getSystem(MapManager.class).replaceChunk(playerConnexionComponent.infChunks, oldChunk, newChunkId);
-                            damneChunk(oldChunk, infMetaDonnesComponent);
+                            Position.replace(playerConnexionComponent.chunkPoss, oldChunkPosX, oldChunkPosy, newChunkPosX, newChunkPosY);
                         } else {
                             serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
-                                    infChunkComponent.chunkPosX,
-                                    infChunkComponent.chunkPosY,
+                                    newChunkPosX,
+                                    newChunkPosY,
                                     infChunkComponent.toBytes(mCell)
                             ), playerConnexionComponent.channel);
-                            playerConnexionComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(playerConnexionComponent.infChunks, newChunkId);
+                            playerConnexionComponent.chunkPoss.add(new Position(newChunkPosX, newChunkPosY));
                         }
                     }
                     // la limite d'update de chunk pour ce process est atteint
@@ -110,11 +116,10 @@ public class MapSystemServer extends IteratingSystem {
         }
     }
 
-    private boolean chunkSansChangement(int[] infChunks, int i, int j) {
+    private boolean chunkSansChangement(List<Position> chunkPoss, int i, int j) {
         boolean trouve = false;
-        for (int k = 0; k < infChunks.length; k++) {
-            InfChunkComponent infChunkComponent = mChunk.get(infChunks[k]);
-            if (infChunkComponent.chunkPosX == i && infChunkComponent.chunkPosY == j) {
+        for (Position position : chunkPoss) {
+            if (position.x() == i && position.y() == j) {
                 trouve = true;
                 break;
             }
@@ -122,32 +127,29 @@ public class MapSystemServer extends IteratingSystem {
         return !trouve;
     }
 
-    private List<Integer> trouveChunkADamner(int[] infChunks, int chunkPosX, int chunkPosY) {
-        List<Integer> ret = new ArrayList<>(2 * dataCtrl.option.renderDistance.get() + 1);
-        for (int i = 0; i < infChunks.length; i++) {
-            if (!chunkEstDansLaRenderDistance(infChunks[i], chunkPosX, chunkPosY)) {
-                ret.add(infChunks[i]);
+    private List<Position> trouveChunkADamner(List<Position> poss, int chunkPosX, int chunkPosY) {
+        List<Position> ret = new ArrayList<>(2 * dataCtrl.option.renderDistance.get() + 1);
+        for (Position position : poss) {
+            if (!chunkEstDansLaRenderDistance(position, chunkPosX, chunkPosY)) {
+                ret.add(position);
             }
         }
         return ret;
     }
 
-    private void damneChunk(int chunkId, InfMetaDonneesComponent infMetaDonneesComponent) {
+    public int[] damneChunkServer(int[] infChunks, int chunkId, InfMetaDonneesComponent infMetaDonneesComponent) {
         try {
             world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
         } catch (IOException e) {
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
             logger.error("Le chunk {},{} n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
         }
-        world.getSystem(MapManager.class).supprimeChunk(chunkId);
+        return world.getSystem(MapManager.class).supprimerChunkAMap(infChunks, chunkId);
     }
 
-
-
-    private boolean chunkEstDansLaRenderDistance(int chunkId, int posX, int posY) {
-        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int dstX = Math.abs(posX - infChunkComponent.chunkPosX);
-        int dstY = Math.abs(posY - infChunkComponent.chunkPosY);
+    public boolean chunkEstDansLaRenderDistance(Position position, int posX, int posY) {
+        int dstX = Math.abs(posX - position.x());
+        int dstY = Math.abs(posY - position.y());
         return dstX <=dataCtrl.option.renderDistance.get() && dstY <= dataCtrl.option.renderDistance.get();
     }
 
