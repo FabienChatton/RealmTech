@@ -21,7 +21,6 @@ public class PlayerConnexionComponent extends Component {
     public PlayerConnexionComponent set(Channel channel, UUID uuid) {
         this.channel = channel;
         this.uuid = uuid;
-        infChunks = new int[0];
         chunkPoss = new ArrayList<>();
         return this;
     }

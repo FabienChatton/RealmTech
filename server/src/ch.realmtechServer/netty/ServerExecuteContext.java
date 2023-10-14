@@ -2,6 +2,7 @@ package ch.realmtechServer.netty;
 
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.component.InfCellComponent;
+import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
 import ch.realmtechServer.ecs.system.ItemManagerServer;
 import ch.realmtechServer.ecs.system.MapManager;
@@ -53,7 +54,8 @@ public class ServerExecuteContext implements ServerExecute {
         ServerContext.nextTick(() -> {
             int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
-            int[] infChunks = playerConnexionComponent.infChunks;
+            InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
+            int[] infChunks = infMapComponent.infChunks;
             int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
             int cellId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
             ComponentMapper<InfCellComponent> mCell = serverContext.getEcsEngineServer().getWorld().getMapper(InfCellComponent.class);

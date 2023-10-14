@@ -51,7 +51,7 @@ public final class EcsEngineServer {
 
                 // system
                 .with(new MapSystemServer())
-                .with(new MapUnloadUnusedChunkSystem())
+//                .with(new MapUnloadUnusedChunkSystem())
                 .with(new CraftingPlayerSystem())
 //                .with(new ItemBeingPickAnimationSystem())
                 .with(new PickUpOnGroundItemSystem())
