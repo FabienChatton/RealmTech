@@ -33,6 +33,11 @@ public class PlayerMovePacket implements ServerPacket {
     }
 
     @Override
+    public int getSize() {
+        return Float.SIZE * 4;
+    }
+
+    @Override
     public void executeOnServer(Channel clientChannel, ServerExecute serverExecute) {
         serverExecute.playerMove(clientChannel, impulseX, impulseY, pos);
     }

@@ -42,5 +42,10 @@ public class ConnexionJoueurReussitPacket implements ClientPacket {
     }
 
     public record ConnexionJoueurReussitArg(float x, float y, UUID uuid) {
+
+    }
+    @Override
+    public int getSize() {
+        return Float.SIZE * 2 + Long.SIZE * 2;
     }
 }

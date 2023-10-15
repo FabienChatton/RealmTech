@@ -157,7 +157,7 @@ public class PlayerManagerServer extends BaseSystem {
             Box2dComponent box2dComponent = mBox2d.get(playerId);
             box2dComponent.body.setTransform(pos.x, pos.y, box2dComponent.body.getAngle());
         } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
+            logger.warn(e.getMessage());
         }
     }
 }

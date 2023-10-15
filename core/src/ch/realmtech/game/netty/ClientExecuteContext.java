@@ -9,6 +9,7 @@ import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.level.cell.BreakCell;
+import ch.realmtechServer.packet.ClientPacket;
 import ch.realmtechServer.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -90,5 +91,15 @@ public class ClientExecuteContext implements ClientExecute {
             BreakCell breakCellEvent = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakCellEvent();
             if (breakCellEvent != null) breakCellEvent.breakCell(context.getEcsEngine().getSystem(ItemManagerClient.class), context.getEcsEngine().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
         });
+    }
+
+    @Override
+    public void tickBeat(float tickElapseTime) {
+        context.getEcsEngine().serverTickBeatMonitoring.addTickElapseTime(tickElapseTime);
+    }
+
+    @Override
+    public <T extends ClientPacket> void packetReciveMonitoring(T packet) {
+        context.getEcsEngine().serverTickBeatMonitoring.addPacketResive(packet);
     }
 }

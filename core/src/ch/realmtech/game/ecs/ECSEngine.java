@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs;
 
 import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.*;
+import ch.realmtech.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
@@ -44,6 +45,7 @@ public final class ECSEngine implements Disposable {
     private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
     private final ItemManager itemManager;
+    public final ServerTickBeatMonitoring serverTickBeatMonitoring;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -54,6 +56,7 @@ public final class ECSEngine implements Disposable {
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
         itemManager = new ItemManagerClient();
+        serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
                 .withFrame(new PlayerManagerClient())

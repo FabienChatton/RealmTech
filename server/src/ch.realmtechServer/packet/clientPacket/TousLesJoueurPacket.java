@@ -42,6 +42,11 @@ public class TousLesJoueurPacket implements ClientPacket {
     }
 
     @Override
+    public int getSize() {
+        return Integer.SIZE + poss.length * Float.SIZE + uuids.length * Long.SIZE;
+    }
+
+    @Override
     public void write(ByteBuf byteBuf) {
         byteBuf.writeInt(nombreDeJoueur);
         for (int i = 0; i < nombreDeJoueur; i++) {

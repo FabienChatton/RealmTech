@@ -49,4 +49,9 @@ public class CellBreakPacket implements ClientPacket {
         byteBuf.writeLong(playerUUID.getLeastSignificantBits());
         byteBuf.writeInt(itemUsedByPlayerHash);
     }
+
+    @Override
+    public int getSize() {
+        return Integer.SIZE * 3 + Byte.SIZE + Long.SIZE * 2;
+    }
 }

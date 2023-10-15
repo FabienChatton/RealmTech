@@ -9,4 +9,7 @@ public interface Packet {
     default int getId() {
         return getClass().getSimpleName().hashCode();
     }
+
+    /** Donnes la taille du packet en bits */
+    int getSize();
 }

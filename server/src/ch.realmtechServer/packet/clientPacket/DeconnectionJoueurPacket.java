@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.UUID;
 
 public class DeconnectionJoueurPacket implements ClientPacket {
-    private UUID uuid;
+    private final UUID uuid;
 
     public DeconnectionJoueurPacket(UUID uuid) {
         this.uuid = uuid;
@@ -27,5 +27,10 @@ public class DeconnectionJoueurPacket implements ClientPacket {
     public void write(ByteBuf byteBuf) {
         byteBuf.writeLong(uuid.getMostSignificantBits());
         byteBuf.writeLong(uuid.getLeastSignificantBits());
+    }
+
+    @Override
+    public int getSize() {
+        return Long.SIZE * 2;
     }
 }

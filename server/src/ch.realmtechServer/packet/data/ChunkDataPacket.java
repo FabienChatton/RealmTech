@@ -39,4 +39,8 @@ public class ChunkDataPacket {
     public byte[] getChunkBytes() {
         return chunkBytes;
     }
+
+    public int getSize() {
+        return Integer.SIZE * 2 + chunkBytes.length * Byte.SIZE;
+    }
 }

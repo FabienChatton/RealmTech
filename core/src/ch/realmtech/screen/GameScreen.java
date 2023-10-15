@@ -24,6 +24,9 @@ public class GameScreen extends AbstractScreen {
     private final Label gameCoo;
     private final Label chunkPos;
     private final Label innerChunk;
+    private final Label tps;
+    private final Label reciveDataSize;
+    private final Label sendDataSize;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -33,11 +36,17 @@ public class GameScreen extends AbstractScreen {
         gameCoo = new Label("", skin);
         chunkPos = new Label("", skin);
         innerChunk = new Label("", skin);
+        tps = new Label(null, skin);
+        reciveDataSize = new Label(null, skin);
+        sendDataSize = new Label(null, skin);
 
         debugTable.add(fpsLabel).left().row();
         debugTable.add(gameCoo).left().row();
         debugTable.add(chunkPos).left().row();
         debugTable.add(innerChunk).left().row();
+        debugTable.add(tps).left().row();
+        debugTable.add(reciveDataSize).left().row();
+        debugTable.add(sendDataSize).left().row();
     }
 
     @Override
@@ -56,10 +65,10 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             if (uiTable.getChildren().contains(debugTable, true)) {
                 uiTable.clear();
-                uiStage.setDebugAll(false);
+                // uiStage.setDebugAll(false);
             } else {
                 uiTable.add(debugTable).expand().left().top();
-                uiStage.setDebugAll(true);
+                // uiStage.setDebugAll(true);
             }
         }
         // open inventory
@@ -96,6 +105,9 @@ public class GameScreen extends AbstractScreen {
         gameCoo.setText(String.format("Game X : %f\nGame Y : %f", gameCamera.position.x, gameCamera.position.y));
         chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapManager.getChunkPos(gameCamera.position.x), MapManager.getChunkPos(gameCamera.position.y)));
         innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapManager.getInnerChunk(gameCamera.position.x), MapManager.getInnerChunk(gameCamera.position.y)));
+        tps.setText(String.format("TPS : %d ", context.getEcsEngine().serverTickBeatMonitoring.getTickBeatPerSeconde()));
+        reciveDataSize.setText(String.format("RDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataReciveSizePerSeconde()));
+        sendDataSize.setText(String.format("SDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataSendPerSeconde()));
     }
 
     @Override

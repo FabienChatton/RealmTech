@@ -22,4 +22,9 @@ public class DemandeDeConnexionJoueurPacket implements ServerPacket {
     public void executeOnServer(Channel clientChannel, ServerExecute serverExecute) {
         serverExecute.newPlayerConnect(clientChannel);
     }
+
+    @Override
+    public int getSize() {
+        return 0;
+    }
 }

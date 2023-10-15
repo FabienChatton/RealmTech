@@ -32,4 +32,9 @@ public class ChunkAReplacePacket implements ClientPacket {
         byteBuf.writeInt(oldChunkPosX);
         byteBuf.writeInt(oldChunkPosY);
     }
+
+    @Override
+    public int getSize() {
+        return newChunkDataPacket.getSize() + Integer.SIZE * 2;
+    }
 }

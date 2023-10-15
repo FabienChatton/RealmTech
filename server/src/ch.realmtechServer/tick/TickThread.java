@@ -31,11 +31,11 @@ public class TickThread extends Thread implements Closeable {
                     lastTickTime = System.currentTimeMillis();
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
-                    try {
-                        close();
-                    } catch (IOException ex) {
-                        logger.error(ex.getMessage(), e);
-                    }
+//                    try {
+//                        close();
+//                    } catch (IOException ex) {
+//                        logger.error(ex.getMessage(), e);
+//                    }
                 }
             }
         }

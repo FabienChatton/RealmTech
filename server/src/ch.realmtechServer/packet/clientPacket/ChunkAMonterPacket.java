@@ -23,4 +23,9 @@ public class ChunkAMonterPacket implements ClientPacket {
     public void write(ByteBuf byteBuf) {
         chunkDataPacket.writeChunk(byteBuf);
     }
+
+    @Override
+    public int getSize() {
+        return chunkDataPacket.getSize();
+    }
 }

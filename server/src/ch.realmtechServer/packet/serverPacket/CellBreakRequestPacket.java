@@ -42,4 +42,9 @@ public class CellBreakRequestPacket implements ServerPacket {
     public void executeOnServer(Channel clientChannel, ServerExecute serverExecute) {
         serverExecute.cellBreakRequest(clientChannel, chunkPosX, chunkPosY, innerChunkX, innerChunkY, itemUseByPlayerHash);
     }
+
+    @Override
+    public int getSize() {
+        return Integer.SIZE * 3 + Byte.SIZE * 2;
+    }
 }

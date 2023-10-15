@@ -211,7 +211,7 @@ public final class RealmTech extends Game{
     public void rejoindreMulti(String host, int port) throws Exception {
         synchronized (this) {
             if (ecsEngine == null) {
-                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false);
+                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false, this);
                 nouveauECS(clientConnexionHandler);
                 clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
             }
@@ -222,7 +222,7 @@ public final class RealmTech extends Game{
         synchronized (this) {
             if (ecsEngine == null) {
                 ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
-                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true);
+                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true, this);
                 nouveauECS(clientConnexionHandler);
                 clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
             }

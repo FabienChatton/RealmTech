@@ -20,6 +20,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ClientPacket> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ClientPacket msg) throws Exception {
+        clientExecute.packetReciveMonitoring(msg);
         msg.executeOnClient(clientExecute);
     }
 }

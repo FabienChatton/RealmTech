@@ -5,6 +5,7 @@ import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
 import ch.realmtechServer.options.DataCtrl;
+import ch.realmtechServer.packet.clientPacket.TickBeatPacket;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public final class EcsEngineServer {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
+    private ServerContext serverContext;
     private World world;
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     private final BodyDef bodyDef;
@@ -33,6 +35,7 @@ public final class EcsEngineServer {
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
+        this.serverContext = serverContext;
         Box2D.init();
         DataCtrl dataCtrl = new DataCtrl();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
@@ -106,8 +109,16 @@ public final class EcsEngineServer {
     }
     public void processNextTickRunnable() {
         synchronized (nextTickServer) {
-            nextTickServer.forEach(Runnable::run);
-            nextTickServer.clear();
+            try {
+                long t1 = System.currentTimeMillis();
+                nextTickServer.forEach(Runnable::run);
+                long t2 = System.currentTimeMillis();
+                serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            } finally {
+                nextTickServer.clear();
+            }
         }
     }
 

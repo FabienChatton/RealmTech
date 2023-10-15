@@ -40,6 +40,7 @@ public class ServerContext {
                 .put(DeconnectionJoueurPacket.class, DeconnectionJoueurPacket::new)
                 .put(CellBreakRequestPacket.class, CellBreakRequestPacket::new)
                 .put(CellBreakPacket.class, CellBreakPacket::new)
+                .put(TickBeatPacket.class, TickBeatPacket::new)
         ;
     }
 
