@@ -152,6 +152,7 @@ Métadonnées
     - version du protocole, int
     - nombre de row, int
     - nombre de slot par row, int
+    - backgoundTextureName, String (US_ASCII)
  body
     pour chaque slot:
         - hash du registre de l'item, int
@@ -160,8 +161,8 @@ Métadonnées
 Les rows sont les lignes, c'est-à-dire qu'elles vont de gauche à droite, alors
 que les slot par row sont les colonnes, c'est-à-dire de haut en bas
 ```text
-+-+-+ <- row
-| | |
++-+-+ 
+| | | <- row
 +-+-+
 | | |
 +-+-+
