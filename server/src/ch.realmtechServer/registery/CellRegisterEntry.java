@@ -1,6 +1,5 @@
 package ch.realmtechServer.registery;
 
-import ch.realmtechServer.divers.Lazy;
 import ch.realmtechServer.level.cell.CellBehavior;
 import ch.realmtechServer.mod.RealmTechCoreMod;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import java.util.List;
 
 public class CellRegisterEntry implements Entry<CellRegisterEntry> {
-    @Lazy(champSource = "textureRegionName")
+
     private TextureRegion textureRegion;
     private final String textureRegionName;
     private final CellBehavior cellBehavior;

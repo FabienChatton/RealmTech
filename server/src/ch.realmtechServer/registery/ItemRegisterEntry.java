@@ -1,6 +1,5 @@
 package ch.realmtechServer.registery;
 
-import ch.realmtechServer.divers.Lazy;
 import ch.realmtechServer.item.ItemBehavior;
 import ch.realmtechServer.mod.RealmTechCoreMod;
 import com.artemis.Archetype;
@@ -11,7 +10,6 @@ import java.util.NoSuchElementException;
 
 public class ItemRegisterEntry implements Entry<ItemRegisterEntry> {
     private Archetype archetype;
-    @Lazy(champSource = "textureRegionName")
     private TextureRegion textureRegion;
     private String textureRegionName;
     private final ItemBehavior itemBehavior;

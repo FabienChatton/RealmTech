@@ -143,7 +143,32 @@ Les inventaires permettent de stocker des items.
 Les inventaires sont un tableau de deux dimensions, représentant dans la
 première dimension, l'index de l'inventaire, et dans la deuxième,
 le nombre d'item. L'inventaire peut être lié
-à un system de craft pour qu'il puisse réaliser les crafts possibles.
+à un system de craft.
+### Protocole de sauvegarde inventaire
+La version du protocole de sauvegarde sont les premiers 4 octets de l'inventaire
+sérialisé.
+```text
+Métadonnées
+    - version du protocole, int
+    - nombre de row, int
+    - nombre de slot par row, int
+ body
+    pour chaque slot:
+        - hash du registre de l'item, int
+        - le nombre d'item, byte
+```
+Les rows sont les lignes, c'est-à-dire qu'elles vont de gauche à droite, alors
+que les slot par row sont les colonnes, c'est-à-dire de haut en bas
+```text
++-+-+ <- row
+| | |
++-+-+
+| | |
++-+-+
+ /\ 
+ || slot par row
+```
+
 
 ## RealmTechData
 Le dossier RealmTechData contient les informations nécessaires pour
