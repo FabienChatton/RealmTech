@@ -40,8 +40,7 @@ public class CellBeingMineSystem extends IteratingSystem {
                 byte innerChunkX = MapManager.getInnerChunk(gameCoordinate.x);
                 byte innerChunkY = MapManager.getInnerChunk(gameCoordinate.y);
                 context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, RealmTechCoreMod.NO_ITEM));
-//                world.getSystem(MapManager.class).breakCellServer(chunk, entityId, context.getEcsEngine().getPlayerId());
-//                remove(entityId);
+                mCellBeingMine.remove(topCell);
             }
         } else {
             mCellBeingMine.remove(entityId);
