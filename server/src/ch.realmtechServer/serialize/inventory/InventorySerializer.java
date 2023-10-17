@@ -16,8 +16,6 @@ public interface InventorySerializer {
      */
     Supplier<int[][]> fromBytes(World world, byte[] bytes);
 
-    InventorySerializerV1 inventorySerializerV1 = new InventorySerializerV1();
-
     static Supplier<int[][]> getFromBytes(World world, byte[] bytes) {
         byte[] versionBytes = new byte[Integer.BYTES];
         System.arraycopy(bytes, 0, versionBytes, 0, versionBytes.length);
@@ -25,12 +23,16 @@ public interface InventorySerializer {
         int version = byteBuffer.getInt();
 
         return switch (version) {
-            case 1 -> inventorySerializerV1.fromBytes(world, bytes);
-            default -> throw new IllegalStateException("Unexpected value: " + version + ". Cette version n'est pas implémentée pas");
+            case 1 -> InventorySerializerImplementation.inventorySerializerV1.fromBytes(world, bytes);
+            default -> throw new IllegalStateException("Unexpected value: " + version + ". Cette version n'est pas implémentée");
         };
     }
 
     static byte[] toBytes(World world, InventoryComponent inventoryComponent) {
-        return inventorySerializerV1.toBytes(inventoryComponent, world);
+        return InventorySerializerImplementation.inventorySerializerV1.toBytes(inventoryComponent, world);
+    }
+
+    final class InventorySerializerImplementation {
+        private static final InventorySerializer inventorySerializerV1 = new InventorySerializerV1();
     }
 }
