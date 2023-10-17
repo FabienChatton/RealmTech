@@ -5,6 +5,7 @@ import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.helper.Popup;
 import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.packet.serverPacket.GetPlayerInventorySessionPacket;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -73,7 +74,11 @@ public class GameScreen extends AbstractScreen {
         }
         // open inventory
         if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get())) {
-            context.getEcsEngine().togglePlayerInventoryWindow();
+            if (!context.getSystem(PlayerInventorySystem.class).isEnabled()) {
+                context.getConnexionHandler().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
+            } else {
+                context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
+            }
         }
 
         if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.keyDropItem.get())) {

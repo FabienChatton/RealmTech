@@ -41,7 +41,7 @@ public class InventorySerializerV1 implements InventorySerializer {
     }
 
     @Override
-    public Supplier<Integer> fromBytes(World world, byte[] bytes) {
+    public Supplier<int[][]> fromBytes(World world, byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         // header
         int version = byteBuffer.getInt();
@@ -54,13 +54,17 @@ public class InventorySerializerV1 implements InventorySerializer {
         for (int i = 0; i < numberOfRow; i++) {
             for (int j = 0; j < numberOfSlotParRow; j++) {
                 int index = j * (i + 1);
-                itemsRegistry[index] = ItemRegisterEntry.getItemByHash(byteBuffer.getInt());
+                int itemHash = byteBuffer.getInt();
+                if (itemHash == 0) {
+                    itemsRegistry[index] = null;
+                } else {
+                    itemsRegistry[index] = ItemRegisterEntry.getItemByHash(itemHash);
+                }
                 itemsNumber[index] = byteBuffer.get();
             }
         }
         return () -> {
-            int inventoryId = world.create();
-            InventoryComponent inventoryComponent = world.edit(inventoryId).create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow, backgroundTextureName);
+            int[][] inventory = new int[numberOfRow * numberOfSlotParRow][InventoryComponent.DEFAULT_STACK_LIMITE];
             for (int i = 0; i < numberOfRow; i++) {
                 for (int j = 0; j < numberOfSlotParRow; j++) {
                     int index = j * (i + 1);
@@ -68,17 +72,17 @@ public class InventorySerializerV1 implements InventorySerializer {
                     if (itemRegisterEntry != null) {
                         for (int n = 0; n < itemsNumber[index]; n++) {
                             int itemId = world.getSystem(ItemManager.class).newItemInventory(itemRegisterEntry);
-                            inventoryComponent.inventory[index][n] = itemId;
+                            inventory[index][n] = itemId;
                         }
                     }
                 }
             }
-            return inventoryId;
+            return inventory;
         };
     }
 
     private int getTailleBytes(InventoryComponent inventoryComponent) {
         // version protocole, nombre de row, slot par row, backgroundTextureName, nombre de row * slot par row * (hash + nombre)
-        return Integer.BYTES + Integer.BYTES + Integer.BYTES + inventoryComponent.backgroundTexture.getBytes(StandardCharsets.UTF_8).length + 1 + inventoryComponent.numberOfRow * inventoryComponent.numberOfSlotParRow * Integer.BYTES + Byte.BYTES;
+        return Integer.BYTES + Integer.BYTES + Integer.BYTES + inventoryComponent.backgroundTexture.getBytes(StandardCharsets.US_ASCII).length + 1 + inventoryComponent.numberOfRow * inventoryComponent.numberOfSlotParRow * (Integer.BYTES + Byte.BYTES);
     }
 }

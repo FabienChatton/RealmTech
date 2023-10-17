@@ -3,6 +3,7 @@ package ch.realmtechServer.netty;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
+import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
 import ch.realmtechServer.ecs.system.ItemManagerServer;
 import ch.realmtechServer.ecs.system.MapManager;
@@ -11,8 +12,10 @@ import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.clientPacket.CellBreakPacket;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechServer.packet.clientPacket.DeconnectionJoueurPacket;
+import ch.realmtechServer.packet.clientPacket.PlayerInventoryPacket;
 import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.registery.ItemRegisterEntry;
+import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
@@ -66,6 +69,17 @@ public class ServerExecuteContext implements ServerExecute {
                     serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, playerConnexionComponent.uuid, itemUseByPlayerHash));
                 }
             }
+        });
+    }
+
+    @Override
+    public void getPlayerInventorySession(Channel clientChannel) {
+        ServerContext.nextTick(() -> {
+            int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
+            PlayerConnexionComponent playerConnexionComponent = serverContext.getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
+            InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
+            byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
+            clientChannel.writeAndFlush(new PlayerInventoryPacket(bytes, playerConnexionComponent.uuid));
         });
     }
 }

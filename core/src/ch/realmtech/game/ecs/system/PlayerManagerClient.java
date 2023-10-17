@@ -4,6 +4,7 @@ import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.craft.CraftStrategy;
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.mod.RealmTechCoreMod;
+import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class PlayerManagerClient extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerClient.class);
@@ -29,6 +31,8 @@ public class PlayerManagerClient extends Manager {
     private BodyDef bodyDef;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<PlayerComponent> mPlayer;
+    private ComponentMapper<InventoryComponent> mInventory;
     private final HashMap<UUID, Integer> players;
     public final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
 
@@ -134,5 +138,12 @@ public class PlayerManagerClient extends Manager {
 
     public void removePlayer(UUID uuid) {
         world.delete(getPlayers().get(uuid));
+    }
+
+    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
+        int playerId = getPlayers().get(playerUUID);
+        Supplier<int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
+        InventoryComponent inventoryComponent = mInventory.get(playerId);
+        inventoryComponent.inventory = inventorySupplier.get();
     }
 }

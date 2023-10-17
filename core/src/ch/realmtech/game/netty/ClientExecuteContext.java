@@ -102,4 +102,12 @@ public class ClientExecuteContext implements ClientExecute {
     public <T extends ClientPacket> void packetReciveMonitoring(T packet) {
         context.getEcsEngine().serverTickBeatMonitoring.addPacketResive(packet);
     }
+
+    @Override
+    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
+        context.nextFrame(() -> {
+            context.getSystem(PlayerManagerClient.class).setPlayerInventory(playerUUID, inventoryBytes);
+            context.getEcsEngine().togglePlayerInventoryWindow();
+        });
+    }
 }

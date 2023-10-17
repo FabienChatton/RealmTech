@@ -6,10 +6,7 @@ import ch.realmtechServer.netty.*;
 import ch.realmtechServer.packet.PacketMap;
 import ch.realmtechServer.packet.ServerResponseHandler;
 import ch.realmtechServer.packet.clientPacket.*;
-import ch.realmtechServer.packet.serverPacket.CellBreakRequestPacket;
-import ch.realmtechServer.packet.serverPacket.DemandeDeConnexionJoueurPacket;
-import ch.realmtechServer.packet.serverPacket.PlayerMovePacket;
-import ch.realmtechServer.packet.serverPacket.ServerExecute;
+import ch.realmtechServer.packet.serverPacket.*;
 import ch.realmtechServer.tick.TickThread;
 import com.artemis.BaseSystem;
 import io.netty.channel.ChannelFuture;
@@ -41,6 +38,8 @@ public class ServerContext {
                 .put(CellBreakRequestPacket.class, CellBreakRequestPacket::new)
                 .put(CellBreakPacket.class, CellBreakPacket::new)
                 .put(TickBeatPacket.class, TickBeatPacket::new)
+                .put(GetPlayerInventorySessionPacket.class, GetPlayerInventorySessionPacket::new)
+                .put(PlayerInventoryPacket.class, PlayerInventoryPacket::new)
         ;
     }
 

@@ -24,4 +24,6 @@ public interface ClientExecute {
     void tickBeat(float tickElapseTime);
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
+
+    void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes);
 }
