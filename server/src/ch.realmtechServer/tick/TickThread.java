@@ -25,9 +25,7 @@ public class TickThread extends Thread implements Closeable {
             long deltaTime = System.currentTimeMillis() - lastTickTime;
             if (deltaTime > TIME_TICK_LAPS_MILLIS) {
                 try {
-                    serverContext.getEcsEngineServer().getWorld().setDelta(deltaTime);
-                    serverContext.getEcsEngineServer().getWorld().process();
-                    serverContext.getEcsEngineServer().processNextTickRunnable();
+                    serverContext.getEcsEngineServer().process(deltaTime / 1000f);
                     lastTickTime = System.currentTimeMillis();
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);

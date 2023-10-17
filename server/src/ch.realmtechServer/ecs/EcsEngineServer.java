@@ -75,7 +75,7 @@ public final class EcsEngineServer {
 
                 // server
 //                .with(new CellBeingMineSystem())
-                //.with(new PhysiqueWorldStepSystem())
+                .with(new PhysiqueWorldStepSystem())
                 .with(new FurnaceSystem())
 
                 .with(new MapManager())
@@ -88,7 +88,22 @@ public final class EcsEngineServer {
         worldConfiguration.register(dataCtrl);
         worldConfiguration.register(itemManager);
         this.world = new World(worldConfiguration);
+        physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
         logger.trace("fin de l'initialisation du ecs");
+    }
+
+    public void process(float deltaTime) {
+        world.setDelta(deltaTime);
+        world.process();
+        processNextTickRunnable();
+        // pour débug
+//        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class)).getEntities();
+//        ComponentMapper<PositionComponent> mPos = world.getMapper(PositionComponent.class);
+//        int[] itemsData = items.getData();
+//        for (int i = 0; i < items.size(); i++) {
+//            PositionComponent positionComponent = mPos.get(itemsData[i]);
+//            logger.info(positionComponent.x + "," + positionComponent.y);
+//        }
     }
 
     public void prepareSaveToLoad(String saveName) throws IOException {
@@ -103,10 +118,10 @@ public final class EcsEngineServer {
         world.getSystem(SaveInfManager.class).saveInfMap(infMap);
         logger.info("carte sauvegarde");
     }
-
     public World getWorld() {
         return world;
     }
+
     public void processNextTickRunnable() {
         synchronized (nextTickServer) {
             try {
