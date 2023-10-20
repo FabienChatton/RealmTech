@@ -44,10 +44,10 @@ public class DataCtrl {
     }
 
     private static void saveOptionFile(final Properties propertiesFile, final Option option) throws IOException {
-        propertiesFile.put("keyMoveForward", option.keyMoveForward.toString());
+        propertiesFile.put("keyMoveForward", option.keyMoveUp.toString());
         propertiesFile.put("keyMoveLeft", option.keyMoveLeft.toString());
         propertiesFile.put("keyMoveRight", option.keyMoveRight.toString());
-        propertiesFile.put("keyMoveBack", option.keyMoveBack.toString());
+        propertiesFile.put("keyMoveBack", option.keyMoveDown.toString());
         propertiesFile.put("openInventory", option.openInventory.toString());
         propertiesFile.put("renderDistance", option.renderDistance.toString());
         propertiesFile.put("chunkParUpdate", option.chunkParUpdate.toString());
@@ -70,10 +70,10 @@ public class DataCtrl {
             throw illegalArgumentException;
         }
         final Option option = new Option();
-        option.keyMoveForward.set(Integer.parseInt(propertiesFile.getProperty("keyMoveForward")));
+        option.keyMoveUp.set(Integer.parseInt(propertiesFile.getProperty("keyMoveForward")));
         option.keyMoveLeft.set(Integer.parseInt(propertiesFile.getProperty("keyMoveLeft")));
         option.keyMoveRight.set(Integer.parseInt(propertiesFile.getProperty("keyMoveRight")));
-        option.keyMoveBack.set(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
+        option.keyMoveDown.set(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
         option.openInventory.set(Integer.parseInt(propertiesFile.getProperty("openInventory")));
         option.renderDistance.set(Integer.parseInt(propertiesFile.getProperty("renderDistance")));
         option.chunkParUpdate.set(Integer.parseInt(propertiesFile.getProperty("chunkParUpdate")));
@@ -100,10 +100,10 @@ public class DataCtrl {
     public static final class Option {
         public final static int RENDER_DISTANCE_MIN = 1;
         public final static int RENDER_DISTANCE_MAX = 16;
-        public final AtomicInteger keyMoveForward = new AtomicInteger();
+        public final AtomicInteger keyMoveUp = new AtomicInteger();
         public final AtomicInteger keyMoveLeft = new AtomicInteger();
         public final AtomicInteger keyMoveRight = new AtomicInteger();
-        public final AtomicInteger keyMoveBack = new AtomicInteger();
+        public final AtomicInteger keyMoveDown = new AtomicInteger();
         public final AtomicInteger openInventory = new AtomicInteger();
         public final AtomicInteger renderDistance = new AtomicInteger();
         public final AtomicInteger chunkParUpdate = new AtomicInteger();
@@ -122,10 +122,10 @@ public class DataCtrl {
         }
 
         public void setDefaultOption() {
-            keyMoveForward.set(Input.Keys.W);
+            keyMoveUp.set(Input.Keys.W);
             keyMoveLeft.set(Input.Keys.A);
             keyMoveRight.set(Input.Keys.D);
-            keyMoveBack.set(Input.Keys.S);
+            keyMoveDown.set(Input.Keys.S);
             openInventory.set(Input.Keys.E);
             renderDistance.set(6);
             chunkParUpdate.set(3);

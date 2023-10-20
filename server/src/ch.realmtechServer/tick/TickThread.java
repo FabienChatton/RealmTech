@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class TickThread extends Thread implements Closeable {
     private final static Logger logger = LoggerFactory.getLogger(TickThread.class);
-    public final static long TIME_TICK_LAPS_MILLIS = 20;
+    public final static long TIME_TICK_LAPS_MILLIS = 16;
     private final ServerContext serverContext;
     private long lastTickTime = System.currentTimeMillis();
     private boolean run = true;

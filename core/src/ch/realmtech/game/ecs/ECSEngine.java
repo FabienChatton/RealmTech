@@ -71,6 +71,7 @@ public final class ECSEngine implements Disposable {
 
                 // system
                 .withFrame(new PlayerInputSystem())
+                .withFrame(new PlayerMouvementTextureSystem())
 //                .withClient(new MapSystem())
                 .withFrame(new CraftingPlayerSystem())
                 .withFrame(new ItemBeingPickAnimationSystem())

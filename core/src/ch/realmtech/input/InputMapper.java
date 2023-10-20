@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 //TODO mettre la gestion des input dans l'ECS avec un composent singleton
 public final class InputMapper implements InputProcessor {
     private final RealmTech context;
-    public static KeysMapper moveForward;
+    public static KeysMapper moveUp;
     public static KeysMapper moveLeft;
     public static KeysMapper moveRight;
-    public static KeysMapper moveBack;
+    public static KeysMapper moveDown;
     public static KeysMapper openInventory;
     public static PointerMapper leftClick;
     public static PointerMapper rightClick;
@@ -32,16 +32,16 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveForward = new KeysMapper(context.getDataCtrl().option.keyMoveForward);
+        moveUp = new KeysMapper(context.getDataCtrl().option.keyMoveUp);
         moveLeft = new KeysMapper(context.getDataCtrl().option.keyMoveLeft);
         moveRight = new KeysMapper(context.getDataCtrl().option.keyMoveRight);
-        moveBack = new KeysMapper(context.getDataCtrl().option.keyMoveBack);
+        moveDown = new KeysMapper(context.getDataCtrl().option.keyMoveDown);
         openInventory = new KeysMapper(context.getDataCtrl().option.openInventory);
 
-        keysMappers.add(moveForward);
+        keysMappers.add(moveUp);
         keysMappers.add(moveLeft);
         keysMappers.add(moveRight);
-        keysMappers.add(moveBack);
+        keysMappers.add(moveDown);
         keysMappers.add(openInventory);
 
         // pointer
@@ -68,10 +68,10 @@ public final class InputMapper implements InputProcessor {
     }
 
     public static void reset() {
-        moveForward.isPressed = false;
+        moveUp.isPressed = false;
         moveLeft.isPressed = false;
         moveRight.isPressed = false;
-        moveBack.isPressed = false;
+        moveDown.isPressed = false;
     }
 
     public boolean isKeyPressed(final int keycode) {
@@ -157,7 +157,7 @@ public final class InputMapper implements InputProcessor {
     }
 
     public final static class KeysMapper {
-        public AtomicInteger key;
+        private final AtomicInteger key;
         public boolean isPressed;
 
         public KeysMapper(AtomicInteger key) {

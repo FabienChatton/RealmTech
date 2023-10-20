@@ -8,6 +8,7 @@ import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
 import ch.realmtechServer.ecs.system.ItemManagerServer;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
+import ch.realmtechServer.ecs.system.PlayerMouvementSystemServer;
 import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.clientPacket.CellBreakPacket;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
@@ -17,7 +18,6 @@ import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
-import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 
 public class ServerExecuteContext implements ServerExecute {
@@ -46,9 +46,9 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void playerMove(Channel clientChannel, float impulseX, float impulseY, Vector2 pos) {
+    public void playerMove(Channel clientChannel, byte inputKeys) {
         ServerContext.nextTick(() -> {
-            serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).playerMove(clientChannel, impulseX, impulseY, pos);
+            serverContext.getSystem(PlayerMouvementSystemServer.class).playerMove(clientChannel, inputKeys);
         });
     }
 

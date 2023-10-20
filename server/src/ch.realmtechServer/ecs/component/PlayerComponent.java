@@ -4,6 +4,7 @@ import com.artemis.Component;
 import com.artemis.World;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 
 public class PlayerComponent extends Component {
@@ -11,6 +12,7 @@ public class PlayerComponent extends Component {
     public boolean moveDown;
     public boolean moveLeft;
     public boolean moveRight;
+    public Vector2 oldPos = new Vector2();
     public TextureRegion[] animationFront;
     public TextureRegion[] animationLeft;
     public TextureRegion[] animationBack;

@@ -30,7 +30,7 @@ public final class EcsEngineServer {
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
-    private final static List<Runnable> nextTickServer = Collections.synchronizedList(new ArrayList<>());
+    private final static List<Runnable> nextTickServerPre = Collections.synchronizedList(new ArrayList<>());
     private final ItemManager itemManager;
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
@@ -51,6 +51,7 @@ public final class EcsEngineServer {
                 .with(new InventoryManager())
                 .with(new PhysiqueContactListenerManager())
                 .with(new SaveInfManager())
+                .with(new PlayerMouvementSystemServer())
 
                 // system
                 .with(new MapSystemServer())
@@ -93,9 +94,18 @@ public final class EcsEngineServer {
     }
 
     public void process(float deltaTime) {
+        long t1 = System.currentTimeMillis();
+        List<Runnable> copyPre;
+        synchronized (nextTickServerPre) {
+            copyPre = List.copyOf(nextTickServerPre);
+            nextTickServerPre.clear();
+        }
+        processNextTickRunnable(copyPre);
         world.setDelta(deltaTime);
         world.process();
-        processNextTickRunnable();
+
+        long t2 = System.currentTimeMillis();
+        serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f));
         // pour débug
 //        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class)).getEntities();
 //        ComponentMapper<PositionComponent> mPos = world.getMapper(PositionComponent.class);
@@ -122,23 +132,16 @@ public final class EcsEngineServer {
         return world;
     }
 
-    public void processNextTickRunnable() {
-        synchronized (nextTickServer) {
-            try {
-                long t1 = System.currentTimeMillis();
-                nextTickServer.forEach(Runnable::run);
-                long t2 = System.currentTimeMillis();
-                serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f));
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            } finally {
-                nextTickServer.clear();
-            }
+    public void processNextTickRunnable(List<Runnable> runnables) {
+        try {
+            runnables.forEach(Runnable::run);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
     public static void nextTickServer(Runnable runnable) {
-        nextTickServer.add(runnable);
+        nextTickServerPre.add(runnable);
     }
 
     public Entity getMapEntity() {

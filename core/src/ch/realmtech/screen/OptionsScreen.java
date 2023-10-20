@@ -53,7 +53,7 @@ public class OptionsScreen extends AbstractScreen {
 
         // keyMoveForward
         optionTable.add(new Label("keyMoveForward", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveForward)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveUp)).padLeft(10f).padBottom(10f).row();
         // keyMoveLeft
         optionTable.add(new Label("keyMoveLeft", skin)).left();
         optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveLeft)).padLeft(10f).padBottom(10f).row();
@@ -62,7 +62,7 @@ public class OptionsScreen extends AbstractScreen {
         optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveRight)).padLeft(10f).padBottom(10f).row();
         // keyMoveBack
         optionTable.add(new Label("keyMoveBack", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveBack)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveDown)).padLeft(10f).padBottom(10f).row();
         // keyDropItem
         optionTable.add(new Label("keyDropItem", skin)).left();
         optionTable.add(newKeysBind(context.getDataCtrl().option.keyDropItem)).padLeft(10f).padBottom(10f).row();
