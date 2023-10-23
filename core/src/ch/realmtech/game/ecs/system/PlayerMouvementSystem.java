@@ -31,7 +31,6 @@ public class PlayerMouvementSystem extends IteratingSystem {
     private boolean directionChange = false;
     private float xFactor = 0;
     private float yFactor = 0;
-    private final static float FORCE = 1f;
 
     @Override
     protected void process(int entityId) {

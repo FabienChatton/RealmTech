@@ -10,6 +10,6 @@ public class PhysiqueWorldStepSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        physicWorld.step(0.025f, 6, 2);
+        physicWorld.step(1f / 60f, 6, 2);
     }
 }

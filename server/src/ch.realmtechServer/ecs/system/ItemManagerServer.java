@@ -49,7 +49,7 @@ public class ItemManagerServer extends ItemManager {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
         itemComponent.set(itemRegisterEntry, UUID.randomUUID());
-        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 64, 64);
+        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void tickBeat(float tickElapseTime) {
-        context.getEcsEngine().serverTickBeatMonitoring.addTickElapseTime(tickElapseTime);
+        context.nextFrame(() -> context.getEcsEngine().serverTickBeatMonitoring.addTickElapseTime(tickElapseTime));
     }
 
     @Override
