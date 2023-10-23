@@ -82,7 +82,7 @@ public class GameScreen extends AbstractScreen {
         }
 
         if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.keyDropItem.get())) {
-            context.getEcsEngine().dropCurentPlayerItem();
+            //context.getEcsEngine().dropCurentPlayerItem();
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))

@@ -9,7 +9,7 @@ import ch.realmtechServer.registery.ItemRegisterEntry;
 public class BreakCellEvent {
 
     public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntry) {
-        return (itemManager, world, chunkId, cellId, itemUseByPlayer) -> {
+        return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
             if (itemRegisterEntry != null) {
                 InfCellComponent cellComponent = world.getMapper(InfCellComponent.class).get(cellId);
                 InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
@@ -19,12 +19,11 @@ public class BreakCellEvent {
                             : ItemType.TOUS;
                     if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS
                             || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemTypeUse) {
-                        itemManager.newItemOnGround(
+                        cellManager.breakCell(
                                 MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX()),
                                 MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY()),
                                 itemRegisterEntry
                         );
-                        world.getSystem(MapManager.class).damneCell(chunkId, cellId);
                         return true;
                     }
                 }
@@ -34,7 +33,7 @@ public class BreakCellEvent {
     }
 
     public static BreakCell dropNothing() {
-        return (itemManager, world, chunkId, cellId, itemUseByPlayer) -> {
+        return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
             world.getSystem(MapManager.class).damneCell(chunkId, cellId);
             return true;
         };

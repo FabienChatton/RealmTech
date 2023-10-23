@@ -61,6 +61,7 @@ public final class EcsEngineServer {
                 .with(new PickUpOnGroundItemSystem())
 //                .with(new PlayerMouvementSystem())
                 .with(new Box2dFrotementSystem())
+                .with(new ItemOnGroundPosSyncSystem())
                 // render
 //                .with(new PlayerTextureAnimated())
                 .with(new UpdateBox2dWithPosition())
@@ -77,7 +78,7 @@ public final class EcsEngineServer {
                 // server
 //                .with(new CellBeingMineSystem())
                 .with(new PhysiqueWorldStepSystem())
-                .with(new FurnaceSystem())
+                //.with(new FurnaceSystem())
 
                 .with(new MapManager())
                 .with(new PlayerManagerServer())

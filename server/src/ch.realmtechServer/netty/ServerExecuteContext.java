@@ -5,12 +5,11 @@ import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
-import ch.realmtechServer.ecs.system.ItemManagerServer;
 import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.ecs.system.MapSystemServer;
 import ch.realmtechServer.ecs.system.PlayerManagerServer;
 import ch.realmtechServer.ecs.system.PlayerMouvementSystemServer;
 import ch.realmtechServer.level.cell.BreakCell;
-import ch.realmtechServer.packet.clientPacket.CellBreakPacket;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechServer.packet.clientPacket.DeconnectionJoueurPacket;
 import ch.realmtechServer.packet.clientPacket.PlayerInventoryPacket;
@@ -53,21 +52,19 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, int itemUseByPlayerHash) {
+    public void cellBreakRequest(Channel clientChannel, int worldPosX, int worldPosY, int itemUseByPlayerHash) {
         ServerContext.nextTick(() -> {
             int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
             InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
             int[] infChunks = infMapComponent.infChunks;
-            int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
-            int cellId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
+            int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
+            int cellId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
             ComponentMapper<InfCellComponent> mCell = serverContext.getEcsEngineServer().getWorld().getMapper(InfCellComponent.class);
             InfCellComponent infCellComponent = mCell.get(cellId);
             BreakCell breakCellEvent = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
             if (breakCellEvent != null) {
-                if (breakCellEvent.breakCell(serverContext.getSystem(ItemManagerServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUseByPlayerHash))) {
-                    serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, playerConnexionComponent.uuid, itemUseByPlayerHash));
-                }
+                breakCellEvent.breakCell(serverContext.getSystem(MapSystemServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUseByPlayerHash));
             }
         });
     }

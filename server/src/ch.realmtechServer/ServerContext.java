@@ -40,6 +40,7 @@ public class ServerContext {
                 .put(TickBeatPacket.class, TickBeatPacket::new)
                 .put(GetPlayerInventorySessionPacket.class, GetPlayerInventorySessionPacket::new)
                 .put(PlayerInventoryPacket.class, PlayerInventoryPacket::new)
+                .put(ItemOnGroundPacket.class, ItemOnGroundPacket::new)
         ;
     }
 

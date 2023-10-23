@@ -3,9 +3,12 @@ package ch.realmtechServer.ecs.system;
 import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.divers.Position;
 import ch.realmtechServer.ecs.component.*;
+import ch.realmtechServer.level.cell.CellManager;
 import ch.realmtechServer.options.DataCtrl;
+import ch.realmtechServer.packet.clientPacket.CellBreakPacket;
 import ch.realmtechServer.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtechServer.packet.clientPacket.ChunkAReplacePacket;
+import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -24,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MapSystemServer extends BaseSystem {
+public class MapSystemServer extends BaseSystem implements CellManager {
     private final static Logger logger = LoggerFactory.getLogger(MapSystemServer.class);
 //    @Wire
 //    private SoundManager soundManager;
@@ -184,14 +187,14 @@ public class MapSystemServer extends BaseSystem {
         return chunkId;
     }
 
-//
-//    public static int getChunk(RealmTech context, Vector2 screenCoordinate) {
-//        int[] infChunks = getChunkInUse(context);
-//        Vector3 gameCoordinate = getGameCoordinate(context, screenCoordinate);
-//        return context.getEcsEngine().getWorld().getSystem(MapSystem.class).getChunk(infChunks, gameCoordinate.x, gameCoordinate.y);
-//    }
-//
-//    public static int[] getChunkInUse(RealmTech context) {
-//        return context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
-//    }
+    @Override
+    public void breakCell(int worldPosX, int worldPosY, ItemRegisterEntry itemDropRegisterEntry) {
+        InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
+        int chunk = world.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
+        int topCell = world.getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        if (topCell == -1) return;
+        world.getSystem(MapManager.class).damneCell(chunk, topCell);
+        world.getSystem(ItemManagerServer.class).newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry);
+        serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
+    }
 }

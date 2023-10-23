@@ -39,7 +39,7 @@ public class CellBeingMineSystem extends IteratingSystem {
                 int chunkPosY = MapManager.getChunkPos(gameCoordinate.y);
                 byte innerChunkX = MapManager.getInnerChunk(gameCoordinate.x);
                 byte innerChunkY = MapManager.getInnerChunk(gameCoordinate.y);
-                context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(chunkPosX, chunkPosY, innerChunkX, innerChunkY, RealmTechCoreMod.NO_ITEM));
+                context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(MapManager.getWorldPos(chunkPosX, innerChunkX), MapManager.getWorldPos(chunkPosY, innerChunkY), RealmTechCoreMod.NO_ITEM));
                 mCellBeingMine.remove(topCell);
             }
         } else {

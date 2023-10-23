@@ -5,14 +5,11 @@ import ch.realmtech.game.ecs.system.ItemManagerClient;
 import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.screen.ScreenType;
-import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
-import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.ClientPacket;
 import ch.realmtechServer.packet.clientPacket.ClientExecute;
 import ch.realmtechServer.registery.ItemRegisterEntry;
-import com.artemis.ComponentMapper;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,16 +77,15 @@ public class ClientExecuteContext implements ClientExecute {
         });
     }
 
-    @Override
-    public void cellBreak(int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, UUID playerUUID, int itemUsedByPlayerHash) {
+
+    public void cellBreak(int worldPosX, int worldPosY) {
         context.nextFrame(() -> {
             int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+            int chunkPosX = MapManager.getChunkPos(worldPosX);
+            int chunkPosY = MapManager.getChunkPos(worldPosY);
             int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
-            int cellId = context.getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
-            int playerId = context.getSystem(PlayerManagerClient.class).getPlayers().get(playerUUID);
-            ComponentMapper<InfCellComponent> mCell = context.getEcsEngine().getWorld().getMapper(InfCellComponent.class);
-            BreakCell breakCellEvent = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getBreakCellEvent();
-            if (breakCellEvent != null) breakCellEvent.breakCell(context.getEcsEngine().getSystem(ItemManagerClient.class), context.getEcsEngine().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUsedByPlayerHash));
+            int cellId = context.getSystem(MapManager.class).getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+            context.getSystem(MapManager.class).damneCell(chunkId, cellId);
         });
     }
 
@@ -100,7 +96,7 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public <T extends ClientPacket> void packetReciveMonitoring(T packet) {
-        context.getEcsEngine().serverTickBeatMonitoring.addPacketResive(packet);
+        context.nextFrame(() -> context.getEcsEngine().serverTickBeatMonitoring.addPacketResive(packet));
     }
 
     @Override
@@ -108,6 +104,13 @@ public class ClientExecuteContext implements ClientExecute {
         context.nextFrame(() -> {
             context.getSystem(PlayerManagerClient.class).setPlayerInventory(playerUUID, inventoryBytes);
             context.getEcsEngine().togglePlayerInventoryWindow();
+        });
+    }
+
+    @Override
+    public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
+        context.nextFrame(() -> {
+            context.getSystem(ItemManagerClient.class).setItemOnGroundPos(uuid, itemRegisterEntry, worldPosX, worldPosY);
         });
     }
 }

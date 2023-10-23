@@ -8,15 +8,12 @@ import ch.realmtech.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.strategy.ServerInvocationStrategy;
 import ch.realmtech.strategy.WorldConfigurationBuilderServer;
-import ch.realmtechServer.ctrl.ItemManager;
-import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.mod.PlayerFootStepSound;
 import ch.realmtechServer.mod.RealmTechCorePlugin;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -44,7 +41,6 @@ public final class ECSEngine implements Disposable {
     private final ServerInvocationStrategy serverInvocationStrategy;
     private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
-    private final ItemManager itemManager;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
@@ -55,7 +51,6 @@ public final class ECSEngine implements Disposable {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
-        itemManager = new ItemManagerClient();
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
@@ -63,7 +58,7 @@ public final class ECSEngine implements Disposable {
 
                 // manageur
                 .withFrame(new TagManager())
-                .withFrame(itemManager)
+                .withFrame(new ItemManagerClient())
                 .withFrame(new InventoryManager())
                 .withFrame(new PhysiqueContactListenerManager())
                 .withFrame(new SaveInfManager())
@@ -74,8 +69,8 @@ public final class ECSEngine implements Disposable {
                 .withFrame(new PlayerMouvementTextureSystem())
 //                .withClient(new MapSystem())
                 .withFrame(new CraftingPlayerSystem())
-                .withFrame(new ItemBeingPickAnimationSystem())
-                .withFrame(new PickUpOnGroundItemSystem())
+                //.withFrame(new ItemBeingPickAnimationSystem())
+                //.withFrame(new PickUpOnGroundItemSystem())
                 .withFrame(new PlayerMouvementSystem())
                 .withFrame(new Box2dFrotementSystem())
                 // render
@@ -94,7 +89,7 @@ public final class ECSEngine implements Disposable {
                 // server
                 .withTick(new CellBeingMineSystem())
                 .withTick(new PhysiqueWorldStepSystem())
-                .withTick(new FurnaceSystem())
+                //.withTick(new FurnaceSystem())
                 .build();
         inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
                 new ArrayList<>(List.of(
@@ -118,7 +113,6 @@ public final class ECSEngine implements Disposable {
         worldConfiguration.register(context.getDataCtrl());
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
-        worldConfiguration.register(itemManager);
 
         worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);
@@ -192,15 +186,15 @@ public final class ECSEngine implements Disposable {
         world.getSystem(SaveInfManager.class).saveInfChunk(infChunkId, rootSaveDirPath);
     }
 
-    public void dropCurentPlayerItem() {
-        ItemComponent itemComponent = world.getSystem(ItemBarManager.class).getSelectItemComponent();
-        if (itemComponent != null) {
-            world.getSystem(InventoryManager.class).removeOneItem(world.getSystem(ItemBarManager.class).getSelectStack());
-            Vector3 gameCoo = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            world.getSystem(ItemManagerClient.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
-            context.getSoundManager().playItemDrop();
-        }
-    }
+//    public void dropCurentPlayerItem() {
+//        ItemComponent itemComponent = world.getSystem(ItemBarManager.class).getSelectItemComponent();
+//        if (itemComponent != null) {
+//            world.getSystem(InventoryManager.class).removeOneItem(world.getSystem(ItemBarManager.class).getSelectStack());
+//            Vector3 gameCoo = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+//            world.getSystem(ItemManagerClient.class).newItemOnGround(gameCoo.x, gameCoo.y, itemComponent.itemRegisterEntry);
+//            context.getSoundManager().playItemDrop();
+//        }
+//    }
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {
         return world.getSystem(type);

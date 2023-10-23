@@ -13,6 +13,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
+import java.util.UUID;
+
 public class ItemManagerServer extends ItemManager {
     @Wire(name = "physicWorld")
     private World physicWorld;
@@ -46,7 +48,7 @@ public class ItemManagerServer extends ItemManager {
     public void newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        itemComponent.set(itemRegisterEntry);
+        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
         ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 64, 64);
     }
 
@@ -54,7 +56,7 @@ public class ItemManagerServer extends ItemManager {
     public int newItemInventory(ItemRegisterEntry itemRegisterEntry) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        itemComponent.set(itemRegisterEntry);
+        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
         return itemId;
     }
 

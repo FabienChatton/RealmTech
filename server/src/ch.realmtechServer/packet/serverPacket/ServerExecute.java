@@ -9,7 +9,7 @@ public interface ServerExecute {
 
     void playerMove(Channel clientChannel, byte inputKeys);
 
-    void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, byte innerChunkX, byte innerChunkY, int itemUseByPlayerHash);
+    void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, int itemUseByPlayerHash);
 
     void getPlayerInventorySession(Channel clientChannel);
 }
