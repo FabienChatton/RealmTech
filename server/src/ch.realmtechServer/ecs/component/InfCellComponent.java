@@ -34,7 +34,7 @@ public class InfCellComponent extends PooledComponent {
         return new FromBytesArgs(posX, posY, cellRegisterEntry);
     }
 
-    public record FromBytesArgs(byte posX, byte posY, CellRegisterEntry cellRegisterEntry){ }
+    public record FromBytesArgs(byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry){ }
 
     @Override
     protected void reset() {

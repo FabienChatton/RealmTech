@@ -64,6 +64,10 @@ public class MapManager extends Manager {
         }
     }
 
+    public static int getWorldPos(float gameCoordinate) {
+        return getWorldPos(getChunkPos(gameCoordinate), getInnerChunk(gameCoordinate));
+    }
+
     /**
      * @param index l'index d'un tableau
      * @return la position x dans le chunk
@@ -104,18 +108,6 @@ public class MapManager extends Manager {
             }
         }
         throw new NoSuchElementException("Il n'existe pas de chunk à la position " + chunkPosX + "," + chunkPosY + " dans cette map");
-    }
-
-    public int getChunk(int[] chunks, int worldPosX, int worldPosY) {
-        int chunkX = MapManager.getChunkPos(worldPosX);
-        int chunkY = MapManager.getChunkPos(worldPosY);
-        for (int i = 0; i < chunks.length; i++) {
-            InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
-            if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
-                return chunks[i];
-            }
-        }
-        throw new NoSuchElementException("Il n'existe pas de chunk à la position " + worldPosX + "," + worldPosY + " dans cette map");
     }
 
     public int getChunk(int[] chunks, float gameCoordinateX, float gameCoordinateY) {

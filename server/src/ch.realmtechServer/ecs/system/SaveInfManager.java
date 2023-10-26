@@ -176,7 +176,7 @@ public class SaveInfManager extends Manager {
             byte[] cellBuff = new byte[InfCellComponent.TAILLE_BYTES];
             inputWrap.get(cellBuff);
             InfCellComponent.FromBytesArgs cellFromArgs = InfCellComponent.fromBytes(cellBuff);
-            cellulesId[i] = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, cellFromArgs.posX(), cellFromArgs.posY(), cellFromArgs.cellRegisterEntry());
+            cellulesId[i] = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, cellFromArgs.innerPosX(), cellFromArgs.innerPosY(), cellFromArgs.cellRegisterEntry());
         }
         return chunkId;
     }

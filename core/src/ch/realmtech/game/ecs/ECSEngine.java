@@ -60,7 +60,7 @@ public final class ECSEngine implements Disposable {
                 .withFrame(new TagManager())
                 .withFrame(new ItemManagerClient())
                 .withFrame(new InventoryManager())
-                .withFrame(new PhysiqueContactListenerManager())
+                //.withFrame(new PhysiqueContactListenerManager())
                 .withFrame(new SaveInfManager())
                 .withFrame(new MapManager())
 
@@ -221,10 +221,6 @@ public final class ECSEngine implements Disposable {
     public Vector2 getGameCoordinate(Vector2 screenCoordinate) {
         Vector3 unproject = context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));
         return new Vector2(unproject.x, unproject.y);
-    }
-    public int getTopCell(int chunk, Vector2 screenCoordinate) {
-        Vector2 gameCoordinate = getGameCoordinate(screenCoordinate);
-        return getWorld().getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(gameCoordinate.x), MapManager.getInnerChunk(gameCoordinate.y));
     }
     public void nextFrame(Runnable runnable) {
         nextFrameRunnable.add(runnable);
