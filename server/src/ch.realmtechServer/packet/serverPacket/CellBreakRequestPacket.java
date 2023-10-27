@@ -13,7 +13,6 @@ public class CellBreakRequestPacket implements ServerPacket {
     public CellBreakRequestPacket(int worldPosX, int worldPosY, ItemRegisterEntry itemUseByPlayerHash) {
         this.worldPosX = worldPosX;
         this.worldPosY = worldPosY;
-        System.out.println("request X " + worldPosX + " Y " + worldPosY);
         this.itemUseByPlayerHash = itemUseByPlayerHash.getHash();
     }
 

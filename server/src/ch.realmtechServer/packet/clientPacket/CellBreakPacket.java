@@ -10,7 +10,6 @@ public class CellBreakPacket implements ClientPacket {
     public CellBreakPacket(int worldPosX, int worldPosY) {
         this.worldPosX = worldPosX;
         this.worldPosY = worldPosY;
-        System.out.println("res X " + worldPosX + " Y " + worldPosY);
     }
 
     public CellBreakPacket(ByteBuf byteBuf) {

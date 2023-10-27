@@ -80,25 +80,8 @@ public class MapManager extends Manager {
         return (byte) Math.abs(index / WorldMap.CHUNK_SIZE);
     }
 
-    public static byte getInnerChunk(float gameCoordinate) {
-        if (gameCoordinate > -1 && gameCoordinate < 0) {
-            return 15;
-        } else {
-            return getInnerChunk((int) gameCoordinate);
-        }
-    }
-
     public static int getChunkPos(int worldPos) {
         return worldPos < 0 ? -(int) Math.ceil((float)-worldPos / WorldMap.CHUNK_SIZE) : worldPos / WorldMap.CHUNK_SIZE;
-    }
-
-    @Deprecated
-    public static int getChunkPos(float gameCoordinate) {
-        if (gameCoordinate > -1 && gameCoordinate < 0) {
-            return -1;
-        } else {
-            return getChunkPos((int) gameCoordinate);
-        }
     }
 
     public int getChunk(int chunkPosX, int chunkPosY, int[] infChunks) {
@@ -109,20 +92,6 @@ public class MapManager extends Manager {
             }
         }
         throw new NoSuchElementException("Il n'existe pas de chunk à la position " + chunkPosX + "," + chunkPosY + " dans cette map");
-    }
-
-    public int getChunk(int[] chunks, float gameCoordinateX, float gameCoordinateY) {
-        int ret = -1;
-        int chunkX = MapManager.getChunkPos(gameCoordinateX);
-        int chunkY = MapManager.getChunkPos(gameCoordinateY);
-        for (int i = 0; i < chunks.length; i++) {
-            InfChunkComponent infChunkComponent = mChunk.get(chunks[i]);
-            if (infChunkComponent.chunkPosX == chunkX && infChunkComponent.chunkPosY == chunkY) {
-                ret = chunks[i];
-                break;
-            }
-        }
-        return ret;
     }
 
     public int getTopCell(int chunk, byte innerX, byte innerY) {

@@ -30,9 +30,12 @@ public class CellBeingMineSystem extends IteratingSystem {
 
         Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
-        int expectChunk = world.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(gameCoordinate.x), MapManager.getChunkPos(gameCoordinate.y), infChunks);
-        int topCell = context.getSystem(MapManager.class).getTopCell(expectChunk, MapManager.getInnerChunk(gameCoordinate.x), MapManager.getInnerChunk(gameCoordinate.y));
-        InfChunkComponent infChunkComponent = mChunk.get(expectChunk);
+        int worldPosX = MapManager.getWorldPos(gameCoordinate.x);
+        int worldPosY = MapManager.getWorldPos(gameCoordinate.y);
+
+        int chunk = world.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
+        int topCell = context.getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        InfChunkComponent infChunkComponent = mChunk.get(chunk);
         InfCellComponent infCellComponent = mCell.get(topCell);
 
         if (topCell == entityId && InputMapper.leftClick.isPressed) {
@@ -40,8 +43,7 @@ public class CellBeingMineSystem extends IteratingSystem {
             context.getSoundManager().playBreakingCell();
             if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) return;
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
-                int worldPosX = MapManager.getWorldPos(gameCoordinate.x);
-                int worldPosY = MapManager.getWorldPos(gameCoordinate.y);
+
                 context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(worldPosX, worldPosY, RealmTechCoreMod.NO_ITEM));
                 mCellBeingMine.remove(topCell);
             }

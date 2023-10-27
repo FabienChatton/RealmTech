@@ -10,6 +10,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class PlayerInputSystem extends BaseSystem {
@@ -19,18 +20,25 @@ public class PlayerInputSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        Vector3 gameCoordinate = context.getGameStage().getCamera().unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        Vector2 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
+        int worldPosX = MapManager.getWorldPos(gameCoordinate.x);
+        int worldPosY = MapManager.getWorldPos(gameCoordinate.y);
+
         MapManager mapManger = world.getSystem(MapManager.class);
         InfMapComponent infMapComponent = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class);
+        int chunk;
+        try {
+            chunk = mapManger.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
+        } catch (Exception e) {
+            return;
+        }
+        byte innerChunkX = MapManager.getInnerChunk(worldPosX);
+        byte innerChunkY = MapManager.getInnerChunk(worldPosY);
+        int topCell = context.getSystem(MapManager.class).getTopCell(chunk, innerChunkX, innerChunkY);
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            int chunk = mapManger.getChunk(infMapComponent.infChunks, gameCoordinate.x, gameCoordinate.y);
-            byte innerChunkX = MapManager.getInnerChunk(gameCoordinate.x);
-            byte innerChunkY = MapManager.getInnerChunk(gameCoordinate.y);
-            int topCellId = context.getSystem(MapManager.class).getTopCell(chunk, innerChunkX, innerChunkY);
-            mapManger.addCellBeingMine(topCellId);
+            mapManger.addCellBeingMine(topCell);
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            int chunk = mapManger.getChunk(infMapComponent.infChunks, gameCoordinate.x, gameCoordinate.y);
-            int topCell = mapManger.getTopCell(chunk, MapManager.getInnerChunk(gameCoordinate.x), MapManager.getInnerChunk(gameCoordinate.y));
             InfCellComponent infCellComponent = mCell.get(topCell);
             if (infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
                 infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(world, topCell);

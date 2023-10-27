@@ -38,10 +38,12 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
         Box2dComponent box2dComponent = mBox2d.get(playerId);
         PositionComponent positionComponent = mPos.get(playerId);
         InfMapComponent infMapComponent = world.getSystem(TagManager.class).getEntity("infMap").getComponent(InfMapComponent.class);
+        int worldPosX = MapManager.getWorldPos(positionComponent.x);
+        int worldPosY = MapManager.getWorldPos(positionComponent.y);
 
-        int chunkId = world.getSystem(MapManager.class).getChunk(infMapComponent.infChunks, positionComponent.x, positionComponent.y);
-        byte innerChunkX = MapManager.getInnerChunk(positionComponent.x);
-        byte innerChunkY = MapManager.getInnerChunk(positionComponent.y);
+        int chunkId = world.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY) ,infMapComponent.infChunks);
+        byte innerChunkX = MapManager.getInnerChunk(worldPosX);
+        byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCellId = world.getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
         InfCellComponent infCellComponent = mCell.get(topCellId);
         float cellSpeedEffect = infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
