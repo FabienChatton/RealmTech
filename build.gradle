@@ -69,6 +69,7 @@ project(":server") {
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        api 'org.junit.jupiter:junit-jupiter:5.8.1'
     }
 }
 

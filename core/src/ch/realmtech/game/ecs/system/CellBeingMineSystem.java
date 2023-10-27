@@ -3,6 +3,8 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtech.input.InputMapper;
 import ch.realmtechServer.ecs.component.CellBeingMineComponent;
+import ch.realmtechServer.ecs.component.InfCellComponent;
+import ch.realmtechServer.ecs.component.InfChunkComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.mod.RealmTechCoreMod;
@@ -19,6 +21,8 @@ public class CellBeingMineSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
+    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<InfChunkComponent> mChunk;
 
     @Override
     protected void process(int entityId) {
@@ -28,6 +32,9 @@ public class CellBeingMineSystem extends IteratingSystem {
         Vector2 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
         int expectChunk = world.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(gameCoordinate.x), MapManager.getChunkPos(gameCoordinate.y), infChunks);
         int topCell = context.getSystem(MapManager.class).getTopCell(expectChunk, MapManager.getInnerChunk(gameCoordinate.x), MapManager.getInnerChunk(gameCoordinate.y));
+        InfChunkComponent infChunkComponent = mChunk.get(expectChunk);
+        InfCellComponent infCellComponent = mCell.get(topCell);
+
         if (topCell == entityId && InputMapper.leftClick.isPressed) {
             CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
             context.getSoundManager().playBreakingCell();

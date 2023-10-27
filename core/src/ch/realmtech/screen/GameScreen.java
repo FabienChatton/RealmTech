@@ -109,7 +109,7 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedDown();
 
         fpsLabel.setText(String.format("FPS : %d", Gdx.graphics.getFramesPerSecond()));
-        gameCoo.setText(String.format("Camera X : %f\nWorldPosX : %d\nCamera Y : %f\nWorldPosY : %d", gameCamera.position.x, MapManager.getWorldPos(gameCamera.position.x), gameCamera.position.y, MapManager.getWorldPos(gameCamera.position.y)));
+        gameCoo.setText(String.format("WorldPosX : %d, Camera X : %f\nWorldPosY : %d, Camera Y : %f", MapManager.getWorldPos(gameCamera.position.x), gameCamera.position.x, MapManager.getWorldPos(gameCamera.position.y), gameCamera.position.y));
         chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapManager.getChunkPos(gameCamera.position.x), MapManager.getChunkPos(gameCamera.position.y)));
         innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapManager.getInnerChunk(gameCamera.position.x), MapManager.getInnerChunk(gameCamera.position.y)));
         tps.setText(String.format("TPS : %d ", context.getEcsEngine().serverTickBeatMonitoring.getTickBeatPerSeconde()));

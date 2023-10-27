@@ -58,14 +58,14 @@ public class MapManager extends Manager {
      */
     public static byte getInnerChunk(int worldPos) {
         if (worldPos < 0) {
-            return (byte) ((byte) (worldPos % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE) - 1);
+            return (byte) ((worldPos % WorldMap.CHUNK_SIZE + WorldMap.CHUNK_SIZE) % WorldMap.CHUNK_SIZE);
         } else {
             return (byte) (worldPos % WorldMap.CHUNK_SIZE);
         }
     }
 
     public static int getWorldPos(float gameCoordinate) {
-        return getWorldPos(getChunkPos(gameCoordinate), getInnerChunk(gameCoordinate));
+        return  (int) (gameCoordinate < 0 ? gameCoordinate - 1 : Math.floor(gameCoordinate));
     }
 
     /**
@@ -89,9 +89,10 @@ public class MapManager extends Manager {
     }
 
     public static int getChunkPos(int worldPos) {
-        return (worldPos < 0 ? worldPos - WorldMap.CHUNK_SIZE : worldPos) / WorldMap.CHUNK_SIZE;
+        return worldPos < 0 ? -(int) Math.ceil((float)-worldPos / WorldMap.CHUNK_SIZE) : worldPos / WorldMap.CHUNK_SIZE;
     }
 
+    @Deprecated
     public static int getChunkPos(float gameCoordinate) {
         if (gameCoordinate > -1 && gameCoordinate < 0) {
             return -1;
