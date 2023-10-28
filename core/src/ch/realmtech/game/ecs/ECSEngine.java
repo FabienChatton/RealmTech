@@ -121,12 +121,12 @@ public final class ECSEngine implements Disposable {
     }
 
     public void process(float delta) {
-        world.setDelta(delta);
-        world.process();
         synchronized (nextFrameRunnable) {
             nextFrameRunnable.forEach(Runnable::run);
             nextFrameRunnable.clear();
         }
+        world.setDelta(delta);
+        world.process();
     }
 
     @Override

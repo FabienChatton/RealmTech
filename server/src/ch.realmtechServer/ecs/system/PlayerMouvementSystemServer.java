@@ -13,7 +13,7 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<InfCellComponent> mCell;
-    private final static float FORCE = 6f;
+    private final static float FORCE = 8f;
     @Override
     protected void process(int entityId) {
         MovementComponent movementComponent = mMovement.get(entityId);

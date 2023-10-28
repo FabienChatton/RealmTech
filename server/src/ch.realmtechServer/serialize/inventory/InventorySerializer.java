@@ -1,9 +1,11 @@
 package ch.realmtechServer.serialize.inventory;
 
+import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.component.InventoryComponent;
 import com.artemis.World;
 
 import java.nio.ByteBuffer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface InventorySerializer {
@@ -14,9 +16,9 @@ public interface InventorySerializer {
      * La méthode ne créer pas de nouvel entity dans le monde, c'est le supplier qui créer les entities et le return
      * le tableau de l'inventaire. Quand le supplier est invoqué, c'est l'inventaire qui est créé, mais aussi tous les items.
      */
-    Supplier<int[][]> fromBytes(World world, byte[] bytes);
+    Function<ItemManager, int[][]> fromBytes(World world, byte[] bytes);
 
-    static Supplier<int[][]> getFromBytes(World world, byte[] bytes) {
+    static Function<ItemManager, int[][]> getFromBytes(World world, byte[] bytes) {
         byte[] versionBytes = new byte[Integer.BYTES];
         System.arraycopy(bytes, 0, versionBytes, 0, versionBytes.length);
         ByteBuffer byteBuffer = ByteBuffer.wrap(versionBytes);

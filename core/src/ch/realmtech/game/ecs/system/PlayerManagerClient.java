@@ -2,6 +2,7 @@ package ch.realmtech.game.ecs.system;
 
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.craft.CraftStrategy;
+import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.mod.RealmTechCoreMod;
 import ch.realmtechServer.serialize.inventory.InventorySerializer;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class PlayerManagerClient extends Manager {
@@ -140,8 +142,8 @@ public class PlayerManagerClient extends Manager {
 
     public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
         int playerId = getPlayers().get(playerUUID);
-        Supplier<int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
+        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
         InventoryComponent inventoryComponent = mInventory.get(playerId);
-        inventoryComponent.inventory = inventorySupplier.get();
+        inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerClient.class));
     }
 }

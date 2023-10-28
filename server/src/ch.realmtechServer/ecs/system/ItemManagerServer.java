@@ -8,6 +8,7 @@ import ch.realmtechServer.ecs.component.PositionComponent;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
+import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -24,6 +25,7 @@ public class ItemManagerServer extends ItemManager {
     private FixtureDef fixtureDef;
     private Archetype defaultItemGroundArchetype;
     private Archetype defaultItemInventoryArchetype;
+    private ComponentMapper<Box2dComponent> mBox2d;
 
     @Override
     protected void initialize() {
@@ -40,16 +42,19 @@ public class ItemManagerServer extends ItemManager {
 
     /**
      * Permet de faire apparaitre un nouvel item sur la map.
-     * @param worldPosX La position X dans le monde du nouvel item.
-     * @param worldPosY La position Y dans le monde du nouvel item.
+     *
+     * @param worldPosX         La position X dans le monde du nouvel item.
+     * @param worldPosY         La position Y dans le monde du nouvel item.
      * @param itemRegisterEntry Le register qui permettra de créer l'item.
+     * @return
      */
     @Override
-    public void newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
+    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
         itemComponent.set(itemRegisterEntry, UUID.randomUUID());
         ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
+        return itemId;
     }
 
     @Override
@@ -61,6 +66,8 @@ public class ItemManagerServer extends ItemManager {
     }
 
     public void playerPickUpItem(int itemId, int playerId) {
+        Box2dComponent box2dComponent = mBox2d.get(playerId);
+        physicWorld.destroyBody(box2dComponent.body);
         world.edit(itemId).remove(Box2dComponent.class);
         world.edit(itemId).remove(PositionComponent.class);
         world.getSystem(InventoryManager.class).addItemToInventory(itemId, playerId);

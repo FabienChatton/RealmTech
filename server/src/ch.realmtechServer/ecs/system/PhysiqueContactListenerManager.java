@@ -1,10 +1,8 @@
 package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.ServerContext;
-import ch.realmtechServer.ctrl.ItemManagerCommun;
-import ch.realmtechServer.ecs.component.ItemBeingPickComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
-import ch.realmtechServer.ecs.component.PlayerComponent;
+import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -18,8 +16,10 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
 //    private SoundManager soundManager;
     @Wire(name = "physicWorld")
     private World physicWorld;
+    @Wire
+    private ItemManagerServer itemManager;
 
-    private ComponentMapper<PlayerComponent> mPlayer;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     private ComponentMapper<ItemComponent> mItem;
 
@@ -48,17 +48,15 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
             return;
         }
         try {
-            if (mPlayer.has((int) contact.getFixtureA().getBody().getUserData())) {
+            if (mPlayerConnexion.has((int) contact.getFixtureA().getBody().getUserData())) {
                 int playerId = (int) contact.getFixtureA().getBody().getUserData();
                 final Fixture fixtureB = contact.getFixtureB();
                 if (mItem.has((int) fixtureB.getBody().getUserData())) {
-                    contact.setEnabled(false);
                     int itemId = (int) fixtureB.getBody().getUserData();
-                    ItemManagerCommun.playerPickUpItem(world, itemId, playerId);
                     //soundManager.playItemPickUp();
                     ServerContext.nextTick(() -> {
                         try {
-                            world.edit(itemId).remove(ItemBeingPickComponent.class);
+                                itemManager.playerPickUpItem(itemId, playerId);
                         } catch (NullPointerException e) {
                             logger.error(e.getMessage(), e);
                         } finally {

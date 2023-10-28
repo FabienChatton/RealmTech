@@ -35,12 +35,6 @@ public class ItemManagerCommun {
         return itemId;
     }
 
-    public static void playerPickUpItem(World world, int itemId, int playerId) {
-        world.edit(itemId).remove(Box2dComponent.class);
-        world.edit(itemId).remove(PositionComponent.class);
-        world.getSystem(InventoryManager.class).addItemToInventory(itemId, playerId);
-    }
-
     private static Body createBox2dItem(com.badlogic.gdx.physics.box2d.World physicWorld, BodyDef bodyDef, FixtureDef fixtureDef, int itemId, float worldX, float worldY, float widthWorld, float heightWorld) {
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);

@@ -11,6 +11,7 @@ import com.artemis.World;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class InventorySerializerV1 implements InventorySerializer {
@@ -41,7 +42,7 @@ public class InventorySerializerV1 implements InventorySerializer {
     }
 
     @Override
-    public Supplier<int[][]> fromBytes(World world, byte[] bytes) {
+    public Function<ItemManager, int[][]> fromBytes(World world, byte[] bytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         // header
         int version = byteBuffer.getInt();
@@ -53,7 +54,7 @@ public class InventorySerializerV1 implements InventorySerializer {
         // body
         for (int i = 0; i < numberOfRow; i++) {
             for (int j = 0; j < numberOfSlotParRow; j++) {
-                int index = j * (i + 1);
+                int index = i * numberOfSlotParRow + j;
                 int itemHash = byteBuffer.getInt();
                 if (itemHash == 0) {
                     itemsRegistry[index] = null;
@@ -63,7 +64,7 @@ public class InventorySerializerV1 implements InventorySerializer {
                 itemsNumber[index] = byteBuffer.get();
             }
         }
-        return () -> {
+        return (itemManager) -> {
             int[][] inventory = new int[numberOfRow * numberOfSlotParRow][InventoryComponent.DEFAULT_STACK_LIMITE];
             for (int i = 0; i < numberOfRow; i++) {
                 for (int j = 0; j < numberOfSlotParRow; j++) {
@@ -71,7 +72,7 @@ public class InventorySerializerV1 implements InventorySerializer {
                     ItemRegisterEntry itemRegisterEntry = itemsRegistry[index];
                     if (itemRegisterEntry != null) {
                         for (int n = 0; n < itemsNumber[index]; n++) {
-                            int itemId = world.getSystem(ItemManager.class).newItemInventory(itemRegisterEntry);
+                            int itemId = itemManager.newItemInventory(itemRegisterEntry);
                             inventory[index][n] = itemId;
                         }
                     }
