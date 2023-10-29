@@ -41,6 +41,7 @@ public class ServerContext {
                 .put(GetPlayerInventorySessionPacket.class, GetPlayerInventorySessionPacket::new)
                 .put(PlayerInventoryPacket.class, PlayerInventoryPacket::new)
                 .put(ItemOnGroundPacket.class, ItemOnGroundPacket::new)
+                .put(ItemOnGroundSupprimerPacket.class, ItemOnGroundSupprimerPacket::new)
         ;
     }
 

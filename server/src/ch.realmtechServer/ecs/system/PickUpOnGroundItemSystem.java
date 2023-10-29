@@ -32,7 +32,9 @@ public class PickUpOnGroundItemSystem extends IteratingSystem {
             PositionComponent positionItemComponent = mPosition.get(itemId);
             float distance = Vector2.dst2(positionPickerComponent.x, positionPickerComponent.y, positionItemComponent.x, positionItemComponent.y);
             if (distance <= pickerComponent.magnetRange) {
-                world.edit(itemId).create(ItemBeingPickComponent.class).set(pickerId); // ajout une animation qui déplace l'item vers le joueur
+                if (!mBeingPick.has(itemId)) {
+                    world.edit(itemId).create(ItemBeingPickComponent.class).set(pickerId); // ajout une animation qui déplace l'item vers le joueur
+                }
             }
         }
     }

@@ -65,6 +65,7 @@ public final class EcsEngineServer {
                 // render
 //                .with(new PlayerTextureAnimated())
                 .with(new UpdateBox2dWithPosition())
+                .with(new ItemBeingPickAnimationSystem())
 //                .with(new CameraFollowPlayerSystem())
 //                .with(new MapRendererSystem())
 //                .with(new CellBeingMineRenderSystem())

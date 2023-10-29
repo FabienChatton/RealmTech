@@ -2,10 +2,12 @@ package ch.realmtechServer.ctrl;
 
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ecs.component.Box2dComponent;
+import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.PositionComponent;
 import ch.realmtechServer.ecs.system.InventoryManager;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
+import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -51,5 +53,12 @@ public class ItemManagerCommun {
         itemBody.createFixture(fixtureDef);
         polygonShape.dispose();
         return itemBody;
+    }
+
+    public static void removeBox2dAndPosition(int itemId, ComponentMapper<Box2dComponent> mBox2d, com.badlogic.gdx.physics.box2d.World physicWorld, World world) {
+        Box2dComponent box2dComponent = mBox2d.get(itemId);
+        physicWorld.destroyBody(box2dComponent.body);
+        world.edit(itemId).remove(Box2dComponent.class);
+        world.edit(itemId).remove(PositionComponent.class);
     }
 }

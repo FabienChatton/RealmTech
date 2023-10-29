@@ -49,11 +49,22 @@ public class ItemManagerClient extends ItemManager {
                 .build(world);
     }
 
-    public int newItemOnGround(float worldPosX, float worldPosY, UUID itemUUID, ItemRegisterEntry itemRegisterEntry) {
+    private int getItem(UUID itemUuid) {
+        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
+        int[] itemsData = items.getData();
+        for (int i = 0; i < items.size(); i++) {
+            if (mItem.get(itemsData[i]).uuid.equals(itemUuid)) {
+                return itemsData[i];
+            }
+        }
+        return -1;
+    }
+    
+    public int newItemOnGround(float worldPosX, float worldPosY, UUID itemUuid, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = newItemOnGround(worldPosX, worldPosY, itemRegisterEntry);
         ItemComponent itemComponent = mItem.get(itemId);
         TextureComponent textureComponent = mTexture.get(itemId);
-        itemComponent.set(itemRegisterEntry, itemUUID);
+        itemComponent.set(itemRegisterEntry, itemUuid);
         float widthWorld = textureComponent.texture.getRegionWidth() / RealmTech.PPM;
         float heightWorld = textureComponent.texture.getRegionHeight() / RealmTech.PPM;
         ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, widthWorld, heightWorld);
@@ -69,28 +80,20 @@ public class ItemManagerClient extends ItemManager {
         return itemId;
     }
 
-
-    public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUUID) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype);
-        ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
-        textureComponent.set(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()));
-        textureComponent.scale = RealmTech.UNITE_SCALE;
-        itemComponent.set(itemRegisterEntry, itemUUID);
-        return itemId;
+    public void supprimeItemOnGround(UUID itemUuid) {
+        int item = getItem(itemUuid);
+        if (mItem.has(item)) {
+            Box2dComponent box2dComponent = mBox2d.get(item);
+            physicWorld.destroyBody(box2dComponent.body);
+            world.delete(item);
+        }
     }
 
-//    public void playerPickUpItem(int itemId, int playerId) {
-//        world.edit(itemId).remove(Box2dComponent.class);
-//        world.edit(itemId).remove(PositionComponent.class);
-//        world.getSystem(InventoryManager.class).addItemToInventory(itemId, playerId);
-//    }
-
     public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
-        IntBag entities = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
+        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
         int item = -1;
-        for (int i = 0; i < entities.size(); i++) {
-            int itemId = entities.get(i);
+        for (int i = 0; i < items.size(); i++) {
+            int itemId = items.get(i);
             ItemComponent itemComponent = mItem.get(itemId);
             if (itemComponent.uuid.equals(uuid)) {
                 item = itemId;
@@ -98,7 +101,7 @@ public class ItemManagerClient extends ItemManager {
             }
         }
         if (item == -1) {
-            item = newItemOnGround(worldPosX, worldPosY, uuid, itemRegisterEntry);
+            item = world.getSystem(ItemManagerClient.class).newItemOnGround(worldPosX, worldPosY, uuid, itemRegisterEntry);
         }
         Box2dComponent box2dComponent = mBox2d.get(item);
         box2dComponent.body.setTransform(worldPosX, worldPosY, box2dComponent.body.getAngle());

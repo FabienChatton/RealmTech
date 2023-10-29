@@ -53,14 +53,13 @@ public class PhysiqueContactListenerManager extends Manager implements ContactLi
                 final Fixture fixtureB = contact.getFixtureB();
                 if (mItem.has((int) fixtureB.getBody().getUserData())) {
                     int itemId = (int) fixtureB.getBody().getUserData();
+                    contact.setEnabled(false);
                     //soundManager.playItemPickUp();
                     ServerContext.nextTick(() -> {
                         try {
-                                itemManager.playerPickUpItem(itemId, playerId);
+                            itemManager.playerPickUpItem(itemId, playerId);
                         } catch (NullPointerException e) {
                             logger.error(e.getMessage(), e);
-                        } finally {
-                            physicWorld.destroyBody(fixtureB.getBody());
                         }
                     });
                 }

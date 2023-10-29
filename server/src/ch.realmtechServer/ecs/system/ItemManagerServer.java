@@ -1,10 +1,12 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechServer.ServerContext;
 import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ctrl.ItemManagerCommun;
 import ch.realmtechServer.ecs.component.Box2dComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.PositionComponent;
+import ch.realmtechServer.packet.clientPacket.ItemOnGroundSupprimerPacket;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
@@ -17,6 +19,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import java.util.UUID;
 
 public class ItemManagerServer extends ItemManager {
+    @Wire(name = "serverContext")
+    private ServerContext serverContext;
     @Wire(name = "physicWorld")
     private World physicWorld;
     @Wire
@@ -26,6 +30,7 @@ public class ItemManagerServer extends ItemManager {
     private Archetype defaultItemGroundArchetype;
     private Archetype defaultItemInventoryArchetype;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<ItemComponent> mItem;
 
     @Override
     protected void initialize() {
@@ -66,10 +71,9 @@ public class ItemManagerServer extends ItemManager {
     }
 
     public void playerPickUpItem(int itemId, int playerId) {
-        Box2dComponent box2dComponent = mBox2d.get(playerId);
-        physicWorld.destroyBody(box2dComponent.body);
-        world.edit(itemId).remove(Box2dComponent.class);
-        world.edit(itemId).remove(PositionComponent.class);
+        ItemComponent itemComponent = mItem.get(itemId);
+        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(itemComponent.uuid));
+        ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.getSystem(InventoryManager.class).addItemToInventory(itemId, playerId);
     }
 }

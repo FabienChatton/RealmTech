@@ -29,4 +29,6 @@ public interface ClientExecute {
     void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes);
 
     void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float posX, float posY);
+
+    void supprimeItemOnGround(UUID itemUuid);
 }

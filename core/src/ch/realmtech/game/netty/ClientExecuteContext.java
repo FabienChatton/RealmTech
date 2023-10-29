@@ -109,8 +109,11 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
-        context.nextFrame(() -> {
-            context.getSystem(ItemManagerClient.class).setItemOnGroundPos(uuid, itemRegisterEntry, worldPosX, worldPosY);
-        });
+        context.nextFrame(() -> context.getSystem(ItemManagerClient.class).setItemOnGroundPos(uuid, itemRegisterEntry, worldPosX, worldPosY));
+    }
+
+    @Override
+    public void supprimeItemOnGround(UUID itemUuid) {
+        context.nextFrame(() -> context.getSystem(ItemManagerClient.class).supprimeItemOnGround(itemUuid));
     }
 }
