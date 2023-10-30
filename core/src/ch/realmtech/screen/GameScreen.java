@@ -4,12 +4,12 @@ import ch.realmtech.RealmTech;
 import ch.realmtech.game.ecs.system.ItemBarManager;
 import ch.realmtech.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.helper.Popup;
+import ch.realmtech.screen.uiComponent.ConsoleUi;
 import ch.realmtechServer.ecs.component.PositionComponent;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.packet.serverPacket.GetPlayerInventorySessionPacket;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -30,6 +30,7 @@ public class GameScreen extends AbstractScreen {
     private final Label tps;
     private final Label reciveDataSize;
     private final Label sendDataSize;
+    private final ConsoleUi consoleUi;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -42,6 +43,7 @@ public class GameScreen extends AbstractScreen {
         tps = new Label(null, skin);
         reciveDataSize = new Label(null, skin);
         sendDataSize = new Label(null, skin);
+        consoleUi = new ConsoleUi(skin, context);
 
         debugTable.add(fpsLabel).left().row();
         debugTable.add(gameCoo).left().row();
@@ -77,11 +79,22 @@ public class GameScreen extends AbstractScreen {
             }
         }
         // open inventory
-        if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get())) {
+        if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get()) && consoleUi.getConsoleWindow().getParent() == null) {
             if (!context.getSystem(PlayerInventorySystem.class).isEnabled()) {
                 context.getConnexionHandler().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
             } else {
                 context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
+            }
+        }
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)) {
+            if (consoleUi.getConsoleWindow().getParent() == null) {
+                uiStage.addActor(consoleUi.getConsoleWindow());
+                Gdx.input.setInputProcessor(uiStage);
+            } else {
+                consoleUi.getConsoleWindow().remove();
+                Gdx.input.setInputProcessor(context.getInputManager());
             }
         }
 
@@ -141,5 +154,9 @@ public class GameScreen extends AbstractScreen {
     public void dispose() {
         super.dispose();
         box2DDebugRenderer.dispose();
+    }
+
+    public void writeToConsole(String s) {
+        consoleUi.writeToConsole(s);
     }
 }

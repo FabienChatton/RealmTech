@@ -1,6 +1,7 @@
 package ch.realmtechServer;
 
-import ch.realmtechServer.cli.CommandThread;
+import ch.realmtechServer.cli.CommandServerThread;
+import ch.realmtechServer.cli.CommandeExecute;
 import ch.realmtechServer.ecs.EcsEngineServer;
 import ch.realmtechServer.netty.*;
 import ch.realmtechServer.packet.PacketMap;
@@ -24,7 +25,8 @@ public class ServerContext {
     private final ServerExecute serverExecuteContext;
     private final ServerResponseHandler serverResponseHandler;
     private final TickThread tickThread;
-    private final CommandThread commandThread;
+    private final CommandServerThread commandServerThread;
+    private final CommandeExecute commandeExecute;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -42,6 +44,8 @@ public class ServerContext {
                 .put(PlayerInventoryPacket.class, PlayerInventoryPacket::new)
                 .put(ItemOnGroundPacket.class, ItemOnGroundPacket::new)
                 .put(ItemOnGroundSupprimerPacket.class, ItemOnGroundSupprimerPacket::new)
+                .put(ConsoleCommandeRequestPacket.class, ConsoleCommandeRequestPacket::new)
+                .put(WriteToConsolePacket.class, WriteToConsolePacket::new)
         ;
     }
 
@@ -52,9 +56,10 @@ public class ServerContext {
             serverExecuteContext = new ServerExecuteContext(this);
             serverNetty = new ServerNetty(connexionBuilder, serverExecuteContext);
             serverResponseHandler = new ServerResponse();
-            commandThread = new CommandThread(this);
+            commandeExecute = new CommandeExecute(this);
+            commandServerThread = new CommandServerThread(this, commandeExecute);
             tickThread = new TickThread(this);
-            commandThread.start();
+            commandServerThread.start();
             tickThread.start();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -88,7 +93,7 @@ public class ServerContext {
             ecsEngineServer.saveMap();
         } catch (IOException ignored) {}
         tickThread.close();
-        commandThread.close();
+        commandServerThread.close();
         return serverNetty.close();
     }
 
@@ -114,5 +119,9 @@ public class ServerContext {
 
     public <T extends BaseSystem> T getSystem(Class<T> systemClass) {
         return ecsEngineServer.getWorld().getSystem(systemClass);
+    }
+
+    public CommandeExecute getCommandeExecute() {
+        return commandeExecute;
     }
 }

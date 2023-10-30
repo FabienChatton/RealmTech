@@ -1,6 +1,7 @@
 package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.ecs.component.Box2dComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.PositionComponent;
 import ch.realmtechServer.packet.clientPacket.ItemOnGroundPacket;
@@ -14,10 +15,14 @@ public class ItemOnGroundPosSyncSystem extends IteratingSystem {
     private ServerContext serverContext;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PositionComponent> mPos;
+    private ComponentMapper<Box2dComponent> mBox2d;
     @Override
     protected void process(int entityId) {
         ItemComponent itemComponent = mItem.get(entityId);
         PositionComponent positionComponent = mPos.get(entityId);
-        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundPacket(itemComponent.uuid, itemComponent.itemRegisterEntry, positionComponent.x, positionComponent.y));
+        Box2dComponent box2dComponent = mBox2d.get(entityId);
+        if (box2dComponent.body.isAwake()) {
+            serverContext.getServerHandler().broadCastPacket(new ItemOnGroundPacket(itemComponent.uuid, itemComponent.itemRegisterEntry, positionComponent.x, positionComponent.y));
+        }
     }
 }

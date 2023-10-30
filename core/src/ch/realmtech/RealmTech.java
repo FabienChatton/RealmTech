@@ -7,6 +7,7 @@ import ch.realmtech.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.input.InputMapper;
 import ch.realmtech.screen.AbstractScreen;
+import ch.realmtech.screen.GameScreen;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtech.sound.SoundManager;
 import ch.realmtechServer.netty.ConnexionBuilder;
@@ -52,7 +53,7 @@ public final class RealmTech extends Game{
     private SoundManager soundManager;
     private ClientExecute clientExecute;
     private ScreenType currentScreenType;
-    private AbstractScreen gameScreen;
+    private GameScreen gameScreen;
 
     @Override
     public void create() {
@@ -117,7 +118,7 @@ public final class RealmTech extends Game{
             screen.setOldScreen(currentScreenType);
             setScreen(screen);
             if (screenType == ScreenType.GAME_SCREEN) {
-                gameScreen = screen;
+                gameScreen = (GameScreen) screen;
             }
             currentScreenType = screenType;
         } catch (ReflectiveOperationException e) {
@@ -251,5 +252,9 @@ public final class RealmTech extends Game{
         if (ecsEngine != null) {
             ecsEngine.nextFrame(runnable);
         }
+    }
+
+    public void writeToConsole(String s) {
+        gameScreen.writeToConsole(s);
     }
 }

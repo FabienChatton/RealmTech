@@ -31,4 +31,6 @@ public interface ClientExecute {
     void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float posX, float posY);
 
     void supprimeItemOnGround(UUID itemUuid);
+
+    void writeOnConsoleMessage(String consoleMessageToWrite);
 }

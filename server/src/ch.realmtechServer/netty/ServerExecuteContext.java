@@ -13,11 +13,16 @@ import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechServer.packet.clientPacket.DeconnectionJoueurPacket;
 import ch.realmtechServer.packet.clientPacket.PlayerInventoryPacket;
+import ch.realmtechServer.packet.clientPacket.WriteToConsolePacket;
 import ch.realmtechServer.packet.serverPacket.ServerExecute;
 import ch.realmtechServer.registery.ItemRegisterEntry;
 import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import io.netty.channel.Channel;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 public class ServerExecuteContext implements ServerExecute {
     private final ServerContext serverContext;
@@ -77,6 +82,17 @@ public class ServerExecuteContext implements ServerExecute {
             InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
             byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
             clientChannel.writeAndFlush(new PlayerInventoryPacket(bytes, playerConnexionComponent.uuid));
+        });
+    }
+
+    @Override
+    public void consoleCommande(Channel clientChannel, String stringCommande) {
+        ServerContext.nextTick(() -> {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (PrintWriter printWriter = new PrintWriter(baos, true, StandardCharsets.US_ASCII)) {
+                serverContext.getCommandeExecute().execute(stringCommande, printWriter);
+            }
+            serverContext.getServerHandler().sendPacketTo(new WriteToConsolePacket(baos.toString()), clientChannel);
         });
     }
 }

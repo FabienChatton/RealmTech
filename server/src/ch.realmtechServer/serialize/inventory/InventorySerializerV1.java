@@ -1,7 +1,7 @@
 package ch.realmtechServer.serialize.inventory;
 
 import ch.realmtechServer.ctrl.ItemManager;
-import ch.realmtechServer.divers.ByteBufferGetString;
+import ch.realmtechServer.divers.ByteBufferStringHelper;
 import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.system.InventoryManager;
@@ -12,7 +12,6 @@ import com.artemis.World;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class InventorySerializerV1 implements InventorySerializer {
     private final static int VERSION = 1;
@@ -24,7 +23,7 @@ public class InventorySerializerV1 implements InventorySerializer {
         byteBuffer.putInt(VERSION);
         byteBuffer.putInt(inventoryComponent.numberOfRow);
         byteBuffer.putInt(inventoryComponent.numberOfSlotParRow);
-        byteBuffer.put((inventoryComponent.backgroundTexture + "\0").getBytes(StandardCharsets.US_ASCII));
+        ByteBufferStringHelper.writeString(byteBuffer, inventoryComponent.backgroundTexture);
         // body
         for (int i = 0; i < inventoryComponent.numberOfRow; i++) {
             for (int j = 0; j < inventoryComponent.numberOfSlotParRow; j++) {
@@ -49,7 +48,7 @@ public class InventorySerializerV1 implements InventorySerializer {
         int version = byteBuffer.getInt();
         int numberOfRow = byteBuffer.getInt();
         int numberOfSlotParRow = byteBuffer.getInt();
-        String backgroundTextureName = ByteBufferGetString.getString(byteBuffer);
+        String backgroundTextureName = ByteBufferStringHelper.getString(byteBuffer);
         ItemRegisterEntry[] itemsRegistry = new ItemRegisterEntry[numberOfRow * numberOfSlotParRow];
         byte[] itemsNumber = new byte[numberOfRow * numberOfSlotParRow];
         // body

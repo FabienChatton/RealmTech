@@ -12,4 +12,6 @@ public interface ServerExecute {
     void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, int itemUseByPlayerHash);
 
     void getPlayerInventorySession(Channel clientChannel);
+
+    void consoleCommande(Channel clientChannel, String stringCommande);
 }

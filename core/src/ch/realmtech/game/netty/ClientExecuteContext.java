@@ -116,4 +116,9 @@ public class ClientExecuteContext implements ClientExecute {
     public void supprimeItemOnGround(UUID itemUuid) {
         context.nextFrame(() -> context.getSystem(ItemManagerClient.class).supprimeItemOnGround(itemUuid));
     }
+
+    @Override
+    public void writeOnConsoleMessage(String consoleMessageToWrite) {
+        context.nextFrame(() -> context.writeToConsole(consoleMessageToWrite));
+    }
 }
