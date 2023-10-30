@@ -30,7 +30,7 @@ public class GameScreen extends AbstractScreen {
     private final Label tps;
     private final Label reciveDataSize;
     private final Label sendDataSize;
-    private final ConsoleUi consoleUi;
+    private ConsoleUi consoleUi;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -90,6 +90,7 @@ public class GameScreen extends AbstractScreen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)) {
             if (consoleUi.getConsoleWindow().getParent() == null) {
+                consoleUi = new ConsoleUi(skin, context);
                 uiStage.addActor(consoleUi.getConsoleWindow());
                 Gdx.input.setInputProcessor(uiStage);
             } else {
