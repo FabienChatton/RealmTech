@@ -2,6 +2,7 @@ package ch.realmtechServer;
 
 import ch.realmtechServer.cli.CommandServerThread;
 import ch.realmtechServer.cli.CommandeExecute;
+import ch.realmtechServer.cli.CommandeServerServerContext;
 import ch.realmtechServer.ecs.EcsEngineServer;
 import ch.realmtechServer.netty.*;
 import ch.realmtechServer.packet.PacketMap;
@@ -56,7 +57,7 @@ public class ServerContext {
             serverExecuteContext = new ServerExecuteContext(this);
             serverNetty = new ServerNetty(connexionBuilder, serverExecuteContext);
             serverResponseHandler = new ServerResponse();
-            commandeExecute = new CommandeExecute(this);
+            commandeExecute = new CommandeExecute(new CommandeServerServerContext(this));
             commandServerThread = new CommandServerThread(this, commandeExecute);
             tickThread = new TickThread(this);
             commandServerThread.start();

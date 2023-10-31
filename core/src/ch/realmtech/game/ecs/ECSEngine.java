@@ -1,7 +1,7 @@
 package ch.realmtech.game.ecs;
 
 import ch.realmtech.RealmTech;
-import ch.realmtech.console.ConsoleClientInputThread;
+import ch.realmtech.game.console.CommandClientExecute;
 import ch.realmtech.game.ecs.system.*;
 import ch.realmtech.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.game.netty.RealmTechClientConnexionHandler;
@@ -43,7 +43,7 @@ public final class ECSEngine implements Disposable {
     private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
-    private final ConsoleClientInputThread consoleClientInputThread;
+    private final CommandClientExecute commandClientExecute;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -53,7 +53,7 @@ public final class ECSEngine implements Disposable {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
-        consoleClientInputThread = new ConsoleClientInputThread(connexionHandler);
+        commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilderServer(serverInvocationStrategy)
                 .dependsOn(RealmTechCorePlugin.class)
@@ -229,7 +229,7 @@ public final class ECSEngine implements Disposable {
         nextFrameRunnable.add(runnable);
     }
 
-    public ConsoleClientInputThread getConsoleClientInputThread() {
-        return consoleClientInputThread;
+    public CommandClientExecute getCommandClientExecute() {
+        return commandClientExecute;
     }
 }

@@ -1,22 +1,21 @@
 package ch.realmtechServer.cli;
 
-import ch.realmtechServer.ServerContext;
-
 import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
 
-@Command(name = "rtc", aliases = "", subcommands = {
+@Command(name = "server", aliases = "s", subcommands = {
         StopCommand.class,
         EchoCommande.class,
+        DumpItemsCommand.class,
 })
 public class MasterCommand implements Callable<Integer> {
-    final ServerContext serverContext;
+    final CommandServerContext commandServerContext;
     final PrintWriter output;
 
-    public MasterCommand(ServerContext serverContext, PrintWriter output) {
-        this.serverContext = serverContext;
+    public MasterCommand(CommandServerContext commandServerContext, PrintWriter output) {
+        this.commandServerContext = commandServerContext;
         this.output = output;
     }
 

@@ -15,4 +15,9 @@ public class PositionComponent extends Component {
         set(worldX, worldY);
         box2dComponent.body.setTransform(worldX + box2dComponent.widthWorld / 2, worldY + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
     }
+
+    @Override
+    public String toString() {
+        return String.format("%f %f", x, y);
+    }
 }
