@@ -90,7 +90,6 @@ public class GameScreen extends AbstractScreen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)) {
             if (consoleUi.getConsoleWindow().getParent() == null) {
-                consoleUi = new ConsoleUi(skin, context);
                 uiStage.addActor(consoleUi.getConsoleWindow());
                 Gdx.input.setInputProcessor(uiStage);
             } else {

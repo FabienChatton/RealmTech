@@ -8,10 +8,10 @@ import static picocli.CommandLine.ParentCommand;
 @Command(name = "stop", description = "stop le serveur", mixinStandardHelpOptions = true)
 public class StopCommand implements Callable<Integer> {
     @ParentCommand
-    private MasterCommand masterCommand;
+    private MasterServerCommand masterServerCommand;
     @Override
     public Integer call() throws Exception {
-        masterCommand.commandServerContext.closeServer().await();
+        masterServerCommand.serverContext.close().await();
         return 0;
     }
 }

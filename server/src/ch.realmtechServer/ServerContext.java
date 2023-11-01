@@ -1,8 +1,7 @@
 package ch.realmtechServer;
 
 import ch.realmtechServer.cli.CommandServerThread;
-import ch.realmtechServer.cli.CommandeExecute;
-import ch.realmtechServer.cli.CommandeServerServerContext;
+import ch.realmtechServer.cli.CommandeServerExecute;
 import ch.realmtechServer.ecs.EcsEngineServer;
 import ch.realmtechServer.netty.*;
 import ch.realmtechServer.packet.PacketMap;
@@ -27,7 +26,7 @@ public class ServerContext {
     private final ServerResponseHandler serverResponseHandler;
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
-    private final CommandeExecute commandeExecute;
+    private final CommandeServerExecute commandeServerExecute;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -57,8 +56,8 @@ public class ServerContext {
             serverExecuteContext = new ServerExecuteContext(this);
             serverNetty = new ServerNetty(connexionBuilder, serverExecuteContext);
             serverResponseHandler = new ServerResponse();
-            commandeExecute = new CommandeExecute(new CommandeServerServerContext(this));
-            commandServerThread = new CommandServerThread(this, commandeExecute);
+            commandeServerExecute = new CommandeServerExecute(this);
+            commandServerThread = new CommandServerThread(this, commandeServerExecute);
             tickThread = new TickThread(this);
             commandServerThread.start();
             tickThread.start();
@@ -122,7 +121,7 @@ public class ServerContext {
         return ecsEngineServer.getWorld().getSystem(systemClass);
     }
 
-    public CommandeExecute getCommandeExecute() {
-        return commandeExecute;
+    public CommandeServerExecute getCommandeExecute() {
+        return commandeServerExecute;
     }
 }

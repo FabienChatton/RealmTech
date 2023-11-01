@@ -11,13 +11,13 @@ public class CommandServerThread extends Thread implements Closeable {
     private final ServerContext serverContext;
     private final Scanner scanner;
     private volatile boolean run = true;
-    private final CommandeExecute commandeExecute;
+    private final CommandeServerExecute commandeServerExecute;
 
-    public CommandServerThread(ServerContext serverContext, CommandeExecute commandeExecute) {
+    public CommandServerThread(ServerContext serverContext, CommandeServerExecute commandeServerExecute) {
         super("Command Server Cli Thread");
         this.serverContext = serverContext;
         this.scanner = new Scanner(System.in);
-        this.commandeExecute = commandeExecute;
+        this.commandeServerExecute = commandeServerExecute;
         this.setDaemon(true);
     }
 
@@ -27,7 +27,7 @@ public class CommandServerThread extends Thread implements Closeable {
             if (scanner.hasNextLine()) {
                 String stringCommande = scanner.nextLine();
                 PrintWriter output = new PrintWriter(System.out);
-                commandeExecute.execute(stringCommande, output);
+                commandeServerExecute.execute(stringCommande, output);
                 output.flush();
             }
             try {

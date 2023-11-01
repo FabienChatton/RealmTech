@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 public class ConsoleUi {
@@ -20,7 +21,7 @@ public class ConsoleUi {
     private final TextButton flushButton;
     private final Table outputTextContainer;
     private final ScrollPane scroll;
-    private ByteArrayOutputStream baosOutput;
+    private final StringWriter stringWriter;
     private final PrintWriter printWriter;
 
 
@@ -28,15 +29,15 @@ public class ConsoleUi {
         this.skin = skin;
         this.context = context;
         consoleWindow = new Window("Console", skin);
-        textFieldInput = new TextField("echo bonjour", skin);
+        textFieldInput = new TextField("", skin);
         flushButton = new TextButton("send", skin);
         outputTextContainer = new Table(skin);
-        baosOutput = new ByteArrayOutputStream();
-        printWriter = new PrintWriter(baosOutput, true, StandardCharsets.US_ASCII) {
+        stringWriter = new StringWriter();
+        printWriter = new PrintWriter(stringWriter) {
             @Override
             public void flush() {
-                writeToConsole(baosOutput.toString());
-                baosOutput = new ByteArrayOutputStream();
+                writeToConsole(stringWriter.toString());
+                stringWriter.getBuffer().setLength(0);
             }
         };
         consoleWindow.setBounds(100, 100, Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 100);
@@ -59,6 +60,16 @@ public class ConsoleUi {
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ENTER) {
                     sendCommandeRequest();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                if (Input.Keys.valueOf(Character.toString(character)) == Input.Keys.GRAVE || character == '§') {
+                    textFieldInput.setText(textFieldInput.getText().substring(0, textFieldInput.getText().length() - 1));
                     return true;
                 } else {
                     return false;
