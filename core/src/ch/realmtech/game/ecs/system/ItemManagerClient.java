@@ -82,6 +82,7 @@ public class ItemManagerClient extends ItemManager {
 
     public void supprimeItemOnGround(UUID itemUuid) {
         int item = getItem(itemUuid);
+        if (item == -1) return;
         if (mItem.has(item)) {
             Box2dComponent box2dComponent = mBox2d.get(item);
             physicWorld.destroyBody(box2dComponent.body);

@@ -56,9 +56,11 @@ public class ItemManagerServer extends ItemManager {
     @Override
     public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
-        ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
-        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
+        ServerContext.nextTick(() -> {
+            ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
+            itemComponent.set(itemRegisterEntry, UUID.randomUUID());
+            ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
+        });
         return itemId;
     }
 

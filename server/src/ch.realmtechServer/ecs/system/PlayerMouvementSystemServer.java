@@ -45,6 +45,7 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCellId = world.getSystem(MapManager.class).getTopCell(chunkId, innerChunkX, innerChunkY);
+        if (topCellId == -1) return;
         InfCellComponent infCellComponent = mCell.get(topCellId);
         float cellSpeedEffect = infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
 

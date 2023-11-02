@@ -119,7 +119,6 @@ public final class ECSEngine implements Disposable {
 
         worldConfiguration.setInvocationStrategy(serverInvocationStrategy);
         world = new World(worldConfiguration);
-        physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
 
     }
 

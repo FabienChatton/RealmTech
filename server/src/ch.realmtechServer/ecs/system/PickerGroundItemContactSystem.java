@@ -7,6 +7,7 @@ import ch.realmtechServer.ecs.component.PositionComponent;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
+import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,10 +17,12 @@ import com.badlogic.gdx.math.Vector2;
 public class PickerGroundItemContactSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
+    @Wire
+    private ItemManagerServer itemManager;
     @Override
     protected void process(int entityId) {
         Box2dComponent pickerBox2dComponent = mBox2d.get(entityId);
-        IntBag itemsEntities = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class)).getEntities();
+        IntBag itemsEntities = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, Box2dComponent.class)).getEntities();
         Vector2 pickerWorldCenter = pickerBox2dComponent.body.getWorldCenter();
         float pickerX = pickerWorldCenter.x - pickerBox2dComponent.widthWorld / 2f;
         float pickerY = pickerWorldCenter.y - pickerBox2dComponent.heightWorld / 2f;
@@ -34,7 +37,7 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
             float itemY = itemWorldCenter.y - itemBox2dComponent.heightWorld / 2f;
             Rectangle itemRectangle = new Rectangle(itemX, itemY, itemBox2dComponent.widthWorld, itemBox2dComponent.heightWorld);
             if (itemRectangle.overlaps(playerRectangle)) {
-
+                itemManager.playerPickUpItem(itemId, entityId);
             }
         }
     }

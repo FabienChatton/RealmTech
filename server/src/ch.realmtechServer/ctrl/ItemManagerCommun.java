@@ -49,7 +49,7 @@ public class ItemManagerCommun {
         polygonShape.setAsBox(widthWorld, heightWorld);
         fixtureDef.shape = polygonShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
-        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT | PhysiqueWorldHelper.BIT_PLAYER;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
         itemBody.createFixture(fixtureDef);
         polygonShape.dispose();
         return itemBody;
