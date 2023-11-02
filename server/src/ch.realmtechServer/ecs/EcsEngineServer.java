@@ -49,7 +49,6 @@ public final class EcsEngineServer {
                 .with(new TagManager())
                 .with(itemManager)
                 .with(new InventoryManager())
-                .with(new PhysiqueContactListenerManager())
                 .with(new SaveInfManager())
                 .with(new PlayerMouvementSystemServer())
 
@@ -79,6 +78,7 @@ public final class EcsEngineServer {
                 // server
 //                .with(new CellBeingMineSystem())
                 .with(new PhysiqueWorldStepSystem())
+                .with(new PickerGroundItemContactSystem())
                 //.with(new FurnaceSystem())
 
                 .with(new MapManager())
@@ -91,7 +91,6 @@ public final class EcsEngineServer {
         worldConfiguration.register(dataCtrl);
         worldConfiguration.register(itemManager);
         this.world = new World(worldConfiguration);
-        physicWorld.setContactListener(world.getSystem(PhysiqueContactListenerManager.class));
         logger.trace("fin de l'initialisation du ecs");
     }
 
