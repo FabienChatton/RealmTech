@@ -5,6 +5,7 @@ import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ctrl.ItemManagerCommun;
 import ch.realmtechServer.ecs.component.Box2dComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
+import ch.realmtechServer.ecs.component.ItemPickableComponent;
 import ch.realmtechServer.ecs.component.PositionComponent;
 import ch.realmtechServer.packet.clientPacket.ItemOnGroundSupprimerPacket;
 import ch.realmtechServer.registery.ItemRegisterEntry;
@@ -56,10 +57,11 @@ public class ItemManagerServer extends ItemManager {
     @Override
     public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
+        ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
+        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
+        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
         ServerContext.nextTick(() -> {
-            ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-            itemComponent.set(itemRegisterEntry, UUID.randomUUID());
-            ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
+            world.edit(itemId).create(ItemPickableComponent.class);
         });
         return itemId;
     }
@@ -76,6 +78,7 @@ public class ItemManagerServer extends ItemManager {
         ItemComponent itemComponent = mItem.get(itemId);
         serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(itemComponent.uuid));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
+        world.edit(itemId).remove(ItemPickableComponent.class);
         world.getSystem(InventoryManager.class).addItemToInventory(itemId, playerId);
     }
 }

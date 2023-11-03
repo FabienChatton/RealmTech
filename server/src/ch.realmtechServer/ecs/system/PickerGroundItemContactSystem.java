@@ -1,7 +1,7 @@
 package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.ecs.component.Box2dComponent;
-import ch.realmtechServer.ecs.component.ItemComponent;
+import ch.realmtechServer.ecs.component.ItemPickableComponent;
 import ch.realmtechServer.ecs.component.PickerGroundItemComponent;
 import ch.realmtechServer.ecs.component.PositionComponent;
 import com.artemis.Aspect;
@@ -22,7 +22,7 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         Box2dComponent pickerBox2dComponent = mBox2d.get(entityId);
-        IntBag itemsEntities = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, Box2dComponent.class)).getEntities();
+        IntBag itemsEntities = world.getAspectSubscriptionManager().get(Aspect.all(ItemPickableComponent.class)).getEntities();
         Vector2 pickerWorldCenter = pickerBox2dComponent.body.getWorldCenter();
         float pickerX = pickerWorldCenter.x - pickerBox2dComponent.widthWorld / 2f;
         float pickerY = pickerWorldCenter.y - pickerBox2dComponent.heightWorld / 2f;
