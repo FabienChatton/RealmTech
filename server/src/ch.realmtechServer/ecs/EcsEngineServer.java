@@ -107,14 +107,6 @@ public final class EcsEngineServer {
 
         long t2 = System.currentTimeMillis();
         serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f));
-        // pour débug
-//        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class)).getEntities();
-//        ComponentMapper<PositionComponent> mPos = world.getMapper(PositionComponent.class);
-//        int[] itemsData = items.getData();
-//        for (int i = 0; i < items.size(); i++) {
-//            PositionComponent positionComponent = mPos.get(itemsData[i]);
-//            logger.info(positionComponent.x + "," + positionComponent.y);
-//        }
     }
 
     public void prepareSaveToLoad(String saveName) throws IOException {
@@ -134,11 +126,7 @@ public final class EcsEngineServer {
     }
 
     public void processNextTickRunnable(List<Runnable> runnables) {
-        try {
-            runnables.forEach(Runnable::run);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+        runnables.forEach(Runnable::run);
     }
 
     public static void nextTickServer(Runnable runnable) {

@@ -84,6 +84,9 @@ public class MapManager extends Manager {
         return worldPos < 0 ? -(int) Math.ceil((float)-worldPos / WorldMap.CHUNK_SIZE) : worldPos / WorldMap.CHUNK_SIZE;
     }
 
+    /**
+     * @throws NoSuchElementException si le chunk n'existe pas
+     */
     public int getChunk(int chunkPosX, int chunkPosY, int[] infChunks) {
         for (int infChunk : infChunks) {
             InfChunkComponent infChunkComponent = mChunk.get(infChunk);

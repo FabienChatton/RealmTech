@@ -1,14 +1,21 @@
 package ch.realmtechServer.ecs.system;
 
+import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.TextureComponent;
+import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
+import com.artemis.annotations.Wire;
+import io.netty.channel.Channel;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 public class InventoryManager extends Manager {
+    @Wire
+    private ItemManager itemManager;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
@@ -182,5 +189,11 @@ public class InventoryManager extends Manager {
         } else {
             return 0;
         }
+    }
+
+    public void setPlayerInventoryRequestServer(Channel clientChannel, byte[] inventoryBytes) {
+        int playerId = world.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
+        Function<ItemManager, int[][]> inventoryFromBytes = InventorySerializer.getFromBytes(world, inventoryBytes);
+        mInventory.get(playerId).inventory = inventoryFromBytes.apply(itemManager);
     }
 }

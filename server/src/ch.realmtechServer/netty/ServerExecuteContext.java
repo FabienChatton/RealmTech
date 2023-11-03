@@ -5,10 +5,7 @@ import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.PlayerConnexionComponent;
-import ch.realmtechServer.ecs.system.MapManager;
-import ch.realmtechServer.ecs.system.MapSystemServer;
-import ch.realmtechServer.ecs.system.PlayerManagerServer;
-import ch.realmtechServer.ecs.system.PlayerMouvementSystemServer;
+import ch.realmtechServer.ecs.system.*;
 import ch.realmtechServer.level.cell.BreakCell;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechServer.packet.clientPacket.DeconnectionJoueurPacket;
@@ -82,6 +79,13 @@ public class ServerExecuteContext implements ServerExecute {
             InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
             byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
             clientChannel.writeAndFlush(new PlayerInventoryPacket(bytes, playerConnexionComponent.uuid));
+        });
+    }
+
+    @Override
+    public void setPlayerRequestInventory(Channel clientChannel, byte[] inventoryBytes) {
+        ServerContext.nextTick(() -> {
+            serverContext.getSystem(InventoryManager.class).setPlayerInventoryRequestServer(clientChannel, inventoryBytes);
         });
     }
 

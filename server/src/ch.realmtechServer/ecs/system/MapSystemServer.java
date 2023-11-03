@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class MapSystemServer extends BaseSystem implements CellManager {
@@ -73,7 +74,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
                     for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
                         final boolean changement = chunkSansChangement(playerConnexionComponent.chunkPoss, i, j);
                         if (changement) {
-                            int newChunkId = getOrGenerateChunk(infMetaDonnesComponent, i, j);
+                            int newChunkId = getCacheOrGenerateChunk(infMapComponent, infMetaDonnesComponent, i, j);
                             InfChunkComponent infChunkComponent = mChunk.get(newChunkId);
                             int newChunkPosX = infChunkComponent.chunkPosX;
                             int newChunkPosY = infChunkComponent.chunkPosY;
@@ -167,7 +168,12 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         return positions.stream().anyMatch(position -> chunkEstDansLaRenderDistance(position, chunkPosX, chunkPosY));
     }
 
-    private int getOrGenerateChunk(InfMetaDonneesComponent infMetaDonneesComponent, int chunkX, int chunkY) {
+    private int getCacheOrGenerateChunk(InfMapComponent infMapComponent, InfMetaDonneesComponent infMetaDonneesComponent, int chunkX, int chunkY) {
+        // regarde si le chunk est déjà present dans la map
+        try {
+            return world.getSystem(MapManager.class).getChunk(chunkX, chunkY, infMapComponent.infChunks);
+        } catch (NoSuchElementException ignored) { }
+
         int chunkId;
         try {
             chunkId = world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);

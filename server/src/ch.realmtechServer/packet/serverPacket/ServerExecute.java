@@ -13,5 +13,7 @@ public interface ServerExecute {
 
     void getPlayerInventorySession(Channel clientChannel);
 
+    void setPlayerRequestInventory(Channel clientChannel, byte[] inventoryBytes);
+
     void consoleCommande(Channel clientChannel, String stringCommande);
 }

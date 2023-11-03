@@ -32,6 +32,7 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
         for (int i = 0; i < itemsEntities.size(); i++) {
             int itemId = itemsData[i];
             Box2dComponent itemBox2dComponent = mBox2d.get(itemId);
+            if (itemBox2dComponent == null || itemBox2dComponent.body == null) return;
             Vector2 itemWorldCenter = itemBox2dComponent.body.getWorldCenter();
             float itemX = itemWorldCenter.x - itemBox2dComponent.widthWorld / 2f;
             float itemY = itemWorldCenter.y - itemBox2dComponent.heightWorld / 2f;
