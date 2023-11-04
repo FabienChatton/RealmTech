@@ -8,10 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsoleUi {
     private final Skin skin;
@@ -23,6 +24,8 @@ public class ConsoleUi {
     private final ScrollPane scroll;
     private final StringWriter stringWriter;
     private final PrintWriter printWriter;
+    private final List<String> commandHistory;
+    private final AtomicInteger commandHistoryIndex;
 
 
     public ConsoleUi(Skin skin, RealmTech context) {
@@ -33,6 +36,9 @@ public class ConsoleUi {
         flushButton = new TextButton("send", skin);
         outputTextContainer = new Table(skin);
         stringWriter = new StringWriter();
+        commandHistory = new ArrayList<>();
+        commandHistory.add(textFieldInput.getText());
+        commandHistoryIndex = new AtomicInteger(0);
         printWriter = new PrintWriter(stringWriter) {
             @Override
             public void flush() {
@@ -40,7 +46,7 @@ public class ConsoleUi {
                 stringWriter.getBuffer().setLength(0);
             }
         };
-        consoleWindow.setBounds(100, 100, Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 100);
+        consoleWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         scroll = new ScrollPane(outputTextContainer, skin);
         scroll.setFadeScrollBars(false);
@@ -61,6 +67,10 @@ public class ConsoleUi {
                 if (keycode == Input.Keys.ENTER) {
                     sendCommandeRequest();
                     return true;
+                } else if (keycode == Input.Keys.UP) {
+                    return upHistoryCommand();
+                } else if (keycode == Input.Keys.DOWN) {
+                    return downHistoryCommand();
                 } else {
                     return false;
                 }
@@ -71,6 +81,9 @@ public class ConsoleUi {
                 if (Input.Keys.valueOf(Character.toString(character)) == Input.Keys.GRAVE || character == '§') {
                     textFieldInput.setText(textFieldInput.getText().substring(0, textFieldInput.getText().length() - 1));
                     return true;
+                } else if (commandHistoryIndex.get() == commandHistory.size() - 1) {
+                    commandHistory.set(commandHistoryIndex.get(), textFieldInput.getText());
+                    return true;
                 } else {
                     return false;
                 }
@@ -80,8 +93,32 @@ public class ConsoleUi {
 
     private void sendCommandeRequest() {
         outputTextContainer.add(new Label("> " + textFieldInput.getText(), skin)).expandX().fillX().left().row();
+        commandHistory.add(textFieldInput.getText());
+        commandHistoryIndex.incrementAndGet();
+
         context.getEcsEngine().getCommandClientExecute().execute(textFieldInput.getText(), printWriter);
         textFieldInput.setText("");
+    }
+
+    private boolean upHistoryCommand() {
+        if (commandHistoryIndex.get() > 0) {
+            commandHistoryIndex.decrementAndGet();
+            textFieldInput.setText(commandHistory.get(commandHistoryIndex.get()));
+            textFieldInput.setCursorPosition(textFieldInput.getText().length());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean downHistoryCommand() {
+        if (commandHistoryIndex.get() < commandHistory.size() - 1) {
+            commandHistoryIndex.incrementAndGet();
+            textFieldInput.setText(commandHistory.get(commandHistoryIndex.get()));
+            textFieldInput.setCursorPosition(textFieldInput.getText().length());
+            return true;
+        }
+        return false;
     }
 
     public Window getConsoleWindow() {
