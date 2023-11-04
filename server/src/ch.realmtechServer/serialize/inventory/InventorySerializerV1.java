@@ -34,7 +34,7 @@ public class InventorySerializerV1 implements InventorySerializer {
                 } else {
                     byteBuffer.putInt(ItemRegisterEntry.getHash(mItem.get(inventoryComponent.inventory[index][0]).itemRegisterEntry));
                 }
-                byteBuffer.put((byte) InventoryManager.tailleStack(inventoryComponent.inventory[i]));
+                byteBuffer.put((byte) InventoryManager.tailleStack(inventoryComponent.inventory[index]));
             }
         }
 

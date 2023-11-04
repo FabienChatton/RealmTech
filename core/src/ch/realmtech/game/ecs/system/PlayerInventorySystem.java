@@ -158,16 +158,6 @@ public class PlayerInventorySystem extends BaseSystem {
             }
             context.getSoundManager().playOpenInventory();
             inGameSystemOnInventoryOpen.disableInGameSystemOnPause(world);
-//            for (Actor actor : inventoryStage.getActors().items) {
-//                if (actor instanceof ClickAndDropActor clickAndDropActor) {
-//                    int[] stack = clickAndDropActor.getStack();
-//                    for (int itemId : stack) {
-//                        if (mItem.has(itemId)) {
-//                            System.out.println(mItem.get(itemId) + ", itemId:" + itemId);
-//                        }
-//                    }
-//                }
-//            }
             return true;
         } else {
             return false;

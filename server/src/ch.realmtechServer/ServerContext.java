@@ -46,6 +46,7 @@ public class ServerContext {
                 .put(ItemOnGroundSupprimerPacket.class, ItemOnGroundSupprimerPacket::new)
                 .put(ConsoleCommandeRequestPacket.class, ConsoleCommandeRequestPacket::new)
                 .put(WriteToConsolePacket.class, WriteToConsolePacket::new)
+                .put(PlayerInventorySetRequestPacket.class, PlayerInventorySetRequestPacket::new)
         ;
     }
 

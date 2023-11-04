@@ -5,6 +5,8 @@ import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.ItemResultCraftComponent;
 import ch.realmtechServer.ecs.system.InventoryManager;
+import ch.realmtechServer.packet.serverPacket.PlayerInventorySetRequestPacket;
+import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 
 public class ClickAndDrop2 {
+    private final RealmTech context;
     private final Stage stage;
     private final World world;
     private final ClickAndDropActor clickAndDropActor;
@@ -23,6 +26,7 @@ public class ClickAndDrop2 {
     private final Array<ClickAndDropActor> destinations;
 
     public ClickAndDrop2(RealmTech context, Stage stage, World world) {
+        this.context = context;
         clickAndDropActor = new ClickAndDropActor(context, new int[InventoryComponent.DEFAULT_STACK_LIMITE], world.getMapper(ItemComponent.class), null) {
             @Override
             public void act(float delta) {
@@ -49,6 +53,7 @@ public class ClickAndDrop2 {
         this.destinations = new Array<>(50);
     }
 
+    // prend un item
     public void addSource(final ClickAndDropActor clickAndDropActorSrc) {
         final ClickAndDropListener listener = new ClickAndDropListener() {
             @Override
@@ -89,19 +94,25 @@ public class ClickAndDrop2 {
         actors.add(clickAndDropActorSrc);
     }
 
+    // depose un item
     public void addDestination(ClickAndDropActor clickAndDropActorDst) {
         final ClickAndDropListener listener = new ClickAndDropListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (event.isStopped()) return false;
+                boolean ret = false;
                 if (button == Input.Buttons.LEFT) {
                     world.getSystem(InventoryManager.class).moveStackToStack(clickAndDropActor.getStack(), clickAndDropActorDst.getStack());
-                    return true;
+                    ret = true;
                 } else if (button == Input.Buttons.RIGHT) {
                     world.getSystem(InventoryManager.class).moveStackToStackNumber(clickAndDropActor.getStack(), clickAndDropActorDst.getStack(), 1);
-                    return true;
+                    ret = true;
                 }
-                return false;
+                if (ret) {
+                    InventoryComponent inventoryComponent = context.getEcsEngine().getPlayerEntity().getComponent(InventoryComponent.class);
+                    context.getConnexionHandler().sendAndFlushPacketToServer(new PlayerInventorySetRequestPacket(InventorySerializer.toBytes(world, inventoryComponent)));
+                }
+                return ret;
             }
         };
         clickAndDropActorDst.addCaptureListener(listener);
