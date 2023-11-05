@@ -81,6 +81,8 @@ public class ConsoleUi {
                 if (Input.Keys.valueOf(Character.toString(character)) == Input.Keys.GRAVE || character == '§') {
                     textFieldInput.setText(textFieldInput.getText().substring(0, textFieldInput.getText().length() - 1));
                     return true;
+                } else if (character == '\n') {
+                    return false;
                 } else if (commandHistoryIndex.get() == commandHistory.size() - 1) {
                     commandHistory.set(commandHistoryIndex.get(), textFieldInput.getText());
                     return true;
@@ -93,8 +95,14 @@ public class ConsoleUi {
 
     private void sendCommandeRequest() {
         outputTextContainer.add(new Label("> " + textFieldInput.getText(), skin)).expandX().fillX().left().row();
-        commandHistory.add(textFieldInput.getText());
-        commandHistoryIndex.incrementAndGet();
+        if (commandHistoryIndex.get() != commandHistory.size() - 1) {
+            commandHistory.set(commandHistory.size() - 1, textFieldInput.getText());
+            commandHistory.add("");
+            commandHistoryIndex.set(commandHistory.size() - 1);
+        } else {
+            commandHistory.add(textFieldInput.getText());
+            commandHistoryIndex.incrementAndGet();
+        }
 
         context.getEcsEngine().getCommandClientExecute().execute(textFieldInput.getText(), printWriter);
         textFieldInput.setText("");

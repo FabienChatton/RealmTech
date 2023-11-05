@@ -102,26 +102,26 @@ public class GameScreen extends AbstractScreen {
             //context.getEcsEngine().dropCurentPlayerItem();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 0);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 1);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 2);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 3);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 4);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 5);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 6);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 7);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 8);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedUp();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedDown();
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 0);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 1);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 2);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 3);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 4);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 5);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 6);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 7);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9))
+//            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 8);
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedUp();
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedDown();
 
         PositionComponent positionComponent = context.getEcsEngine().getPlayerEntity().getComponent(PositionComponent.class);
         int worldPosX = MapManager.getWorldPos(positionComponent.x);
