@@ -4,6 +4,7 @@ import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.craft.CraftStrategy;
 import ch.realmtechServer.ctrl.ItemManager;
 import ch.realmtechServer.ecs.component.*;
+import ch.realmtechServer.ecs.system.InventoryManager;
 import ch.realmtechServer.mod.RealmTechCoreMod;
 import ch.realmtechServer.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
@@ -144,6 +145,7 @@ public class PlayerManagerClient extends Manager {
         int playerId = getPlayers().get(playerUUID);
         Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
         InventoryComponent inventoryComponent = mInventory.get(playerId);
+        world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
         inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerClient.class));
     }
 }

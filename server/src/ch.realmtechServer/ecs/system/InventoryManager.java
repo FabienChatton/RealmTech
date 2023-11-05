@@ -193,7 +193,9 @@ public class InventoryManager extends Manager {
 
     public void setPlayerInventoryRequestServer(Channel clientChannel, byte[] inventoryBytes) {
         int playerId = world.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
-        Function<ItemManager, int[][]> inventoryFromBytes = InventorySerializer.getFromBytes(world, inventoryBytes);
-        mInventory.get(playerId).inventory = inventoryFromBytes.apply(itemManager);
+        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
+        InventoryComponent inventoryComponent = mInventory.get(playerId);
+        world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
+        inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerServer.class));
     }
 }
