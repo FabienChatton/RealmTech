@@ -14,8 +14,8 @@ qu'on peut posse n'importe où pour créer ses propres bâtiments.
 ## Jouer au jeu
 ### cmd
 ```shell
-git clone https://github.com/FabienChatton/realmTech
-cd realmTech
+git clone https://github.com/FabienChatton/RealmTech
+cd RealmTech
 .\gradlew desktop:run
 ```
 Cette méthode stock le fichier RealmTechData dans le dossier assets ce
@@ -24,7 +24,7 @@ jeu vous recommande la méthode d'importation de la configuration
 dans le dossier.run avec Intellij
 ### IntelliJ
 ```shell
-git clone https://github.com/FabienChatton/realmTech
+git clone https://github.com/FabienChatton/RealmTech
 ```
 Et importé la configuration dans le dossier .run
 
@@ -62,24 +62,80 @@ Et importé la configuration dans le dossier .run
 4. [ ] plusieurs dimensions
 
 ## Doc Architecture
-RealmTech est la classe la plus haute dans la hiérarchie.
-Son rôle est de faire le lien entre les écrans et le jeu. RealmTech,
-Permet de donner du context aux écrans.
-Par exemple, dans l'écran de sélection de sauvegarde, l'écran
-demande au context, quelque sont les sauvegardes à afficher.
+RealmTech est la globalité du projet. La partie client est
+en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu.
+Pour que le jeu fonctionne, il faut la partie client et la partie serveur, mais pas d'inquiétude,
+le client inclut le serveur. Le serveur peut etre utilisé de manière "Standalone", c'est-à-dire
+sans le client, anssi, des clients peuvent se connecter sur une machine dédier.
 
 ```mermaid
-classDiagram
-    class RealmTech
-    
-    class ECS
-    ECS : - RealmTech context
-    
-    class Screen
-    Screen : - RealmTech context
-    
-    ECS --o RealmTech
-    Screen --o RealmTech
+graph LR
+    subgraph RealmTech
+        subgraph RealmTechClient
+            subgraph Screen
+                MenuScreen
+                OptionScreen
+                SavesScreen
+            end
+            ContextOption
+            subgraph InGame
+                subgraph Client
+                    contextClient
+                    subgraph EcsClient [ECS]
+                        ecsClient
+                        SystemsClient
+                        EcsWorldClient
+                        PhysiqueWorldClient
+                        ConnexionClientIn
+                        ConnexionClientOut
+                        CommandExecuteClient
+                    end
+                    subgraph GameScreenClient [GameScreen]
+                        GameScreen
+                        PauseScreen
+                    end
+                    assets
+                    GameOptionClient
+                end
+                subgraph RealmTechServer
+                    subgraph Server
+                        contextServer
+                        subgraph EcsServer [ECS]
+                            ecsServer
+                            Components
+                            SystemsServer
+                            EcsWorldServer
+                            PhysiqueWorldServer
+                            ConnexionServerIn
+                            ConnexionServerOut
+                            CommandExecuteServer
+                        end
+                        GameOptionServer
+                    end
+                end
+            end
+        end
+        contextClient --- ecsClient
+        contextClient --- GameScreenClient
+        contextClient --- assets
+
+        ecsClient --- SystemsClient 
+        ecsClient --- EcsWorldClient
+        ecsClient --- PhysiqueWorldClient
+        ecsClient --- ConnexionClientIn
+        ecsClient --- ConnexionClientOut
+        ecsClient --- CommandExecuteClient
+
+        contextServer --- ecsServer
+
+        ecsServer --- Components
+        ecsServer --- SystemsServer
+        ecsServer --- EcsWorldServer
+        ecsServer --- PhysiqueWorldServer
+        ecsServer --- ConnexionServerIn
+        ecsServer --- ConnexionServerOut
+        ecsServer --- CommandExecuteServer
+    end
 ```
 Le ECS est la partie centrale du jeu. C'est lui qui contient tout
 le nécessaire pour le jeu. Il est créé quand le jeu commence, quand
@@ -96,7 +152,7 @@ en fonction de leur layer. Le layer représente le niveau où la cellule
 se trouve.
 
 0. ground
-1. gournd deco
+1. ground deco
 2. build
 3. build déco
 
