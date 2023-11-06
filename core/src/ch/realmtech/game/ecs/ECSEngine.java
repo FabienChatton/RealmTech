@@ -63,17 +63,13 @@ public final class ECSEngine implements Disposable {
                 .withFrame(new TagManager())
                 .withFrame(new ItemManagerClient())
                 .withFrame(new InventoryManager())
-                //.withFrame(new PhysiqueContactListenerManager())
                 .withFrame(new SaveInfManager())
                 .withFrame(new MapManager())
 
                 // system
                 .withFrame(new PlayerInputSystem())
                 .withFrame(new PlayerMouvementTextureSystem())
-//                .withClient(new MapSystem())
                 .withFrame(new CraftingPlayerSystem())
-                //.withFrame(new ItemBeingPickAnimationSystem())
-                //.withFrame(new PickUpOnGroundItemSystem())
                 .withFrame(new PlayerMouvementSystem())
                 .withFrame(new Box2dFrotementSystem())
                 // render
@@ -87,7 +83,7 @@ public final class ECSEngine implements Disposable {
 
                 // ui
                 .withFrame(new PlayerInventorySystem())
-//                .withClient(new ItemBarManager())
+                .withFrame(new ItemBarManager())
 
                 // server
                 .withTick(new CellBeingMineSystem())

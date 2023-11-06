@@ -7,14 +7,12 @@ import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class ItemBarManager extends BaseSystem {
-    private final static String TAG = ItemBarManager.class.getSimpleName();
     private Stage itemBarStage;
     private Table itemBarTable;
     private Table itemBar;
@@ -76,7 +74,6 @@ public class ItemBarManager extends BaseSystem {
             newSlot = (byte) (numberOfSlotParRow - 1);
         }
         this.slotSelected = newSlot;
-        Gdx.app.debug(TAG, "le slot " + this.slotSelected  + " est selectionne");
     }
 
     public void slotSelectedUp() {
