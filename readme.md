@@ -46,13 +46,15 @@ Et importé la configuration dans le dossier .run
 
 1. [x] carte infinie
 2. [ ] serveur interne
+3. [ ] console de debug
 
 ### alpha
 
-1. [ ] raccourci clavier custom
-2. [ ] machine multi cellules
-3. [ ] refonte machine tier (vapeur, lv, mv...)
+1. [ ] reorganisation du code selon architecture
+2. [ ] raccourci clavier custom
+3. [ ] machine multi cellules
 4. [ ] infrastructure, convoyer/pipe
+5. [ ] simulation physique client
 
 ### beta 
 
