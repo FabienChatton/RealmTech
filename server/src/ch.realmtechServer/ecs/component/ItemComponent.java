@@ -16,6 +16,6 @@ public class ItemComponent extends Component {
 
     @Override
     public String toString() {
-        return itemRegisterEntry.toString();
+        return String.format("%s %s", itemRegisterEntry, uuid);
     }
 }
