@@ -16,11 +16,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class CellBeingMineRenderSystem extends IteratingSystem {
 
     @Wire(name = "context")
-    RealmTech context;
-
-    ComponentMapper<CellBeingMineComponent> mCellBeingMine;
-    ComponentMapper<InfCellComponent> mCell;
-    ComponentMapper<InfChunkComponent> mChunk;
+    private RealmTech context;
+    private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
+    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<InfChunkComponent> mChunk;
 
     @Override
     protected void begin() {

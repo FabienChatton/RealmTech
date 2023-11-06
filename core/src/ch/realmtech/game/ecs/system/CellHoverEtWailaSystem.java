@@ -3,22 +3,28 @@ package ch.realmtech.game.ecs.system;
 import ch.realmtech.RealmTech;
 import ch.realmtechServer.ecs.component.InfCellComponent;
 import ch.realmtechServer.ecs.component.InfChunkComponent;
+import ch.realmtechServer.ecs.component.InfMapComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
+import ch.realmtechServer.ecs.system.MapManager;
+import ch.realmtechServer.item.ItemType;
+import ch.realmtechServer.registery.CellRegisterEntry;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class CellHoverEtWailaSystem extends BaseSystem {
-    private final static String TAG = CellHoverEtWailaSystem.class.getSimpleName();
     @Wire(name = "context")
     private RealmTech context;
-    @Wire
     private TextureAtlas textureAtlas;
     private Table wailaStageTable;
     private Window wailaWindow;
@@ -61,53 +67,58 @@ public class CellHoverEtWailaSystem extends BaseSystem {
     protected void end() {
         super.end();
         context.getGameStage().getBatch().end();
+        wailaStage.draw();
     }
 
     @Override
     protected void processSystem() {
-//        // cell hover
-//        Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-//        int chunk = MapSystem.getChunk(context, screenCoordinate);
-//        if (chunk == -1) return;
-//        int cell = MapSystem.getTopCell(context, chunk, screenCoordinate);
-//        if (cell == -1) return;
-//        InfChunkComponent infChunkComponent = mChunk.get(chunk);
-//        InfCellComponent infCellComponent = mCell.get(cell);
-//        TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
-//        context.getGameStage().getBatch().draw(region,
-//                MapSystem.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX()),
-//                MapSystem.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY()),
-//                RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
-//                RealmTech.PPM * RealmTech.UNITE_SCALE / 2
-//        );
-//
-//        // waila
-//        wailaWindow.getTitleLabel().setText(infCellComponent.cellRegisterEntry.toString());
-//        wailaCellImage.setDrawable(new TextureRegionDrawable(infCellComponent.cellRegisterEntry.getTextureRegion(textureAtlas)));
-//        wailaCellInfoHash.setText("ID: " + CellRegisterEntry.hashString(infCellComponent.cellRegisterEntry.toString()));
-//
-//        ItemType curentItemType;
-//        if (!mItem.has(world.getSystem(ItemBarManager.class).getSelectItem())) {
-//            curentItemType = ItemType.TOUS;
-//        } else {
-//            ItemComponent curentItemComponent = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem());
-//            curentItemType = curentItemComponent.itemRegisterEntry.getItemBehavior().getItemType();
-//        }
-//        ItemType itemTypeToMine;
-//        if (infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() != null) {
-//            itemTypeToMine = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith();
-//        } else {
-//            itemTypeToMine = ItemType.RIEN;
-//        }
-//        if (curentItemType == itemTypeToMine || infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS) {
-//            wailaCellInfoCanBreak.setColor(Color.GREEN);
-//        } else {
-//            wailaCellInfoCanBreak.setColor(Color.RED);
-//        }
-//        if (itemTypeToMine != null) {
-//            wailaCellInfoCanBreak.setText("break with: " + itemTypeToMine.toString().toLowerCase());
-//        }
-//
-//        wailaStage.draw();
+        // cell hover
+        int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+        Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        Vector2 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
+        int worldPosX = MapManager.getWorldPos(gameCoordinate.x);
+        int worldPosY = MapManager.getWorldPos(gameCoordinate.y);
+
+        int chunk = world.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
+        if (chunk == -1) return;
+        int topCell = context.getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        if (topCell == -1) return;
+        InfChunkComponent infChunkComponent = mChunk.get(chunk);
+        InfCellComponent infCellComponent = mCell.get(topCell);
+        TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
+        context.getGameStage().getBatch().draw(
+                region,
+                worldPosX,
+                worldPosY,
+                RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
+                RealmTech.PPM * RealmTech.UNITE_SCALE / 2
+        );
+
+        // waila
+        wailaWindow.getTitleLabel().setText(infCellComponent.cellRegisterEntry.toString());
+        wailaCellImage.setDrawable(new TextureRegionDrawable(infCellComponent.cellRegisterEntry.getTextureRegion(textureAtlas)));
+        wailaCellInfoHash.setText("Id: " + CellRegisterEntry.hashString(infCellComponent.cellRegisterEntry.toString()));
+
+        ItemType curentItemType;
+        if (!mItem.has(world.getSystem(ItemBarManager.class).getSelectItem())) {
+            curentItemType = ItemType.TOUS;
+        } else {
+            ItemComponent curentItemComponent = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem());
+            curentItemType = curentItemComponent.itemRegisterEntry.getItemBehavior().getItemType();
+        }
+        ItemType itemTypeToMine;
+        if (infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() != null) {
+            itemTypeToMine = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith();
+        } else {
+            itemTypeToMine = ItemType.RIEN;
+        }
+        if (curentItemType == itemTypeToMine || infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS) {
+            wailaCellInfoCanBreak.setColor(Color.GREEN);
+        } else {
+            wailaCellInfoCanBreak.setColor(Color.RED);
+        }
+        if (itemTypeToMine != null) {
+            wailaCellInfoCanBreak.setText("break with: " + itemTypeToMine.toString().toLowerCase());
+        }
     }
 }

@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
 public class MapSystemServer extends BaseSystem implements CellManager {
@@ -170,11 +169,11 @@ public class MapSystemServer extends BaseSystem implements CellManager {
 
     private int getCacheOrGenerateChunk(InfMapComponent infMapComponent, InfMetaDonneesComponent infMetaDonneesComponent, int chunkX, int chunkY) {
         // regarde si le chunk est déjà present dans la map
-        try {
-            return world.getSystem(MapManager.class).getChunk(chunkX, chunkY, infMapComponent.infChunks);
-        } catch (NoSuchElementException ignored) { }
+        int chunkId = world.getSystem(MapManager.class).getChunk(chunkX, chunkY, infMapComponent.infChunks);
+        if (chunkId != -1) {
+            return chunkId;
+        }
 
-        int chunkId;
         try {
             chunkId = world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
         } catch (FileNotFoundException | BufferUnderflowException e) {

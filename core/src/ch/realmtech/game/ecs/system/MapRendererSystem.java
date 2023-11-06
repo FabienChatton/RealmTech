@@ -31,8 +31,6 @@ public class MapRendererSystem extends IteratingSystem {
 
     @Override
     protected void begin() {
-        gameStage.getBatch().setProjectionMatrix(gameStage.getCamera().combined);
-        gameStage.getCamera().update();
         gameStage.getBatch().begin();
     }
 

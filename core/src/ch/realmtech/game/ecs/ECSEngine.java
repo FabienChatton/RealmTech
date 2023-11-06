@@ -78,7 +78,7 @@ public final class ECSEngine implements Disposable {
                 .withFrame(new CameraFollowPlayerSystem())
                 .withFrame(new MapRendererSystem())
                 .withFrame(new CellBeingMineRenderSystem())
-//                .withClient(new CellHoverEtWailaSystem())
+                .withFrame(new CellHoverEtWailaSystem())
                 .withFrame(new TextureRenderer())
 
                 // ui
@@ -95,8 +95,8 @@ public final class ECSEngine implements Disposable {
                         PlayerInputSystem.class,
                         PhysiqueWorldStepSystem.class,
                         CellBeingMineSystem.class,
-                        CellBeingMineRenderSystem.class
-//                        CellHoverEtWailaSystem.class
+                        CellBeingMineRenderSystem.class,
+                        CellHoverEtWailaSystem.class
                 ))
         );
         worldConfiguration.register("physicWorld", physicWorld);

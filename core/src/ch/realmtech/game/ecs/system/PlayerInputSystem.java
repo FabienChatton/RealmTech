@@ -11,7 +11,6 @@ import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 public class PlayerInputSystem extends BaseSystem {
     @Wire(name = "context")
@@ -27,12 +26,8 @@ public class PlayerInputSystem extends BaseSystem {
 
         MapManager mapManger = world.getSystem(MapManager.class);
         InfMapComponent infMapComponent = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class);
-        int chunk;
-        try {
-            chunk = mapManger.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
-        } catch (Exception e) {
-            return;
-        }
+        int chunk = mapManger.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
+        if (chunk == -1) return;
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCell = context.getSystem(MapManager.class).getTopCell(chunk, innerChunkX, innerChunkY);

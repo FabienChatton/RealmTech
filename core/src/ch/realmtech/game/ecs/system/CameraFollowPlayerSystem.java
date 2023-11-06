@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 @All({PositionComponent.class, Box2dComponent.class, PlayerComponent.class})
 public class CameraFollowPlayerSystem extends IteratingSystem {
     @Wire(name = "gameCamera")
-    OrthographicCamera gameCamera;
+    private OrthographicCamera gameCamera;
 
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;

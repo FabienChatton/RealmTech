@@ -85,7 +85,7 @@ public class MapManager extends Manager {
     }
 
     /**
-     * @throws NoSuchElementException si le chunk n'existe pas
+     * @return -1 si le chunk n'a pas été trouvé sinon l'id du chunk.
      */
     public int getChunk(int chunkPosX, int chunkPosY, int[] infChunks) {
         for (int infChunk : infChunks) {
@@ -94,7 +94,7 @@ public class MapManager extends Manager {
                 return infChunk;
             }
         }
-        throw new NoSuchElementException("Il n'existe pas de chunk à la position " + chunkPosX + "," + chunkPosY + " dans cette map");
+        return -1;
     }
 
     public int getTopCell(int chunk, byte innerX, byte innerY) {
@@ -319,6 +319,7 @@ public class MapManager extends Manager {
         try {
             InfMapComponent infMap = getInfMap();
             int oldChunkId = getChunk(oldChunkPosX, oldChunkPosY, infMap.infChunks);
+            if (oldChunkId == -1) throw new NoSuchElementException();
             int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
             replaceChunk(infMap.infChunks, oldChunkId, chunkId);
             supprimeChunk(oldChunkId);
