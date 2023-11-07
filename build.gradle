@@ -20,7 +20,7 @@ allprojects {
     version = '1.0'
     ext {
         appName = "RealmTech"
-        gdxVersion = '1.11.0'
+        gdxVersion = '1.12.1'
         roboVMVersion = '2.3.16'
         box2DLightsVersion = '1.5'
         aiVersion = '1.8.2'
@@ -65,8 +65,6 @@ project(":server") {
         api 'ch.qos.logback:logback-classic:1.4.11'
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         api 'org.junit.jupiter:junit-jupiter:5.8.1'
@@ -80,5 +78,6 @@ project(":core") {
     dependencies {
         implementation project(":server")
         api 'club.minnced:java-discord-rpc:2.0.1'
+        api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
     }
 }
