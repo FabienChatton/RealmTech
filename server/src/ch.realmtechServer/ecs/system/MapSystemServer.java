@@ -150,6 +150,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
     public int[] damneChunkServer(int[] infChunks, int chunkId, InfMetaDonneesComponent infMetaDonneesComponent) {
         try {
             world.getSystem(SaveInfManager.class).saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
+            world.getSystem(MapManager.class).supprimeChunk(chunkId);
         } catch (IOException e) {
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
             logger.error("Le chunk {},{} n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);

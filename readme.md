@@ -283,9 +283,9 @@ save date, long
 seed, long
 ```
 #### Fichier .rsc
-Le nom du fichier qui correspond à un fichier .rsc, correspond à la position
-du chunk en jeu. Le nom du fichier contient la position X du chunk, un "," et
-La position Y du chunk, par exemple 12,-23.rsc. Chaque fichier la version du protocole de sauvegarde.
+Un fichier .rsc contient les données d'un chunk. Le fichier est nommée en
+fonction du <code>chunk pos</code> du chunk. Les deux coordonnées sont
+séparés par une virgule, par exemple : 12,-34.rsc.
 ```text
 Métadonnées
     - version du protocole, int
@@ -296,9 +296,9 @@ Body
         - hash du cellRegisterEntry, int
         - position dans le chunk, byte
 ```
-Un chunk fait <code>version protocole (int) + nombre de cells * taille cell (short) + chunkPosX (int) + chunkPosY (int)</code>.
+Un chunk fait <code>version protocole (int) + nombre de cells (short) * taille cell (5 bytes) + chunkPosX (int) + chunkPosY (int)</code>.
 
-Une cellule fait <code>6 bytes</code>.
+Une cellule fait <code>5 bytes</code>.
 #### Fichier .psi
 
 Le fichier contient l'inventaire du joueur (pas utilisé par le serveur)

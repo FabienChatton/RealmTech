@@ -7,13 +7,14 @@ import com.artemis.utils.IntBag;
 
 import java.util.concurrent.Callable;
 
-import static picocli.CommandLine.Command;
-import static picocli.CommandLine.ParentCommand;
+import static picocli.CommandLine.*;
 
 @Command(name = "chunks", description = "dump all loaded chunk")
 public class DumpChunksCommand implements Callable<Integer> {
     @ParentCommand
     DumpCommand dumpCommand;
+    @Option(names = {"-v", "--verbose"}, description = "Show more detail, like chunk count")
+    private boolean verbose;
     @Override
     public Integer call() throws Exception {
         ComponentMapper<InfChunkComponent> mChunk = dumpCommand.masterCommand.getWorld().getMapper(InfChunkComponent.class);
@@ -26,6 +27,9 @@ public class DumpChunksCommand implements Callable<Integer> {
             dumpCommand.masterCommand.output.println(infChunkComponent);
         }
         if (chunkEntities.size() == 0) dumpCommand.masterCommand.output.println("no chunk loaded");
+        if (verbose) {
+            dumpCommand.masterCommand.output.println("Chunk count : " + chunkEntities.size());
+        }
         return 0;
     }
 }
