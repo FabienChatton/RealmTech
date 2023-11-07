@@ -17,6 +17,7 @@ public class CommandeServerExecute {
         MasterServerCommand masterServerCommand = new MasterServerCommand(serverContext, output);
         CommandLine commandLine = new CommandLine(masterServerCommand);
         commandLine.setErr(output);
+        commandLine.setOut(output);
         if (stringCommande.equals("help")) {
             commandLine.usage(output);
         } else {

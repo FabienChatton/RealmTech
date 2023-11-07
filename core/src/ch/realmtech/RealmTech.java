@@ -18,6 +18,7 @@ import com.artemis.BaseSystem;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -74,7 +75,7 @@ public final class RealmTech extends Game{
         discord.init();
         gameStage = new Stage(
                 new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT,
-                        new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
+                        new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT)));
         uiStage = new Stage(
                 new ExtendViewport(SCREEN_WIDTH, SCREEN_HEIGHT,
                         new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT)));
@@ -114,11 +115,19 @@ public final class RealmTech extends Game{
 
     public void setScreen(final ScreenType screenType) {
         try {
+            Screen currentScreen = getScreen();
             AbstractScreen screen = screenType.screenClass.getConstructor(RealmTech.class).newInstance(this);
             screen.setOldScreen(currentScreenType);
-            setScreen(screen);
             if (screenType == ScreenType.GAME_SCREEN) {
-                gameScreen = (GameScreen) screen;
+                if (gameScreen == null) {
+                    gameScreen = (GameScreen) screen;
+                }
+                setScreen(gameScreen);
+            } else {
+                setScreen(screen);
+            }
+            if (!(currentScreenType == ScreenType.GAME_SCREEN && screenType == ScreenType.GAME_PAUSE)) {
+                if (currentScreen != null) currentScreen.dispose();
             }
             currentScreenType = screenType;
         } catch (ReflectiveOperationException e) {

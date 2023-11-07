@@ -23,6 +23,7 @@ public class CommandClientExecute {
             MasterClientCommand masterClientCommand = new MasterClientCommand(context, output);
             CommandLine commandLine = new CommandLine(masterClientCommand);
             commandLine.setErr(output);
+            commandLine.setOut(output);
             if (stringCommandeWithoutContext.equals("help")) {
                 commandLine.usage(output); // auto flush
             } else {

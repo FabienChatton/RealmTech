@@ -19,7 +19,7 @@ public class DumpCommand implements Callable<Integer> {
     CommunMasterCommand masterCommand;
     @Override
     public Integer call() throws Exception {
-        System.out.println("Please select a subcommand. Do \"dump -h\" to see all available commands");
+        masterCommand.output.println("Please select a subcommand. Do \"dump -h\" to see all available commands");
         return 0;
     }
 }
