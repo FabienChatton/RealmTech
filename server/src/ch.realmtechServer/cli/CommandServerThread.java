@@ -23,6 +23,7 @@ public class CommandServerThread extends Thread implements Closeable {
 
     @Override
     public void run() {
+        System.out.println("ready to receive cli command");
         while (run) {
             if (scanner.hasNextLine()) {
                 String stringCommande = scanner.nextLine();

@@ -2,11 +2,11 @@ package ch.realmtechServer.cli;
 
 import java.io.PrintWriter;
 
-import static picocli.CommandLine.*;
+import static picocli.CommandLine.Command;
 
 @Command(name = "commun", aliases = "c", subcommands = {
         EchoCommande.class,
-        DumpItemsCommand.class,
+        DumpCommand.class,
 })
 public abstract class CommunMasterCommand implements CommendContext {
     final PrintWriter output;

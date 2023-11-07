@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class PlayerManagerServer extends BaseSystem {
@@ -132,7 +131,17 @@ public class PlayerManagerServer extends BaseSystem {
                 return playersData[i];
             }
         }
-        throw new NoSuchElementException("Le player au channel " + clientChannel.toString() + " n'est pas dans la liste des joueurs");
+        return -1;
+    }
+
+    public int getPlayerByUuid(UUID uuid) {
+        int[] playersData = players.getData();
+        for (int i = 0; i < players.size(); i++) {
+            if (mPlayerConnexion.get(playersData[i]).uuid.equals(uuid)) {
+                return playersData[i];
+            }
+        }
+        return -1;
     }
 
     public PlayerConnexionComponent getPlayerConnexionComponentByChannel(Channel clientChannel) {

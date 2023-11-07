@@ -10,6 +10,7 @@ import static picocli.CommandLine.Command;
 
 @Command(name = "server", aliases = "s", subcommands = {
         StopCommand.class,
+        TeleportPlayerCommand.class,
 })
 public class MasterServerCommand extends CommunMasterCommand implements Callable<Integer> {
     final ServerContext serverContext;

@@ -71,4 +71,9 @@ public class InfChunkComponent extends PooledComponent {
         // version protocole (int) + nombre de cells * taille cell (short) + chunkPosX (int) + chunkPosY (int)
         return Integer.BYTES + infCellsId.length * InfCellComponent.TAILLE_BYTES + Integer.BYTES + Integer.BYTES;
     }
+
+    @Override
+    public String toString() {
+        return String.format("x: %d, y: %d, size: %d", chunkPosX, chunkPosY, infCellsId.length);
+    }
 }
