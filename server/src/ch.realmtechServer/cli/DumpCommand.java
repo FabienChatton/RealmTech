@@ -1,6 +1,8 @@
 package ch.realmtechServer.cli;
 
 
+import picocli.CommandLine;
+
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
@@ -19,7 +21,10 @@ public class DumpCommand implements Callable<Integer> {
     CommunMasterCommand masterCommand;
     @Override
     public Integer call() throws Exception {
-        masterCommand.output.println("Please select a subcommand. Do \"dump -h\" to see all available commands");
+        CommandLine commandLine = new CommandLine(this);
+        commandLine.setErr(masterCommand.output);
+        commandLine.setOut(masterCommand.output);
+        commandLine.execute("-h");
         return 0;
     }
 }

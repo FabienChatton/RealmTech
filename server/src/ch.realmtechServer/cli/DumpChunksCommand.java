@@ -22,14 +22,14 @@ public class DumpChunksCommand implements Callable<Integer> {
                 InfChunkComponent.class
         )).getEntities();
         int[] data = chunkEntities.getData();
-        for (int i = 0; i < chunkEntities.size(); i++) {
-            InfChunkComponent infChunkComponent = mChunk.get(data[i]);
-            dumpCommand.masterCommand.output.println(infChunkComponent);
+        if (verbose) {
+            for (int i = 0; i < chunkEntities.size(); i++) {
+                InfChunkComponent infChunkComponent = mChunk.get(data[i]);
+                dumpCommand.masterCommand.output.println(infChunkComponent);
+            }
         }
         if (chunkEntities.size() == 0) dumpCommand.masterCommand.output.println("no chunk loaded");
-        if (verbose) {
-            dumpCommand.masterCommand.output.println("Chunk count : " + chunkEntities.size());
-        }
+        dumpCommand.masterCommand.output.println("Chunk count : " + chunkEntities.size());
         return 0;
     }
 }
