@@ -2,7 +2,9 @@ package ch.realmtechServer.ecs.system;
 
 import ch.realmtechServer.PhysiqueWorldHelper;
 import ch.realmtechServer.ServerContext;
+import ch.realmtechServer.craft.CraftStrategy;
 import ch.realmtechServer.ecs.component.*;
+import ch.realmtechServer.mod.RealmTechCoreMod;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtechServer.packet.clientPacket.TousLesJoueurPacket;
 import com.artemis.BaseSystem;
@@ -86,6 +88,14 @@ public class PlayerManagerServer extends BaseSystem {
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
         inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+
+        // default crafting table
+        int defaultCraftingTable = world.create();
+        int defaultResultInventory = world.create();
+        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
+        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);

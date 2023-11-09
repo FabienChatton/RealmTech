@@ -8,8 +8,8 @@ import java.util.concurrent.Callable;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
-@Command(name = "dump",  description = "master dump command, see subcommands for more dump details",
-        mixinStandardHelpOptions = true,
+@Command(name = "dump",  description = "master dump command, see subcommands for more dump details.\n" +
+                                        "Each subcommands has a verbose option",
         subcommands = {
                 DumpChunksCommand.class,
                 DumpItemsCommand.class,
@@ -25,7 +25,7 @@ public class DumpCommand implements Callable<Integer> {
         CommandLine commandLine = new CommandLine(this);
         commandLine.setErr(masterCommand.output);
         commandLine.setOut(masterCommand.output);
-        commandLine.execute("-h");
+        commandLine.usage(masterCommand.output);
         return 0;
     }
 }
