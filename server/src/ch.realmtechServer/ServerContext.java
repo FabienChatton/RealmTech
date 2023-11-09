@@ -114,9 +114,6 @@ public class ServerContext {
     public ServerResponseHandler getServerHandler() {
         return serverResponseHandler;
     }
-    public static void nextTick(Runnable runnable) {
-        EcsEngineServer.nextTickServer(runnable);
-    }
 
     public <T extends BaseSystem> T getSystem(Class<T> systemClass) {
         return ecsEngineServer.getWorld().getSystem(systemClass);

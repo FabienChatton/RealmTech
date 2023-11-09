@@ -69,7 +69,6 @@ public final class ECSEngine implements Disposable {
                 // system
                 .withFrame(new PlayerInputSystem())
                 .withFrame(new PlayerMouvementTextureSystem())
-                .withFrame(new CraftingPlayerSystem())
                 .withFrame(new PlayerMouvementSystem())
                 .withFrame(new Box2dFrotementSystem())
                 // render

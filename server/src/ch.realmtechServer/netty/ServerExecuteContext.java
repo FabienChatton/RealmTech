@@ -48,14 +48,14 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void playerMove(Channel clientChannel, byte inputKeys) {
-        ServerContext.nextTick(() -> {
+        serverContext.getEcsEngineServer().nextTick(() -> {
             serverContext.getSystem(PlayerMouvementSystemServer.class).playerMove(clientChannel, inputKeys);
         });
     }
 
     @Override
     public void cellBreakRequest(Channel clientChannel, int worldPosX, int worldPosY, int itemUseByPlayerHash) {
-        ServerContext.nextTick(() -> {
+        serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
             InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
@@ -73,7 +73,7 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void getPlayerInventorySession(Channel clientChannel) {
-        ServerContext.nextTick(() -> {
+        serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
             InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
@@ -84,14 +84,14 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void setPlayerRequestInventory(Channel clientChannel, byte[] inventoryBytes) {
-        ServerContext.nextTick(() -> {
+        serverContext.getEcsEngineServer().nextTick(() -> {
             serverContext.getSystem(InventoryManager.class).setPlayerInventoryRequestServer(clientChannel, inventoryBytes);
         });
     }
 
     @Override
     public void consoleCommande(Channel clientChannel, String stringCommande) {
-        ServerContext.nextTick(() -> {
+        serverContext.getEcsEngineServer().nextTick(() -> {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (PrintWriter printWriter = new PrintWriter(baos, true, StandardCharsets.US_ASCII)) {
                 serverContext.getCommandeExecute().execute(stringCommande, printWriter);

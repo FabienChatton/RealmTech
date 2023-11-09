@@ -8,11 +8,12 @@ import java.util.concurrent.Callable;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
-@Command(name = "dump",  description = "master dump command, see sub command for more dump details",
+@Command(name = "dump",  description = "master dump command, see subcommands for more dump details",
         mixinStandardHelpOptions = true,
         subcommands = {
-                DumpItemsCommand.class,
                 DumpChunksCommand.class,
+                DumpItemsCommand.class,
+                DumpCraftResultCommand.class,
                 DumpPlayersCommand.class,
         }
 )

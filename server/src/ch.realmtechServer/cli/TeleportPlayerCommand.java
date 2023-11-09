@@ -15,7 +15,7 @@ public class TeleportPlayerCommand implements Callable<Integer> {
     CommunMasterCommand masterCommand;
 
     @Parameters(index = "0", description = "The uuid of the player")
-    private String uuidString;
+    private String playerUuid;
 
     @Parameters(index = "1", description = "X game coordinate")
     private float x;
@@ -28,7 +28,7 @@ public class TeleportPlayerCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         UUID uuid;
         try {
-            uuid = UUID.fromString(uuidString);
+            uuid = UUID.fromString(playerUuid);
         } catch (IllegalArgumentException e) {
             masterCommand.output.println(e.getMessage());
             return -1;

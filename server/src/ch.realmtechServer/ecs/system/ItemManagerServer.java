@@ -60,7 +60,7 @@ public class ItemManagerServer extends ItemManager {
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
         itemComponent.set(itemRegisterEntry, UUID.randomUUID());
         ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
-        ServerContext.nextTick(() -> {
+        serverContext.getEcsEngineServer().nextTickSchedule(10, () -> {
             world.edit(itemId).create(ItemPickableComponent.class);
         });
         return itemId;

@@ -4,11 +4,11 @@ import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.*;
 
-@Command(name = "echo", description = "echo un message", mixinStandardHelpOptions = true)
+@Command(name = "echo", description = "Display a line of text.", mixinStandardHelpOptions = true)
 public class EchoCommande implements Callable<Integer> {
     @ParentCommand
     private CommunMasterCommand masterServerCommand;
-    @Parameters(description = "Le message a echo")
+    @Parameters(description = "The String to display")
     private String[] messages;
     @Override
     public Integer call() throws Exception {

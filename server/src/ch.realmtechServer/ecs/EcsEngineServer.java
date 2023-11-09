@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public final class EcsEngineServer {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
@@ -30,8 +28,10 @@ public final class EcsEngineServer {
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
-    private final static List<Runnable> nextTickServerPre = Collections.synchronizedList(new ArrayList<>());
+    private final List<Runnable> nextTickServerPre = Collections.synchronizedList(new ArrayList<>());
+    private final Map<Long, List<Runnable>> nextTickSchedule = Collections.synchronizedMap(new HashMap<>());
     private final ItemManager itemManager;
+    private static long  tickCount;
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
@@ -96,14 +96,32 @@ public final class EcsEngineServer {
 
     public void process(float deltaTime) {
         long t1 = System.currentTimeMillis();
+
         List<Runnable> copyPre;
         synchronized (nextTickServerPre) {
             copyPre = List.copyOf(nextTickServerPre);
             nextTickServerPre.clear();
         }
-        processNextTickRunnable(copyPre);
+
+        List<Runnable> schedule;
+        synchronized (nextTickSchedule) {
+            List<Runnable> runnableSchedule = nextTickSchedule.get(tickCount);
+            if (runnableSchedule != null) {
+                schedule = runnableSchedule;
+                nextTickSchedule.put(tickCount, null);
+            } else {
+                schedule = List.of();
+            }
+        }
+
+        List<Runnable> listToRun = new ArrayList<>();
+        listToRun.addAll(copyPre);
+        listToRun.addAll(schedule);
+
+        processNextTickRunnable(listToRun);
         world.setDelta(deltaTime);
         world.process();
+        ++tickCount;
 
         long t2 = System.currentTimeMillis();
         serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f));
@@ -129,8 +147,22 @@ public final class EcsEngineServer {
         runnables.forEach(Runnable::run);
     }
 
-    public static void nextTickServer(Runnable runnable) {
-        nextTickServerPre.add(runnable);
+    public void nextTick(Runnable runnable) {
+        synchronized (nextTickServerPre) {
+            nextTickServerPre.add(runnable);
+        }
+    }
+
+    public void nextTickSchedule(int tickFutureCount, Runnable runnable) {
+        long futureTick = tickCount + tickFutureCount;
+        synchronized (nextTickSchedule) {
+            List<Runnable> runnableSchedule = nextTickSchedule.get(futureTick);
+            if (runnableSchedule == null) {
+                nextTickSchedule.put(futureTick, new ArrayList<>(List.of(runnable)));
+            } else {
+                runnableSchedule.add(runnable);
+            }
+        }
     }
 
     public Entity getMapEntity() {

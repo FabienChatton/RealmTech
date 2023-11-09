@@ -12,8 +12,9 @@ import static picocli.CommandLine.*;
 @Command(name = "chunks", description = "dump all loaded chunk")
 public class DumpChunksCommand implements Callable<Integer> {
     @ParentCommand
-    DumpCommand dumpCommand;
-    @Option(names = {"-v", "--verbose"}, description = "Show more detail, like chunk count")
+    private DumpCommand dumpCommand;
+
+    @Option(names = {"-v", "--verbose"}, description = "Show more detail about chunk")
     private boolean verbose;
     @Override
     public Integer call() throws Exception {
@@ -29,7 +30,7 @@ public class DumpChunksCommand implements Callable<Integer> {
             }
         }
         if (chunkEntities.size() == 0) dumpCommand.masterCommand.output.println("no chunk loaded");
-        dumpCommand.masterCommand.output.println("Chunk count : " + chunkEntities.size());
+        else dumpCommand.masterCommand.output.println("Chunk count: " + chunkEntities.size());
         return 0;
     }
 }
