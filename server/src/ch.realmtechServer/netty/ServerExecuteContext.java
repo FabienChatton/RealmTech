@@ -20,6 +20,7 @@ import io.netty.channel.Channel;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class ServerExecuteContext implements ServerExecute {
     private final ServerContext serverContext;
@@ -78,7 +79,7 @@ public class ServerExecuteContext implements ServerExecute {
             PlayerConnexionComponent playerConnexionComponent = serverContext.getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
             InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
             byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
-            clientChannel.writeAndFlush(new PlayerInventoryPacket(bytes, playerConnexionComponent.uuid));
+            clientChannel.writeAndFlush(new PlayerInventoryPacket(playerConnexionComponent.uuid, bytes, playerConnexionComponent.mainInventoryUUID));
         });
     }
 
@@ -97,6 +98,13 @@ public class ServerExecuteContext implements ServerExecute {
                 serverContext.getCommandeExecute().execute(stringCommande, printWriter);
             }
             serverContext.getServerHandler().sendPacketTo(new WriteToConsolePacket(baos.toString()), clientChannel);
+        });
+    }
+
+    @Override
+    public void inventoryMoveItems(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            serverContext.getSystem(InventoryManager.class).moveInventory(srcInventory, dstInventory, itemsToMove, slotIndex);
         });
     }
 }

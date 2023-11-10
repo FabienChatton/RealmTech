@@ -6,7 +6,10 @@ import ch.realmtechServer.craft.CraftStrategy;
 import ch.realmtechServer.ecs.component.*;
 import ch.realmtechServer.mod.RealmTechCoreMod;
 import ch.realmtechServer.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtechServer.packet.clientPacket.InventorySetPacket;
 import ch.realmtechServer.packet.clientPacket.TousLesJoueurPacket;
+import ch.realmtechServer.serialize.inventory.InventorySerializer;
+import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -45,6 +48,16 @@ public class PlayerManagerServer extends BaseSystem {
         TousLesJoueursArg tousLesJoueursArg = getTousLesJoueurs();
         TousLesJoueurPacket tousLesJoueurPacket = new TousLesJoueurPacket(tousLesJoueursArg.nombreDeJoueur(), tousLesJoueursArg.pos(), tousLesJoueursArg.uuids());
         serverContext.getServerHandler().broadCastPacket(tousLesJoueurPacket);
+
+        // devrait pas etre ici, devrait etre appelé quand l'inventaire change
+        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
+        int[] inventoryData = inventoryEntities.getData();
+        for (int i = 0; i < inventoryEntities.size(); i++) {
+            int inventoryId = inventoryData[i];
+            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(inventoryComponent.uuid, InventorySerializer.toBytes(world, inventoryComponent)));
+        }
     }
 
     public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel) {
@@ -74,8 +87,9 @@ public class PlayerManagerServer extends BaseSystem {
 
         // player connexion component
         UUID uuid = UUID.randomUUID();
+        UUID mainInventoryUUID = UUID.randomUUID();
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
-        playerConnexionComponent.set(channel, uuid);
+        playerConnexionComponent.set(channel, uuid, mainInventoryUUID);
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
@@ -88,6 +102,7 @@ public class PlayerManagerServer extends BaseSystem {
         // inventory component
         InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
         inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        inventoryComponent.uuid = mainInventoryUUID;
 
         // default crafting table
         int defaultCraftingTable = world.create();

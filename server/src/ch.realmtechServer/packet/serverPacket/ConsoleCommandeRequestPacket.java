@@ -1,6 +1,6 @@
 package ch.realmtechServer.packet.serverPacket;
 
-import ch.realmtechServer.divers.ByteBufferStringHelper;
+import ch.realmtechServer.divers.ByteBufferHelper;
 import ch.realmtechServer.packet.ServerPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -13,12 +13,12 @@ public class ConsoleCommandeRequestPacket implements ServerPacket {
     }
 
     public ConsoleCommandeRequestPacket(ByteBuf byteBuf) {
-        stringCommande = ByteBufferStringHelper.getString(byteBuf);
+        stringCommande = ByteBufferHelper.getString(byteBuf);
     }
 
     @Override
     public void write(ByteBuf byteBuf) {
-        ByteBufferStringHelper.writeString(byteBuf, stringCommande);
+        ByteBufferHelper.writeString(byteBuf, stringCommande);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class PlayerInputSystem extends BaseSystem {
                 infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(world, topCell);
             } else {
                 if (mapManger.placeItemToBloc(context.getEcsEngine().getPlayerId(), Input.Buttons.RIGHT, infMapComponent.infChunks, gameCoordinate.x, gameCoordinate.y, context.getSystem(ItemBarManager.class).getSelectItem())) {
-                    world.getSystem(InventoryManager.class).removeOneItem(context.getSystem(ItemBarManager.class).getSelectStack());
+                    world.getSystem(InventoryManager.class).deleteOneItem(context.getSystem(ItemBarManager.class).getSelectStack());
                 }
             }
         }

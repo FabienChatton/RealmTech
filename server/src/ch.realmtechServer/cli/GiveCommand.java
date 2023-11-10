@@ -56,7 +56,7 @@ public class GiveCommand implements Callable<Integer> {
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry());
         try {
-            masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(itemId, inventoryComponent);
+            masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
             byte[] inventoryBytes = InventorySerializer.toBytes(masterCommand.getWorld(), inventoryComponent);
             masterCommand.getWorld().getSystem(InventoryManager.class).setPlayerInventoryRequestServer(playerConnexionComponent.channel, inventoryBytes);
         } catch (Exception e) {

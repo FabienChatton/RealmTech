@@ -5,33 +5,39 @@ import ch.realmtechServer.ecs.component.InventoryComponent;
 import ch.realmtechServer.ecs.component.ItemComponent;
 import ch.realmtechServer.ecs.component.TextureComponent;
 import ch.realmtechServer.serialize.inventory.InventorySerializer;
+import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.IntBag;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class InventoryManager extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(InventoryManager.class);
     @Wire
     private ItemManager itemManager;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
 
-    public boolean addItemToInventory(int itemId, int entityId) {
-        return addItemToInventory(itemId, mInventory.get(entityId));
+    public boolean addItemToInventory(int inventoryId, int itemId) {
+        return addItemToInventory(mInventory.get(inventoryId), itemId);
     }
 
     /**
      * Parcourt l'inventaire à la recherche d'un emplacement disponible pour ajouter l'item
      *
-     * @param itemId             l'item souhaité a ajouter.
      * @param inventoryComponent L'entité où l'item sera ajouté.
+     * @param itemId             l'item souhaité a ajouter.
      * @return vrai si l'item a été ajouté avec success.
      */
-    public boolean addItemToInventory(int itemId, InventoryComponent inventoryComponent) {
+    public boolean addItemToInventory(InventoryComponent inventoryComponent, int itemId) {
         for (int i = 0; i < inventoryComponent.inventory.length; i++) {
             if (addItemToStack(inventoryComponent.inventory[i], itemId)) {
                 return true;
@@ -130,23 +136,25 @@ public class InventoryManager extends Manager {
         return mInventory.get(entityId).inventory;
     }
 
-    public static void clearInventory(int[][] inventory) {
-        for (int[] stack : inventory) {
-            clearStack(stack);
-        }
-    }
-
     public static void clearStack(int[] stack) {
         Arrays.fill(stack, 0);
     }
 
+    /**
+     * Remove all items in this inventory from this world and set to 0 all slot in all stack.
+     * @param inventory The inventory to remove.
+     */
     public void removeInventory(int[][] inventory) {
         for (int[] stack : inventory) {
-            removeStack(stack);
+            deleteStack(stack);
         }
     }
 
-    private void removeStack(int[] stack) {
+    /**
+     * Delete all items from in this stack from this world and set to 0 all slot.
+     * @param stack The stack to remove.
+     */
+    private void deleteStack(int[] stack) {
         final int tailleStack = InventoryManager.tailleStack(stack);
         for (int i = 0; i < tailleStack; i++) {
             world.delete(stack[i]);
@@ -154,25 +162,32 @@ public class InventoryManager extends Manager {
         clearStack(stack);
     }
 
-    public void removeOneItem(int[] stack) {
+    /**
+     * Delete the item on top of this stack.
+     * @param stack The stack to remove.
+     */
+    public void deleteOneItem(int[] stack) {
         int taille = tailleStack(stack);
         if (taille == 0) return;
         world.delete(stack[taille - 1]);
         stack[taille - 1] = 0;
     }
 
-    public void removeAllOneItem(int[][] inventory) {
+    /**
+     * Delete all item on top of this inventory
+     * @param inventory The inventory to remove top item.
+     */
+    public void deleteAllOneItem(int[][] inventory) {
         for (int i = 0; i < inventory.length; i++) {
-            removeOneItem(inventory[i]);
+            deleteOneItem(inventory[i]);
         }
     }
 
     /**
-     * Pour que le stack puisse être déplacé, il faut que le stack src ne soit pas vide et que les items dans le stack source et
-     * le stack dst soit du même registre.
-     *
-     * @param src
-     * @param dst
+     * For the stack to be moved, the src stack must not be empty and the items
+     * in the source stack and the dst stack must be in the same register.
+     * @param src The source stack.
+     * @param dst The destination stack.
      */
     public boolean canMouveStack(int[] src, int[] dst) {
         if (src[0] == 0) return false;
@@ -191,11 +206,172 @@ public class InventoryManager extends Manager {
         }
     }
 
+    /**
+     * Get the stack that contains this item id.
+     * @param itemId The item id where is the stack to find.
+     * @param inventoryId The inventory to search into.
+     * @return The stack that contains the item id or null if stack was not found.
+     */
+    public int[] getStackContainsItem(int inventoryId, int itemId) {
+        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+        for (int[] stack : inventoryComponent.inventory) {
+            for (int i : stack) {
+                if (i == itemId) {
+                    return stack;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Delete a item in this inventory. This item can be anywhere in this inventory.
+     * <strong>Delete</string> this item from this world.
+     * @param inventoryId The inventory where the item will be remove.
+     * @param itemId The item id to remove.
+     * @return true if the operation was successful.
+     */
+    public boolean deleteItemInInventory(int inventoryId, int itemId) {
+        int[] stack = getStackContainsItem(inventoryId, itemId);
+        if (stack == null) return false;
+        return deleteItemInStack(stack, itemId);
+    }
+
+    /**
+     * Remove a item in this inventory. This item can be anywhere in this inventory.
+     * <strong>Do not delete</strong> this item from this world.
+     * @param inventoryId The inventory where the item will be remove.
+     * @param itemId The item id to remove.
+     * @return true if the operation was successful.
+     */
+    public boolean removeItemInInventory(int inventoryId, int itemId) {
+        int[] stack = getStackContainsItem(inventoryId, itemId);
+        if (stack == null) return false;
+        return removeItemInStack(stack, itemId);
+    }
+
+    /**
+     * Delete one item in this stack. The item can be anywhere in this stack.
+     * <strong>Delete</string> this item from this world.
+     * @param stack  The stack the contains the item.
+     * @param itemId The item id to remove.
+     * @return true if the operation was successful.
+     */
+    public boolean deleteItemInStack(int[] stack, int itemId) {
+        if (removeItemInStack(stack, itemId)) {
+            world.delete(itemId);
+            return true;
+        } else  {
+            return false;
+        }
+    }
+
+    /**
+     * Remove one item in this stack. The item can be anywhere in this stack.
+     * <strong>Do not delete</strong> the item from this world. See non static
+     * method {@link #deleteItemInStack} for delete item.
+     * @param stack  The stack the contains the item.
+     * @param itemId The item id to remove.
+     * @return true if the operation was successful.
+     */
+    public static boolean removeItemInStack(int[] stack, int itemId) {
+        int index = -1;
+        for (int i = 0; i < stack.length; i++) {
+            if (stack[i] == itemId) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            return false;
+        }
+
+        int[] resultArray = new int[stack.length];
+        for (int i = 0, j = 0; j < stack.length; i++, j++) {
+            if (i == index) {
+                j++;
+            }
+            resultArray[i] = stack[j];
+        }
+        System.arraycopy(resultArray, 0, stack, 0, stack.length);
+        return true;
+    }
+
+    /**
+     * Give the inventory id who as this uuid.
+     * @param uuid The uuid value to test with
+     * @return The corresponding inventory id or -1 if none inventory has this uuid value.
+     */
+    public int getInventoryByUUID(UUID uuid) {
+        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
+        int[] inventoryData = inventoryEntities.getData();
+        for (int i = 0; i < inventoryEntities.size(); i++) {
+            int inventoryId = inventoryData[i];
+            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+            if (uuid.equals(inventoryComponent.uuid)) {
+                return inventoryId;
+            }
+        }
+        return -1;
+    }
+
     public void setPlayerInventoryRequestServer(Channel clientChannel, byte[] inventoryBytes) {
         int playerId = world.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
         Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
         InventoryComponent inventoryComponent = mInventory.get(playerId);
         world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
         inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerServer.class));
+    }
+
+    public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
+        int inventoryId = getInventoryByUUID(inventoryUUID);
+        if (inventoryId == -1) return;
+        Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
+        mInventory.get(inventoryId).inventory = inventoryGet.apply(itemManager);
+    }
+
+    public synchronized void moveInventory(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {
+        int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
+        int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
+        if (srcInventoryId == -1){
+            logger.warn("The src inventory {} was not found", srcInventoryId);
+            return;
+        }
+
+        if (dstInventoryId == -1){
+            logger.warn("The src inventory {} was not found", srcInventoryId);
+            return;
+        }
+
+        int[] itemsSrcId = new int[itemsToMove.length];
+        for (UUID uuid : itemsToMove) {
+            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(uuid);
+            if (itemId == -1) {
+                logger.warn("The item id {} was not found", uuid);
+                return;
+            }
+        }
+
+        int[] srcStack = null;
+        for (int i = 0; i < itemsSrcId.length; i++) {
+            int[] stack = getStackContainsItem(srcInventoryId, itemsSrcId[i]);
+            if (srcStack == null) {
+                srcStack = stack;
+            } else {
+                if (srcStack != stack) {
+                    logger.warn("Items are split between multiple stack");
+                    return;
+                }
+            }
+        }
+
+        int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
+        if (slotIndex > dstInventory.length) {
+            logger.warn("slot item is out of bound");
+            return;
+        }
+        moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
+
+
     }
 }

@@ -6,6 +6,7 @@ import ch.realmtech.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.helper.Popup;
 import ch.realmtech.screen.ScreenType;
 import ch.realmtechServer.ecs.component.InfMapComponent;
+import ch.realmtechServer.ecs.system.InventoryManager;
 import ch.realmtechServer.ecs.system.MapManager;
 import ch.realmtechServer.packet.ClientPacket;
 import ch.realmtechServer.packet.clientPacket.ClientExecute;
@@ -100,10 +101,17 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
+    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID) {
         context.nextFrame(() -> {
-            context.getSystem(PlayerManagerClient.class).setPlayerInventory(playerUUID, inventoryBytes);
+            context.getSystem(PlayerManagerClient.class).setPlayerInventory(playerUUID, inventoryBytes, inventoryUUID);
             context.getEcsEngine().togglePlayerInventoryWindow();
+        });
+    }
+
+    @Override
+    public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
+        context.nextFrame(() -> {
+            context.getSystem(InventoryManager.class).setInventory(inventoryUUID, inventoryBytes);
         });
     }
 

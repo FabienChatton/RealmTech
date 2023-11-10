@@ -1,6 +1,6 @@
 package ch.realmtechServer.packet.clientPacket;
 
-import ch.realmtechServer.divers.ByteBufferStringHelper;
+import ch.realmtechServer.divers.ByteBufferHelper;
 import ch.realmtechServer.packet.ClientPacket;
 import io.netty.buffer.ByteBuf;
 
@@ -12,7 +12,7 @@ public class WriteToConsolePacket implements ClientPacket {
     }
 
     public WriteToConsolePacket(ByteBuf byteBuf) {
-        consoleMessageToWrite = ByteBufferStringHelper.getString(byteBuf);
+        consoleMessageToWrite = ByteBufferHelper.getString(byteBuf);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class WriteToConsolePacket implements ClientPacket {
 
     @Override
     public void write(ByteBuf byteBuf) {
-        ByteBufferStringHelper.writeString(byteBuf, consoleMessageToWrite);
+        ByteBufferHelper.writeString(byteBuf, consoleMessageToWrite);
     }
 
     @Override

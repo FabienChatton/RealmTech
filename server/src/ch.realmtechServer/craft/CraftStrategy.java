@@ -55,7 +55,7 @@ public interface CraftStrategy {
                     if (timeToBurn > 0) {
                         furnaceComponent.timeToBurn = timeToBurn;
                         furnaceComponent.itemBurn = itemCarburantComponent.itemRegisterEntry;
-                        world.getSystem(InventoryManager.class).removeOneItem(stack);
+                        world.getSystem(InventoryManager.class).deleteOneItem(stack);
                     }
                 }
             } else {
@@ -66,7 +66,7 @@ public interface CraftStrategy {
 
             if (craftResult != null) {
                 if (furnaceComponent.timeToBurn > 0 && furnaceComponent.curentBurnTime == 0 && furnaceComponent.curentCraftResult == null && isModifierStackItemResultFurnace(craftResult, mItem, inventoryResultComponent)) {
-                    world.getSystem(InventoryManager.class).removeOneItem(inventoryCraftComponent.inventory[0]);
+                    world.getSystem(InventoryManager.class).deleteOneItem(inventoryCraftComponent.inventory[0]);
                     furnaceComponent.curentCraftResult = craftResult;
                 }
             }

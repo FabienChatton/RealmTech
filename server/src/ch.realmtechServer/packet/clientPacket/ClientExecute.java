@@ -26,11 +26,13 @@ public interface ClientExecute {
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
 
-    void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes);
+    void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID);
 
     void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float posX, float posY);
 
     void supprimeItemOnGround(UUID itemUuid);
 
     void writeOnConsoleMessage(String consoleMessageToWrite);
+
+    void setInventory(UUID inventoryUUID, byte[] inventoryBytes);
 }

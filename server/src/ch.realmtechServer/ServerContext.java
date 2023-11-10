@@ -47,6 +47,8 @@ public class ServerContext {
                 .put(ConsoleCommandeRequestPacket.class, ConsoleCommandeRequestPacket::new)
                 .put(WriteToConsolePacket.class, WriteToConsolePacket::new)
                 .put(PlayerInventorySetRequestPacket.class, PlayerInventorySetRequestPacket::new)
+                .put(InventoryMoveItemsRequest.class, InventoryMoveItemsRequest::new)
+                .put(InventorySetPacket.class, InventorySetPacket::new)
         ;
     }
 

@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class PlayerManagerClient extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerClient.class);
@@ -141,11 +140,14 @@ public class PlayerManagerClient extends Manager {
         world.delete(getPlayers().get(uuid));
     }
 
-    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
+    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID) {
         int playerId = getPlayers().get(playerUUID);
         Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
         InventoryComponent inventoryComponent = mInventory.get(playerId);
         world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
         inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerClient.class));
+        if (inventoryComponent.uuid == null) {
+            inventoryComponent.uuid = inventoryUUID;
+        }
     }
 }
