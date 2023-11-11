@@ -66,8 +66,6 @@ project(":server") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
-        api 'org.junit.jupiter:junit-jupiter:5.8.1'
     }
 }
 
@@ -79,5 +77,16 @@ project(":core") {
         implementation project(":server")
         api 'club.minnced:java-discord-rpc:2.0.1'
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+    }
+}
+
+project(":test") {
+    apply plugin: "java-library"
+
+
+    dependencies {
+        implementation project(":core")
+        implementation project(":server")
+        api 'org.junit.jupiter:junit-jupiter:5.8.1'
     }
 }

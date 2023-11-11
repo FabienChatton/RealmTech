@@ -8,7 +8,7 @@ dependencies {
 
 sourceSets.main.java.srcDirs = ["src/"]
 
-project.ext.mainClassName = "ch.realmtechServer.ServerContext"
+project.ext.mainClassName = "ch.realmtech.server.ServerContext"
 
 task run(dependsOn: classes, type: JavaExec) {
     mainClass = project.mainClassName
