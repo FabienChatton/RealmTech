@@ -15,6 +15,7 @@ import static picocli.CommandLine.ParentCommand;
                 DumpItemsCommand.class,
                 DumpCraftResultCommand.class,
                 DumpPlayersCommand.class,
+                DumpInventoryCommand.class
         }
 )
 public class DumpCommand implements Callable<Integer> {

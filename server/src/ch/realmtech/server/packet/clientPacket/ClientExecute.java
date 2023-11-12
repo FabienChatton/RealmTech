@@ -6,7 +6,7 @@ import ch.realmtech.server.registery.ItemRegisterEntry;
 import java.util.UUID;
 
 public interface ClientExecute {
-    void connexionJoueurReussit(final float x, final float y, UUID uuid);
+    void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg);
 
     void autreJoueur(float x, float y, UUID uuid);
 
@@ -26,7 +26,7 @@ public interface ClientExecute {
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
 
-    void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID);
+    void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes);
 
     void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float posX, float posY);
 

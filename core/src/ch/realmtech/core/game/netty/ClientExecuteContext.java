@@ -5,18 +5,28 @@ import ch.realmtech.core.game.ecs.system.ItemManagerClient;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
+import ch.realmtech.server.craft.CraftStrategy;
+import ch.realmtech.server.ctrl.ItemManager;
+import ch.realmtech.server.ecs.component.CraftingComponent;
+import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
+import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
+import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.inventory.InventorySerializer;
+import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class ClientExecuteContext implements ClientExecute {
     private final static Logger logger = LoggerFactory.getLogger(ClientExecuteContext.class);
@@ -27,8 +37,23 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void connexionJoueurReussit(float x, float y, UUID uuid) {
-        context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
+    public void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg) {
+        int playerId = context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.playerUuid());
+
+        World world = context.getEcsEngine().getWorld();
+        Function<ItemManager, int[][]> inventoryFromBytes = InventorySerializer.getFromBytes(world, connexionJoueurReussitArg.inventoryBytes());
+        // inventory
+        context.getSystem(InventoryManager.class).createInventoryComponent(playerId, inventoryFromBytes.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        // craft
+        int defaultCraftingTable = world.create();
+        context.getSystem(InventoryManager.class).createInventoryComponent(defaultCraftingTable, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        // craft result
+        int defaultResultInventory = world.create();
+        context.getSystem(InventoryManager.class).createInventoryComponent(defaultResultInventory, connexionJoueurReussitArg.inventoryCraftResultUuid(), 1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+
+        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
+        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
+
         Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
     }
 
@@ -101,9 +126,9 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID) {
+    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
         context.nextFrame(() -> {
-            context.getSystem(PlayerManagerClient.class).setPlayerInventory(playerUUID, inventoryBytes, inventoryUUID);
+            context.getSystem(PlayerManagerClient.class).setPlayerInventory(playerUUID, inventoryBytes);
             context.getEcsEngine().togglePlayerInventoryWindow();
         });
     }

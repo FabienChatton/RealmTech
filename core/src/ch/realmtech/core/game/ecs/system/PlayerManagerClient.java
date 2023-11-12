@@ -45,7 +45,7 @@ public class PlayerManagerClient extends Manager {
         players = new HashMap<>();
     }
 
-    public void createPlayerClient(float x, float y, UUID uuid) {
+    public int createPlayerClient(float x, float y, UUID uuid) {
         logger.info("creation du joueur client {} ", uuid);
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
@@ -91,9 +91,9 @@ public class PlayerManagerClient extends Manager {
         PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
         positionComponent.set(box2dComponent, x, y);
 
-        // inventory component
-        InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+//        // inventory component
+//        InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
+//        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -119,14 +119,16 @@ public class PlayerManagerClient extends Manager {
         TextureAtlas.AtlasRegion textureRight2 = textureAtlas.findRegion("reimu-right-2");
         playerComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
 
-        // default crafting table
-        int defaultCraftingTable = world.create();
-        int defaultResultInventory = world.create();
-        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
+//        // default crafting table
+//        int defaultCraftingTable = world.create();
+//        int defaultResultInventory = world.create();
+//        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
+//        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+//        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+//        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
+
         players.put(uuid, playerId);
+        return playerId;
     }
 
     public HashMap<UUID, Integer> getPlayers() {
@@ -143,14 +145,11 @@ public class PlayerManagerClient extends Manager {
         world.delete(getPlayers().get(uuid));
     }
 
-    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID) {
-        int playerId = getPlayers().get(playerUUID);
-        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
-        InventoryComponent inventoryComponent = mInventory.get(playerId);
-        systemsAdminClient.inventoryManager.removeInventory(inventoryComponent.inventory);
-        inventoryComponent.inventory = inventorySupplier.apply(systemsAdminClient.itemManagerClient);
-        if (inventoryComponent.uuid == null) {
-            inventoryComponent.uuid = inventoryUUID;
-        }
+    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
+//        int playerId = getPlayers().get(playerUUID);
+//        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
+//        InventoryComponent inventoryComponent = mInventory.get(playerId);
+//        systemsAdminClient.inventoryManager.removeInventory(inventoryComponent.inventory);
+//        inventoryComponent.inventory = inventorySupplier.apply(systemsAdminClient.itemManagerClient);
     }
 }

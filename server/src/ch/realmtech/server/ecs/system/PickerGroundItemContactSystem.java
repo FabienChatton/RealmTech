@@ -18,7 +18,7 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
     @Wire
-    private ItemManagerServer itemManager;
+    private ItemManagerServer itemManagerServer;
     @Override
     protected void process(int entityId) {
         Box2dComponent pickerBox2dComponent = mBox2d.get(entityId);
@@ -38,7 +38,7 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
             float itemY = itemWorldCenter.y - itemBox2dComponent.heightWorld / 2f;
             Rectangle itemRectangle = new Rectangle(itemX, itemY, itemBox2dComponent.widthWorld, itemBox2dComponent.heightWorld);
             if (itemRectangle.overlaps(playerRectangle)) {
-                itemManager.playerPickUpItem(itemId, entityId);
+                itemManagerServer.playerPickUpItem(itemId, entityId);
             }
         }
     }

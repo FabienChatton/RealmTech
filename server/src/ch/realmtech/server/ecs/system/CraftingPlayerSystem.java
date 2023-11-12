@@ -19,8 +19,6 @@ import java.util.Optional;
 
 @All(CraftingTableComponent.class)
 public class CraftingPlayerSystem extends IteratingSystem {
-    @Wire
-    private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<CraftingComponent> mCrafting;

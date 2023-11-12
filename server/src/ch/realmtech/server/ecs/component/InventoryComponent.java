@@ -17,9 +17,6 @@ public class InventoryComponent extends Component {
     public int numberOfRow;
     public int numberOfSlotParRow;
     public String backgroundTexture;
-    // ajouter un jour dans le set. il ne devrait pas etre null
-    @Null
-    public UUID uuid;
 
     public InventoryComponent set(int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
         this.stackLimite = DEFAULT_STACK_LIMITE;
@@ -28,5 +25,19 @@ public class InventoryComponent extends Component {
         inventory = new int[numberOfSlotParRow * numberOfRow][DEFAULT_STACK_LIMITE];
         this.backgroundTexture = backgroundTextureName;
         return this;
+    }
+
+    public InventoryComponent set(int[][] inventory, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
+        this.stackLimite = DEFAULT_STACK_LIMITE;
+        this.numberOfRow = numberOfRow;
+        this.numberOfSlotParRow = numberOfSlotParRow;
+        this.inventory = inventory;
+        this.backgroundTexture = backgroundTextureName;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("row: %d, column: %d, backgroundTexture: %s", numberOfRow, numberOfSlotParRow, backgroundTexture);
     }
 }

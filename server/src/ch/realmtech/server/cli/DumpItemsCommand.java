@@ -28,7 +28,7 @@ public class DumpItemsCommand implements Callable<Integer> {
             }
         }
         if (itemsEntities.size() == 0) dumpCommand.masterCommand.output.println("no items loaded");
-        else dumpCommand.masterCommand.output.println("Chunk count: " + itemsEntities.size());
+        else dumpCommand.masterCommand.output.println("Items count: " + itemsEntities.size());
         return 0;
     }
 }

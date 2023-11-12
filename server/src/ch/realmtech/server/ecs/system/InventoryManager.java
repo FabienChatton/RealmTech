@@ -4,22 +4,21 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
-import com.artemis.Aspect;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.utils.IntBag;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class InventoryManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(InventoryManager.class);
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     @Wire
     private ItemManager itemManager;
     private ComponentMapper<InventoryComponent> mInventory;
@@ -298,80 +297,134 @@ public class InventoryManager extends Manager {
     }
 
     /**
-     * Give the inventory id who as this uuid.
-     * @param uuid The uuid value to test with
-     * @return The corresponding inventory id or -1 if none inventory has this uuid value.
+     * Give the inventory id who as this playerUuid.
+     * @param uuid The playerUuid value to test with
+     * @return The corresponding inventory id or -1 if none inventory has this playerUuid value.
      */
     public int getInventoryByUUID(UUID uuid) {
-        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
-        int[] inventoryData = inventoryEntities.getData();
-        for (int i = 0; i < inventoryEntities.size(); i++) {
-            int inventoryId = inventoryData[i];
-            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-            if (uuid.equals(inventoryComponent.uuid)) {
-                return inventoryId;
-            }
-        }
+//        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
+//        int[] inventoryData = inventoryEntities.getData();
+//        for (int i = 0; i < inventoryEntities.size(); i++) {
+//            int inventoryId = inventoryData[i];
+//            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+//            if (playerUuid.equals(inventoryComponent.playerUuid)) {
+//                return inventoryId;
+//            }
+//        }
         return -1;
     }
 
     public void setPlayerInventoryRequestServer(Channel clientChannel, byte[] inventoryBytes) {
-        int playerId = world.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
-        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
-        InventoryComponent inventoryComponent = mInventory.get(playerId);
-        world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
-        inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerServer.class));
+//        int playerId = world.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
+//        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
+//        InventoryComponent inventoryComponent = mInventory.get(playerId);
+//        world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
+//        inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerServer.class));
     }
 
     public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
-        int inventoryId = getInventoryByUUID(inventoryUUID);
-        if (inventoryId == -1) return;
-        Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
-        mInventory.get(inventoryId).inventory = inventoryGet.apply(itemManager);
+//        int inventoryId = getInventoryByUUID(inventoryUUID);
+//        if (inventoryId == -1) return;
+//        Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
+//        mInventory.get(inventoryId).inventory = inventoryGet.apply(itemManager);
     }
 
     public synchronized void moveInventory(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {
-        int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
-        int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
-        if (srcInventoryId == -1){
-            logger.warn("The src inventory {} was not found", srcInventoryId);
-            return;
-        }
+//        int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
+//        int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
+//        if (srcInventoryId == -1){
+//            logger.warn("The src inventory {} was not found", srcInventoryId);
+//            return;
+//        }
+//
+//        if (dstInventoryId == -1){
+//            logger.warn("The src inventory {} was not found", srcInventoryId);
+//            return;
+//        }
+//
+//        int[] itemsSrcId = new int[itemsToMove.length];
+//        for (UUID playerUuid : itemsToMove) {
+//            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(playerUuid);
+//            if (itemId == -1) {
+//                logger.warn("The item id {} was not found", playerUuid);
+//                return;
+//            }
+//        }
+//
+//        int[] srcStack = null;
+//        for (int i = 0; i < itemsSrcId.length; i++) {
+//            int[] stack = getStackContainsItem(srcInventoryId, itemsSrcId[i]);
+//            if (srcStack == null) {
+//                srcStack = stack;
+//            } else {
+//                if (srcStack != stack) {
+//                    logger.warn("Items are split between multiple stack");
+//                    return;
+//                }
+//            }
+//        }
+//
+//        int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
+//        if (slotIndex > dstInventory.length) {
+//            logger.warn("slot item is out of bound");
+//            return;
+//        }
+//        moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
+//
 
-        if (dstInventoryId == -1){
-            logger.warn("The src inventory {} was not found", srcInventoryId);
-            return;
-        }
+    }
 
-        int[] itemsSrcId = new int[itemsToMove.length];
-        for (UUID uuid : itemsToMove) {
-            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(uuid);
-            if (itemId == -1) {
-                logger.warn("The item id {} was not found", uuid);
-                return;
-            }
-        }
+    /**
+     * Create a fully inventory with a random uuid.
+     * @param entityId The entity to add the inventory component.
+     * @param inventory
+     * @param numberOfSlotParRow
+     * @param numberOfRow
+     * @param backgroundTextureName
+     * @return The inventory newly created.
+     */
+    public InventoryComponent createInventoryComponent(int entityId, int[][] inventory, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
+        return createInventoryComponent(entityId, inventory, UUID.randomUUID(), numberOfSlotParRow, numberOfRow, backgroundTextureName);
+    }
 
-        int[] srcStack = null;
-        for (int i = 0; i < itemsSrcId.length; i++) {
-            int[] stack = getStackContainsItem(srcInventoryId, itemsSrcId[i]);
-            if (srcStack == null) {
-                srcStack = stack;
-            } else {
-                if (srcStack != stack) {
-                    logger.warn("Items are split between multiple stack");
-                    return;
-                }
-            }
-        }
+    /**
+     * Create a fully inventory.
+     * @param entityId The entity to add the inventory component.
+     * @param inventory
+     * @param numberOfSlotParRow
+     * @param numberOfRow
+     * @param backgroundTextureName
+     * @return The inventory newly created.
+     */
+    public InventoryComponent createInventoryComponent(int entityId, int[][] inventory, UUID uuid, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
+        InventoryComponent inventoryComponent = world.edit(entityId).create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow, backgroundTextureName);
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(uuid, entityId);
+        return inventoryComponent;
+    }
 
-        int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
-        if (slotIndex > dstInventory.length) {
-            logger.warn("slot item is out of bound");
-            return;
-        }
-        moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
+    /**
+     * Create a empty inventory with a random uuid.
+     * @param entityId The entity to add the inventory component.
+     * @param numberOfSlotParRow
+     * @param numberOfRow
+     * @param backgroundTextureName
+     * @return The inventory newly created.
+     */
+    public InventoryComponent createInventoryComponent(int entityId, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
+        return createInventoryComponent(entityId, UUID.randomUUID(), numberOfSlotParRow, numberOfRow, backgroundTextureName);
+    }
 
-
+    /**
+     * Create a empty inventory.
+     * @param entityId The entity to add the inventory component.
+     * @param numberOfSlotParRow
+     * @param numberOfRow
+     * @param backgroundTextureName
+     * @return The inventory newly created.
+     */
+    public InventoryComponent createInventoryComponent(int entityId, UUID uuid, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
+        InventoryComponent inventoryComponent = world.edit(entityId).create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow, backgroundTextureName);
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(uuid, entityId);
+        return inventoryComponent;
     }
 }

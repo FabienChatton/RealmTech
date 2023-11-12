@@ -9,12 +9,10 @@ import java.util.UUID;
 public class PlayerInventoryPacket implements ClientPacket {
     private final UUID playerUUID;
     private final byte[] inventoryBytes;
-    private final UUID inventoryUUID;
 
-    public PlayerInventoryPacket(UUID playerUUID, byte[] inventoryBytes, UUID inventoryUUID) {
+    public PlayerInventoryPacket(UUID playerUUID, byte[] inventoryBytes) {
         this.playerUUID = playerUUID;
         this.inventoryBytes = inventoryBytes;
-        this.inventoryUUID = inventoryUUID;
     }
 
     public PlayerInventoryPacket(ByteBuf byteBuf) {
@@ -22,12 +20,11 @@ public class PlayerInventoryPacket implements ClientPacket {
         int inventoryBytesLength = byteBuf.readInt();
         inventoryBytes = new byte[inventoryBytesLength];
         byteBuf.readBytes(inventoryBytes);
-        inventoryUUID = ByteBufferHelper.readUUID(byteBuf);
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.setPlayerInventory(playerUUID, inventoryBytes, inventoryUUID);
+        clientExecute.setPlayerInventory(playerUUID, inventoryBytes);
     }
 
     @Override
@@ -35,7 +32,6 @@ public class PlayerInventoryPacket implements ClientPacket {
         ByteBufferHelper.writeUUID(byteBuf, playerUUID);
         byteBuf.writeInt(inventoryBytes.length);
         byteBuf.writeBytes(inventoryBytes);
-        ByteBufferHelper.writeUUID(byteBuf, inventoryUUID);
     }
 
     @Override

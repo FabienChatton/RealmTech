@@ -33,7 +33,7 @@ public class ServerExecuteContext implements ServerExecute {
     public void newPlayerConnect(Channel clientChanel) {
         // connexion réussie
         ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel);
-        serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.uuid()), clientChanel);
+        serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
 
 //        // tous les joueurs
 //        PlayerManagerServer.TousLesJoueursArg tousLesJoueursArgs = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getTousLesJoueurs();
@@ -79,7 +79,7 @@ public class ServerExecuteContext implements ServerExecute {
             PlayerConnexionComponent playerConnexionComponent = serverContext.getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
             InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
             byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
-            clientChannel.writeAndFlush(new PlayerInventoryPacket(playerConnexionComponent.uuid, bytes, playerConnexionComponent.mainInventoryUUID));
+            clientChannel.writeAndFlush(new PlayerInventoryPacket(playerConnexionComponent.uuid, bytes));
         });
     }
 

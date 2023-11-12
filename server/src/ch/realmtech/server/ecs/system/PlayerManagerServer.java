@@ -4,6 +4,7 @@ import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftStrategy;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
@@ -26,6 +27,8 @@ import java.util.UUID;
 
 public class PlayerManagerServer extends BaseSystem {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerServer.class);
+    @Wire
+    private SystemsAdminServer systemsAdminServer;
     @Wire(name = "serverContext")
     private ServerContext serverContext;
     @Wire(name = "physicWorld")
@@ -38,6 +41,7 @@ public class PlayerManagerServer extends BaseSystem {
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<UuidComponent> mUuid;
 
     public PlayerManagerServer() {
         players = new IntBag();
@@ -49,15 +53,15 @@ public class PlayerManagerServer extends BaseSystem {
         TousLesJoueurPacket tousLesJoueurPacket = new TousLesJoueurPacket(tousLesJoueursArg.nombreDeJoueur(), tousLesJoueursArg.pos(), tousLesJoueursArg.uuids());
         serverContext.getServerHandler().broadCastPacket(tousLesJoueurPacket);
 
-        // devrait pas etre ici, devrait etre appelé quand l'inventaire change
-        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
-        int[] inventoryData = inventoryEntities.getData();
-        for (int i = 0; i < inventoryEntities.size(); i++) {
-            int inventoryId = inventoryData[i];
-            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(inventoryComponent.uuid, InventorySerializer.toBytes(world, inventoryComponent)));
-        }
+//        // devrait pas etre ici, devrait etre appelé quand l'inventaire change
+//        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+//        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
+//        int[] inventoryData = inventoryEntities.getData();
+//        for (int i = 0; i < inventoryEntities.size(); i++) {
+//            int inventoryId = inventoryData[i];
+//            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+//            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(mUuid.get(inventoryId).getUuid(), InventorySerializer.toBytes(world, inventoryComponent)));
+//        }
     }
 
     public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel) {
@@ -100,16 +104,14 @@ public class PlayerManagerServer extends BaseSystem {
         positionComponent.set(box2dComponent, x, y);
 
         // inventory component
-        InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
-        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        inventoryComponent.uuid = mainInventoryUUID;
+        InventoryComponent inventoryComponent = systemsAdminServer.inventoryManager.createInventoryComponent(playerId, InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
 
         // default crafting table
         int defaultCraftingTable = world.create();
         int defaultResultInventory = world.create();
         world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        systemsAdminServer.inventoryManager.createInventoryComponent(defaultCraftingTable, 2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        systemsAdminServer.inventoryManager.createInventoryComponent(defaultResultInventory, 1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
         world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
 
         // pick up item component
@@ -117,7 +119,12 @@ public class PlayerManagerServer extends BaseSystem {
         pickerGroundItemComponent.set(10);
         players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
-        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, uuid);
+        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, uuid,
+                InventorySerializer.toBytes(world, inventoryComponent),
+                mUuid.get(playerId).getUuid(),
+                mUuid.get(defaultCraftingTable).getUuid(),
+                mUuid.get(defaultResultInventory).getUuid()
+        );
     }
 
     public IntBag getPlayers() {
