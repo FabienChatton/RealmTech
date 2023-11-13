@@ -5,6 +5,7 @@ import com.artemis.Component;
 import java.util.UUID;
 
 public class UuidComponent extends Component {
+    /** The uuid value */
     private UUID uuid;
 
     public UuidComponent set(UUID uuid) {
@@ -19,5 +20,10 @@ public class UuidComponent extends Component {
     @Override
     public String toString() {
         return String.format("%s", uuid);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return uuid.equals(obj);
     }
 }

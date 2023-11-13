@@ -7,10 +7,8 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
-import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
-import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -90,10 +88,15 @@ public class PlayerManagerServer extends BaseSystem {
         box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
         // player connexion component
-        UUID uuid = UUID.randomUUID();
-        UUID mainInventoryUUID = UUID.randomUUID();
+        UUID playerUuid = UUID.randomUUID();
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
-        playerConnexionComponent.set(channel, uuid, mainInventoryUUID);
+        playerConnexionComponent.set(channel);
+        systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
+
+        // inventory
+        int mainPlayerInventory = world.create();
+        InventoryComponent inventoryComponent = systemsAdminServer.inventoryManager.createInventoryComponent(mainPlayerInventory, InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
+        playerConnexionComponent.mainInventoryId = mainPlayerInventory;
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
@@ -102,9 +105,6 @@ public class PlayerManagerServer extends BaseSystem {
         // position component
         PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
         positionComponent.set(box2dComponent, x, y);
-
-        // inventory component
-        InventoryComponent inventoryComponent = systemsAdminServer.inventoryManager.createInventoryComponent(playerId, InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
 
         // default crafting table
         int defaultCraftingTable = world.create();
@@ -119,9 +119,9 @@ public class PlayerManagerServer extends BaseSystem {
         pickerGroundItemComponent.set(10);
         players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
-        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, uuid,
+        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
                 InventorySerializer.toBytes(world, inventoryComponent),
-                mUuid.get(playerId).getUuid(),
+                mUuid.get(mainPlayerInventory).getUuid(),
                 mUuid.get(defaultCraftingTable).getUuid(),
                 mUuid.get(defaultResultInventory).getUuid()
         );
@@ -148,10 +148,12 @@ public class PlayerManagerServer extends BaseSystem {
         ComponentMapper<PlayerConnexionComponent> mPlayer = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class);
         ComponentMapper<PositionComponent> mPos = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class);
         for (int i = 0; i < players.size(); i++) {
-            PositionComponent positionComponent = mPos.get(playersData[i]);
-            PlayerConnexionComponent playerComponent = mPlayer.get(playersData[i]);
+            int playerId = playersData[i];
+            PositionComponent positionComponent = mPos.get(playerId);
+            PlayerConnexionComponent playerComponent = mPlayer.get(playerId);
             poss[i] = new Vector2(positionComponent.x, positionComponent.y);
-            uuids[i] = playerComponent.uuid;
+            UuidComponent uuidComponent = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId);
+            uuids[i] = uuidComponent.getUuid();
         }
         return new TousLesJoueursArg(players.size(), poss, uuids);
     }
@@ -169,8 +171,9 @@ public class PlayerManagerServer extends BaseSystem {
     public int getPlayerByUuid(UUID uuid) {
         int[] playersData = players.getData();
         for (int i = 0; i < players.size(); i++) {
-            if (mPlayerConnexion.get(playersData[i]).uuid.equals(uuid)) {
-                return playersData[i];
+            int playerId = playersData[i];
+            if (systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid().equals(uuid)) {
+                return playerId;
             }
         }
         return -1;

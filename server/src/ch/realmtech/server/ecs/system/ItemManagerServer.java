@@ -3,10 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ctrl.ItemManagerCommun;
-import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.ItemPickableComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ItemOnGroundSupprimerPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
@@ -37,6 +34,7 @@ public class ItemManagerServer extends ItemManager {
     private Archetype defaultItemInventoryArchetype;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     @Override
     protected void initialize() {
@@ -84,7 +82,7 @@ public class ItemManagerServer extends ItemManager {
         serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(itemComponent.uuid));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
-        systemsAdminServer.inventoryManager.addItemToInventory(playerId, itemId);
+        systemsAdminServer.inventoryManager.addItemToInventory(mPlayerConnexion.get(playerId).mainInventoryId, itemId);
     }
 
     /**

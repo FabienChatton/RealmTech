@@ -82,6 +82,7 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get()) && consoleUi.getConsoleWindow().getParent() == null) {
             if (!context.getSystem(PlayerInventorySystem.class).isEnabled()) {
                 context.getConnexionHandler().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
+                context.getEcsEngine().togglePlayerInventoryWindow();
             } else {
                 context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
             }

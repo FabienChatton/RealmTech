@@ -4,13 +4,13 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.clickAndDrop.ClickAndDrop2;
 import ch.realmtech.core.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
+import ch.realmtech.core.game.ecs.plgin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.core.game.inventory.DisplayInventoryArgs;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.shader.BlurShader;
 import ch.realmtech.core.shader.GrayShader;
 import ch.realmtech.core.shader.Shaders;
-import ch.realmtech.core.game.ecs.plgin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
@@ -186,8 +186,10 @@ public class PlayerInventorySystem extends BaseSystem {
                 window.add(playerInventory);
             };
 
+            int playerId = context.getEcsEngine().getPlayerId();
+            PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
+                    DisplayInventoryArgs.builder(mInventory.get(playerConnexionComponent.mainInventoryId), playerInventory).build(),
                     DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).craftingInventory), craftingInventory)
                             .build(),
                     DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).craftingResultInventory), craftingResultInventory)
@@ -198,6 +200,7 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void refreshInventory(AddAndDisplayInventoryArgs displayInventoryArgs) {
+        clearDisplayInventory();
         displayAddTable(displayInventoryArgs.addTable());
         displayInventory(displayInventoryArgs.args());
         Gdx.input.setInputProcessor(inventoryStage);
@@ -224,11 +227,6 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    /**
-     * Ajout les cases de l'inventaire dans le tableau passé en second paramètre.
-     *
-     * @param displayInventoryArgs
-     */
     public void displayInventory(DisplayInventoryArgs displayInventoryArgs) {
         Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryComponent(), inventoryStage, displayInventoryArgs.clickAndDropSrc(), displayInventoryArgs.clickAndDropDst());
         for (int i = 0; i < tableImages.size; i++) {

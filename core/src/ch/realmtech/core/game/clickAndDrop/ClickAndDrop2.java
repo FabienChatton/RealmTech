@@ -1,12 +1,12 @@
 package ch.realmtech.core.game.clickAndDrop;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.ItemResultCraftComponent;
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.packet.serverPacket.PlayerInventorySetRequestPacket;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
@@ -96,6 +96,8 @@ public class ClickAndDrop2 {
 
     // depose un item
     public void addDestination(ClickAndDropActor clickAndDropActorDst) {
+        ComponentMapper<InventoryComponent> mInventory = context.getEcsEngine().getWorld().getMapper(InventoryComponent.class);
+        ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class);
         final ClickAndDropListener listener = new ClickAndDropListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -109,8 +111,8 @@ public class ClickAndDrop2 {
                     ret = true;
                 }
                 if (ret) {
-                    InventoryComponent inventoryComponent = context.getEcsEngine().getPlayerEntity().getComponent(InventoryComponent.class);
-                    context.getConnexionHandler().sendAndFlushPacketToServer(new PlayerInventorySetRequestPacket(InventorySerializer.toBytes(world, inventoryComponent)));
+                    InventoryComponent inventoryComponent = mInventory.get(mPlayerConnexion.get(context.getSystem(PlayerManagerClient.class).getMainPlayer()).mainInventoryId);
+
                 }
                 return ret;
             }

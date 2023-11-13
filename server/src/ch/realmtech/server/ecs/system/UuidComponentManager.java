@@ -22,6 +22,15 @@ public class UuidComponentManager extends Manager {
     }
 
     /**
+     * Get the {@link UuidComponent} of this {@link Entity}.
+     * @param entityId The entity id who as this uuid component.
+     * @return the {@link UuidComponent} of null if not found.
+     */
+    public UuidComponent getRegisteredComponent(int entityId) {
+        return mUuid.get(entityId);
+    }
+
+    /**
      * Get the {@link Entity} id of a registered {@link Component} in this world.
      * For faster research, specify the component to search.
      * @param uuid The playerUuid of the {@link Component}.
@@ -37,9 +46,11 @@ public class UuidComponentManager extends Manager {
      * Add a {@link UuidComponent} to this entity.
      * @param uuid The {@link UUID} to add a this entity.
      * @param entityId The entityId to add the {@link UuidComponent}
+     * @throws IllegalStateException If the entity id has already a uuid component.
      * @return the entity id.
      */
-    public UuidComponent createRegisteredComponent(UUID uuid, int entityId) {
+    public UuidComponent createRegisteredComponent(UUID uuid, int entityId) throws IllegalStateException {
+        if (mUuid.get(entityId) != null) throw new IllegalStateException("This entity has already a uuid component");
         return world.edit(entityId).create(UuidComponent.class).set(uuid);
     }
 

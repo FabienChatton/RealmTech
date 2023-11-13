@@ -4,10 +4,10 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -24,6 +24,7 @@ public class ItemBarManager extends BaseSystem {
     private SystemsAdminClient systemsAdminClient;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     @Override
     protected void processSystem() {
@@ -46,7 +47,7 @@ public class ItemBarManager extends BaseSystem {
         itemBar.clear();
         int player = systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
-        final InventoryComponent inventoryComponent = mInventory.get(player);
+        final InventoryComponent inventoryComponent = mInventory.get(mPlayerConnexion.get(player).mainInventoryId);
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
             Table stackImage = systemsAdminClient.playerInventorySystem.createItemSlotToDisplay(inventoryComponent.inventory[i], inventoryComponent);
             if (j == slotSelected) {
@@ -70,7 +71,7 @@ public class ItemBarManager extends BaseSystem {
     public void setSlotSelected(byte newSlotDesired) {
         int player = systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
         byte newSlot = newSlotDesired;
-        int numberOfSlotParRow = mInventory.get(player).numberOfSlotParRow;
+        int numberOfSlotParRow = mInventory.get(mPlayerConnexion.get(player).mainInventoryId).numberOfSlotParRow;
         if (newSlotDesired >= numberOfSlotParRow) {
             newSlot = 0;
         } else if (newSlotDesired < 0) {
@@ -89,7 +90,7 @@ public class ItemBarManager extends BaseSystem {
 
     public int[][] getItemBarItems() {
         int player = systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
-        int[][] inventory = mInventory.get(player).inventory;
+        int[][] inventory = mInventory.get(mPlayerConnexion.get(player).mainInventoryId).inventory;
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         int[][] ret = new int[InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW][InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW];
         for (byte k = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, k++) {

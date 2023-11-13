@@ -15,9 +15,9 @@ public interface ServerExecute {
 
     void getPlayerInventorySession(Channel clientChannel);
 
-    void setPlayerRequestInventory(Channel clientChannel, byte[] inventoryBytes);
-
     void consoleCommande(Channel clientChannel, String stringCommande);
 
     void inventoryMoveItems(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex);
+
+    void getInventory(Channel clientChannel, UUID inventoryUuid);
 }

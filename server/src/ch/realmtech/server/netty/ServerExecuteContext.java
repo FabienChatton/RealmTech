@@ -1,15 +1,12 @@
 package ch.realmtech.server.netty;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.component.InfCellComponent;
-import ch.realmtech.server.ecs.component.InfMapComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.level.cell.BreakCell;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.DeconnectionJoueurPacket;
-import ch.realmtech.server.packet.clientPacket.PlayerInventoryPacket;
+import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.packet.clientPacket.WriteToConsolePacket;
 import ch.realmtech.server.packet.serverPacket.ServerExecute;
 import ch.realmtech.server.registery.ItemRegisterEntry;
@@ -42,9 +39,9 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void removePlayer(Channel channel) {
-        PlayerConnexionComponent playerConnexionComponentChannel = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(channel);
+        int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(channel);
         serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
-        serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(playerConnexionComponentChannel.uuid), channel);
+        serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(playerId).getUuid()), channel);
     }
 
     @Override
@@ -75,18 +72,9 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void getPlayerInventorySession(Channel clientChannel) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
-            InventoryComponent inventoryComponent = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class).get(playerId);
-            byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
-            clientChannel.writeAndFlush(new PlayerInventoryPacket(playerConnexionComponent.uuid, bytes));
-        });
-    }
-
-    @Override
-    public void setPlayerRequestInventory(Channel clientChannel, byte[] inventoryBytes) {
-        serverContext.getEcsEngineServer().nextTick(() -> {
-            serverContext.getSystem(InventoryManager.class).setPlayerInventoryRequestServer(clientChannel, inventoryBytes);
+            ComponentMapper<UuidComponent> mUuid = serverContext.getEcsEngineServer().getWorld().getMapper(UuidComponent.class);
+            getInventory(clientChannel, mUuid.get(playerConnexionComponent.mainInventoryId).getUuid());
         });
     }
 
@@ -105,6 +93,15 @@ public class ServerExecuteContext implements ServerExecute {
     public void inventoryMoveItems(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             serverContext.getSystem(InventoryManager.class).moveInventory(srcInventory, dstInventory, itemsToMove, slotIndex);
+        });
+    }
+
+    @Override
+    public void getInventory(Channel clientChannel, UUID inventoryUuid) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            InventoryComponent inventoryComponent = serverContext.getSystem(InventoryManager.class).getInventoryComponentByUUID(inventoryUuid);
+            byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
+            clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, bytes));
         });
     }
 }

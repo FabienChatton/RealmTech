@@ -2,16 +2,10 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.server.PhysiqueWorldHelper;
-import ch.realmtech.server.craft.CraftStrategy;
-import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
@@ -20,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class PlayerManagerClient extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerClient.class);
@@ -81,7 +74,7 @@ public class PlayerManagerClient extends Manager {
 
         // player connexion
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
-        playerConnexionComponent.uuid = uuid;
+        systemsAdminClient.uuidComponentManager.createRegisteredComponent(uuid, playerId);
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
@@ -151,5 +144,9 @@ public class PlayerManagerClient extends Manager {
 //        InventoryComponent inventoryComponent = mInventory.get(playerId);
 //        systemsAdminClient.inventoryManager.removeInventory(inventoryComponent.inventory);
 //        inventoryComponent.inventory = inventorySupplier.apply(systemsAdminClient.itemManagerClient);
+    }
+
+    public int getMainPlayer() {
+        return systemsAdminClient.tagManager.getEntityId(MAIN_PLAYER_TAG);
     }
 }

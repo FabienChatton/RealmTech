@@ -26,8 +26,6 @@ public interface ClientExecute {
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
 
-    void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes);
-
     void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float posX, float posY);
 
     void supprimeItemOnGround(UUID itemUuid);

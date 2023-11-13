@@ -3,10 +3,12 @@ package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.registery.RegistryEntry;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
@@ -49,16 +51,17 @@ public class GiveCommand implements Callable<Integer> {
         }
         ComponentMapper<InventoryComponent> mInventory = masterCommand.getWorld().getMapper(InventoryComponent.class);
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = masterCommand.getWorld().getMapper(PlayerConnexionComponent.class);
+        ComponentMapper<UuidComponent> mUuid = masterCommand.getWorld().getMapper(UuidComponent.class);
 
         int playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(uuid);
 
-        InventoryComponent inventoryComponent = mInventory.get(playerId);
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+        InventoryComponent inventoryComponent = mInventory.get(playerConnexionComponent.mainInventoryId);
         int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry());
         try {
             masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
             byte[] inventoryBytes = InventorySerializer.toBytes(masterCommand.getWorld(), inventoryComponent);
-            masterCommand.getWorld().getSystem(InventoryManager.class).setPlayerInventoryRequestServer(playerConnexionComponent.channel, inventoryBytes);
+            masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(playerConnexionComponent.mainInventoryId).getUuid(), inventoryBytes), playerConnexionComponent.channel);
         } catch (Exception e) {
             masterCommand.getWorld().delete(itemId);
             return -1;

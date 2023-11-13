@@ -3,6 +3,7 @@ package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.system.UuidComponentManager;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
@@ -32,15 +33,16 @@ public class DumpPlayersCommand implements Callable<Integer> {
                 int playerId = data[i];
                 PositionComponent positionComponent = mPos.get(playerId);
                 PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+                UuidComponentManager uuidComponentManager = dumpCommand.masterCommand.getWorld().getSystem(UuidComponentManager.class);
                 if (playerConnexionComponent.channel != null) {
                     // sur le serveur
                     dumpCommand.masterCommand.output.println(
-                            String.format("x: %f, y: %f, uuid: %s, ip: %s", positionComponent.x, positionComponent.y, playerConnexionComponent.uuid, playerConnexionComponent.channel.remoteAddress())
+                            String.format("x: %f, y: %f, uuid: %s, ip: %s", positionComponent.x, positionComponent.y, uuidComponentManager.getRegisteredComponent(playerId), playerConnexionComponent.channel.remoteAddress())
                     );
                 } else {
                     // sur le client
                     dumpCommand.masterCommand.output.println(
-                            String.format("x: %f, y: %f, uuid: %s", positionComponent.x, positionComponent.y, playerConnexionComponent.uuid)
+                            String.format("x: %f, y: %f, uuid: %s", positionComponent.x, positionComponent.y, uuidComponentManager.getRegisteredComponent(playerId))
                     );
                 }
             }

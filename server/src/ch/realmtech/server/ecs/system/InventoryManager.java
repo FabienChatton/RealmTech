@@ -4,16 +4,18 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class InventoryManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(InventoryManager.class);
@@ -297,36 +299,33 @@ public class InventoryManager extends Manager {
     }
 
     /**
-     * Give the inventory id who as this playerUuid.
-     * @param uuid The playerUuid value to test with
-     * @return The corresponding inventory id or -1 if none inventory has this playerUuid value.
+     * Give the {@link InventoryComponent} id who as this {@link UuidComponent}.
+     * @param uuid The uuid value to test with
+     * @return The corresponding inventory id or -1 if none inventory has this uuid value.
      */
     public int getInventoryByUUID(UUID uuid) {
-//        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
-//        int[] inventoryData = inventoryEntities.getData();
-//        for (int i = 0; i < inventoryEntities.size(); i++) {
-//            int inventoryId = inventoryData[i];
-//            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-//            if (playerUuid.equals(inventoryComponent.playerUuid)) {
-//                return inventoryId;
-//            }
-//        }
-        return -1;
+        return systemsAdminCommun.uuidComponentManager.getRegisteredComponent(uuid, InventoryComponent.class);
     }
 
-    public void setPlayerInventoryRequestServer(Channel clientChannel, byte[] inventoryBytes) {
-//        int playerId = world.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
-//        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
-//        InventoryComponent inventoryComponent = mInventory.get(playerId);
-//        world.getSystem(InventoryManager.class).removeInventory(inventoryComponent.inventory);
-//        inventoryComponent.inventory = inventorySupplier.apply(world.getSystem(ItemManagerServer.class));
+    /**
+     * Give the {@link InventoryComponent} who as this {@link UuidComponent}.
+     * @param uuid The uuid value to test with
+     * @return The corresponding inventory id or null if none inventory has this {@link UuidComponent#uuid}.
+     */
+    public InventoryComponent getInventoryComponentByUUID(UUID uuid) {
+        int inventoryId = getInventoryByUUID(uuid);
+        return inventoryId != -1 ? mInventory.get(inventoryId) : null;
     }
 
     public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
-//        int inventoryId = getInventoryByUUID(inventoryUUID);
-//        if (inventoryId == -1) return;
-//        Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
-//        mInventory.get(inventoryId).inventory = inventoryGet.apply(itemManager);
+        int inventoryId = getInventoryByUUID(inventoryUUID);
+        if (inventoryId == -1) return;
+        Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
+        int[][] newInventory = inventoryGet.apply(itemManager);
+        int[][] inventory = mInventory.get(inventoryId).inventory;
+        for (int i = 0; i < inventory.length; i++) {
+            System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
+        }
     }
 
     public synchronized void moveInventory(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {

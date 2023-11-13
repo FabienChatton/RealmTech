@@ -41,14 +41,13 @@ public class ServerContext {
                 .put(CellBreakPacket.class, CellBreakPacket::new)
                 .put(TickBeatPacket.class, TickBeatPacket::new)
                 .put(GetPlayerInventorySessionPacket.class, GetPlayerInventorySessionPacket::new)
-                .put(PlayerInventoryPacket.class, PlayerInventoryPacket::new)
                 .put(ItemOnGroundPacket.class, ItemOnGroundPacket::new)
                 .put(ItemOnGroundSupprimerPacket.class, ItemOnGroundSupprimerPacket::new)
                 .put(ConsoleCommandeRequestPacket.class, ConsoleCommandeRequestPacket::new)
                 .put(WriteToConsolePacket.class, WriteToConsolePacket::new)
-                .put(PlayerInventorySetRequestPacket.class, PlayerInventorySetRequestPacket::new)
                 .put(InventoryMoveItemsRequest.class, InventoryMoveItemsRequest::new)
                 .put(InventorySetPacket.class, InventorySetPacket::new)
+                .put(InventoryGetPacket.class, InventoryGetPacket::new)
         ;
     }
 
