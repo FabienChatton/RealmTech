@@ -7,21 +7,21 @@ import io.netty.channel.Channel;
 
 import java.util.UUID;
 
-public class InventoryMoveItemsRequest implements ServerPacket {
+public class InventoryMoveItemsPacket implements ServerPacket {
 
     private final UUID srcInventory;
     private final UUID dstInventory;
     private final UUID[] itemsToMove;
     private final int slotIndex;
 
-    public InventoryMoveItemsRequest(UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
+    public InventoryMoveItemsPacket(UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
         this.srcInventory = srcInventory;
         this.dstInventory = dstInventory;
         this.itemsToMove = itemsToMove;
         this.slotIndex = slotIndex;
     }
 
-    public InventoryMoveItemsRequest(ByteBuf byteBuf) {
+    public InventoryMoveItemsPacket(ByteBuf byteBuf) {
         srcInventory = ByteBufferHelper.readUUID(byteBuf);
         dstInventory = ByteBufferHelper.readUUID(byteBuf);
         int itemsCount = byteBuf.readInt();

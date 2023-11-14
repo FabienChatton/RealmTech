@@ -13,7 +13,7 @@ public class UuidComponentManager extends Manager {
 
     /**
      * Get the {@link Entity} id of a registered {@link UuidComponent} in this world.
-     * @param uuid The playerUuid of the {@link Component}.
+     * @param uuid The uuid of the {@link Component}.
      * @return The {@link Entity} id or -1 if not found.
      */
     public int getRegisteredComponent(UUID uuid) {
@@ -34,7 +34,7 @@ public class UuidComponentManager extends Manager {
      * Get the {@link Entity} id of a registered {@link Component} in this world.
      * For faster research, specify the component to search.
      * @param uuid The playerUuid of the {@link Component}.
-     * @param componentClass The desired class with a playerUuid.
+     * @param componentClass The desired class with a uuid.
      * @return The {@link Entity} id or -1 if not found.
      */
     public int getRegisteredComponent(UUID uuid, Class<? extends Component> componentClass) {

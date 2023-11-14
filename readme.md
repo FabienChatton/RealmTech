@@ -227,6 +227,32 @@ que les slot par row sont les colonnes, c'est-à-dire de haut en bas
  /\ 
  || slot par row
 ```
+un composent d'inventaire seul, nest pas utile, il doit être utilisé avec un autre
+composent, comme une composent de coffre, ou un composent de table de craft
+
+```mermaid
+classDiagram
+    class Player
+    class Inventory
+    class InventoryUi
+    class Chest {
+        -inventoryId
+    }
+    class CraftingTable {
+        -inventoryCraftId
+        -inventoryResultId
+    }
+    class Crafting
+
+    Player *-- Chest
+    Chest *-- Inventory
+    Chest *-- InventoryUi
+    
+    Player *-- CraftingTable
+    CraftingTable "2" *-- Inventory
+    CraftingTable *-- InventoryUi
+    CraftingTable *-- Crafting
+```
 
 
 ## RealmTechData

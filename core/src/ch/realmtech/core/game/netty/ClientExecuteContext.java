@@ -6,12 +6,13 @@ import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
-import ch.realmtech.server.craft.CraftStrategy;
 import ch.realmtech.server.ctrl.ItemManager;
-import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.component.InfMapComponent;
+import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
@@ -42,19 +43,10 @@ public class ClientExecuteContext implements ClientExecute {
 
         World world = context.getEcsEngine().getWorld();
         Function<ItemManager, int[][]> inventoryFromBytes = InventorySerializer.getFromBytes(world, connexionJoueurReussitArg.inventoryBytes());
-        // inventory
-        int mainPlayerInventory = world.create();
-        context.getSystem(InventoryManager.class).createInventoryComponent(mainPlayerInventory, inventoryFromBytes.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        playerConnexionComponent.mainInventoryId = mainPlayerInventory;
-        // craft
-        int defaultCraftingTable = world.create();
-        context.getSystem(InventoryManager.class).createInventoryComponent(defaultCraftingTable, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        // craft result
-        int defaultResultInventory = world.create();
-        context.getSystem(InventoryManager.class).createInventoryComponent(defaultResultInventory, connexionJoueurReussitArg.inventoryCraftResultUuid(), 1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-
-        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
+        // inventory chest
+        context.getSystem(InventoryManager.class).createChest(playerId, inventoryFromBytes.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+        // crafting table
+        context.getSystem(InventoryManager.class).createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
 
         Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
     }

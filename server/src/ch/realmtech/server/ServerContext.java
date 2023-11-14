@@ -45,7 +45,7 @@ public class ServerContext {
                 .put(ItemOnGroundSupprimerPacket.class, ItemOnGroundSupprimerPacket::new)
                 .put(ConsoleCommandeRequestPacket.class, ConsoleCommandeRequestPacket::new)
                 .put(WriteToConsolePacket.class, WriteToConsolePacket::new)
-                .put(InventoryMoveItemsRequest.class, InventoryMoveItemsRequest::new)
+                .put(InventoryMoveItemsPacket.class, InventoryMoveItemsPacket::new)
                 .put(InventorySetPacket.class, InventorySetPacket::new)
                 .put(InventoryGetPacket.class, InventoryGetPacket::new)
         ;

@@ -13,6 +13,7 @@ public class PlayerConnexionComponent extends Component {
     public int[] ancienChunkPos = null;
     public List<Position> chunkPoss;
     @EntityId
+    @Deprecated
     public int mainInventoryId;
 
     public PlayerConnexionComponent set(Channel channel) {

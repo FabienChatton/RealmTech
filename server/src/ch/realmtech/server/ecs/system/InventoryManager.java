@@ -1,13 +1,13 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.craft.CraftStrategy;
 import ch.realmtech.server.ctrl.ItemManager;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.TextureComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
+import com.artemis.EntityEdit;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import org.slf4j.Logger;
@@ -26,6 +26,8 @@ public class InventoryManager extends Manager {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<ChestComponent> mChest;
+    private ComponentMapper<UuidComponent> mUuid;
 
     public boolean addItemToInventory(int inventoryId, int itemId) {
         return addItemToInventory(mInventory.get(inventoryId), itemId);
@@ -299,7 +301,7 @@ public class InventoryManager extends Manager {
     }
 
     /**
-     * Give the {@link InventoryComponent} id who as this {@link UuidComponent}.
+     * Give the {@link InventoryComponent} id who has this {@link UuidComponent}.
      * @param uuid The uuid value to test with
      * @return The corresponding inventory id or -1 if none inventory has this uuid value.
      */
@@ -308,7 +310,7 @@ public class InventoryManager extends Manager {
     }
 
     /**
-     * Give the {@link InventoryComponent} who as this {@link UuidComponent}.
+     * Give the {@link InventoryComponent} who has this {@link UuidComponent}.
      * @param uuid The uuid value to test with
      * @return The corresponding inventory id or null if none inventory has this {@link UuidComponent#uuid}.
      */
@@ -329,61 +331,48 @@ public class InventoryManager extends Manager {
     }
 
     public synchronized void moveInventory(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {
-//        int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
-//        int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
-//        if (srcInventoryId == -1){
-//            logger.warn("The src inventory {} was not found", srcInventoryId);
-//            return;
-//        }
-//
-//        if (dstInventoryId == -1){
-//            logger.warn("The src inventory {} was not found", srcInventoryId);
-//            return;
-//        }
-//
-//        int[] itemsSrcId = new int[itemsToMove.length];
-//        for (UUID playerUuid : itemsToMove) {
-//            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(playerUuid);
-//            if (itemId == -1) {
-//                logger.warn("The item id {} was not found", playerUuid);
-//                return;
-//            }
-//        }
-//
-//        int[] srcStack = null;
-//        for (int i = 0; i < itemsSrcId.length; i++) {
-//            int[] stack = getStackContainsItem(srcInventoryId, itemsSrcId[i]);
-//            if (srcStack == null) {
-//                srcStack = stack;
-//            } else {
-//                if (srcStack != stack) {
-//                    logger.warn("Items are split between multiple stack");
-//                    return;
-//                }
-//            }
-//        }
-//
-//        int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
-//        if (slotIndex > dstInventory.length) {
-//            logger.warn("slot item is out of bound");
-//            return;
-//        }
-//        moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
-//
+        int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
+        int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
+        if (srcInventoryId == -1){
+            logger.warn("The src inventory {} was not found", srcInventoryId);
+            return;
+        }
 
-    }
+        if (dstInventoryId == -1){
+            logger.warn("The src inventory {} was not found", srcInventoryId);
+            return;
+        }
 
-    /**
-     * Create a fully inventory with a random uuid.
-     * @param entityId The entity to add the inventory component.
-     * @param inventory
-     * @param numberOfSlotParRow
-     * @param numberOfRow
-     * @param backgroundTextureName
-     * @return The inventory newly created.
-     */
-    public InventoryComponent createInventoryComponent(int entityId, int[][] inventory, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
-        return createInventoryComponent(entityId, inventory, UUID.randomUUID(), numberOfSlotParRow, numberOfRow, backgroundTextureName);
+        int[] itemsSrcId = new int[itemsToMove.length];
+        for (UUID playerUuid : itemsToMove) {
+            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(playerUuid);
+            if (itemId == -1) {
+                logger.warn("The item id {} was not found", playerUuid);
+                return;
+            }
+        }
+
+        int[] srcStack = null;
+        for (int i = 0; i < itemsSrcId.length; i++) {
+            int[] stack = getStackContainsItem(srcInventoryId, itemsSrcId[i]);
+            if (srcStack == null) {
+                srcStack = stack;
+            } else {
+                if (srcStack != stack) {
+                    logger.warn("Items are split between multiple stack");
+                    return;
+                }
+            }
+        }
+
+        int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
+        if (slotIndex > dstInventory.length) {
+            logger.warn("slot item is out of bound");
+            return;
+        }
+        moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
+
+
     }
 
     /**
@@ -395,6 +384,7 @@ public class InventoryManager extends Manager {
      * @param backgroundTextureName
      * @return The inventory newly created.
      */
+    @Deprecated
     public InventoryComponent createInventoryComponent(int entityId, int[][] inventory, UUID uuid, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
         InventoryComponent inventoryComponent = world.edit(entityId).create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow, backgroundTextureName);
         systemsAdminCommun.uuidComponentManager.createRegisteredComponent(uuid, entityId);
@@ -409,6 +399,7 @@ public class InventoryManager extends Manager {
      * @param backgroundTextureName
      * @return The inventory newly created.
      */
+    @Deprecated
     public InventoryComponent createInventoryComponent(int entityId, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
         return createInventoryComponent(entityId, UUID.randomUUID(), numberOfSlotParRow, numberOfRow, backgroundTextureName);
     }
@@ -421,9 +412,49 @@ public class InventoryManager extends Manager {
      * @param backgroundTextureName
      * @return The inventory newly created.
      */
+    @Deprecated
     public InventoryComponent createInventoryComponent(int entityId, UUID uuid, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
         InventoryComponent inventoryComponent = world.edit(entityId).create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow, backgroundTextureName);
         systemsAdminCommun.uuidComponentManager.createRegisteredComponent(uuid, entityId);
         return inventoryComponent;
     }
+
+    public int createChest(int motherEntity, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
+        int inventoryId = world.create();
+        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
+
+        EntityEdit inventoryEdit = world.edit(inventoryId);
+        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        inventoryEdit.create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow);
+        inventoryEdit.create(InventoryUiComponent.class).set();
+        return inventoryId;
+    }
+
+    public void createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
+        int inventoryId = world.create();
+        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
+
+        EntityEdit inventoryEdit = world.edit(inventoryId);
+        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
+        inventoryEdit.create(InventoryUiComponent.class).set();
+    }
+
+    public void createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
+        int craftingInventoryId = world.create();
+        int craftingResultInventoryId = world.create();
+
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, CraftStrategy.craftingStrategyCraftingTable());
+        EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
+        craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
+        craftingInventoryEdit.create(InventoryComponent.class).set(craftingNumberOfSlotParRow, craftingNumberOfRow);
+        craftingInventoryEdit.create(InventoryUiComponent.class).set();
+        craftingInventoryEdit.create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventoryId);
+
+        EntityEdit craftingResultInventoryEdit = world.edit(craftingResultInventoryId);
+        craftingInventoryEdit.create(UuidComponent.class).set(craftingResultInventoryUuid);
+        craftingInventoryEdit.create(InventoryComponent.class).set(1, 1);
+        craftingInventoryEdit.create(InventoryUiComponent.class).set();
+    }
+
 }
