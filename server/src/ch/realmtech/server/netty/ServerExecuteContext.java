@@ -72,9 +72,9 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void getPlayerInventorySession(Channel clientChannel) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            PlayerConnexionComponent playerConnexionComponent = serverContext.getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
+            int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             ComponentMapper<UuidComponent> mUuid = serverContext.getEcsEngineServer().getWorld().getMapper(UuidComponent.class);
-            getInventory(clientChannel, mUuid.get(playerConnexionComponent.mainInventoryId).getUuid());
+            getInventory(clientChannel, mUuid.get(serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId)).getUuid());
         });
     }
 

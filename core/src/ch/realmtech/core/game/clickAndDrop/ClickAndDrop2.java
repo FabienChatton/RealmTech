@@ -111,8 +111,7 @@ public class ClickAndDrop2 {
                     ret = true;
                 }
                 if (ret) {
-                    InventoryComponent inventoryComponent = mInventory.get(mPlayerConnexion.get(context.getSystem(PlayerManagerClient.class).getMainPlayer()).mainInventoryId);
-
+                    InventoryComponent chestInventory = world.getSystem(InventoryManager.class).getChestInventory(context.getSystem(PlayerManagerClient.class).getMainPlayer());
                 }
                 return ret;
             }

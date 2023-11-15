@@ -40,6 +40,7 @@ public class PlayerManagerServer extends BaseSystem {
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<UuidComponent> mUuid;
+    private ComponentMapper<InventoryComponent> mInventory;
 
     public PlayerManagerServer() {
         players = new IntBag();
@@ -94,9 +95,8 @@ public class PlayerManagerServer extends BaseSystem {
         systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
 
         // inventory
-        int mainPlayerInventory = world.create();
-        InventoryComponent inventoryComponent = systemsAdminServer.inventoryManager.createInventoryComponent(mainPlayerInventory, InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        playerConnexionComponent.mainInventoryId = mainPlayerInventory;
+        int chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+        InventoryComponent chestInventoryComponent = mInventory.get(chestId);
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
@@ -107,12 +107,7 @@ public class PlayerManagerServer extends BaseSystem {
         positionComponent.set(box2dComponent, x, y);
 
         // default crafting table
-        int defaultCraftingTable = world.create();
-        int defaultResultInventory = world.create();
-        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-        systemsAdminServer.inventoryManager.createInventoryComponent(defaultCraftingTable, 2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        systemsAdminServer.inventoryManager.createInventoryComponent(defaultResultInventory, 1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
+        int[] craftingInventories = systemsAdminServer.inventoryManager.createCraftingTable(playerId, UUID.randomUUID(), 2,2, UUID.randomUUID());
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -120,10 +115,10 @@ public class PlayerManagerServer extends BaseSystem {
         players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
-                InventorySerializer.toBytes(world, inventoryComponent),
-                mUuid.get(mainPlayerInventory).getUuid(),
-                mUuid.get(defaultCraftingTable).getUuid(),
-                mUuid.get(defaultResultInventory).getUuid()
+                InventorySerializer.toBytes(world, chestInventoryComponent),
+                mUuid.get(chestId).getUuid(),
+                mUuid.get(craftingInventories[0]).getUuid(),
+                mUuid.get(craftingInventories[1]).getUuid()
         );
     }
 

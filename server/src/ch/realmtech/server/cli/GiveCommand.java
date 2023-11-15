@@ -56,12 +56,13 @@ public class GiveCommand implements Callable<Integer> {
         int playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(uuid);
 
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-        InventoryComponent inventoryComponent = mInventory.get(playerConnexionComponent.mainInventoryId);
+        InventoryComponent inventoryComponent = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
+        int chestInventoryId = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
         int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry());
         try {
             masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
             byte[] inventoryBytes = InventorySerializer.toBytes(masterCommand.getWorld(), inventoryComponent);
-            masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(playerConnexionComponent.mainInventoryId).getUuid(), inventoryBytes), playerConnexionComponent.channel);
+            masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), inventoryBytes), playerConnexionComponent.channel);
         } catch (Exception e) {
             masterCommand.getWorld().delete(itemId);
             return -1;

@@ -187,12 +187,11 @@ public class PlayerInventorySystem extends BaseSystem {
             };
 
             int playerId = context.getEcsEngine().getPlayerId();
-            PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(mInventory.get(playerConnexionComponent.mainInventoryId), playerInventory).build(),
-                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).craftingInventory), craftingInventory)
+                    DisplayInventoryArgs.builder(systemsAdminClient.inventoryManager.getChestInventory(playerId), playerInventory).build(),
+                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingInventory), craftingInventory)
                             .build(),
-                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG)).craftingResultInventory), craftingResultInventory)
+                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingResultInventory), craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
             });

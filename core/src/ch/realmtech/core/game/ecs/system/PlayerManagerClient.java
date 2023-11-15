@@ -32,6 +32,8 @@ public class PlayerManagerClient extends Manager {
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;
     private final HashMap<UUID, Integer> players;
+    /** @deprecated utilisé plus tôt systemsAdminClient.playerManagerClient.getMainPlayer()*/
+    @Deprecated
     public final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
 
     {

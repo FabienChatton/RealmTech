@@ -125,7 +125,7 @@ public class ClientExecuteContext implements ClientExecute {
             context.getSystem(InventoryManager.class).setInventory(inventoryUUID, inventoryBytes);
             ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class);
             ComponentMapper<UuidComponent> mUuid = context.getEcsEngine().getWorld().getMapper(UuidComponent.class);
-            int mainInventoryId = mPlayerConnexion.get(context.getSystem(PlayerManagerClient.class).getMainPlayer()).mainInventoryId;
+            int mainInventoryId = context.getSystem(InventoryManager.class).getChestInventoryId(context.getSystem(PlayerManagerClient.class).getMainPlayer());
             if (mUuid.get(mainInventoryId).getUuid().equals(inventoryUUID)) {
                 context.getEcsEngine().getSystem(PlayerInventorySystem.class).refreshInventory(context.getEcsEngine().getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer().apply(context));
             }

@@ -11,4 +11,8 @@ public class ChestComponent extends Component {
         this.inventoryId = inventoryId;
         return this;
     }
+
+    public int getInventoryId() {
+        return inventoryId;
+    }
 }

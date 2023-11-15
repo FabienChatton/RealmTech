@@ -17,15 +17,6 @@ public class InventoryComponent extends Component {
     public int numberOfSlotParRow;
     @Deprecated
     public String backgroundTexture;
-    @Deprecated
-    public InventoryComponent set(int numberOfSlotParRow, int numberOfRow, @Deprecated String backgroundTextureName) {
-        this.stackLimite = DEFAULT_STACK_LIMITE;
-        this.numberOfRow = numberOfRow;
-        this.numberOfSlotParRow = numberOfSlotParRow;
-        inventory = new int[numberOfSlotParRow * numberOfRow][DEFAULT_STACK_LIMITE];
-        this.backgroundTexture = backgroundTextureName;
-        return this;
-    }
 
     @Deprecated
     public InventoryComponent set(int[][] inventory, int numberOfSlotParRow, int numberOfRow, @Deprecated String backgroundTextureName) {
@@ -37,10 +28,14 @@ public class InventoryComponent extends Component {
         return this;
     }
 
+    @Deprecated
+    public InventoryComponent set(int numberOfSlotParRow, int numberOfRow, @Deprecated String backgroundTextureName) {
+        set(new int[numberOfSlotParRow * numberOfRow][DEFAULT_STACK_LIMITE], numberOfSlotParRow, numberOfRow, backgroundTextureName);
+        return this;
+    }
+
     public InventoryComponent set(int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
-        this.inventory = inventory;
-        this.numberOfSlotParRow = numberOfSlotParRow;
-        this.numberOfRow = numberOfRow;
+        set(inventory, numberOfSlotParRow, numberOfRow, DEFAULT_BACKGROUND_TEXTURE_NAME);
         return this;
     }
 

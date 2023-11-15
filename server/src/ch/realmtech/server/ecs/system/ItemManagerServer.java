@@ -82,7 +82,7 @@ public class ItemManagerServer extends ItemManager {
         serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(itemComponent.uuid));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
-        systemsAdminServer.inventoryManager.addItemToInventory(mPlayerConnexion.get(playerId).mainInventoryId, itemId);
+        systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
     }
 
     /**

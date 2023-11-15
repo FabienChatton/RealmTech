@@ -430,7 +430,7 @@ public class InventoryManager extends Manager {
         return inventoryId;
     }
 
-    public void createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
+    public int createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
         world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
 
@@ -438,9 +438,10 @@ public class InventoryManager extends Manager {
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
         inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
         inventoryEdit.create(InventoryUiComponent.class).set();
+        return inventoryId;
     }
-
-    public void createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
+    /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
+    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
@@ -452,9 +453,17 @@ public class InventoryManager extends Manager {
         craftingInventoryEdit.create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventoryId);
 
         EntityEdit craftingResultInventoryEdit = world.edit(craftingResultInventoryId);
-        craftingInventoryEdit.create(UuidComponent.class).set(craftingResultInventoryUuid);
-        craftingInventoryEdit.create(InventoryComponent.class).set(1, 1);
-        craftingInventoryEdit.create(InventoryUiComponent.class).set();
+        craftingResultInventoryEdit.create(UuidComponent.class).set(craftingResultInventoryUuid);
+        craftingResultInventoryEdit.create(InventoryComponent.class).set(1, 1);
+        craftingResultInventoryEdit.create(InventoryUiComponent.class).set();
+        return new int[]{craftingInventoryId, craftingResultInventoryId};
+    }
+
+    public InventoryComponent getChestInventory(int motherEntity) {
+        return mInventory.get(mChest.get(motherEntity).getInventoryId());
+    }
+    public int getChestInventoryId(int motherEntity) {
+        return mChest.get(motherEntity).getInventoryId();
     }
 
 }
