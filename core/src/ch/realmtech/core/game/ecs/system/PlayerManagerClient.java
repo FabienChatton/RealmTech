@@ -32,9 +32,8 @@ public class PlayerManagerClient extends Manager {
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;
     private final HashMap<UUID, Integer> players;
-    /** @deprecated utilisé plus tôt systemsAdminClient.playerManagerClient.getMainPlayer()*/
-    @Deprecated
-    public final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
+
+    private final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
 
     {
         players = new HashMap<>();
@@ -86,10 +85,6 @@ public class PlayerManagerClient extends Manager {
         PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
         positionComponent.set(box2dComponent, x, y);
 
-//        // inventory component
-//        InventoryComponent inventoryComponent = world.edit(playerId).create(InventoryComponent.class);
-//        inventoryComponent.set(InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
@@ -114,14 +109,6 @@ public class PlayerManagerClient extends Manager {
         TextureAtlas.AtlasRegion textureRight2 = textureAtlas.findRegion("reimu-right-2");
         playerComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
 
-//        // default crafting table
-//        int defaultCraftingTable = world.create();
-//        int defaultResultInventory = world.create();
-//        world.edit(playerId).create(CraftingTableComponent.class).set(defaultCraftingTable, defaultResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-//        world.edit(defaultCraftingTable).create(InventoryComponent.class).set(2, 2, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//        world.edit(defaultResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//        world.edit(defaultCraftingTable).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, defaultResultInventory);
-
         players.put(uuid, playerId);
         return playerId;
     }
@@ -138,14 +125,6 @@ public class PlayerManagerClient extends Manager {
 
     public void removePlayer(UUID uuid) {
         world.delete(getPlayers().get(uuid));
-    }
-
-    public void setPlayerInventory(UUID playerUUID, byte[] inventoryBytes) {
-//        int playerId = getPlayers().get(playerUUID);
-//        Function<ItemManager, int[][]> inventorySupplier = InventorySerializer.getFromBytes(world, inventoryBytes);
-//        InventoryComponent inventoryComponent = mInventory.get(playerId);
-//        systemsAdminClient.inventoryManager.removeInventory(inventoryComponent.inventory);
-//        inventoryComponent.inventory = inventorySupplier.apply(systemsAdminClient.itemManagerClient);
     }
 
     public int getMainPlayer() {

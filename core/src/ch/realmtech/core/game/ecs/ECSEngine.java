@@ -3,13 +3,13 @@ package ch.realmtech.core.game.ecs;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.console.CommandClientExecute;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
-import ch.realmtech.core.game.ecs.system.*;
-import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
-import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.core.game.ecs.plgin.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plgin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plgin.strategy.TickEmulationInvocationStrategy;
-import ch.realmtech.server.ecs.system.*;
+import ch.realmtech.core.game.ecs.system.*;
+import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
+import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
+import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import com.artemis.*;
@@ -119,15 +119,6 @@ public final class ECSEngine implements Disposable {
             world.delete(entity);
         }
     }
-
-    public int getPlayerId() {
-        return world.getSystem(TagManager.class).getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
-    }
-
-    public Entity getPlayerEntity() {
-        return world.getSystem(TagManager.class).getEntity(PlayerManagerClient.MAIN_PLAYER_TAG);
-    }
-
 
     public World getWorld() {
         return world;

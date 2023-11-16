@@ -45,7 +45,7 @@ public class ItemBarManager extends BaseSystem {
 
     public void displayPlayerItemBar() {
         itemBar.clear();
-        int player = systemsAdminClient.tagManager.getEntityId(PlayerManagerClient.MAIN_PLAYER_TAG);
+        int player = systemsAdminClient.playerManagerClient.getMainPlayer();
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         final InventoryComponent chestInventory = systemsAdminClient.inventoryManager.getChestInventory(player);
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {

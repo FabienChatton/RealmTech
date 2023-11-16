@@ -4,7 +4,6 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
-import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -40,7 +39,7 @@ public class PlayerInputSystem extends BaseSystem {
             if (infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
                 infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(world, topCell);
             } else {
-                if (systemsAdminClient.mapManager.placeItemToBloc(context.getEcsEngine().getPlayerId(), Input.Buttons.RIGHT, infMapComponent.infChunks, gameCoordinate.x, gameCoordinate.y, systemsAdminClient.itemBarManager.getSelectItem())) {
+                if (systemsAdminClient.mapManager.placeItemToBloc(context.getSystem(PlayerManagerClient.class).getMainPlayer(), Input.Buttons.RIGHT, infMapComponent.infChunks, gameCoordinate.x, gameCoordinate.y, systemsAdminClient.itemBarManager.getSelectItem())) {
                     systemsAdminClient.inventoryManager.deleteOneItem(systemsAdminClient.itemBarManager.getSelectStack());
                 }
             }

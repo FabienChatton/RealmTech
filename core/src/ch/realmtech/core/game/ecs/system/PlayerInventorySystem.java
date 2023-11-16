@@ -186,7 +186,7 @@ public class PlayerInventorySystem extends BaseSystem {
                 window.add(playerInventory);
             };
 
-            int playerId = context.getEcsEngine().getPlayerId();
+            int playerId = context.getSystem(PlayerManagerClient.class).getMainPlayer();
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
                     DisplayInventoryArgs.builder(systemsAdminClient.inventoryManager.getChestInventory(playerId), playerInventory).build(),
                     DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingInventory), craftingInventory)

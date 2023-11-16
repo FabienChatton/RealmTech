@@ -3,6 +3,7 @@ package ch.realmtech.core.screen;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.system.ItemBarManager;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
+import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
 import ch.realmtech.server.ecs.component.PositionComponent;
@@ -124,7 +125,7 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedUp();
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedDown();
 
-        PositionComponent positionComponent = context.getEcsEngine().getPlayerEntity().getComponent(PositionComponent.class);
+        PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(context.getSystem(PlayerManagerClient.class).getMainPlayer());
         int worldPosX = MapManager.getWorldPos(positionComponent.x);
         int worldPosY = MapManager.getWorldPos(positionComponent.y);
         fpsLabel.setText(String.format("FPS : %d", Gdx.graphics.getFramesPerSecond()));
