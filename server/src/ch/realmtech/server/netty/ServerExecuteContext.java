@@ -93,6 +93,11 @@ public class ServerExecuteContext implements ServerExecute {
     public void moveStackToStackNumberRequest(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             serverContext.getSystem(InventoryManager.class).moveStackToStackRequest(srcInventory, dstInventory, itemsToMove, slotIndex);
+            ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
+            InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(srcInventory));
+            InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(dstInventory));
+            serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), srcInventoryComponent)), clientChannel);
+            serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), dstInventoryComponent)), clientChannel);
         });
     }
 

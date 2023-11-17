@@ -336,7 +336,7 @@ public class InventoryManager extends Manager {
     /**
      * Give the {@link InventoryComponent} who has this {@link UuidComponent}.
      * @param uuid The uuid value to test with
-     * @return The corresponding inventory id or null if none inventory has this {@link UuidComponent#uuid}.
+     * @return The corresponding inventory id or null if none inventory has this {@link UuidComponent#getUuid()}.
      */
     public InventoryComponent getInventoryComponentByUUID(UUID uuid) {
         int inventoryId = getInventoryByUUID(uuid);
@@ -395,7 +395,7 @@ public class InventoryManager extends Manager {
             logger.warn("slot item is out of bound");
             return;
         }
-        moveStackToStack(itemsSrcId, dstInventory[slotIndex]);
+        moveStackToStack(srcStack, dstInventory[slotIndex]);
 
 
     }

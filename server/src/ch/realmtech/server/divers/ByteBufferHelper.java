@@ -68,6 +68,16 @@ public final class ByteBufferHelper {
         return UUID.fromString(uuid.toString());
     }
 
+    public static UUID readUUID(ByteBuffer byteBuffer) {
+        long msb = byteBuffer.getLong();
+        long lsb = byteBuffer.getLong();
+
+        UUID uuid = new UUID(msb, lsb);
+
+        // test si valide
+        return UUID.fromString(uuid.toString());
+    }
+
     /**
      * Write a uuid to the byte buf. Increment the index of the byte buf by 16.
      * @param byteBuf The byte buf to write into.
@@ -80,5 +90,13 @@ public final class ByteBufferHelper {
         byteBuf.writeLong(msb);
         byteBuf.writeLong(lsb);
         return byteBuf;
+    }
+
+    public static ByteBuffer writeUUID(ByteBuffer byteBuffer, UUID uuid) {
+        long msb = uuid.getMostSignificantBits();
+        long lsb = uuid.getLeastSignificantBits();
+        byteBuffer.putLong(msb);
+        byteBuffer.putLong(lsb);
+        return byteBuffer;
     }
 }

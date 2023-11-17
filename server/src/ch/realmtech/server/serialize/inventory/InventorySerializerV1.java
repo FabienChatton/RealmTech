@@ -4,6 +4,7 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -19,21 +20,25 @@ public class InventorySerializerV1 implements InventorySerializer {
     @Override
     public byte[] toBytes(InventoryComponent inventoryComponent, World world) {
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
+        ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         // header
         ByteBuffer byteBuffer = ByteBuffer.allocate(getTailleBytes(inventoryComponent));
         byteBuffer.putInt(VERSION);
         byteBuffer.putInt(inventoryComponent.numberOfRow);
         byteBuffer.putInt(inventoryComponent.numberOfSlotParRow);
-        ByteBufferHelper.writeString(byteBuffer, inventoryComponent.backgroundTexture);
         // body
         for (int i = 0; i < inventoryComponent.numberOfRow; i++) {
             for (int j = 0; j < inventoryComponent.numberOfSlotParRow; j++) {
                 int index = i * inventoryComponent.numberOfSlotParRow + j;
                 // si pas d'item dans le slot, met 0
-                if (inventoryComponent.inventory[index][0] == 0) {
+                int itemId = inventoryComponent.inventory[index][0];
+                if (itemId == 0) {
                     byteBuffer.putInt(0);
+                    byteBuffer.putLong(0);
+                    byteBuffer.putLong(0);
                 } else {
-                    byteBuffer.putInt(ItemRegisterEntry.getHash(mItem.get(inventoryComponent.inventory[index][0]).itemRegisterEntry));
+                    byteBuffer.putInt(ItemRegisterEntry.getHash(mItem.get(itemId).itemRegisterEntry));
+                    ByteBufferHelper.writeUUID(byteBuffer, mUuid.get(itemId).getUuid());
                 }
                 byteBuffer.put((byte) InventoryManager.tailleStack(inventoryComponent.inventory[index]));
             }
@@ -49,8 +54,8 @@ public class InventorySerializerV1 implements InventorySerializer {
         int version = byteBuffer.getInt();
         int numberOfRow = byteBuffer.getInt();
         int numberOfSlotParRow = byteBuffer.getInt();
-        String backgroundTextureName = ByteBufferHelper.getString(byteBuffer);
         ItemRegisterEntry[] itemsRegistry = new ItemRegisterEntry[numberOfRow * numberOfSlotParRow];
+        UUID[] itemsUuid = new UUID[numberOfRow * numberOfSlotParRow];
         byte[] itemsNumber = new byte[numberOfRow * numberOfSlotParRow];
         // body
         for (int i = 0; i < numberOfRow; i++) {
@@ -59,8 +64,10 @@ public class InventorySerializerV1 implements InventorySerializer {
                 int itemHash = byteBuffer.getInt();
                 if (itemHash == 0) {
                     itemsRegistry[index] = null;
+                    ByteBufferHelper.readUUID(byteBuffer);
                 } else {
                     itemsRegistry[index] = ItemRegisterEntry.getItemByHash(itemHash);
+                    itemsUuid[index] = ByteBufferHelper.readUUID(byteBuffer);
                 }
                 itemsNumber[index] = byteBuffer.get();
             }
@@ -71,9 +78,10 @@ public class InventorySerializerV1 implements InventorySerializer {
                 for (int j = 0; j < numberOfSlotParRow; j++) {
                     int index = i * numberOfSlotParRow + j;
                     ItemRegisterEntry itemRegisterEntry = itemsRegistry[index];
+                    UUID itemUuid = itemsUuid[index];
                     if (itemRegisterEntry != null) {
                         for (int n = 0; n < itemsNumber[index]; n++) {
-                            int itemId = itemManager.newItemInventory(itemRegisterEntry, UUID.randomUUID());
+                            int itemId = itemManager.newItemInventory(itemRegisterEntry, itemUuid);
                             inventory[index][n] = itemId;
                         }
                     }
@@ -84,7 +92,7 @@ public class InventorySerializerV1 implements InventorySerializer {
     }
 
     private int getTailleBytes(InventoryComponent inventoryComponent) {
-        // version protocole, nombre de row, slot par row, backgroundTextureName, nombre de row * slot par row * (hash + nombre)
-        return Integer.BYTES + Integer.BYTES + Integer.BYTES + inventoryComponent.backgroundTexture.getBytes(StandardCharsets.US_ASCII).length + 1 + inventoryComponent.numberOfRow * inventoryComponent.numberOfSlotParRow * (Integer.BYTES + Byte.BYTES);
+        // version protocole, nombre de row, slot par row, backgroundTextureName, nombre de row * slot par row * ((hash + nombre) + uuid)
+        return Integer.BYTES + Integer.BYTES + Integer.BYTES + inventoryComponent.backgroundTexture.getBytes(StandardCharsets.US_ASCII).length + 1 + (inventoryComponent.numberOfRow * inventoryComponent.numberOfSlotParRow * ((Integer.BYTES + Byte.BYTES) + Long.BYTES * 2));
     }
 }
