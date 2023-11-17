@@ -58,7 +58,7 @@ public class GiveCommand implements Callable<Integer> {
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         InventoryComponent inventoryComponent = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
         int chestInventoryId = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
-        int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry());
+        int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry(), UUID.randomUUID());
         try {
             masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
             byte[] inventoryBytes = InventorySerializer.toBytes(masterCommand.getWorld(), inventoryComponent);

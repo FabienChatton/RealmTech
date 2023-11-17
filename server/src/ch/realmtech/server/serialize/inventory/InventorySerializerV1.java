@@ -11,6 +11,7 @@ import com.artemis.World;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class InventorySerializerV1 implements InventorySerializer {
@@ -72,7 +73,7 @@ public class InventorySerializerV1 implements InventorySerializer {
                     ItemRegisterEntry itemRegisterEntry = itemsRegistry[index];
                     if (itemRegisterEntry != null) {
                         for (int n = 0; n < itemsNumber[index]; n++) {
-                            int itemId = itemManager.newItemInventory(itemRegisterEntry);
+                            int itemId = itemManager.newItemInventory(itemRegisterEntry, UUID.randomUUID());
                             inventory[index][n] = itemId;
                         }
                     }

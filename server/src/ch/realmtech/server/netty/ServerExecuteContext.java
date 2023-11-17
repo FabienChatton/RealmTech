@@ -90,9 +90,9 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void inventoryMoveItems(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
+    public void moveStackToStackNumberRequest(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            serverContext.getSystem(InventoryManager.class).moveInventory(srcInventory, dstInventory, itemsToMove, slotIndex);
+            serverContext.getSystem(InventoryManager.class).moveStackToStackRequest(srcInventory, dstInventory, itemsToMove, slotIndex);
         });
     }
 

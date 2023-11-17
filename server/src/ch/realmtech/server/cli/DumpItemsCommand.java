@@ -24,7 +24,8 @@ public class DumpItemsCommand implements Callable<Integer> {
         int[] itemsData = itemsEntities.getData();
         if (verbose) {
             for (int i = 0; i < itemsEntities.size(); i++) {
-                dumpCommand.masterCommand.output.println(ItemInfoHelper.dumpItem(dumpCommand.masterCommand.getWorld(), itemsData[i]));
+                int itemId = itemsData[i];
+                dumpCommand.masterCommand.output.println(ItemInfoHelper.dumpItem(dumpCommand.masterCommand.getWorld(), itemId));
             }
         }
         if (itemsEntities.size() == 0) dumpCommand.masterCommand.output.println("no items loaded");

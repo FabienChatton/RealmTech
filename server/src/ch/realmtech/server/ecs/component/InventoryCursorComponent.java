@@ -3,11 +3,11 @@ package ch.realmtech.server.ecs.component;
 import com.artemis.Component;
 import com.artemis.annotations.EntityId;
 
-public class ChestComponent extends Component {
+public class InventoryCursorComponent extends Component {
     @EntityId
     private int inventoryId;
 
-    public ChestComponent set(int inventoryId) {
+    public InventoryCursorComponent set(int inventoryId) {
         this.inventoryId = inventoryId;
         return this;
     }

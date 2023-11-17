@@ -17,7 +17,7 @@ public interface ServerExecute {
 
     void consoleCommande(Channel clientChannel, String stringCommande);
 
-    void inventoryMoveItems(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex);
+    void moveStackToStackNumberRequest(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex);
 
     void getInventory(Channel clientChannel, UUID inventoryUuid);
 }

@@ -121,7 +121,6 @@ public class PlayerInventorySystem extends BaseSystem {
         inventoryWindow.setBounds((inventoryStage.getWidth() - with) / 2, (inventoryStage.getHeight() - height) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
-        this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world);
         blurShader = new BlurShader();
         grayShader = new GrayShader();
         inventoryWindow.setColor(Color.WHITE);
@@ -271,5 +270,9 @@ public class PlayerInventorySystem extends BaseSystem {
         nombreItem.setFontScale(0.5f);
         nombreItem.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
+    }
+
+    public void createClickAndDrop(int playerId) {
+        this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world, playerId);
     }
 }

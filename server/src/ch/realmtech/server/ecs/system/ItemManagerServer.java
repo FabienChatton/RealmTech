@@ -34,18 +34,19 @@ public class ItemManagerServer extends ItemManager {
     private Archetype defaultItemInventoryArchetype;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     @Override
     protected void initialize() {
         super.initialize();
-        defaultItemGroundArchetype = new ArchetypeBuilder()
-                .add(ItemComponent.class)
-                .add(PositionComponent.class)
-                .add(Box2dComponent.class)
-                .build(world);
         defaultItemInventoryArchetype = new ArchetypeBuilder()
                 .add(ItemComponent.class)
+                .add(UuidComponent.class)
+                .build(world);
+        defaultItemGroundArchetype = new ArchetypeBuilder(defaultItemInventoryArchetype)
+                .add(PositionComponent.class)
+                .add(Box2dComponent.class)
                 .build(world);
     }
 
@@ -55,13 +56,12 @@ public class ItemManagerServer extends ItemManager {
      * @param worldPosX         La position X dans le monde du nouvel item.
      * @param worldPosY         La position Y dans le monde du nouvel item.
      * @param itemRegisterEntry Le register qui permettra de créer l'item.
+     * @param itemUuid
      * @return
      */
     @Override
-    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
-        ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
+    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
+        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
         ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
         serverContext.getEcsEngineServer().nextTickSchedule(10, () -> {
             world.edit(itemId).create(ItemPickableComponent.class);
@@ -70,16 +70,15 @@ public class ItemManagerServer extends ItemManager {
     }
 
     @Override
-    public int newItemInventory(ItemRegisterEntry itemRegisterEntry) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype);
-        ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
+    public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
+        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
+        mUuid.get(itemId).set(UUID.randomUUID());
         return itemId;
     }
 
     public void playerPickUpItem(int itemId, int playerId) {
-        ItemComponent itemComponent = mItem.get(itemId);
-        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(itemComponent.uuid));
+        UuidComponent uuidComponent = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemId);
+        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(uuidComponent.getUuid()));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
@@ -95,8 +94,7 @@ public class ItemManagerServer extends ItemManager {
         int[] itemData = itemEntities.getData();
         for (int i = 0; i < itemEntities.size(); i++) {
             int itemId = itemData[i];
-            ItemComponent itemComponent = mItem.get(itemId);
-            if (uuid.equals(itemComponent.uuid)) {
+            if (uuid.equals(mUuid.get(itemId).getUuid())) {
                 return itemId;
             }
         }

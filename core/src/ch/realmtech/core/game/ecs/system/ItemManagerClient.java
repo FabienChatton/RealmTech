@@ -4,15 +4,9 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ctrl.ItemManagerCommun;
-import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.component.TextureComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.registery.ItemRegisterEntry;
-import com.artemis.Archetype;
-import com.artemis.ArchetypeBuilder;
-import com.artemis.Aspect;
-import com.artemis.ComponentMapper;
+import com.artemis.*;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -37,21 +31,21 @@ public class ItemManagerClient extends ItemManager {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<TextureComponent> mTexture;
+    private ComponentMapper<UuidComponent> mUuid;
     private Archetype defaultItemGroundArchetype;
     private Archetype defaultItemInventoryArchetype;
 
     @Override
     protected void initialize() {
         super.initialize();
-        defaultItemGroundArchetype = new ArchetypeBuilder()
-                .add(ItemComponent.class)
-                .add(PositionComponent.class)
-                .add(Box2dComponent.class)
-                .add(TextureComponent.class)
-                .build(world);
         defaultItemInventoryArchetype = new ArchetypeBuilder()
                 .add(ItemComponent.class)
                 .add(TextureComponent.class)
+                .add(UuidComponent.class)
+                .build(world);
+        defaultItemGroundArchetype = new ArchetypeBuilder(defaultItemInventoryArchetype)
+                .add(PositionComponent.class)
+                .add(Box2dComponent.class)
                 .build(world);
     }
 
@@ -59,18 +53,19 @@ public class ItemManagerClient extends ItemManager {
         IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
         int[] itemsData = items.getData();
         for (int i = 0; i < items.size(); i++) {
-            if (mItem.get(itemsData[i]).uuid.equals(itemUuid)) {
-                return itemsData[i];
+            int itemId = itemsData[i];
+            if (mUuid.get(itemId).getUuid().equals(itemUuid)) {
+                return itemId;
             }
         }
         return -1;
     }
     
     public int newItemOnGround(float worldPosX, float worldPosY, UUID itemUuid, ItemRegisterEntry itemRegisterEntry) {
-        final int itemId = newItemOnGround(worldPosX, worldPosY, itemRegisterEntry);
+        final int itemId = newItemOnGround(worldPosX, worldPosY, itemRegisterEntry, itemUuid);
         ItemComponent itemComponent = mItem.get(itemId);
         TextureComponent textureComponent = mTexture.get(itemId);
-        itemComponent.set(itemRegisterEntry, itemUuid);
+        itemComponent.set(itemRegisterEntry);
         float widthWorld = textureComponent.texture.getRegionWidth() / RealmTech.PPM;
         float heightWorld = textureComponent.texture.getRegionHeight() / RealmTech.PPM;
         ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, widthWorld, heightWorld);
@@ -78,9 +73,10 @@ public class ItemManagerClient extends ItemManager {
     }
 
     @Override
-    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype);
-        TextureComponent textureComponent = world.edit(itemId).create(TextureComponent.class);
+    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
+        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
+        EntityEdit edit = world.edit(itemId);
+        TextureComponent textureComponent = edit.create(TextureComponent.class);
         textureComponent.set(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()));
         textureComponent.scale = RealmTech.UNITE_SCALE;
         return itemId;
@@ -101,8 +97,7 @@ public class ItemManagerClient extends ItemManager {
         int item = -1;
         for (int i = 0; i < items.size(); i++) {
             int itemId = items.get(i);
-            ItemComponent itemComponent = mItem.get(itemId);
-            if (itemComponent.uuid.equals(uuid)) {
+            if (mUuid.get(itemId).getUuid().equals(uuid)) {
                 item = itemId;
                 break;
             }
@@ -115,10 +110,10 @@ public class ItemManagerClient extends ItemManager {
     }
 
     @Override
-    public int newItemInventory(ItemRegisterEntry itemRegisterEntry) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype);
+    public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
+        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
-        itemComponent.set(itemRegisterEntry, UUID.randomUUID());
+        itemComponent.set(itemRegisterEntry);
         return itemId;
     }
 }

@@ -47,8 +47,13 @@ public class ClientExecuteContext implements ClientExecute {
         context.getSystem(InventoryManager.class).createChest(playerId, inventoryFromBytes.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         // crafting table
         context.getSystem(InventoryManager.class).createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
+        // inventory cursor
+        context.getSystem(InventoryManager.class).createCursorInventory(playerId, connexionJoueurReussitArg.inventoryCursorUuid(), 1, 1);
 
-        Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
+        Gdx.app.postRunnable(() -> {
+            context.getSystem(PlayerInventorySystem.class).createClickAndDrop(playerId);
+            context.setScreen(ScreenType.GAME_SCREEN);
+        });
     }
 
     @Override

@@ -6,10 +6,12 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
+import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.EntityEdit;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.IntBag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,8 @@ public class InventoryManager extends Manager {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
-    private ComponentMapper<ChestComponent> mChest;
+    private ComponentMapper<InventoryChestComponent> mChest;
+    private ComponentMapper<InventoryCursorComponent> mCursor;
     private ComponentMapper<UuidComponent> mUuid;
 
     public boolean addItemToInventory(int inventoryId, int itemId) {
@@ -310,6 +313,27 @@ public class InventoryManager extends Manager {
     }
 
     /**
+     * Get entity with a inventory component who this inventory has this stack
+     * @param srcStack The stack to search with inventory
+     * @return the entity id who as this stack or -1 if not found.
+     */
+    public int getInventoryByStack(int[] srcStack) {
+        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
+        int[] inventoryData = inventoryEntities.getData();
+        for (int i = 0; i < inventoryEntities.size(); i++) {
+            int inventoryId = inventoryData[i];
+            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+            int[][] inventory = inventoryComponent.inventory;
+            for (int[] stack : inventory) {
+                if (stack == srcStack) {
+                    return inventoryId;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Give the {@link InventoryComponent} who has this {@link UuidComponent}.
      * @param uuid The uuid value to test with
      * @return The corresponding inventory id or null if none inventory has this {@link UuidComponent#uuid}.
@@ -329,8 +353,7 @@ public class InventoryManager extends Manager {
             System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
         }
     }
-
-    public synchronized void moveInventory(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {
+    public void moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {
         int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
         int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
         if (srcInventoryId == -1){
@@ -344,10 +367,12 @@ public class InventoryManager extends Manager {
         }
 
         int[] itemsSrcId = new int[itemsToMove.length];
-        for (UUID playerUuid : itemsToMove) {
-            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(playerUuid);
+        for (int i = 0; i < itemsToMove.length; i++) {
+            UUID itemUuid = itemsToMove[i];
+            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(itemUuid);
+            itemsSrcId[i] = itemId;
             if (itemId == -1) {
-                logger.warn("The item id {} was not found", playerUuid);
+                logger.warn("The item id {} was not found", itemUuid);
                 return;
             }
         }
@@ -370,58 +395,24 @@ public class InventoryManager extends Manager {
             logger.warn("slot item is out of bound");
             return;
         }
-        moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
+        moveStackToStack(itemsSrcId, dstInventory[slotIndex]);
 
 
     }
 
-    /**
-     * Create a fully inventory.
-     * @param entityId The entity to add the inventory component.
-     * @param inventory
-     * @param numberOfSlotParRow
-     * @param numberOfRow
-     * @param backgroundTextureName
-     * @return The inventory newly created.
-     */
-    @Deprecated
-    public InventoryComponent createInventoryComponent(int entityId, int[][] inventory, UUID uuid, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
-        InventoryComponent inventoryComponent = world.edit(entityId).create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow, backgroundTextureName);
-        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(uuid, entityId);
-        return inventoryComponent;
-    }
+    public int createCursorInventory(int motherEntity, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
+        int inventoryId = world.create();
+        world.edit(motherEntity).create(InventoryCursorComponent.class).set(inventoryId);
 
-    /**
-     * Create a empty inventory with a random uuid.
-     * @param entityId The entity to add the inventory component.
-     * @param numberOfSlotParRow
-     * @param numberOfRow
-     * @param backgroundTextureName
-     * @return The inventory newly created.
-     */
-    @Deprecated
-    public InventoryComponent createInventoryComponent(int entityId, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
-        return createInventoryComponent(entityId, UUID.randomUUID(), numberOfSlotParRow, numberOfRow, backgroundTextureName);
-    }
-
-    /**
-     * Create a empty inventory.
-     * @param entityId The entity to add the inventory component.
-     * @param numberOfSlotParRow
-     * @param numberOfRow
-     * @param backgroundTextureName
-     * @return The inventory newly created.
-     */
-    @Deprecated
-    public InventoryComponent createInventoryComponent(int entityId, UUID uuid, int numberOfSlotParRow, int numberOfRow, String backgroundTextureName) {
-        InventoryComponent inventoryComponent = world.edit(entityId).create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow, backgroundTextureName);
-        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(uuid, entityId);
-        return inventoryComponent;
+        EntityEdit inventoryEdit = world.edit(inventoryId);
+        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        inventoryEdit.create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow);
+        return inventoryId;
     }
 
     public int createChest(int motherEntity, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
-        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
+        world.edit(motherEntity).create(InventoryChestComponent.class).set(inventoryId);
 
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
@@ -429,10 +420,9 @@ public class InventoryManager extends Manager {
         inventoryEdit.create(InventoryUiComponent.class).set();
         return inventoryId;
     }
-
     public int createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
-        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
+        world.edit(motherEntity).create(InventoryChestComponent.class).set(inventoryId);
 
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
@@ -440,6 +430,7 @@ public class InventoryManager extends Manager {
         inventoryEdit.create(InventoryUiComponent.class).set();
         return inventoryId;
     }
+
     /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
         int craftingInventoryId = world.create();
@@ -462,8 +453,11 @@ public class InventoryManager extends Manager {
     public InventoryComponent getChestInventory(int motherEntity) {
         return mInventory.get(mChest.get(motherEntity).getInventoryId());
     }
+    public InventoryComponent getCursorInventory(int motherEntity) {
+        return mInventory.get(mCursor.get(motherEntity).getInventoryId());
+    }
+
     public int getChestInventoryId(int motherEntity) {
         return mChest.get(motherEntity).getInventoryId();
     }
-
 }

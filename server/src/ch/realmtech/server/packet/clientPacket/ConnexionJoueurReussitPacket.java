@@ -27,11 +27,13 @@ public class ConnexionJoueurReussitPacket implements ClientPacket {
         UUID inventoryUuid = ByteBufferHelper.readUUID(byteBuf);
         UUID inventoryCraftUuid = ByteBufferHelper.readUUID(byteBuf);
         UUID inventoryCraftResultUuid = ByteBufferHelper.readUUID(byteBuf);
+        UUID inventoryCursorUuid = ByteBufferHelper.readUUID(byteBuf);
         connexionJoueurReussitArg = new ConnexionJoueurReussitArg(x, y, playerUuid,
                 inventory,
                 inventoryUuid,
                 inventoryCraftUuid,
-                inventoryCraftResultUuid
+                inventoryCraftResultUuid,
+                inventoryCursorUuid
         );
     }
 
@@ -50,16 +52,18 @@ public class ConnexionJoueurReussitPacket implements ClientPacket {
         ByteBufferHelper.writeUUID(byteBuf, connexionJoueurReussitArg.inventoryUuid);
         ByteBufferHelper.writeUUID(byteBuf, connexionJoueurReussitArg.inventoryCraftUuid);
         ByteBufferHelper.writeUUID(byteBuf, connexionJoueurReussitArg.inventoryCraftResultUuid);
+        ByteBufferHelper.writeUUID(byteBuf, connexionJoueurReussitArg.inventoryCursorUuid);
     }
 
     public record ConnexionJoueurReussitArg(float x, float y, UUID playerUuid,
             byte[] inventoryBytes,
             UUID inventoryUuid,
             UUID inventoryCraftUuid,
-            UUID inventoryCraftResultUuid
+            UUID inventoryCraftResultUuid,
+            UUID inventoryCursorUuid
     ) { }
     @Override
     public int getSize() {
-        return Float.SIZE * 2 + Long.SIZE * 2 + Integer.SIZE + connexionJoueurReussitArg.inventoryBytes.length * Byte.SIZE + Long.SIZE * 2 * 2;
+        return Float.SIZE * 2 + Long.SIZE * 2 + Integer.SIZE + connexionJoueurReussitArg.inventoryBytes.length * Byte.SIZE + Long.SIZE * 2 * 4;
     }
 }

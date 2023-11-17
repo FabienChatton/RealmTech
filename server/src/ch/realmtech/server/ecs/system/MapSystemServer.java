@@ -1,9 +1,9 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
@@ -13,7 +13,6 @@ import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
-import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class MapSystemServer extends BaseSystem implements CellManager {
@@ -203,7 +203,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         int topCell = systemsAdminServer.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         if (topCell == -1) return;
         systemsAdminServer.mapManager.damneCell(chunk, topCell);
-        systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry);
+        systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
         serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
     }
 }

@@ -2,7 +2,9 @@ package ch.realmtech.server.ctrl;
 
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.component.Box2dComponent;
+import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ComponentMapper;
@@ -11,6 +13,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+
+import java.util.UUID;
 
 public class ItemManagerCommun {
     public static void setItemPositionAndPhysicBody(World world, com.badlogic.gdx.physics.box2d.World physicWorld, BodyDef bodyDef, FixtureDef fixtureDef, int itemId, float worldPosX, float worldPosY, float widthWorld, float heightWorld) {
@@ -25,13 +29,17 @@ public class ItemManagerCommun {
         );
     }
 
-    public static int createNewItem(World world, ItemRegisterEntry itemRegisterEntry, Archetype defaultItemGroundArchetype) {
-        final int itemId;
+    public static int createNewItem(World world, ItemRegisterEntry itemRegisterEntry, Archetype defaultItemGroundArchetype, UUID itemUuid) {
+        int itemId;
+        ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
+        ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         if (itemRegisterEntry.getArchetype() != null) {
             itemId = world.create(itemRegisterEntry.getArchetype());
         } else {
             itemId = world.create(defaultItemGroundArchetype);
         }
+        mItem.get(itemId).set(itemRegisterEntry);
+        mUuid.get(itemId).set(itemUuid);
         return itemId;
     }
 

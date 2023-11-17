@@ -2,10 +2,8 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.craft.CraftStrategy;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.TousLesJoueurPacket;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
@@ -98,6 +96,9 @@ public class PlayerManagerServer extends BaseSystem {
         int chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         InventoryComponent chestInventoryComponent = mInventory.get(chestId);
 
+        // inventory cursor
+        int inventoryCursorId = systemsAdminServer.inventoryManager.createCursorInventory(playerId, UUID.randomUUID(), 1, 1);
+
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
         movementComponent.set(10, 10);
@@ -118,7 +119,8 @@ public class PlayerManagerServer extends BaseSystem {
                 InventorySerializer.toBytes(world, chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
                 mUuid.get(craftingInventories[0]).getUuid(),
-                mUuid.get(craftingInventories[1]).getUuid()
+                mUuid.get(craftingInventories[1]).getUuid(),
+                mUuid.get(inventoryCursorId).getUuid()
         );
     }
 
