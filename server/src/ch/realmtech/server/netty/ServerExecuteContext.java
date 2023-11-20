@@ -2,6 +2,7 @@ package ch.realmtech.server.netty;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.commun.CanNotHandlerRequest;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.level.cell.BreakCell;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
@@ -92,12 +93,17 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void moveStackToStackNumberRequest(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            serverContext.getSystem(InventoryManager.class).moveStackToStackRequest(srcInventory, dstInventory, itemsToMove, slotIndex);
-            ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
-            InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(srcInventory));
-            InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(dstInventory));
-            serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), srcInventoryComponent)), clientChannel);
-            serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), dstInventoryComponent)), clientChannel);
+            try {
+                boolean itemMoved = serverContext.getSystem(InventoryManager.class).moveStackToStackRequest(srcInventory, dstInventory, itemsToMove, slotIndex);
+                if (!itemMoved) return;
+                ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
+                InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(srcInventory));
+                InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(dstInventory));
+                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), srcInventoryComponent)), clientChannel);
+                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), dstInventoryComponent)), clientChannel);
+            } catch (CanNotHandlerRequest e) {
+                clientChannel.writeAndFlush(new WriteToConsolePacket(e.getMessage()));
+            }
         });
     }
 

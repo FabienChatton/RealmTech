@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.craft.CraftStrategy;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.commun.CanNotHandlerRequest;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
@@ -353,17 +354,15 @@ public class InventoryManager extends Manager {
             System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
         }
     }
-    public void moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) {
+    public boolean moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) throws CanNotHandlerRequest {
         int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
         int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
         if (srcInventoryId == -1){
-            logger.warn("The src inventory {} was not found", srcInventoryId);
-            return;
+            throw new CanNotHandlerRequest("The src inventory: " + srcInventoryId + "  was not found");
         }
 
         if (dstInventoryId == -1){
-            logger.warn("The src inventory {} was not found", srcInventoryId);
-            return;
+            throw new CanNotHandlerRequest("The dst inventory: " + srcInventoryId + "  was not found");
         }
 
         int[] itemsSrcId = new int[itemsToMove.length];
@@ -372,8 +371,7 @@ public class InventoryManager extends Manager {
             int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(itemUuid);
             itemsSrcId[i] = itemId;
             if (itemId == -1) {
-                logger.warn("The item id {} was not found", itemUuid);
-                return;
+                throw new CanNotHandlerRequest("The item id: " + itemUuid + "  was not found");
             }
         }
 
@@ -383,21 +381,19 @@ public class InventoryManager extends Manager {
             if (srcStack == null) {
                 srcStack = stack;
             } else {
-                if (srcStack != stack) {
-                    logger.warn("Items are split between multiple stack");
-                    return;
-                }
+                throw new CanNotHandlerRequest("Items are split between multiple stack");
             }
         }
 
         int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
         if (slotIndex > dstInventory.length) {
-            logger.warn("slot item is out of bound");
-            return;
+            throw new CanNotHandlerRequest("slot item is out of bound");
         }
-        moveStackToStack(srcStack, dstInventory[slotIndex]);
-
-
+        if (srcStack != null) {
+            return moveStackToStack(srcStack, dstInventory[slotIndex]);
+        } else {
+            return false;
+        }
     }
 
     public int createCursorInventory(int motherEntity, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {

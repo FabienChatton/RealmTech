@@ -1,7 +1,10 @@
 package ch.realmtech.core.game.clickAndDrop;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.packet.serverPacket.MoveStackToStackPacket;
 import com.artemis.ComponentMapper;
@@ -60,18 +63,18 @@ public class ClickAndDrop2 {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (InventoryManager.tailleStack(clickAndDropActor.getStack()) == 0 || !destinations.contains(clickAndDropActorSrc, true)) {
-                    ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
-                    if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
-                        if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
-                            if (world.getSystem(InventoryManager.class).canMouveStack(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack())) {
-                                ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
-                                itemResultCraftComponent.pickEvent.pick(world);
-                                for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
-                                    world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
-                                }
-                            }
-                        }
-                    }
+//                    ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
+//                    if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
+//                        if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
+//                            if (world.getSystem(InventoryManager.class).canMouveStack(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack())) {
+//                                ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
+//                                itemResultCraftComponent.pickEvent.pick(world);
+//                                for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
+//                                    world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
+//                                }
+//                            }
+//                        }
+//                    }
                     if (button == Input.Buttons.LEFT) {
                         ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack());
                     } else if (button == Input.Buttons.RIGHT) {
