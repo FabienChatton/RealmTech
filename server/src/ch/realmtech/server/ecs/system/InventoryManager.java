@@ -32,6 +32,7 @@ public class InventoryManager extends Manager {
     private ComponentMapper<InventoryChestComponent> mChest;
     private ComponentMapper<InventoryCursorComponent> mCursor;
     private ComponentMapper<UuidComponent> mUuid;
+    private ComponentMapper<CraftingTableComponent> mCraftingTable;
 
     public boolean addItemToInventory(int inventoryId, int itemId) {
         return addItemToInventory(mInventory.get(inventoryId), itemId);
@@ -347,13 +348,15 @@ public class InventoryManager extends Manager {
     public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
         int inventoryId = getInventoryByUUID(inventoryUUID);
         if (inventoryId == -1) return;
+        int[][] inventory = mInventory.get(inventoryId).inventory;
+        removeInventory(inventory);
         Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
         int[][] newInventory = inventoryGet.apply(itemManager);
-        int[][] inventory = mInventory.get(inventoryId).inventory;
         for (int i = 0; i < inventory.length; i++) {
             System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
         }
     }
+
     public boolean moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) throws CanNotHandlerRequest {
         int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
         int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
@@ -381,7 +384,9 @@ public class InventoryManager extends Manager {
             if (srcStack == null) {
                 srcStack = stack;
             } else {
-                throw new CanNotHandlerRequest("Items are split between multiple stack");
+                if (stack != srcStack) {
+                    throw new CanNotHandlerRequest("Items are split between multiple stack");
+                }
             }
         }
 
@@ -390,7 +395,7 @@ public class InventoryManager extends Manager {
             throw new CanNotHandlerRequest("slot item is out of bound");
         }
         if (srcStack != null) {
-            return moveStackToStack(srcStack, dstInventory[slotIndex]);
+            return moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
         } else {
             return false;
         }
@@ -455,5 +460,23 @@ public class InventoryManager extends Manager {
 
     public int getChestInventoryId(int motherEntity) {
         return mChest.get(motherEntity).getInventoryId();
+    }
+
+    /**
+     * Get the craft inventory of the entity. Where the crafting happen. Must have {@link CraftingTableComponent}.
+     * @param motherEntity The mother entity must have crafting {@link CraftingTableComponent}.
+     * @return The inventory craft component of the crafting table.
+     */
+    public InventoryComponent getCraftingInventory(int motherEntity) {
+        return mInventory.get(mCraftingTable.get(motherEntity).craftingInventory);
+    }
+
+    /**
+     * Get the result inventory of the entity. Where the crafting result is. Must have {@link CraftingTableComponent}.
+     * @param motherEntity The mother entity must have crafting {@link CraftingTableComponent}.
+     * @return The inventory result component of the crafting table.
+     */
+    public InventoryComponent getCraftingResultInventory(int motherEntity) {
+        return mInventory.get(mCraftingTable.get(motherEntity).craftingResultInventory);
     }
 }

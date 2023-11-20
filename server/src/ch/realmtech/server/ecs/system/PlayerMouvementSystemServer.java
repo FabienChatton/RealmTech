@@ -9,7 +9,7 @@ import com.artemis.managers.TagManager;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
-@All(PlayerConnexionComponent.class)
+@All({PlayerConnexionComponent.class, MovementComponent.class})
 public class PlayerMouvementSystemServer extends IteratingSystem {
     @Wire
     private SystemsAdminServer systemsAdminServer;

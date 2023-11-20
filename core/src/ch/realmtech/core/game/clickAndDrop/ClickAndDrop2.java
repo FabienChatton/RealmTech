@@ -11,6 +11,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -76,7 +77,9 @@ public class ClickAndDrop2 {
 //                        }
 //                    }
                     if (button == Input.Buttons.LEFT) {
-                        ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack());
+                        if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) > 0) {
+                            ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack());
+                        }
                     } else if (button == Input.Buttons.RIGHT) {
                         int nombreADeplacer;
                         if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) == 1) {
@@ -86,7 +89,6 @@ public class ClickAndDrop2 {
                         }
                         ClickAndDrop2.this.moveStackToStackNumberSendRequest(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack(), nombreADeplacer);
                     }
-                    clickAndDropActor.act(Gdx.graphics.getDeltaTime());
                     event.getStage().mouseMoved(Gdx.input.getX(), Gdx.input.getY());
                     event.stop();
                     return true;

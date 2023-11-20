@@ -25,15 +25,17 @@ public interface InventorySerializer {
 
         return switch (version) {
             case 1 -> InventorySerializerImplementation.inventorySerializerV1.fromBytes(world, bytes);
+            case 2 -> InventorySerializerImplementation.inventorySerializerV2.fromBytes(world, bytes);
             default -> throw new IllegalStateException("Unexpected value: " + version + ". Cette version n'est pas implémentée");
         };
     }
 
     static byte[] toBytes(World world, InventoryComponent inventoryComponent) {
-        return InventorySerializerImplementation.inventorySerializerV1.toBytes(inventoryComponent, world);
+        return InventorySerializerImplementation.inventorySerializerV2.toBytes(inventoryComponent, world);
     }
 
     final class InventorySerializerImplementation {
         private static final InventorySerializer inventorySerializerV1 = new InventorySerializerV1();
+        private static final InventorySerializer inventorySerializerV2 = new InventorySerializerV2();
     }
 }

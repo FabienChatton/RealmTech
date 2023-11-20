@@ -19,6 +19,8 @@ import java.util.Optional;
 
 @All(CraftingTableComponent.class)
 public class CraftingPlayerSystem extends IteratingSystem {
+    @Wire
+    private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<CraftingComponent> mCrafting;
@@ -28,13 +30,19 @@ public class CraftingPlayerSystem extends IteratingSystem {
     protected void process(int entityId) {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
 
-        CraftResult craftResult = getCraft(craftingTableComponent);
-        craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(world, craftResult, entityId);
+        CraftResult craftResult = getCraft(entityId);
+        if (craftingTableComponent.getCraftResultStrategy() != null) {
+            craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(world, craftResult, entityId);
+        }
     }
 
-    public CraftResult getCraft(CraftingTableComponent craftingTableComponent) {
-        InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
+    public CraftResult getCraft(int craftingTableEntity) {
+        CraftingTableComponent craftingTableComponent = mCraftingTable.get(craftingTableEntity);
+        InventoryComponent inventoryCraftComponent = systemsAdminServer.inventoryManager.getCraftingInventory(craftingTableEntity);
         CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
+        if (inventoryCraftComponent == null || inventoryCraftComponent.inventory == null) {
+            return null;
+        }
         int[][] inventoryCraft = inventoryCraftComponent.inventory;
         ItemRegisterEntry[] itemRegister = new ItemRegisterEntry[inventoryCraft.length];
         for (int i = 0; i < inventoryCraft.length; i++) {
