@@ -1,13 +1,13 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
-import ch.realmtech.server.ecs.component.CraftingTableComponent;
-import ch.realmtech.server.ecs.component.CraftingComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -16,15 +16,19 @@ import com.artemis.systems.IteratingSystem;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @All(CraftingTableComponent.class)
 public class CraftingPlayerSystem extends IteratingSystem {
     @Wire
     private SystemsAdminServer systemsAdminServer;
+    @Wire(name = "serverContext")
+    private ServerContext serverContext;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<CraftingComponent> mCrafting;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
+    private ComponentMapper<UuidComponent> mUuid;
 
     @Override
     protected void process(int entityId) {
@@ -32,7 +36,10 @@ public class CraftingPlayerSystem extends IteratingSystem {
 
         CraftResult craftResult = getCraft(entityId);
         if (craftingTableComponent.getCraftResultStrategy() != null) {
-            craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(world, craftResult, entityId);
+            if (craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(serverContext, world, craftResult, entityId)) {
+                UUID uuid = mUuid.get(craftingTableComponent.craftingResultInventory).getUuid();
+                serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(uuid, InventorySerializer.toBytes(world, mInventory.get(craftingTableComponent.craftingResultInventory))));
+            }
         }
     }
 

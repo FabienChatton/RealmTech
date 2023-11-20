@@ -1,5 +1,6 @@
 package ch.realmtech.server.craft;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
@@ -10,16 +11,16 @@ import com.artemis.World;
 import java.util.UUID;
 
 public interface CraftStrategy {
-    void consumeCraftingStrategy(World world, CraftResult craftResult, int id);
+    boolean consumeCraftingStrategy(ServerContext serverContext, World world, CraftResult craftResult, int id);
 
     static CraftStrategy craftingStrategyCraftingTable() {
-        return (world, craftResult, id) -> {
+        return (serverContext, world, craftResult, id) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
             ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
             CraftingTableComponent craftingTableComponent = mCraftingTable.get(id);
+            InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
             if (craftResult != null) {
-                InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
                 InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
                 if (isModifierStackItemResultCraftingTable(craftResult, mItem, inventoryResultComponent)) {
                     world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);
@@ -28,15 +29,20 @@ public interface CraftStrategy {
                         world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(inventoryCraftComponent));
                         world.getSystem(InventoryManager.class).addItemToStack(inventoryResultComponent.inventory[0], nouvelItemResult);
                     }
+                    return true;
                 }
             } else {
-                world.getSystem(InventoryManager.class).removeInventory(mInventory.get(craftingTableComponent.craftingResultInventory).inventory);
+                if (InventoryManager.tailleStack(inventoryResultComponent.inventory[0]) > 0) {
+                    world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);
+                    return true;
+                }
             }
+            return false;
         };
     }
 
     static CraftStrategy craftingStrategyFurnace() {
-        return (world, craftResult, id) -> {
+        return (serverContext, world, craftResult, id) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
             ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
@@ -82,6 +88,7 @@ public interface CraftStrategy {
                     }
                 }
             }
+            return false;
         };
     }
 
