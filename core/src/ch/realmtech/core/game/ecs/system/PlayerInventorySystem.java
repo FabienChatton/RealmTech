@@ -42,6 +42,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<ItemStoredComponent> mStoredItem;
     private ComponentMapper<InventoryComponent> mInventory;
+    private ComponentMapper<InventoryUiComponent> mInventoryUi;
     private ComponentMapper<ItemResultCraftComponent> mItemResultCraft;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private Stage inventoryStage;
@@ -187,10 +188,10 @@ public class PlayerInventorySystem extends BaseSystem {
 
             int playerId = context.getSystem(PlayerManagerClient.class).getMainPlayer();
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(systemsAdminClient.inventoryManager.getChestInventory(playerId), playerInventory).build(),
-                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingInventory), craftingInventory)
+                    DisplayInventoryArgs.builder(systemsAdminClient.inventoryManager.getChestInventoryId(playerId), playerInventory).build(),
+                    DisplayInventoryArgs.builder(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingInventory, craftingInventory)
                             .build(),
-                    DisplayInventoryArgs.builder(mInventory.get(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingResultInventory), craftingResultInventory)
+                    DisplayInventoryArgs.builder(mCraftingTable.get(systemsAdminClient.playerManagerClient.getMainPlayer()).craftingResultInventory, craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
             });
@@ -226,21 +227,24 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void displayInventory(DisplayInventoryArgs displayInventoryArgs) {
-        Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryComponent(), inventoryStage, displayInventoryArgs.clickAndDropSrc(), displayInventoryArgs.clickAndDropDst());
+        InventoryComponent inventoryComponent = mInventory.get(displayInventoryArgs.inventoryId());
+        Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryId(), inventoryStage, displayInventoryArgs.clickAndDropSrc(), displayInventoryArgs.clickAndDropDst());
         for (int i = 0; i < tableImages.size; i++) {
-            if (i % displayInventoryArgs.inventoryComponent().numberOfSlotParRow == 0) {
+            if (i % inventoryComponent.numberOfSlotParRow == 0) {
                 displayInventoryArgs.inventoryTable().row();
             }
             displayInventoryArgs.inventoryTable().add(tableImages.get(i));
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(InventoryComponent inventoryComponent, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst) {
+    public Array<Table> createItemSlotsToDisplay(int inventoryId, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst) {
         final Array<Table> tableImages = new Array<>();
+        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+        InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
         for (int[] stack : inventory) {
             final Table tableImage = new Table();
-            final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
+            final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
             tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
             final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage);
             curentClickAndDropActors.add(clickAndDropActor);
@@ -255,10 +259,11 @@ public class PlayerInventorySystem extends BaseSystem {
         return tableImages;
     }
 
-    public Table createItemSlotToDisplay(int[] stack, InventoryComponent inventoryComponent) {
+    public Table createItemSlotToDisplay(int[] stack, int inventoryId) {
         Image image = new Image();
         Label nombreItem = new Label(null, context.getSkin());
-        final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryComponent.backgroundTexture);
+        InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryId);
+        final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
         if (mItem.has(stack[0])) {
             image.setDrawable(new TextureRegionDrawable(mItem.get(stack[0]).itemRegisterEntry.getTextureRegion(context.getTextureAtlas())));
             nombreItem.setText(Integer.toString(InventoryManager.tailleStack(stack)));

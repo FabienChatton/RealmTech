@@ -400,8 +400,9 @@ public class InventoryManager extends Manager {
             if (canMouveStack(srcStack, dstStack)) {
                 int itemCraftResultTemoin = srcStack[0];
                 if (mItemResult.has(itemCraftResultTemoin)) {
+                    if (itemsToMove.length < tailleStack(srcStack)) throw new IllegalAccessError("The craft result can only be fully moved");
                     ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(itemCraftResultTemoin);
-                     mutatedInventories = itemResultCraftComponent.pickEvent.pick(world);
+                    mutatedInventories = itemResultCraftComponent.pickEvent.pick(world);
                     for (int i = 0; i < InventoryManager.tailleStack(srcStack); i++) {
                         world.edit(srcStack[i]).remove(ItemResultCraftComponent.class);
                     }
@@ -466,8 +467,9 @@ public class InventoryManager extends Manager {
     }
 
     public InventoryComponent getChestInventory(int motherEntity) {
-        return mInventory.get(mChest.get(motherEntity).getInventoryId());
+        return mInventory.get(getChestInventoryId(motherEntity));
     }
+
     public InventoryComponent getCursorInventory(int motherEntity) {
         return mInventory.get(mCursor.get(motherEntity).getInventoryId());
     }

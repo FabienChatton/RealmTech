@@ -6,36 +6,17 @@ public class InventoryComponent extends Component {
     public final static int DEFAULT_STACK_LIMITE = 64;
     public final static int DEFAULT_NUMBER_OF_ROW = 4;
     public final static int DEFAULT_NUMBER_OF_SLOT_PAR_ROW = 9;
-    @Deprecated
-    public final static String DEFAULT_BACKGROUND_TEXTURE_NAME = "inventory-02";
-    @Deprecated
-    public final static String NO_BACKGROUND_TEXTURE_NAME = "no-texture";
 
     public int[][] inventory;
     public int stackLimite;
     public int numberOfRow;
     public int numberOfSlotParRow;
-    @Deprecated
-    public String backgroundTexture;
 
-    @Deprecated
-    public InventoryComponent set(int[][] inventory, int numberOfSlotParRow, int numberOfRow, @Deprecated String backgroundTextureName) {
+    public InventoryComponent set(int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
         this.stackLimite = DEFAULT_STACK_LIMITE;
         this.numberOfRow = numberOfRow;
         this.numberOfSlotParRow = numberOfSlotParRow;
         this.inventory = inventory;
-        this.backgroundTexture = backgroundTextureName;
-        return this;
-    }
-
-    @Deprecated
-    public InventoryComponent set(int numberOfSlotParRow, int numberOfRow, @Deprecated String backgroundTextureName) {
-        set(new int[numberOfSlotParRow * numberOfRow][DEFAULT_STACK_LIMITE], numberOfSlotParRow, numberOfRow, backgroundTextureName);
-        return this;
-    }
-
-    public InventoryComponent set(int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
-        set(inventory, numberOfSlotParRow, numberOfRow, DEFAULT_BACKGROUND_TEXTURE_NAME);
         return this;
     }
 
@@ -46,6 +27,6 @@ public class InventoryComponent extends Component {
 
     @Override
     public String toString() {
-        return String.format("row: %d, column: %d, backgroundTexture: %s", numberOfRow, numberOfSlotParRow, backgroundTexture);
+        return String.format("row: %d, column: %d", numberOfRow, numberOfSlotParRow);
     }
 }

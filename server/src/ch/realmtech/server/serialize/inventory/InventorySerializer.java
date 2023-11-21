@@ -24,7 +24,6 @@ public interface InventorySerializer {
         int version = byteBuffer.getInt();
 
         return switch (version) {
-            case 1 -> InventorySerializerImplementation.inventorySerializerV1.fromBytes(world, bytes);
             case 2 -> InventorySerializerImplementation.inventorySerializerV2.fromBytes(world, bytes);
             default -> throw new IllegalStateException("Unexpected value: " + version + ". Cette version n'est pas implémentée");
         };
@@ -35,7 +34,6 @@ public interface InventorySerializer {
     }
 
     final class InventorySerializerImplementation {
-        private static final InventorySerializer inventorySerializerV1 = new InventorySerializerV1();
         private static final InventorySerializer inventorySerializerV2 = new InventorySerializerV2();
     }
 }

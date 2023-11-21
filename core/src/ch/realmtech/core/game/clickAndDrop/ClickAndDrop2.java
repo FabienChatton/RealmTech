@@ -11,7 +11,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -64,22 +63,8 @@ public class ClickAndDrop2 {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (InventoryManager.tailleStack(clickAndDropActor.getStack()) == 0 || !destinations.contains(clickAndDropActorSrc, true)) {
-//                    ComponentMapper<ItemResultCraftComponent> mItemResult = world.getMapper(ItemResultCraftComponent.class);
-//                    if (mItemResult.has(clickAndDropActorSrc.getStack()[0])) {
-//                        if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
-//                            if (world.getSystem(InventoryManager.class).canMouveStack(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack())) {
-//                                ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(clickAndDropActorSrc.getStack()[0]);
-//                                itemResultCraftComponent.pickEvent.pick(world);
-//                                for (int i = 0; i < InventoryManager.tailleStack(clickAndDropActorSrc.getStack()); i++) {
-//                                    world.edit(clickAndDropActorSrc.getStack()[i]).remove(ItemResultCraftComponent.class);
-//                                }
-//                            }
-//                        }
-//                    }
                     if (button == Input.Buttons.LEFT) {
-                        if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) > 0) {
-                            ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack());
-                        }
+                        moveLeftClickStackToStack(clickAndDropActorSrc, clickAndDropActor.getStack());
                     } else if (button == Input.Buttons.RIGHT) {
                         int nombreADeplacer;
                         if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) == 1) {
@@ -87,7 +72,8 @@ public class ClickAndDrop2 {
                         } else {
                             nombreADeplacer = InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) / 2;
                         }
-                        ClickAndDrop2.this.moveStackToStackNumberSendRequest(clickAndDropActorSrc.getStack(), clickAndDropActor.getStack(), nombreADeplacer);
+                        moveRightStackToStackNumber(clickAndDropActorSrc, clickAndDropActor.getStack(), nombreADeplacer);
+
                     }
                     event.getStage().mouseMoved(Gdx.input.getX(), Gdx.input.getY());
                     event.stop();
@@ -98,6 +84,16 @@ public class ClickAndDrop2 {
         };
         clickAndDropActorSrc.addCaptureListener(listener);
         actors.add(clickAndDropActorSrc);
+    }
+
+    private void moveLeftClickStackToStack(ClickAndDropActor clickAndDropActorSrc, int[] dstStack) {
+        if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) > 0) {
+            ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActorSrc.getStack(), dstStack);
+        }
+    }
+
+    private void moveRightStackToStackNumber(ClickAndDropActor clickAndDropActorSrc, int[] dstStack, int number) {
+        ClickAndDrop2.this.moveStackToStackNumberSendRequest(clickAndDropActorSrc.getStack(), dstStack, number);
     }
 
     // depose un item

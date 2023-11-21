@@ -1,25 +1,51 @@
 package ch.realmtech.core.game.inventory;
 
-import ch.realmtech.server.ecs.component.InventoryComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-public record DisplayInventoryArgs(InventoryComponent inventoryComponent, Table inventoryTable, boolean clickAndDropSrc,
-                                   boolean clickAndDropDst) {
+public final class DisplayInventoryArgs {
+    private final int inventoryId;
+    private final Table inventoryTable;
+    private final boolean clickAndDropSrc;
+    private final boolean clickAndDropDst;
 
-    public static DisplayInventoryArgsBuilder builder(InventoryComponent inventoryComponent, Table inventoryTable) {
-        return new DisplayInventoryArgsBuilder(inventoryComponent, inventoryTable);
+    private DisplayInventoryArgs(int inventoryId, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst) {
+        this.inventoryId = inventoryId;
+        this.inventoryTable = inventoryTable;
+        this.clickAndDropSrc = clickAndDropSrc;
+        this.clickAndDropDst = clickAndDropDst;
     }
 
+    public static DisplayInventoryArgsBuilder builder(int inventoryId, Table inventoryTable) {
+        return new DisplayInventoryArgsBuilder(inventoryId, inventoryTable);
+    }
+
+    public int inventoryId() {
+        return inventoryId;
+    }
+
+    public Table inventoryTable() {
+        return inventoryTable;
+    }
+
+    public boolean clickAndDropSrc() {
+        return clickAndDropSrc;
+    }
+
+    public boolean clickAndDropDst() {
+        return clickAndDropDst;
+    }
+
+
     public static class DisplayInventoryArgsBuilder {
-        private InventoryComponent inventoryComponent;
+        private int inventoryId;
         private Table inventoryTable;
         private boolean clickAndDropSrc = true;
         private boolean clickAndDropDst = true;
         private boolean icon = false;
 
 
-        public DisplayInventoryArgsBuilder(InventoryComponent inventoryComponent, Table inventoryTable) {
-            this.inventoryComponent = inventoryComponent;
+        public DisplayInventoryArgsBuilder(int inventoryId, Table inventoryTable) {
+            this.inventoryId = inventoryId;
             this.inventoryTable = inventoryTable;
         }
 
@@ -41,7 +67,7 @@ public record DisplayInventoryArgs(InventoryComponent inventoryComponent, Table 
         }
 
         public DisplayInventoryArgs build() {
-            return new DisplayInventoryArgs(inventoryComponent, inventoryTable, clickAndDropSrc, clickAndDropDst);
+            return new DisplayInventoryArgs(inventoryId, inventoryTable, clickAndDropSrc, clickAndDropDst);
         }
     }
 }

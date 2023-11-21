@@ -47,9 +47,10 @@ public class ItemBarManager extends BaseSystem {
         itemBar.clear();
         int player = systemsAdminClient.playerManagerClient.getMainPlayer();
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
-        final InventoryComponent chestInventory = systemsAdminClient.inventoryManager.getChestInventory(player);
+        int chestInventoryId = systemsAdminClient.inventoryManager.getChestInventoryId(player);
+        InventoryComponent chestInventory = mInventory.get(chestInventoryId);
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
-            Table stackImage = systemsAdminClient.playerInventorySystem.createItemSlotToDisplay(chestInventory.inventory[i], chestInventory);
+            Table stackImage = systemsAdminClient.playerInventorySystem.createItemSlotToDisplay(chestInventory.inventory[i], chestInventoryId);
             if (j == slotSelected) {
                 final Image selectedSlot = new Image(new TextureRegionDrawable(context.getTextureAtlas().findRegion("inventory-01")));
                 selectedSlot.setScale(1.2f);
