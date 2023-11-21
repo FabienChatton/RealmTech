@@ -1,4 +1,4 @@
-package ch.realmtech.core.game.inventory;
+package ch.realmtech.server.inventory;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 

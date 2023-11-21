@@ -2,12 +2,23 @@ package ch.realmtech.server.mod;
 
 
 import ch.realmtech.server.ecs.component.CellBeingMineComponent;
+import ch.realmtech.server.ecs.component.CraftingTableComponent;
+import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
+import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemBehavior;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.registery.*;
+import com.artemis.ComponentMapper;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+
+import java.util.UUID;
+import java.util.function.Consumer;
 
 
 public class RealmTechCoreMod extends ModInitializerManager {
@@ -159,52 +170,47 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .placeCell("realmtech.planche")
                     .build()
     ));
-//    public final static CellItemRegisterEntry CRAFTING_TABLE = registerCellItem("craftingTable", new CellRegisterEntry(
-//            "table-craft-01",
-//            CellBehavior.builder(Cells.Layer.BUILD_DECO)
-//                    .breakWith(ItemType.TOUS, "realmtech.craftingTable")
-//                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-//                    .editEntity((world, cellId) -> {
-//                        int craftingInventory = world.create();
-//                        int craftingResultInventory = world.create();
-//                        world.edit(cellId).create(CraftingTableComponent.class).set(craftingInventory, craftingResultInventory, CraftStrategy.craftingStrategyCraftingTable());
-//                        world.edit(craftingInventory).create(InventoryComponent.class).set(3, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//                        world.edit(craftingResultInventory).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//                        world.edit(craftingInventory).create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventory);
-//                    })
-//                    .interagieClickDroit((world, cellId) -> {
-//                        ComponentMapper<CraftingTableComponent> mCrafting = world.getMapper(CraftingTableComponent.class);
-//                        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-//                        CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
-//                        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
-//                            final Table playerInventory = new Table(context.getSkin());
-//                            final Table craftingInventory = new Table(context.getSkin());
-//                            final Table craftingResultInventory = new Table(context.getSkin());
-//                            Consumer<Window> addTable = window -> {
-//                                Table craftingTable = new Table(context.getSkin());
-//                                craftingTable.add(craftingInventory).padRight(32f);
-//                                craftingTable.add(craftingResultInventory);
-//                                craftingTable.padBottom(10f);
-//                                window.add(craftingTable).row();
-//                                window.add(playerInventory);
-//                            };
-//                            InventoryComponent inventoryComponent = mInventory.get(context.getEcsEngine().getPlayerId());
-//                            InventoryComponent inventoryCraft = mInventory.get(craftingTableComponent.craftingInventory);
-//                            InventoryComponent inventoryResult = mInventory.get(craftingTableComponent.craftingResultInventory);
-//                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-//                                    DisplayInventoryArgs.builder(inventoryComponent, playerInventory).build(),
-//                                    DisplayInventoryArgs.builder(inventoryCraft, craftingInventory).build(),
-//                                    DisplayInventoryArgs.builder(inventoryResult, craftingResultInventory).notClickAndDropDst().build()
-//                            });
-//                        });
-//                    })
-//                    .build()
-//    ), new ItemRegisterEntry(
-//            "table-craft-01",
-//            ItemBehavior.builder()
-//                    .placeCell("realmtech.craftingTable")
-//                    .build()
-//    ));
+    public final static CellItemRegisterEntry CRAFTING_TABLE = registerCellItem("craftingTable", new CellRegisterEntry(
+            "table-craft-01",
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.TOUS, "realmtech.craftingTable")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .editEntity((world, cellId) -> {
+                        world.getSystem(InventoryManager.class).createCraftingTable(cellId, UUID.randomUUID(), 3, 3, UUID.randomUUID());
+                    })
+                    .interagieClickDroit((clientContext, cellId) -> {
+                        ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
+                        ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
+                        CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
+                        clientContext.openPlayerInventory(() -> {
+                            final Table playerInventory = new Table(clientContext.getSkin());
+                            final Table craftingInventory = new Table(clientContext.getSkin());
+                            final Table craftingResultInventory = new Table(clientContext.getSkin());
+                            Consumer<Window> addTable = window -> {
+                                Table craftingTable = new Table(craftingInventory.getSkin());
+                                craftingTable.add(craftingInventory).padRight(32f);
+                                craftingTable.add(craftingResultInventory);
+                                craftingTable.padBottom(10f);
+                                window.add(craftingTable).row();
+                                window.add(playerInventory);
+                            };
+                            int inventoryPlayerId = clientContext.getPlayerId();
+                            int inventoryCraftId = craftingTableComponent.craftingInventory;
+                            int inventoryResultId = craftingTableComponent.craftingResultInventory;
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
+                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryResultId, craftingResultInventory).notClickAndDropDst().build()
+                            });
+                        });
+                    })
+                    .build()
+    ), new ItemRegisterEntry(
+            "table-craft-01",
+            ItemBehavior.builder()
+                    .placeCell("realmtech.craftingTable")
+                    .build()
+    ));
 
 //    public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
 //            "chest-01",

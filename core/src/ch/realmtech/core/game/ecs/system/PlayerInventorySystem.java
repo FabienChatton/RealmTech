@@ -5,14 +5,14 @@ import ch.realmtech.core.game.clickAndDrop.ClickAndDrop2;
 import ch.realmtech.core.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.plgin.strategy.InGameSystemOnInventoryOpen;
-import ch.realmtech.core.game.inventory.AddAndDisplayInventoryArgs;
-import ch.realmtech.core.game.inventory.DisplayInventoryArgs;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.shader.BlurShader;
 import ch.realmtech.core.shader.GrayShader;
 import ch.realmtech.core.shader.Shaders;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
+import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.registery.RegistryEntry;
@@ -148,7 +148,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    private boolean openPlayerInventory(Function<RealmTech, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    public boolean openPlayerInventory(Function<RealmTech, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();

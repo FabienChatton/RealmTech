@@ -4,6 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
+import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -12,12 +13,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.UUID;
+
 public class PlayerInputSystem extends BaseSystem {
     @Wire(name = "context")
     private RealmTech context;
     @Wire
     private SystemsAdminClient systemsAdminClient;
     private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<ItemComponent> mItem;
 
     @Override
     protected void processSystem() {
@@ -37,11 +41,12 @@ public class PlayerInputSystem extends BaseSystem {
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             InfCellComponent infCellComponent = mCell.get(topCell);
             if (infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
-                infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(world, topCell);
+                infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(context, topCell);
             } else {
-                if (systemsAdminClient.mapManager.placeItemToBloc(context.getSystem(PlayerManagerClient.class).getMainPlayer(), Input.Buttons.RIGHT, infMapComponent.infChunks, gameCoordinate.x, gameCoordinate.y, systemsAdminClient.itemBarManager.getSelectItem())) {
-                    systemsAdminClient.inventoryManager.deleteOneItem(systemsAdminClient.itemBarManager.getSelectStack());
-                }
+                UUID playerUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(systemsAdminClient.playerManagerClient.getMainPlayer()).getUuid();
+                int selectItem = systemsAdminClient.itemBarManager.getSelectItem();
+                ItemComponent itemToMine = selectItem != 0 ? mItem.get(selectItem) : null;
+                systemsAdminClient.mapManager.placeItemToBloc(playerUuid, worldPosX, worldPosY, itemToMine);
             }
         }
     }

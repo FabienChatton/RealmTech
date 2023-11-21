@@ -2,6 +2,7 @@ package ch.realmtech.core;
 
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
+import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.game.netty.ClientExecuteContext;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.core.helper.Popup;
@@ -10,11 +11,14 @@ import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.core.sound.SoundManager;
+import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
+import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.serverPacket.DemandeDeConnexionJoueurPacket;
 import com.artemis.BaseSystem;
+import com.artemis.World;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -32,8 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
-public final class RealmTech extends Game{
+public final class RealmTech extends Game implements ClientContext {
     public final static float WORLD_WIDTH = 16f;
     public final static float WORLD_HEIGHT = 9f;
     public final static int SCREEN_WIDTH = 1024;
@@ -139,7 +144,22 @@ public final class RealmTech extends Game{
         return currentScreenType;
     }
 
-	public Skin getSkin() {
+    @Override
+    public World getWorld() {
+        return getEcsEngine().getWorld();
+    }
+
+    @Override
+    public int getPlayerId() {
+        return getSystem(PlayerManagerClient.class).getMainPlayer();
+    }
+
+    @Override
+    public void openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventorySupplier) {
+
+    }
+
+    public Skin getSkin() {
 		return skin;
 	}
 

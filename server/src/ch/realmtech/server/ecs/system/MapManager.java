@@ -157,7 +157,7 @@ public class MapManager extends Manager {
         throw new NoSuchElementException("Le chunk qui correspond à la cellule n'a pas été trouvé");
     }
 
-    public boolean placeItemToBloc(final int playerId, final int button, final int[] chunks, final float gameCoordinateX, final float gameCoordinateY, int selectedItem) {
+    public boolean placeItemToBloc(UUID playerUuid, int worldPosX, int worldPosY, ItemComponent itemForMine) {
 //        if (selectedItem > 0) {
 //            final ItemRegisterEntry selectedItemEntry = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()).itemRegisterEntry;
 //            if (selectedItemEntry.getItemBehavior().getPlaceCell() != null) {

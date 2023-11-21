@@ -148,6 +148,56 @@ joueur à quitter la partie. L'ECS contient :
 - le joueur
 - la sauvegarde
 
+### organisation des projets
+RealmTech est composé de 3 sous projets
+- core
+- server
+- desktop
+
+Le core est la partie comprenant la code pour la partie client, c'est ici
+qu'on trouve tout ce qui est texture ou interface graphique.
+
+Le server est la partie... serveur, il y a le code source du serveur et tout la partie
+en commun entre le client et le serveur. C'est ce sous projet qui est le plus gros de
+code source.
+
+Le desktop ne comporte que la class main pour lancer le jeu sur pc.
+
+Il y a le sous projet test, mais qui est utilisé que pour faire des test unitaires.
+
+```mermaid
+flowchart
+subgraph source
+    core
+    server
+    desktop
+end
+
+subgraph dependencies
+    LibGdx
+    LibGdxLwjgl
+    Netty
+    Artemis
+    Box2d
+    Picocli
+    DiscordRPC
+end
+
+core --> server
+desktop --> core
+
+server --> LibGdx
+server --> Netty
+server --> Artemis
+server --> Box2d
+server --> Picocli
+
+core --> DiscordRPC
+
+desktop --> LibGdxLwjgl
+```
+
+
 ### cellules
 Les cellules composent le monde. Elles sont divisées en plusieurs catégories
 en fonction de leur layer. Le layer représente le niveau où la cellule

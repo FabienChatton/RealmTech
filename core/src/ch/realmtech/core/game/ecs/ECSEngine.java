@@ -6,7 +6,10 @@ import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.plgin.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plgin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plgin.strategy.TickEmulationInvocationStrategy;
-import ch.realmtech.core.game.ecs.system.*;
+import ch.realmtech.core.game.ecs.system.CellBeingMineRenderSystem;
+import ch.realmtech.core.game.ecs.system.CellBeingMineSystem;
+import ch.realmtech.core.game.ecs.system.CellHoverEtWailaSystem;
+import ch.realmtech.core.game.ecs.system.PlayerInputSystem;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.server.ecs.system.SaveInfManager;
@@ -122,10 +125,6 @@ public final class ECSEngine implements Disposable {
 
     public World getWorld() {
         return world;
-    }
-
-    public void togglePlayerInventoryWindow() {
-        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(world.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
     }
 
     public int getMapId() {

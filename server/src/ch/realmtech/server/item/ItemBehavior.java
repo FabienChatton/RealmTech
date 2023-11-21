@@ -1,5 +1,6 @@
 package ch.realmtech.server.item;
 
+import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CellRegisterEntry;
 
 public class ItemBehavior {
@@ -63,7 +64,7 @@ public class ItemBehavior {
         }
 
         public ItemBehaviorBuilder placeCell(String cellRegistryName) {
-            // itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry();
+            itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry();
             return this;
         }
 
