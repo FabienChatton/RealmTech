@@ -8,6 +8,7 @@ public class ItemBehavior {
     private ItemType itemType;
     private float speedEffect;
     private CellRegisterEntry placeCell;
+    private String placeCellName;
     private int timeToBurn = 0;
     private boolean icon;
 
@@ -33,6 +34,9 @@ public class ItemBehavior {
     }
 
     public CellRegisterEntry getPlaceCell() {
+        if (placeCell == null) {
+            placeCell = RealmTechCoreMod.CELLS.get(placeCellName).getEntry();
+        }
         return placeCell;
     }
 
@@ -64,7 +68,7 @@ public class ItemBehavior {
         }
 
         public ItemBehaviorBuilder placeCell(String cellRegistryName) {
-            itemBehavior.placeCell = RealmTechCoreMod.CELLS.get(cellRegistryName).getEntry();
+            itemBehavior.placeCellName = cellRegistryName;
             return this;
         }
 
