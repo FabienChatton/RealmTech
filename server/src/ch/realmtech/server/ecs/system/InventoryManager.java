@@ -3,7 +3,6 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.craft.CraftStrategy;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.plugin.commun.CanNotHandlerRequest;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
@@ -33,6 +32,7 @@ public class InventoryManager extends Manager {
     private ComponentMapper<InventoryCursorComponent> mCursor;
     private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
+    private ComponentMapper<ItemResultCraftComponent> mItemResult;
 
     public boolean addItemToInventory(int inventoryId, int itemId) {
         return addItemToInventory(mInventory.get(inventoryId), itemId);
@@ -357,15 +357,15 @@ public class InventoryManager extends Manager {
         }
     }
 
-    public boolean moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) throws CanNotHandlerRequest {
+    public int[] moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) throws IllegalAccessError {
         int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
         int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
-        if (srcInventoryId == -1){
-            throw new CanNotHandlerRequest("The src inventory: " + srcInventoryId + "  was not found");
+        if (srcInventoryId == -1) {
+            throw new IllegalAccessError("The src inventory: " + srcInventoryId + "  was not found");
         }
 
-        if (dstInventoryId == -1){
-            throw new CanNotHandlerRequest("The dst inventory: " + srcInventoryId + "  was not found");
+        if (dstInventoryId == -1) {
+            throw new IllegalAccessError("The dst inventory: " + srcInventoryId + "  was not found");
         }
 
         int[] itemsSrcId = new int[itemsToMove.length];
@@ -374,7 +374,7 @@ public class InventoryManager extends Manager {
             int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(itemUuid);
             itemsSrcId[i] = itemId;
             if (itemId == -1) {
-                throw new CanNotHandlerRequest("The item id: " + itemUuid + "  was not found");
+                throw new IllegalAccessError("The item id: " + itemUuid + "  was not found");
             }
         }
 
@@ -385,19 +385,33 @@ public class InventoryManager extends Manager {
                 srcStack = stack;
             } else {
                 if (stack != srcStack) {
-                    throw new CanNotHandlerRequest("Items are split between multiple stack");
+                    throw new IllegalAccessError("Items are split between multiple stack");
                 }
             }
         }
 
         int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
         if (slotIndex > dstInventory.length) {
-            throw new CanNotHandlerRequest("slot item is out of bound");
+            throw new IllegalAccessError("slot item is out of bound");
         }
         if (srcStack != null) {
-            return moveStackToStackNumber(srcStack, dstInventory[slotIndex], itemsToMove.length);
+            int[] mutatedInventories = null;
+            int[] dstStack = dstInventory[slotIndex];
+            if (canMouveStack(srcStack, dstStack)) {
+                int itemCraftResultTemoin = srcStack[0];
+                if (mItemResult.has(itemCraftResultTemoin)) {
+                    ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(itemCraftResultTemoin);
+                     mutatedInventories = itemResultCraftComponent.pickEvent.pick(world);
+                    for (int i = 0; i < InventoryManager.tailleStack(srcStack); i++) {
+                        world.edit(srcStack[i]).remove(ItemResultCraftComponent.class);
+                    }
+                }
+            }
+            boolean inventoryMoved = moveStackToStackNumber(srcStack, dstStack, itemsToMove.length);
+            if (!inventoryMoved) throw new IllegalAccessError("move stack to stack has no effect");
+            return mutatedInventories;
         } else {
-            return false;
+            throw new IllegalAccessError("No inventory change");
         }
     }
 

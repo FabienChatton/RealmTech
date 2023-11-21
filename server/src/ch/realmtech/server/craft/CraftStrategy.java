@@ -21,12 +21,11 @@ public interface CraftStrategy {
             CraftingTableComponent craftingTableComponent = mCraftingTable.get(id);
             InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
             if (craftResult != null) {
-                InventoryComponent inventoryCraftComponent = mInventory.get(craftingTableComponent.craftingInventory);
                 if (isModifierStackItemResultCraftingTable(craftResult, mItem, inventoryResultComponent)) {
                     world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);
                     for (int i = 0; i < craftResult.getNombreResult(); i++) {
                         int nouvelItemResult = world.getSystem(ItemManagerServer.class).newItemInventory(craftResult.getItemRegisterEntry(), UUID.randomUUID());
-                        world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(inventoryCraftComponent));
+                        world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(craftingTableComponent.craftingInventory));
                         world.getSystem(InventoryManager.class).addItemToStack(inventoryResultComponent.inventory[0], nouvelItemResult);
                     }
                     return true;

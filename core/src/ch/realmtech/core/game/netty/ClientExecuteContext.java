@@ -10,7 +10,6 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.ClientPacket;
@@ -18,7 +17,6 @@ import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
-import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
@@ -128,12 +126,6 @@ public class ClientExecuteContext implements ClientExecute {
     public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
         context.nextFrame(() -> {
             context.getSystem(InventoryManager.class).setInventory(inventoryUUID, inventoryBytes);
-            ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class);
-            ComponentMapper<UuidComponent> mUuid = context.getEcsEngine().getWorld().getMapper(UuidComponent.class);
-            int mainInventoryId = context.getSystem(InventoryManager.class).getChestInventoryId(context.getSystem(PlayerManagerClient.class).getMainPlayer());
-            if (mUuid.get(mainInventoryId).getUuid().equals(inventoryUUID)) {
-                context.getEcsEngine().getSystem(PlayerInventorySystem.class).refreshInventory(context.getEcsEngine().getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer().apply(context));
-            }
         });
     }
 
