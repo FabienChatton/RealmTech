@@ -48,18 +48,6 @@ public class ItemManagerClient extends ItemManager {
                 .add(Box2dComponent.class)
                 .build(world);
     }
-
-    private int getItem(UUID itemUuid) {
-        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
-        int[] itemsData = items.getData();
-        for (int i = 0; i < items.size(); i++) {
-            int itemId = itemsData[i];
-            if (mUuid.get(itemId).getUuid().equals(itemUuid)) {
-                return itemId;
-            }
-        }
-        return -1;
-    }
     
     public int newItemOnGround(float worldPosX, float worldPosY, UUID itemUuid, ItemRegisterEntry itemRegisterEntry) {
         final int itemId = newItemOnGround(worldPosX, worldPosY, itemRegisterEntry, itemUuid);
@@ -83,7 +71,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     public void supprimeItemOnGround(UUID itemUuid) {
-        int item = getItem(itemUuid);
+        int item = systemsAdminClient.uuidComponentManager.getRegisteredComponent(itemUuid, ItemComponent.class);
         if (item == -1) return;
         if (mItem.has(item)) {
             Box2dComponent box2dComponent = mBox2d.get(item);

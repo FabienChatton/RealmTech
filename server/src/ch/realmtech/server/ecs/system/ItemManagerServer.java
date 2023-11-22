@@ -9,10 +9,8 @@ import ch.realmtech.server.packet.clientPacket.ItemOnGroundSupprimerPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
-import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -82,22 +80,5 @@ public class ItemManagerServer extends ItemManager {
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
-    }
-
-    /**
-     * Give the item id who as this uuid value.
-     * @param uuid The uuid value to test with
-     * @return The corresponding item id or -1 if none item has this uuid value.
-     */
-    public int getItemByUUID(UUID uuid) {
-        IntBag itemEntities = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class)).getEntities();
-        int[] itemData = itemEntities.getData();
-        for (int i = 0; i < itemEntities.size(); i++) {
-            int itemId = itemData[i];
-            if (uuid.equals(mUuid.get(itemId).getUuid())) {
-                return itemId;
-            }
-        }
-        return -1;
     }
 }

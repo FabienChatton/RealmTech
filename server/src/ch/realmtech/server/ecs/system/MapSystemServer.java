@@ -9,6 +9,7 @@ import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAReplacePacket;
+import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -205,5 +206,27 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         systemsAdminServer.mapManager.damneCell(chunk, topCell);
         systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
         serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
+    }
+
+    public CellRegisterEntry placeItemToBloc(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
+        int itemId = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
+        if (itemId == -1) return null;
+        ItemComponent itemComponent = mItem.get(itemId);
+        CellRegisterEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell();
+        if (placeCell == null) return null;
+
+        int chunkPosX = MapManager.getChunkPos(worldPosX);
+        int chunkPosY = MapManager.getChunkPos(worldPosY);
+
+        InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
+        int chunkId = systemsAdminServer.mapManager.getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
+
+        // can only place on item per layer
+        if (systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) != -1) {
+            return null;
+        }
+
+        systemsAdminServer.mapManager.newCellInChunk(chunkId, placeCell, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        return placeCell;
     }
 }

@@ -20,4 +20,6 @@ public interface ServerExecute {
     void moveStackToStackNumberRequest(Channel clientChannel, UUID srcInventory, UUID dstInventory, UUID[] itemsToMove, int slotIndex);
 
     void getInventory(Channel clientChannel, UUID inventoryUuid);
+
+    void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldX, int worldY);
 }

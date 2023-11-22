@@ -371,7 +371,7 @@ public class InventoryManager extends Manager {
         int[] itemsSrcId = new int[itemsToMove.length];
         for (int i = 0; i < itemsToMove.length; i++) {
             UUID itemUuid = itemsToMove[i];
-            int itemId = world.getSystem(ItemManagerServer.class).getItemByUUID(itemUuid);
+            int itemId = systemsAdminCommun.uuidComponentManager.getRegisteredComponent(itemUuid, ItemComponent.class);
             itemsSrcId[i] = itemId;
             if (itemId == -1) {
                 throw new IllegalAccessError("The item id: " + itemUuid + "  was not found");

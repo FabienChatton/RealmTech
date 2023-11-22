@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.packet.serverPacket.ItemToCellPlaceRequestPacket;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -40,13 +41,16 @@ public class PlayerInputSystem extends BaseSystem {
             systemsAdminClient.mapManager.addCellBeingMine(topCell);
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             InfCellComponent infCellComponent = mCell.get(topCell);
+            // interagie avec clique droite
             if (infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
                 infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(context, topCell);
             } else {
-                UUID playerUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(systemsAdminClient.playerManagerClient.getMainPlayer()).getUuid();
+                // place un bloc
                 int selectItem = systemsAdminClient.itemBarManager.getSelectItem();
-                ItemComponent itemToMine = selectItem != 0 ? mItem.get(selectItem) : null;
-                systemsAdminClient.mapManager.placeItemToBloc(playerUuid, worldPosX, worldPosY, itemToMine);
+                if (selectItem != 0) {
+                    UUID itemUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
+                    context.getConnexionHandler().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
+                }
             }
         }
     }

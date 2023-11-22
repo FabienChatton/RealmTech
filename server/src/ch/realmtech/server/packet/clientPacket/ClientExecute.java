@@ -22,6 +22,8 @@ public interface ClientExecute {
 
     void cellBreak(int worldPosX, int worldPosY);
 
+    void cellAdd(int worldPosX, int worldPosY, int cellHash);
+
     void tickBeat(float tickElapseTime);
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);

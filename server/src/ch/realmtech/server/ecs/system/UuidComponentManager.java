@@ -37,8 +37,12 @@ public class UuidComponentManager extends Manager {
      * @param componentClass The desired class with a uuid.
      * @return The {@link Entity} id or -1 if not found.
      */
-    public int getRegisteredComponent(UUID uuid, Class<? extends Component> componentClass) {
-        IntBag entities = world.getAspectSubscriptionManager().get(Aspect.all(UuidComponent.class, componentClass)).getEntities();
+    @SafeVarargs
+    public final int getRegisteredComponent(UUID uuid, Class<? extends Component>... componentClass) {
+        Class<? extends Component>[] componentArray = new Class[componentClass.length + 1];
+        componentArray[0] = UuidComponent.class;
+        System.arraycopy(componentClass, 0, componentArray, 1, componentClass.length);
+        IntBag entities = world.getAspectSubscriptionManager().get(Aspect.all(componentArray)).getEntities();
         return getRegisteredComponent(uuid, entities);
     }
 

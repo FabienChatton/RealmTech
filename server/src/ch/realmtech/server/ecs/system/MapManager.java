@@ -6,7 +6,6 @@ import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.level.map.WorldMap;
 import ch.realmtech.server.level.worldGeneration.PerlinNoise;
-import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -27,8 +26,6 @@ public class MapManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(MapManager.class);
     @Wire(name = "physicWorld")
     private World physicWorld;
-    @Wire
-    private DataCtrl dataCtrl;
     @Wire
     private BodyDef bodyDef;
     @Wire
@@ -136,7 +133,7 @@ public class MapManager extends Manager {
         return ret;
     }
 
-    private void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
+    public void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
@@ -155,22 +152,6 @@ public class MapManager extends Manager {
             }
         }
         throw new NoSuchElementException("Le chunk qui correspond à la cellule n'a pas été trouvé");
-    }
-
-    public boolean placeItemToBloc(UUID playerUuid, int worldPosX, int worldPosY, ItemComponent itemForMine) {
-//        if (selectedItem > 0) {
-//            final ItemRegisterEntry selectedItemEntry = mItem.get(world.getSystem(ItemBarManager.class).getSelectItem()).itemRegisterEntry;
-//            if (selectedItemEntry.getItemBehavior().getPlaceCell() != null) {
-//                final byte innerX = getInnerChunk(gameCoordinateX);
-//                final byte innerY = getInnerChunk(gameCoordinateY);
-//                final int chunkId = getChunk(chunks, gameCoordinateX, gameCoordinateY);
-//                if (getCell(chunkId, innerX, innerY, selectedItemEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) == -1) {
-//                    newCellInChunk(chunkId, selectedItemEntry.getItemBehavior().getPlaceCell(), innerX, innerY);
-//                    return true;
-//                }
-//            }
-//        }
-        return false;
     }
 
     public boolean addCellBeingMine(int cellId) {

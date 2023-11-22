@@ -48,6 +48,8 @@ public class ServerContext {
                 .put(MoveStackToStackPacket.class, MoveStackToStackPacket::new)
                 .put(InventorySetPacket.class, InventorySetPacket::new)
                 .put(InventoryGetPacket.class, InventoryGetPacket::new)
+                .put(ItemToCellPlaceRequestPacket.class, ItemToCellPlaceRequestPacket::new)
+                .put(CellAddPacket.class, CellAddPacket::new)
         ;
     }
 

@@ -2,6 +2,7 @@ package ch.realmtech.core;
 
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
+import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.game.netty.ClientExecuteContext;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
@@ -156,7 +157,7 @@ public final class RealmTech extends Game implements ClientContext {
 
     @Override
     public void openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventorySupplier) {
-
+        getSystem(PlayerInventorySystem.class).openPlayerInventory(openPlayerInventorySupplier);
     }
 
     public Skin getSkin() {

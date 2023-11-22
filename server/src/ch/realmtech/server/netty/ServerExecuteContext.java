@@ -4,11 +4,9 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.level.cell.BreakCell;
-import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
-import ch.realmtech.server.packet.clientPacket.DeconnectionJoueurPacket;
-import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
-import ch.realmtech.server.packet.clientPacket.WriteToConsolePacket;
+import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.ServerExecute;
+import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.ComponentMapper;
@@ -121,6 +119,24 @@ public class ServerExecuteContext implements ServerExecute {
             InventoryComponent inventoryComponent = serverContext.getSystem(InventoryManager.class).getInventoryComponentByUUID(inventoryUuid);
             byte[] bytes = InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
             clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, bytes));
+        });
+    }
+
+    @Override
+    public void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            CellRegisterEntry cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToBloc(itemToPlaceUuid, worldPosX, worldPosY);
+            if (cellPlaced != null) {
+                int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
+                int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
+                int itemId = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
+                serverContext.getSystem(InventoryManager.class).removeItemInInventory(chestInventoryId, itemId);
+                clientChannel.writeAndFlush(new CellAddPacket(worldPosX, worldPosY, CellRegisterEntry.getHash(cellPlaced)));
+
+                UUID inventoryUuid = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId).getUuid();
+                ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
+                clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, InventorySerializer.toBytes(serverContext.getEcsEngineServer().getWorld(), mInventory.get(chestInventoryId))));
+            }
         });
     }
 }

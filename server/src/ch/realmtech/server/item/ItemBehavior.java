@@ -2,12 +2,15 @@ package ch.realmtech.server.item;
 
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CellRegisterEntry;
+import com.badlogic.gdx.utils.Null;
 
 public class ItemBehavior {
     private int attackDommage;
     private ItemType itemType;
     private float speedEffect;
+    @Null
     private CellRegisterEntry placeCell;
+    @Null
     private String placeCellName;
     private int timeToBurn = 0;
     private boolean icon;

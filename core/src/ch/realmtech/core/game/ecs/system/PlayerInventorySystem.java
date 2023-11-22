@@ -36,7 +36,7 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -148,12 +148,12 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public boolean openPlayerInventory(Function<RealmTech, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    public boolean openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
         if (!isEnabled()) {
             super.setEnabled(true);
             InputMapper.reset();
             clearDisplayInventory();
-            currentInventoryArgs = openPlayerInventoryFunction.apply(context);
+            currentInventoryArgs = openPlayerInventoryFunction.get();
             refreshInventory(currentInventoryArgs);
             if (context.getDataCtrl().option.inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
@@ -166,16 +166,16 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public void toggleInventoryWindow(Function<RealmTech, AddAndDisplayInventoryArgs> openPlayerInventoryFunction) {
+    public void toggleInventoryWindow(Supplier<AddAndDisplayInventoryArgs> openPlayerInventorySupplier) {
         if (isEnabled()) {
             closePlayerInventory();
         } else {
-            openPlayerInventory(openPlayerInventoryFunction);
+            openPlayerInventory(openPlayerInventorySupplier);
         }
     }
 
-    public Function<RealmTech, AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
-        return (context) -> {
+    public Supplier<AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
+        return () -> {
             final Table playerInventory = new Table(context.getSkin());
             final Table craftingInventory = new Table(context.getSkin());
             final Table craftingResultInventory = new Table(context.getSkin());

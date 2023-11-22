@@ -15,6 +15,7 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.World;
@@ -109,6 +110,18 @@ public class ClientExecuteContext implements ClientExecute {
             int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
             int cellId = context.getSystem(MapManager.class).getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
             context.getSystem(MapManager.class).damneCell(chunkId, cellId);
+        });
+    }
+
+    @Override
+    public void cellAdd(int worldPosX, int worldPosY, int cellHash) {
+        context.nextFrame(() -> {
+            int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+            int chunkPosX = MapManager.getChunkPos(worldPosX);
+            int chunkPosY = MapManager.getChunkPos(worldPosY);
+            int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
+            CellRegisterEntry cellRegisterEntry = CellRegisterEntry.getCellModAndCellHash(cellHash);
+            context.getSystem(MapManager.class).newCellInChunk(chunkId, cellRegisterEntry, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         });
     }
 
