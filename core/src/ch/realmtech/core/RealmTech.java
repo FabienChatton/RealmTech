@@ -18,6 +18,7 @@ import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.serverPacket.DemandeDeConnexionJoueurPacket;
+import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.badlogic.gdx.Application;
@@ -47,6 +48,7 @@ public final class RealmTech extends Game implements ClientContext {
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
     private final static Logger logger = LoggerFactory.getLogger(RealmTech.class);
+    private final SerializerController serializerController = new SerializerController();
     private InputMapper inputMapper;
     private AssetManager assetManager;
     private Stage gameStage;
@@ -286,5 +288,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public void writeToConsole(String s) {
         gameScreen.writeToConsole(s);
+    }
+
+    public SerializerController getSerializerManagerController() {
+        return serializerController;
     }
 }

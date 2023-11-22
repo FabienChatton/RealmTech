@@ -6,7 +6,6 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.TousLesJoueurPacket;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -116,7 +115,7 @@ public class PlayerManagerServer extends BaseSystem {
         players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
-                InventorySerializer.toBytes(world, chestInventoryComponent),
+                serverContext.getSerializerController().getInventorySerializerManager().toBytesLatest(world, serverContext.getSerializerController(), chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
                 mUuid.get(craftingInventories[0]).getUuid(),
                 mUuid.get(craftingInventories[1]).getUuid(),

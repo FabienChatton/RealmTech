@@ -5,7 +5,6 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.EntityEdit;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class InventoryManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(InventoryManager.class);
@@ -343,18 +341,6 @@ public class InventoryManager extends Manager {
     public InventoryComponent getInventoryComponentByUUID(UUID uuid) {
         int inventoryId = getInventoryByUUID(uuid);
         return inventoryId != -1 ? mInventory.get(inventoryId) : null;
-    }
-
-    public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
-        int inventoryId = getInventoryByUUID(inventoryUUID);
-        if (inventoryId == -1) return;
-        int[][] inventory = mInventory.get(inventoryId).inventory;
-        removeInventory(inventory);
-        Function<ItemManager, int[][]> inventoryGet = InventorySerializer.getFromBytes(world, inventoryBytes);
-        int[][] newInventory = inventoryGet.apply(itemManager);
-        for (int i = 0; i < inventory.length; i++) {
-            System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
-        }
     }
 
     public int[] moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) throws IllegalAccessError {

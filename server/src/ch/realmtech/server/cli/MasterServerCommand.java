@@ -1,6 +1,7 @@
 package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.World;
 
 import java.io.PrintWriter;
@@ -29,5 +30,10 @@ public class MasterServerCommand extends CommunMasterCommand implements Callable
     @Override
     public World getWorld() {
         return serverContext.getEcsEngineServer().getWorld();
+    }
+
+    @Override
+    public SerializerController getSerializerManagerController() {
+        return serverContext.getSerializerController();
     }
 }

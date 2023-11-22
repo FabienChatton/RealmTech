@@ -8,6 +8,7 @@ import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerResponseHandler;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.*;
+import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.tick.TickThread;
 import com.artemis.BaseSystem;
 import io.netty.channel.ChannelFuture;
@@ -27,6 +28,8 @@ public class ServerContext {
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
+
+    private final SerializerController serializerController = new SerializerController();
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -124,5 +127,9 @@ public class ServerContext {
 
     public CommandeServerExecute getCommandeExecute() {
         return commandeServerExecute;
+    }
+
+    public SerializerController getSerializerController() {
+        return serializerController;
     }
 }

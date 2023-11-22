@@ -17,7 +17,7 @@ import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
+import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class ClientExecuteContext implements ClientExecute {
         PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
         World world = context.getEcsEngine().getWorld();
-        Function<ItemManager, int[][]> inventoryFromBytes = InventorySerializer.getFromBytes(world, connexionJoueurReussitArg.inventoryBytes());
+        Function<ItemManager, int[][]> inventoryFromBytes = context.getSerializerManagerController().getInventorySerializerManager().fromBytes(world, context.getSerializerManagerController(), connexionJoueurReussitArg.inventoryBytes());
         // inventory chest
         context.getSystem(InventoryManager.class).createChest(playerId, inventoryFromBytes.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         // crafting table
@@ -138,7 +138,17 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
         context.nextFrame(() -> {
-            context.getSystem(InventoryManager.class).setInventory(inventoryUUID, inventoryBytes);
+            World world = context.getEcsEngine().getWorld();
+            ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+            int inventoryId = context.getSystem(InventoryManager.class).getInventoryByUUID(inventoryUUID);
+            if (inventoryId == -1) return;
+            int[][] inventory = mInventory.get(inventoryId).inventory;
+            context.getSystem(InventoryManager.class).removeInventory(inventory);
+            Function<ItemManager, int[][]> inventoryFromBytes = context.getSerializerManagerController().getInventorySerializerManager().fromBytes(world, context.getSerializerManagerController(), inventoryBytes);
+            int[][] newInventory = inventoryFromBytes.apply(context.getSystem(ItemManagerClient.class));
+            for (int i = 0; i < inventory.length; i++) {
+                System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
+            }
         });
     }
 

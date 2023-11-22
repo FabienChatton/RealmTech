@@ -5,7 +5,6 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.serialize.inventory.InventorySerializer;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
@@ -50,7 +49,7 @@ public class DumpInventoryCommand implements Callable<Integer> {
                     }
                 }
                 if (verbose.length >= 3) {
-                    byte[] inventoryBytes = InventorySerializer.toBytes(dumpCommand.masterCommand.getWorld(), inventoryComponent);
+                    byte[] inventoryBytes = dumpCommand.masterCommand.getSerializerManagerController().getInventorySerializerManager().toBytesLatest(dumpCommand.masterCommand.getWorld(), dumpCommand.masterCommand.getSerializerManagerController(), inventoryComponent);
                     dumpCommand.masterCommand.output.println(String.format("%s", Arrays.toString(inventoryBytes)));
                 }
             }
