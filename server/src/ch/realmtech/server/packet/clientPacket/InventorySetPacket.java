@@ -2,6 +2,7 @@ package ch.realmtech.server.packet.clientPacket;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.packet.ClientPacket;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import io.netty.buffer.ByteBuf;
 
 import java.util.UUID;
@@ -9,34 +10,34 @@ import java.util.UUID;
 public class InventorySetPacket implements ClientPacket {
 
     private final UUID inventoryUUID;
-    private final byte[] inventoryBytes;
+    private final SerializedApplicationBytes applicationInventoryBytes;
 
-    public InventorySetPacket(UUID inventoryUUID, byte[] inventoryBytes) {
+    public InventorySetPacket(UUID inventoryUUID, SerializedApplicationBytes applicationInventoryBytes) {
         this.inventoryUUID = inventoryUUID;
-        this.inventoryBytes = inventoryBytes;
+        this.applicationInventoryBytes = applicationInventoryBytes;
     }
 
     public InventorySetPacket(ByteBuf byteBuf) {
         inventoryUUID = ByteBufferHelper.readUUID(byteBuf);
         int inventoryBytesLength = byteBuf.readInt();
-        inventoryBytes = new byte[inventoryBytesLength];
-        byteBuf.readBytes(inventoryBytes);
+        applicationInventoryBytes = new SerializedApplicationBytes(new byte[inventoryBytesLength]);
+        byteBuf.readBytes(applicationInventoryBytes.applicationBytes());
     }
 
     @Override
     public void write(ByteBuf byteBuf) {
         ByteBufferHelper.writeUUID(byteBuf, inventoryUUID);
-        byteBuf.writeInt(inventoryBytes.length);
-        byteBuf.writeBytes(inventoryBytes);
+        byteBuf.writeInt(applicationInventoryBytes.applicationBytes().length);
+        byteBuf.writeBytes(applicationInventoryBytes.applicationBytes());
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.setInventory(inventoryUUID, inventoryBytes);
+        clientExecute.setInventory(inventoryUUID, applicationInventoryBytes);
     }
 
     @Override
     public int getSize() {
-        return 2 * Long.BYTES + Integer.BYTES + inventoryBytes.length * Byte.BYTES;
+        return 2 * Long.BYTES + Integer.BYTES + applicationInventoryBytes.applicationBytes().length * Byte.BYTES;
     }
 }

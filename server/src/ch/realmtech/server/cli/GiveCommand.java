@@ -11,6 +11,7 @@ import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.registery.RegistryEntry;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 
 import java.util.UUID;
@@ -60,8 +61,8 @@ public class GiveCommand implements Callable<Integer> {
         int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry(), UUID.randomUUID());
         try {
             masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
-            byte[] inventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(masterCommand.getWorld(), masterCommand.getSerializerManagerController(), inventoryComponent);
-            masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), inventoryBytes), playerConnexionComponent.channel);
+            SerializedApplicationBytes ApplicationInventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(masterCommand.getWorld(), inventoryComponent);
+            masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), ApplicationInventoryBytes), playerConnexionComponent.channel);
         } catch (Exception e) {
             masterCommand.getWorld().delete(itemId);
             return -1;

@@ -115,7 +115,7 @@ public class PlayerManagerServer extends BaseSystem {
         players.add(playerId);
         logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
-                serverContext.getSerializerController().getInventorySerializerManager().encode(world, serverContext.getSerializerController(), chestInventoryComponent),
+                serverContext.getSerializerController().getInventorySerializerManager().encode(world, chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
                 mUuid.get(craftingInventories[0]).getUuid(),
                 mUuid.get(craftingInventories[1]).getUuid(),

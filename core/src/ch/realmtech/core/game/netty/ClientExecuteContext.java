@@ -42,7 +42,7 @@ public class ClientExecuteContext implements ClientExecute {
         PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
         World world = context.getEcsEngine().getWorld();
-        Function<ItemManager, int[][]> inventoryGet = context.getSerializerManagerController().getInventorySerializerManager().decode(world, new SerializedApplicationBytes(connexionJoueurReussitArg.inventoryBytes()));
+        Function<ItemManager, int[][]> inventoryGet = context.getSerializerManagerController().getInventorySerializerManager().decode(world, connexionJoueurReussitArg.applicationInventoryBytes());
         // inventory chest
         context.getSystem(InventoryManager.class).createChest(playerId, inventoryGet.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         // crafting table
@@ -137,7 +137,7 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void setInventory(UUID inventoryUUID, byte[] inventoryBytes) {
+    public void setInventory(UUID inventoryUUID, SerializedApplicationBytes applicationInventoryBytes) {
         context.nextFrame(() -> {
             World world = context.getEcsEngine().getWorld();
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
@@ -145,7 +145,7 @@ public class ClientExecuteContext implements ClientExecute {
             if (inventoryId == -1) return;
             int[][] inventory = mInventory.get(inventoryId).inventory;
             context.getSystem(InventoryManager.class).removeInventory(inventory);
-            int[][] newInventory = context.getSerializerManagerController().getInventorySerializerManager().decode(world, new SerializedApplicationBytes(inventoryBytes)).apply(context.getSystem(ItemManagerClient.class));
+            int[][] newInventory = context.getSerializerManagerController().getInventorySerializerManager().decode(world, applicationInventoryBytes).apply(context.getSystem(ItemManagerClient.class));
             for (int i = 0; i < inventory.length; i++) {
                 System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
             }

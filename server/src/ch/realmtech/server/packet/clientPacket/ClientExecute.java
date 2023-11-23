@@ -2,6 +2,7 @@ package ch.realmtech.server.packet.clientPacket;
 
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 
 import java.util.UUID;
 
@@ -34,5 +35,5 @@ public interface ClientExecute {
 
     void writeOnConsoleMessage(String consoleMessageToWrite);
 
-    void setInventory(UUID inventoryUUID, byte[] inventoryBytes);
+    void setInventory(UUID inventoryUUID, SerializedApplicationBytes applicationInventoryBytes);
 }
