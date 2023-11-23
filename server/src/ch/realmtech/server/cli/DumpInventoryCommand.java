@@ -49,7 +49,7 @@ public class DumpInventoryCommand implements Callable<Integer> {
                     }
                 }
                 if (verbose.length >= 3) {
-                    byte[] inventoryBytes = dumpCommand.masterCommand.getSerializerManagerController().getInventorySerializerManager().toBytesLatest(dumpCommand.masterCommand.getWorld(), dumpCommand.masterCommand.getSerializerManagerController(), inventoryComponent);
+                    byte[] inventoryBytes = dumpCommand.masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(dumpCommand.masterCommand.getWorld(), dumpCommand.masterCommand.getSerializerManagerController(), inventoryComponent);
                     dumpCommand.masterCommand.output.println(String.format("%s", Arrays.toString(inventoryBytes)));
                 }
             }

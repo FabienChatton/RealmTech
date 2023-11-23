@@ -36,7 +36,7 @@ public class CraftingPlayerSystem extends IteratingSystem {
         if (craftingTableComponent.getCraftResultStrategy() != null) {
             if (craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(serverContext, world, craftResult, entityId)) {
                 UUID uuid = mUuid.get(craftingTableComponent.craftingResultInventory).getUuid();
-                serverContext.getSerializerController().getInventorySerializerManager().toBytesLatest(world, serverContext.getSerializerController(), mInventory.get(craftingTableComponent.craftingResultInventory));
+                serverContext.getSerializerController().getInventorySerializerManager().encode(world, serverContext.getSerializerController(), mInventory.get(craftingTableComponent.craftingResultInventory));
             }
         }
     }

@@ -7,4 +7,5 @@ import ch.realmtech.server.serialize.Serializer;
 import java.util.function.Function;
 
 public interface InventorySerializer extends Serializer<InventoryComponent, Function<ItemManager, int[][]>> {
+
 }

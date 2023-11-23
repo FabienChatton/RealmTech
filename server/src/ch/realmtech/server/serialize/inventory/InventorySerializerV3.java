@@ -8,6 +8,7 @@ import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.SerializerController;
+import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 
@@ -15,14 +16,12 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class InventorySerializerV2 implements InventorySerializer {
-    private final static int VERSION = 2;
+public class InventorySerializerV3 implements InventorySerializer {
     @Override
-    public byte[] toBytes(World world, SerializerController serializerController, InventoryComponent inventoryComponent) {
+    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, InventoryComponent inventoryComponent) {
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
         ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         ByteBuffer byteBuffer = ByteBuffer.allocate(getBytesSize(world, serializerController, inventoryComponent));
-        byteBuffer.putInt(VERSION);
         byteBuffer.putInt(inventoryComponent.numberOfRow);
         byteBuffer.putInt(inventoryComponent.numberOfSlotParRow);
         byteBuffer.putInt(InventoryComponent.DEFAULT_STACK_LIMITE);
@@ -49,14 +48,13 @@ public class InventorySerializerV2 implements InventorySerializer {
                 }
             }
         }
-        return byteBuffer.array();
+        return new SerializedRawBytes(byteBuffer.array());
     }
 
     @Override
-    public Function<ItemManager, int[][]> fromBytes(World world, SerializerController serializerController, byte[] bytes) {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+    public Function<ItemManager, int[][]> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(rawBytes.rawBytes());
         // header
-        int version = byteBuffer.getInt();
         int numberOfRow = byteBuffer.getInt();
         int numberOfSlotParRow = byteBuffer.getInt();
         int stackLimite = byteBuffer.getInt();
@@ -104,8 +102,8 @@ public class InventorySerializerV2 implements InventorySerializer {
     public int getBytesSize(World world, SerializerController serializerController, InventoryComponent inventoryComponent) {
         int numberofNotEmptySlot = getNumberNotEmtpySlot(inventoryComponent);
         int numberOfItems = getNumberOfItems(inventoryComponent);
-        // version protocole, number of row, number of column, stack size, number of not empty stack, total number of items, number of not empty stack * (hash + number item stack + index), number of items * (number item stack + hash + uuid)
-        return Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + numberofNotEmptySlot * (Integer.BYTES + Integer.BYTES + Integer.BYTES) + numberOfItems * (Integer.BYTES + Integer.BYTES + (Long.BYTES * 2));
+        // number of row, number of column, stack size, number of not empty stack, total number of items, number of not empty stack * (hash + number item stack + index), number of items * (number item stack + hash + uuid)
+        return Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + numberofNotEmptySlot * (Integer.BYTES + Integer.BYTES + Integer.BYTES) + numberOfItems * (Integer.BYTES + Integer.BYTES + (Long.BYTES * 2));
     }
 
     private static int getNumberNotEmtpySlot(InventoryComponent inventoryComponent) {
@@ -137,5 +135,10 @@ public class InventorySerializerV2 implements InventorySerializer {
             }
         }
         return numberOfItems;
+    }
+
+    @Override
+    public int getVersion() {
+        return 3;
     }
 }

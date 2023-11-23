@@ -60,7 +60,7 @@ public class GiveCommand implements Callable<Integer> {
         int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry(), UUID.randomUUID());
         try {
             masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
-            byte[] inventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().toBytesLatest(masterCommand.getWorld(), masterCommand.getSerializerManagerController(), inventoryComponent);
+            byte[] inventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(masterCommand.getWorld(), masterCommand.getSerializerManagerController(), inventoryComponent);
             masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), inventoryBytes), playerConnexionComponent.channel);
         } catch (Exception e) {
             masterCommand.getWorld().delete(itemId);
