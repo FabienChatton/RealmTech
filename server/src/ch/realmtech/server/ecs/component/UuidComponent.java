@@ -24,6 +24,10 @@ public class UuidComponent extends Component {
 
     @Override
     public boolean equals(Object obj) {
-        return uuid.equals(obj);
+        if (obj instanceof UuidComponent uuid1) {
+            return uuid.equals(uuid1.uuid);
+        } else {
+            return false;
+        }
     }
 }

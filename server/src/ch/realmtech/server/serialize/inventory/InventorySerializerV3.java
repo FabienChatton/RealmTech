@@ -7,6 +7,7 @@ import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
@@ -16,7 +17,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class InventorySerializerV3 implements InventorySerializer {
+public class InventorySerializerV3 implements Serializer<InventoryComponent, Function<ItemManager, InventoryArgs>> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, InventoryComponent inventoryComponent) {
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
@@ -42,7 +43,8 @@ public class InventorySerializerV3 implements InventorySerializer {
                     int numberOfItem = InventoryManager.tailleStack(stack);
                     byteBuffer.putInt(numberOfItem);
                     for (int n = 0; n < numberOfItem; n++) {
-                        UUID itemUuid = mUuid.get(stack[stackItemIndex++]).getUuid();
+                        UUID itemUuid = mUuid.get(stack[stackItemIndex]).getUuid();
+                        stackItemIndex++;
                         ByteBufferHelper.writeUUID(byteBuffer, itemUuid);
                     }
                 }
@@ -52,7 +54,7 @@ public class InventorySerializerV3 implements InventorySerializer {
     }
 
     @Override
-    public Function<ItemManager, int[][]> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
+    public Function<ItemManager, InventoryArgs> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(rawBytes.rawBytes());
         // header
         int numberOfRow = byteBuffer.getInt();
@@ -88,13 +90,13 @@ public class InventorySerializerV3 implements InventorySerializer {
             for (int i = 0; i < numberNotEmtpySlot; i++) {
                 ItemRegisterEntry itemRegisterEntry = itemsRegistry[i];
                 for (int n = 0; n < numberItemsInStack[i]; n++) {
-                    UUID uuid = itemsUuid[uuidIndex++];
+                    UUID uuid = itemsUuid[uuidIndex];
+                    uuidIndex++;
                     int newItem = itemManager.newItemInventory(itemRegisterEntry, uuid);
                     world.getSystem(InventoryManager.class).addItemToStack(inventory[inventoryIndexs[i]], newItem);
                 }
             }
-
-            return inventory;
+            return new InventoryArgs(inventory, numberOfRow, numberOfSlotParRow);
         };
     }
 

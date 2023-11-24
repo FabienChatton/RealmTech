@@ -17,6 +17,7 @@ import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -42,9 +43,10 @@ public class ClientExecuteContext implements ClientExecute {
         PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
         World world = context.getEcsEngine().getWorld();
-        Function<ItemManager, int[][]> inventoryGet = context.getSerializerManagerController().getInventorySerializerManager().decode(world, connexionJoueurReussitArg.applicationInventoryBytes());
+        Function<ItemManager, InventoryArgs> inventoryGet = context.getSerializerManagerController().getInventorySerializerManager().decode(world, connexionJoueurReussitArg.applicationInventoryBytes());
         // inventory chest
-        context.getSystem(InventoryManager.class).createChest(playerId, inventoryGet.apply(context.getSystem(ItemManager.class)), connexionJoueurReussitArg.inventoryUuid(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+        InventoryArgs inventoryArgs = inventoryGet.apply(context.getSystem(ItemManager.class));
+        context.getSystem(InventoryManager.class).createChest(playerId, inventoryArgs.inventory(), connexionJoueurReussitArg.inventoryUuid(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
         // crafting table
         context.getSystem(InventoryManager.class).createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
         // inventory cursor
@@ -145,7 +147,8 @@ public class ClientExecuteContext implements ClientExecute {
             if (inventoryId == -1) return;
             int[][] inventory = mInventory.get(inventoryId).inventory;
             context.getSystem(InventoryManager.class).removeInventory(inventory);
-            int[][] newInventory = context.getSerializerManagerController().getInventorySerializerManager().decode(world, applicationInventoryBytes).apply(context.getSystem(ItemManagerClient.class));
+            InventoryArgs inventoryArgs = context.getSerializerManagerController().getInventorySerializerManager().decode(world, applicationInventoryBytes).apply(context.getSystem(ItemManagerClient.class));
+            int[][] newInventory = inventoryArgs.inventory();
             for (int i = 0; i < inventory.length; i++) {
                 System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
             }

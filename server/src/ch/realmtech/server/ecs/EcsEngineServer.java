@@ -2,11 +2,14 @@ package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ecs.system.*;
+import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.TickBeatPacket;
-import com.artemis.*;
+import com.artemis.Entity;
+import com.artemis.World;
+import com.artemis.WorldConfiguration;
+import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -28,6 +31,7 @@ public final class EcsEngineServer {
     private final List<Runnable> nextTickServerPre = Collections.synchronizedList(new ArrayList<>());
     private final Map<Long, List<Runnable>> nextTickSchedule = Collections.synchronizedMap(new HashMap<>());
     private static long tickCount;
+    private final SystemsAdminServer systemsAdminServer;
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
@@ -37,7 +41,8 @@ public final class EcsEngineServer {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
-        SystemsAdminServer systemsAdminServer = new SystemsAdminServer();
+
+        systemsAdminServer = new SystemsAdminServer();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemsAdminServer)
@@ -49,6 +54,7 @@ public final class EcsEngineServer {
         worldConfiguration.register(fixtureDef);
         worldConfiguration.register(dataCtrl);
         worldConfiguration.register(systemsAdminServer);
+        worldConfiguration.register("itemManager", systemsAdminServer.itemManagerServer);
         worldConfiguration.register("systemsAdmin", systemsAdminServer);
         this.world = new World(worldConfiguration);
         logger.trace("fin de l'initialisation du ecs");
@@ -127,5 +133,9 @@ public final class EcsEngineServer {
 
     public Entity getMapEntity() {
         return world.getSystem(TagManager.class).getEntity("infMap");
+    }
+
+    public SystemsAdminServer getSystemsAdminServer() {
+        return systemsAdminServer;
     }
 }

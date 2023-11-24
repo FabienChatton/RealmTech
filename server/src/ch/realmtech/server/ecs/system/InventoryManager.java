@@ -26,7 +26,7 @@ public class InventoryManager extends Manager {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
-    private ComponentMapper<InventoryChestComponent> mChest;
+    private ComponentMapper<ChestComponent> mChest;
     private ComponentMapper<InventoryCursorComponent> mCursor;
     private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
@@ -414,7 +414,7 @@ public class InventoryManager extends Manager {
 
     public int createChest(int motherEntity, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
-        world.edit(motherEntity).create(InventoryChestComponent.class).set(inventoryId);
+        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
 
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
@@ -424,7 +424,7 @@ public class InventoryManager extends Manager {
     }
     public int createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
-        world.edit(motherEntity).create(InventoryChestComponent.class).set(inventoryId);
+        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
 
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);

@@ -69,9 +69,7 @@ public class ItemManagerServer extends ItemManager {
 
     @Override
     public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
-        mUuid.get(itemId).set(UUID.randomUUID());
-        return itemId;
+        return ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
     }
 
     public void playerPickUpItem(int itemId, int playerId) {

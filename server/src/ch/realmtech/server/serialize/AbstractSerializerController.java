@@ -8,17 +8,23 @@ import com.artemis.World;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Map;
 
 
-public abstract class AbstractSerializerController<InputType, OutputType> implements SerializerCoder<InputType, OutputType>, SerializerManager<InputType, OutputType> {
-    private final static int MAGIC_NUMBER_LENGTH = 9;
+public abstract class AbstractSerializerController<InputType, OutputType> implements SerializerCoder<InputType, OutputType> {
+    public final static int MAGIC_NUMBER_LENGTH = 9;
+    public final static int VERSION_LENGTH = Integer.BYTES;
     private final SerializerController serializerController;
     private final byte[] magicNumbers;
+    private final Map<Integer, Serializer<InputType, OutputType>> serializerMap;
+    private final int latestVersion;
 
-    public AbstractSerializerController(SerializerController serializerController, byte[] magicNumbers) {
+    public AbstractSerializerController(SerializerController serializerController, byte[] magicNumbers, Map<Integer, Serializer<InputType, OutputType>> serializerMap, int latestVersion) {
         this.serializerController = serializerController;
         if (magicNumbers.length != 9) throw new IllegalMagicNumbers("Magic number must be of length 9");
         this.magicNumbers = magicNumbers;
+        this.serializerMap = serializerMap;
+        this.latestVersion = latestVersion;
     }
 
     @Override
@@ -31,9 +37,16 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
         return decodeApplicationBytes(world, applicationBytes);
     }
 
-    @Override
-    public byte[] getMagicNumbers() {
+    byte[] getMagicNumbers() {
         return magicNumbers;
+    }
+
+    Serializer<InputType, OutputType> getSerializer(int version) {
+        return serializerMap.get(version);
+    }
+
+    Serializer<InputType, OutputType> getSerializer() {
+        return getSerializer(latestVersion);
     }
 
     private OutputType decodeVersionAndBytes(World world, SerializedVersionAndBytes serializedVersionAndBytes) {
@@ -53,7 +66,7 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
         return magicNumbers;
     }
 
-    private boolean testMagicNumbers(SerializedApplicationBytes applicationBytes, SerializerManager<?, ?> serializerManager) {
+    private boolean testMagicNumbers(SerializedApplicationBytes applicationBytes, AbstractSerializerController<?, ?> serializerManager) {
         return Arrays.equals(getMagicNumbers(applicationBytes), serializerManager.getMagicNumbers());
     }
 
