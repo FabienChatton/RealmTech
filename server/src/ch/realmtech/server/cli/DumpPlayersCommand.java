@@ -17,9 +17,6 @@ public class DumpPlayersCommand implements Callable<Integer> {
     @ParentCommand
     private DumpCommand dumpCommand;
 
-    @Option(names = {"-v", "--verbose"}, description = "Show more detail about items result")
-    private boolean verbose;
-
     @Override
     public Integer call() throws Exception {
         ComponentMapper<PositionComponent> mPos = dumpCommand.masterCommand.getWorld().getMapper(PositionComponent.class);
@@ -28,27 +25,25 @@ public class DumpPlayersCommand implements Callable<Integer> {
                 PlayerConnexionComponent.class
         )).getEntities();
         int[] data = playerEntities.getData();
-        if (verbose) {
-            for (int i = 0; i < playerEntities.size(); i++) {
-                int playerId = data[i];
-                PositionComponent positionComponent = mPos.get(playerId);
-                PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-                UuidComponentManager uuidComponentManager = dumpCommand.masterCommand.getWorld().getSystem(UuidComponentManager.class);
-                if (playerConnexionComponent.channel != null) {
-                    // sur le serveur
-                    dumpCommand.masterCommand.output.println(
-                            String.format("x: %f, y: %f, uuid: %s, ip: %s", positionComponent.x, positionComponent.y, uuidComponentManager.getRegisteredComponent(playerId), playerConnexionComponent.channel.remoteAddress())
-                    );
-                } else {
-                    // sur le client
-                    dumpCommand.masterCommand.output.println(
-                            String.format("x: %f, y: %f, uuid: %s", positionComponent.x, positionComponent.y, uuidComponentManager.getRegisteredComponent(playerId))
-                    );
-                }
+        for (int i = 0; i < playerEntities.size(); i++) {
+            int playerId = data[i];
+            PositionComponent positionComponent = mPos.get(playerId);
+            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+            UuidComponentManager uuidComponentManager = dumpCommand.masterCommand.getWorld().getSystem(UuidComponentManager.class);
+            if (playerConnexionComponent.channel != null) {
+                // sur le serveur
+                dumpCommand.printlnVerbose(1,
+                        String.format("x: %f, y: %f, uuid: %s, ip: %s", positionComponent.x, positionComponent.y, uuidComponentManager.getRegisteredComponent(playerId), playerConnexionComponent.channel.remoteAddress())
+                );
+            } else {
+                // sur le client
+                dumpCommand.printlnVerbose(1,
+                        String.format("x: %f, y: %f, uuid: %s", positionComponent.x, positionComponent.y, uuidComponentManager.getRegisteredComponent(playerId))
+                );
             }
         }
-        if (playerEntities.size() == 0) dumpCommand.masterCommand.output.println("No players loaded");
-        else dumpCommand.masterCommand.output.println("players count:" + playerEntities.size());
+        if (playerEntities.isEmpty()) dumpCommand.masterCommand.output.println("No players loaded");
+        else dumpCommand.masterCommand.output.println("players count: " + playerEntities.size());
         return 0;
     }
 }

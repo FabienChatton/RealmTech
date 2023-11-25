@@ -10,10 +10,9 @@ import static picocli.CommandLine.*;
 @Command(name = "dump",  description = "master dump command, see subcommands for more dump details.\n" +
                                         "Each subcommands has a verbose option",
         subcommands = {
-                //DumpChunksCommand.class,
-                //DumpItemsCommand.class,
-                //DumpCraftResultCommand.class,
-                //DumpPlayersCommand.class,
+                DumpChunksCommand.class,
+                DumpItemsCommand.class,
+                DumpPlayersCommand.class,
                 DumpInventoryCommand.class
         }
 )
