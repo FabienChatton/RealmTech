@@ -9,10 +9,10 @@ import java.util.UUID;
 
 public class UuidSerializerController extends AbstractSerializerController<UUID, UUID> {
     public UuidSerializerController(SerializerController serializerController) {
-        super(serializerController, "uuidSave\0".getBytes(StandardCharsets.UTF_8), new HashMap<>() {
+        super(serializerController, (byte) 14, new HashMap<>() {
             {
-                put(1, new UuidSerializerV1());
+                put((byte) 1, new UuidSerializerV1());
             }
-        }, 1);
+        }, (byte) 1);
     }
 }

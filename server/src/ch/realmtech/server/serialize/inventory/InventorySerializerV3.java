@@ -140,7 +140,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
     }
 
     @Override
-    public int getVersion() {
+    public byte getVersion() {
         return 3;
     }
 }

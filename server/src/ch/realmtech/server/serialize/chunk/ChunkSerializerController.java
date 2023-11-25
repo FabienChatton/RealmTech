@@ -9,10 +9,10 @@ import java.util.HashMap;
 
 public class ChunkSerializerController extends AbstractSerializerController<InfChunkComponent, Integer> {
     public ChunkSerializerController(SerializerController serializerController) {
-        super(serializerController, "chunkSav\0".getBytes(StandardCharsets.UTF_8), new HashMap<>() {
+        super(serializerController, (byte) 12, new HashMap<>() {
             {
-                put(9, new ChunkSerializerV9());
+                put((byte) 9, new ChunkSerializerV9());
             }
-        }, 9);
+        }, (byte) 9);
     }
 }

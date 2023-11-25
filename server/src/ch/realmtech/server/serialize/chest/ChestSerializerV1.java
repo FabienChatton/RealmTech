@@ -68,7 +68,7 @@ public class ChestSerializerV1 implements Serializer<Integer, Integer> {
     }
 
     @Override
-    public int getVersion() {
+    public byte getVersion() {
         return 1;
     }
 }

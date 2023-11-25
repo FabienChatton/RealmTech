@@ -29,7 +29,7 @@ public class UuidSerializerV1 implements Serializer<UUID, UUID> {
     }
 
     @Override
-    public int getVersion() {
+    public byte getVersion() {
         return 1;
     }
 }

@@ -7,22 +7,20 @@ import ch.realmtech.server.serialize.types.SerializedVersionAndBytes;
 import com.artemis.World;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Map;
 
 
 public abstract class AbstractSerializerController<InputType, OutputType> implements SerializerCoder<InputType, OutputType> {
-    public final static int MAGIC_NUMBER_LENGTH = 9;
-    public final static int VERSION_LENGTH = Integer.BYTES;
+    public final static int MAGIC_NUMBER_LENGTH = 1;
+    public final static int VERSION_LENGTH = 1;
     private final SerializerController serializerController;
-    private final byte[] magicNumbers;
-    private final Map<Integer, Serializer<InputType, OutputType>> serializerMap;
-    private final int latestVersion;
+    private final byte magicNumber;
+    private final Map<Byte, Serializer<InputType, OutputType>> serializerMap;
+    private final byte latestVersion;
 
-    public AbstractSerializerController(SerializerController serializerController, byte[] magicNumbers, Map<Integer, Serializer<InputType, OutputType>> serializerMap, int latestVersion) {
+    public AbstractSerializerController(SerializerController serializerController, byte magicNumber, Map<Byte, Serializer<InputType, OutputType>> serializerMap, byte latestVersion) {
         this.serializerController = serializerController;
-        if (magicNumbers.length != 9) throw new IllegalMagicNumbers("Magic number must be of length 9");
-        this.magicNumbers = magicNumbers;
+        this.magicNumber = magicNumber;
         this.serializerMap = serializerMap;
         this.latestVersion = latestVersion;
     }
@@ -37,11 +35,11 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
         return decodeApplicationBytes(world, applicationBytes);
     }
 
-    byte[] getMagicNumbers() {
-        return magicNumbers;
+    byte getMagicNumber() {
+        return magicNumber;
     }
 
-    Serializer<InputType, OutputType> getSerializer(int version) {
+    Serializer<InputType, OutputType> getSerializer(byte version) {
         return serializerMap.get(version);
     }
 
@@ -50,7 +48,7 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
     }
 
     private OutputType decodeVersionAndBytes(World world, SerializedVersionAndBytes serializedVersionAndBytes) {
-        int version = getVersion(serializedVersionAndBytes);
+        byte version = getVersion(serializedVersionAndBytes);
         Serializer<?, OutputType> serializer = getSerializer(version);
         return serializer.fromBytes(world, serializerController, shrinkVersion(serializedVersionAndBytes));
     }
@@ -60,14 +58,12 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
         return decodeVersionAndBytes(world, shrinkMagicNumbers(applicationBytes));
     }
 
-    private byte[] getMagicNumbers(SerializedApplicationBytes applicationBytes) {
-        byte[] magicNumbers = new byte[MAGIC_NUMBER_LENGTH];
-        System.arraycopy(applicationBytes.applicationBytes(), 0, magicNumbers, 0, magicNumbers.length);
-        return magicNumbers;
+    private byte getMagicNumber(SerializedApplicationBytes applicationBytes) {
+        return applicationBytes.applicationBytes()[0];
     }
 
     private boolean testMagicNumbers(SerializedApplicationBytes applicationBytes, AbstractSerializerController<?, ?> serializerManager) {
-        return Arrays.equals(getMagicNumbers(applicationBytes), serializerManager.getMagicNumbers());
+        return getMagicNumber(applicationBytes) == serializerManager.getMagicNumber();
     }
 
     private SerializedVersionAndBytes shrinkMagicNumbers(SerializedApplicationBytes serializedApplicationBytes) {
@@ -77,22 +73,19 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
     }
 
     private SerializedRawBytes shrinkVersion(SerializedVersionAndBytes versionAndBytes) {
-        byte[] shrinkBytes = new byte[versionAndBytes.versionAndBytes().length - Integer.BYTES];
-        System.arraycopy(versionAndBytes.versionAndBytes(), Integer.BYTES, shrinkBytes, 0, shrinkBytes.length);
+        byte[] shrinkBytes = new byte[versionAndBytes.versionAndBytes().length - VERSION_LENGTH];
+        System.arraycopy(versionAndBytes.versionAndBytes(), VERSION_LENGTH, shrinkBytes, 0, shrinkBytes.length);
         return new SerializedRawBytes(shrinkBytes);
     }
 
-    private int getVersion(SerializedVersionAndBytes versionAndBytes) {
-        byte[] tempVersionBytes = new byte[Integer.BYTES];
-        System.arraycopy(versionAndBytes.versionAndBytes(), 0, tempVersionBytes, 0, tempVersionBytes.length);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(tempVersionBytes);
-        return byteBuffer.getInt();
+    private byte getVersion(SerializedVersionAndBytes versionAndBytes) {
+        return versionAndBytes.versionAndBytes()[0];
     }
 
     private SerializedVersionAndBytes encodeVersionAndBytes(World world, InputType toSerialize) {
         SerializedRawBytes rawBytes = getSerializer().toRawBytes(world, serializerController, toSerialize);
-        ByteBuffer versionAndBytesBuffer = ByteBuffer.allocate(rawBytes.rawBytes().length + Integer.BYTES);
-        versionAndBytesBuffer.putInt(getSerializer().getVersion());
+        ByteBuffer versionAndBytesBuffer = ByteBuffer.allocate(rawBytes.rawBytes().length + VERSION_LENGTH);
+        versionAndBytesBuffer.put(getSerializer().getVersion());
         versionAndBytesBuffer.put(rawBytes.rawBytes());
         return new SerializedVersionAndBytes(versionAndBytesBuffer.array());
     }
@@ -100,7 +93,7 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
     private SerializedApplicationBytes encodeApplicationBytes(World world, InputType toSerialize) {
         SerializedVersionAndBytes versionAndBytes = encodeVersionAndBytes(world, toSerialize);
         ByteBuffer applicationBytesBuffer = ByteBuffer.allocate(versionAndBytes.versionAndBytes().length + MAGIC_NUMBER_LENGTH);
-        applicationBytesBuffer.put(getMagicNumbers());
+        applicationBytesBuffer.put(getMagicNumber());
         applicationBytesBuffer.put(versionAndBytes.versionAndBytes());
         return new SerializedApplicationBytes(applicationBytesBuffer.array());
     }

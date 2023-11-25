@@ -12,10 +12,10 @@ import java.util.function.Function;
 public class InventorySerializerController extends AbstractSerializerController<InventoryComponent, Function<ItemManager, InventoryArgs>> {
 
     public InventorySerializerController(SerializerController serializerController) {
-        super(serializerController, "invBytes\0".getBytes(StandardCharsets.UTF_8), new HashMap<>(){
+        super(serializerController, (byte) 13, new HashMap<>(){
             {
-                put(3, new InventorySerializerV3());
+                put((byte) 3, new InventorySerializerV3());
             }
-        }, 3);
+        }, (byte) 3);
     }
 }
