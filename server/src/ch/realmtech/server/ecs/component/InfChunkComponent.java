@@ -76,4 +76,27 @@ public class InfChunkComponent extends PooledComponent {
     public String toString() {
         return String.format("x: %d, y: %d, size: %d", chunkPosX, chunkPosY, infCellsId.length);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof InfChunkComponent testInfChunkComponent) {
+            if (chunkPosX == testInfChunkComponent.chunkPosX && chunkPosY == testInfChunkComponent.chunkPosY) {
+                return infCellsId.length == testInfChunkComponent.infCellsId.length;
+            }
+        }
+        return false;
+    }
+
+    public boolean deepEquals(Object obj, ComponentMapper<InfCellComponent> mCell) {
+        if (equals(obj)) {
+            InfChunkComponent testInfChunkComponent = (InfChunkComponent) obj;
+            for (int i = 0; i < infCellsId.length; i++) {
+                if (!mCell.get(infCellsId[i]).equals(mCell.get(testInfChunkComponent.infCellsId[i]))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }

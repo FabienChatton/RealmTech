@@ -1,30 +1,34 @@
 package ch.realmtech.server.serialize;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.component.ChestComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SerializerControllerTest {
-    private final ServerContext serverContext;
-    private final SerializerController serializerController;
+    private static ServerContext serverContext;
+    private static SerializerController serializerController;
 
-    public SerializerControllerTest() throws Exception {
+    @BeforeAll
+    static void startEmulator() throws Exception {
         serverContext = new ServerContext(new ConnexionBuilder().setSaveName("unitTest"));
         serializerController = serverContext.getSerializerController();
+    }
+
+    @AfterAll
+    static void EndEmulator() throws Exception {
+        serverContext.close();
     }
 
     @Test
@@ -68,5 +72,21 @@ class SerializerControllerTest {
         UuidComponent actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(mChest.get(chestDecode).getInventoryId());
 
         assertEquals(expectedUuid, actualUuid);
+    }
+
+    @Test
+    void serializeChunk() {
+        ComponentMapper<InfChunkComponent> mChunk = serverContext.getEcsEngineServer().getWorld().getMapper(InfChunkComponent.class);
+        InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
+        InfMetaDonneesComponent metaDonnesComponent = infMapComponent.getMetaDonnesComponent(serverContext.getEcsEngineServer().getWorld());
+        int chunkId = serverContext.getEcsEngineServer().getSystemsAdminServer().mapManager.generateNewChunk(metaDonnesComponent, 0, 0);
+        InfChunkComponent expectedInfChunkComponent = mChunk.get(chunkId);
+
+        SerializedApplicationBytes expectedChunkEncoded = serializerController.getChunkSerializerController().encode(serverContext.getEcsEngineServer().getWorld(), expectedInfChunkComponent);
+
+        int actualChunkId = serializerController.getChunkSerializerController().decode(serverContext.getEcsEngineServer().getWorld(), expectedChunkEncoded);
+        InfChunkComponent actualInfChunkComponent = mChunk.get(actualChunkId);
+
+        assertTrue(expectedInfChunkComponent.deepEquals(actualInfChunkComponent, serverContext.getEcsEngineServer().getWorld().getMapper(InfCellComponent.class)));
     }
 }

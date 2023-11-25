@@ -48,4 +48,12 @@ public class InfCellComponent extends PooledComponent {
     public byte getInnerPosY() {
         return Cells.getInnerChunkPosY(innerPos);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof InfCellComponent testInfCellComponent) {
+            return innerPos == testInfCellComponent.innerPos && cellRegisterEntry == testInfCellComponent.cellRegisterEntry;
+        }
+        return false;
+    }
 }

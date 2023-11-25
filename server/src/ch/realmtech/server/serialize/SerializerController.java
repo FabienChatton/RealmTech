@@ -1,6 +1,8 @@
 package ch.realmtech.server.serialize;
 
+import ch.realmtech.server.serialize.cell.CellSerializerController;
 import ch.realmtech.server.serialize.chest.ChestSerializerController;
+import ch.realmtech.server.serialize.chunk.ChunkSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.uuid.UuidSerializerController;
 import com.artemis.World;
@@ -10,6 +12,8 @@ public class SerializerController {
     private final InventorySerializerController inventorySerializerManager = new InventorySerializerController(this);
     private final ChestSerializerController chestSerializerController = new ChestSerializerController(this);
     private final UuidSerializerController uuidSerializerController = new UuidSerializerController(this);
+    private final CellSerializerController cellSerializerController = new CellSerializerController(this);
+    private final ChunkSerializerController chunkSerializerController = new ChunkSerializerController(this);
 
     public <InputType> int getApplicationBytesLength(World world, AbstractSerializerController<InputType, ?> abstractSerializerController, InputType inputType) {
         int rawBytesLength = abstractSerializerController.getSerializer().getBytesSize(world, this, inputType);
@@ -26,5 +30,13 @@ public class SerializerController {
 
     public UuidSerializerController getUuidSerializerController() {
         return uuidSerializerController;
+    }
+
+    public CellSerializerController getCellSerializerController() {
+        return cellSerializerController;
+    }
+
+    public ChunkSerializerController getChunkSerializerController() {
+        return chunkSerializerController;
     }
 }
