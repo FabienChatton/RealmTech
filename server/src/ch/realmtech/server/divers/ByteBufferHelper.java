@@ -1,5 +1,8 @@
 package ch.realmtech.server.divers;
 
+import ch.realmtech.server.serialize.AbstractSerializerController;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
+import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteBuffer;
@@ -98,5 +101,28 @@ public final class ByteBufferHelper {
         byteBuffer.putLong(msb);
         byteBuffer.putLong(lsb);
         return byteBuffer;
+    }
+
+    public static ByteBuf writeSerializedApplicationBytes(ByteBuf buffer, SerializedApplicationBytes serializedApplicationBytes) {
+        buffer.writeInt(serializedApplicationBytes.getLength());
+        buffer.writeBytes(serializedApplicationBytes.applicationBytes());
+        return buffer;
+    }
+
+    public static SerializedApplicationBytes readSerializedApplicationBytes(ByteBuf buffer) {
+        int length = buffer.readInt();
+        SerializedApplicationBytes serializedApplicationBytes = new SerializedApplicationBytes(new byte[length]);
+        buffer.readBytes(serializedApplicationBytes.applicationBytes());
+        return serializedApplicationBytes;
+    }
+
+    public static <InputType> ByteBuf encodeSerializedApplicationBytes(ByteBuf buffer, AbstractSerializerController<InputType, ?> serializerController, InputType toSerialize) {
+        writeSerializedApplicationBytes(buffer, serializerController.encode(toSerialize));
+        return buffer;
+    }
+
+    public static <OutputType> OutputType decodeSerializedApplicationBytes(ByteBuf buffer, AbstractSerializerController<?, OutputType> serializerController) {
+        SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytes(buffer);
+        return serializerController.decode(serializedApplicationBytes);
     }
 }

@@ -11,6 +11,7 @@ import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAReplacePacket;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -27,6 +28,7 @@ import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipException;
 
 
 public class MapSystemServer extends BaseSystem implements CellManager {
@@ -47,7 +49,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
     private SystemsAdminServer systemsAdminServer;
 
     private ComponentMapper<InfMapComponent> mInfMap;
-    private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
+    private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<PositionComponent> mPosition;
@@ -61,7 +63,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
 
     protected void processSystem() {
         InfMapComponent infMapComponent = mInfMap.get(systemsAdminServer.tagManager.getEntityId("infMap"));
-        InfMetaDonneesComponent infMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
+        SaveMetadataComponent infMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
         IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
         int[] playersData = players.getData();
         for (int p = 0; p < players.size(); p++) {
@@ -90,7 +92,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
                                 serverContext.getServerHandler().sendPacketTo(new ChunkAReplacePacket(
                                         newChunkPosX,
                                         newChunkPosY,
-                                        infChunkComponent.toBytes(mCell),
+                                        serverContext.getSerializerController().getChunkSerializerController().encode(infChunkComponent),
                                         oldChunkPosX,
                                         oldChunkPosy
                                 ), playerConnexionComponent.channel);
@@ -100,12 +102,10 @@ public class MapSystemServer extends BaseSystem implements CellManager {
                                 infMapComponent.infChunks = systemsAdminServer.mapManager.ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
                             } else {
                                 serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(
-                                        newChunkPosX,
-                                        newChunkPosY,
-                                        infChunkComponent.toBytes(mCell)
+                                        serverContext.getSerializerController().getChunkSerializerController().encode(infChunkComponent)
                                 ), playerConnexionComponent.channel);
                                 playerConnexionComponent.chunkPoss.add(new Position(newChunkPosX, newChunkPosY));
-                                infMapComponent.infChunks =systemsAdminServer.mapManager.ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
+                                infMapComponent.infChunks = systemsAdminServer.mapManager.ajouterChunkAMap(infMapComponent.infChunks, newChunkId);
                             }
                         }
                     }
@@ -151,9 +151,9 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         return ret;
     }
 
-    public int[] damneChunkServer(int[] infChunks, int chunkId, InfMetaDonneesComponent infMetaDonneesComponent) {
+    public int[] damneChunkServer(int[] infChunks, int chunkId, SaveMetadataComponent saveMetadataComponent) {
         try {
-            systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
+            systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
             systemsAdminServer.mapManager.supprimeChunk(chunkId);
         } catch (IOException e) {
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
@@ -172,7 +172,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         return positions.stream().anyMatch(position -> chunkEstDansLaRenderDistance(position, chunkPosX, chunkPosY));
     }
 
-    private int getCacheOrGenerateChunk(InfMapComponent infMapComponent, InfMetaDonneesComponent infMetaDonneesComponent, int chunkX, int chunkY) {
+    private int getCacheOrGenerateChunk(InfMapComponent infMapComponent, SaveMetadataComponent saveMetadataComponent, int chunkX, int chunkY) {
         // regarde si le chunk est déjà present dans la map
         int chunkId = systemsAdminServer.mapManager.getChunk(chunkX, chunkY, infMapComponent.infChunks);
         if (chunkId != -1) {
@@ -180,12 +180,16 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         }
 
         try {
-            chunkId = systemsAdminServer.saveInfManager.readSavedInfChunk(chunkX, chunkY, infMetaDonneesComponent.saveName);
-        } catch (FileNotFoundException | BufferUnderflowException e) {
-            if (e instanceof BufferUnderflowException) logger.error("Le chunk {},{} est corrompu", chunkX, chunkY);
-            chunkId = systemsAdminServer.mapManager.generateNewChunk(infMetaDonneesComponent, chunkX, chunkY);
+            chunkId = systemsAdminServer.saveInfManager.readSavedInfChunk(chunkX, chunkY, saveMetadataComponent.saveName);
+        } catch (FileNotFoundException | BufferUnderflowException | IllegalMagicNumbers | ZipException e) {
+            if (e instanceof BufferUnderflowException) logger.error("The chunk {},{} was corrupted", chunkX, chunkY);
+            if (e instanceof IllegalMagicNumbers) logger.error("The chunk {},{} was not recognise has a chunk file. Maybe the chunk version is < 9", chunkX, chunkY);
+            if (e instanceof ZipException) logger.error("The chunk {},{} was not compressed", chunkX, chunkY);
+            logger.info("Regeneration the chunk {},{}", chunkX, chunkY);
+
+            chunkId = systemsAdminServer.mapManager.generateNewChunk(saveMetadataComponent, chunkX, chunkY);
             try {
-                systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(infMetaDonneesComponent.saveName));
+                systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
             } catch (IOException ex) {
                 logger.error(e.getMessage(), ex);
                 throw new RuntimeException(ex);

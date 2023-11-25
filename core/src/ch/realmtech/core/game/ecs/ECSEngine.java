@@ -12,9 +12,11 @@ import ch.realmtech.core.game.ecs.system.CellHoverEtWailaSystem;
 import ch.realmtech.core.game.ecs.system.PlayerInputSystem;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
+import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
+import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.*;
 import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class ECSEngine implements Disposable {
+public final class ECSEngine implements Disposable, GetWorld {
     private final static Logger logger = LoggerFactory.getLogger(ECSEngine.class);
 
     private final RealmTech context;
@@ -46,6 +48,7 @@ public final class ECSEngine implements Disposable {
     private final List<Runnable> nextFrameRunnable;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
     private final CommandClientExecute commandClientExecute;
+    private final SerializerController serializerController;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -57,6 +60,7 @@ public final class ECSEngine implements Disposable {
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
+        serializerController = new SerializerController(this);
         SystemsAdminClient systemAdminClient = new SystemsAdminClient();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
@@ -90,10 +94,10 @@ public final class ECSEngine implements Disposable {
         worldConfiguration.register("itemManager", systemAdminClient.itemBarManager);
         worldConfiguration.register(systemAdminClient);
         worldConfiguration.register("systemsAdmin", systemAdminClient);
+        worldConfiguration.register(serializerController);
 
         worldConfiguration.setInvocationStrategy(tickEmulationInvocationStrategy);
         world = new World(worldConfiguration);
-
     }
 
     public void process(float delta) {
@@ -124,6 +128,7 @@ public final class ECSEngine implements Disposable {
         }
     }
 
+    @Override
     public World getWorld() {
         return world;
     }
@@ -139,14 +144,6 @@ public final class ECSEngine implements Disposable {
 
     public void playFootStep(PlayerFootStepSound footStep) {
         context.getSoundManager().playFootStep(footStep.playerFootStepSound(), footStep.volume());
-    }
-
-    public int readSavedInfChunk(int chunkX, int chunkY, String saveName) throws IOException {
-        return world.getSystem(SaveInfManager.class).readSavedInfChunk(chunkX, chunkY, saveName);
-    }
-
-    public void saveInfChunk(int infChunkId, Path rootSaveDirPath) throws IOException {
-        world.getSystem(SaveInfManager.class).saveInfChunk(infChunkId, rootSaveDirPath);
     }
 
 //    public void dropCurentPlayerItem() {
@@ -189,4 +186,10 @@ public final class ECSEngine implements Disposable {
     public CommandClientExecute getCommandClientExecute() {
         return commandClientExecute;
     }
+
+    public SerializerController getSerializerController() {
+        return serializerController;
+    }
+
+
 }

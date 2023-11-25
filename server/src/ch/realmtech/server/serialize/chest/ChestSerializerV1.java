@@ -21,8 +21,8 @@ public class ChestSerializerV1 implements Serializer<Integer, Integer> {
         InventoryComponent inventoryComponent = world.getSystem(InventoryManager.class).getChestInventory(motherChestToSerializer);
         UuidComponent uuidComponent = world.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId);
 
-        SerializedApplicationBytes uuidApplicationBytes = serializerController.getUuidSerializerController().encode(world, uuidComponent.getUuid());
-        SerializedApplicationBytes inventoryApplicationBytes = serializerController.getInventorySerializerManager().encode(world, inventoryComponent);
+        SerializedApplicationBytes uuidApplicationBytes = serializerController.getUuidSerializerController().encode(uuidComponent.getUuid());
+        SerializedApplicationBytes inventoryApplicationBytes = serializerController.getInventorySerializerManager().encode(inventoryComponent);
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(getBytesSize(world, serializerController, motherChestToSerializer));
 
@@ -47,8 +47,8 @@ public class ChestSerializerV1 implements Serializer<Integer, Integer> {
         byteBuffer.get(inventoryApplicationBytes.applicationBytes());
 
 
-        UUID uuidChest = serializerController.getUuidSerializerController().decode(world, uuidApplicationBytes);
-        InventoryArgs inventoryArgs = serializerController.getInventorySerializerManager().decode(world, inventoryApplicationBytes).apply(world.getRegistered("itemManager"));
+        UUID uuidChest = serializerController.getUuidSerializerController().decode(uuidApplicationBytes);
+        InventoryArgs inventoryArgs = serializerController.getInventorySerializerManager().decode(inventoryApplicationBytes).apply(world.getRegistered("itemManager"));
 
         int mother = world.create();
         world.getSystem(InventoryManager.class).createChest(mother, inventoryArgs.inventory(), uuidChest, inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
@@ -61,8 +61,8 @@ public class ChestSerializerV1 implements Serializer<Integer, Integer> {
         InventoryComponent inventoryComponent = world.getSystem(InventoryManager.class).getChestInventory(motherChestToSerializer);
         UuidComponent uuidComponent = world.getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryId);
 
-        int uuidLength = serializerController.getApplicationBytesLength(world, serializerController.getUuidSerializerController(), uuidComponent.getUuid());
-        int inventoryLength = serializerController.getApplicationBytesLength(world, serializerController.getInventorySerializerManager(), inventoryComponent);
+        int uuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), uuidComponent.getUuid());
+        int inventoryLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), inventoryComponent);
         // length uuid, uuid, length inventory, inventory
         return Integer.BYTES + uuidLength * Byte.BYTES + Integer.BYTES + inventoryLength * Byte.BYTES;
     }

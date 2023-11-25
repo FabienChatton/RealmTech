@@ -11,11 +11,11 @@ public interface ClientExecute {
 
     void autreJoueur(float x, float y, UUID uuid);
 
-    void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes);
+    void chunkAMounter(SerializedApplicationBytes applicationChunkBytes);
 
     void chunkADamner(int chunkPosX, int chunkPosY);
 
-    void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY);
+    void chunkARemplacer(int chunkPosX, int chunkPosY, SerializedApplicationBytes chunkApplicationBytes, int oldChunkPosX, int oldChunkPosY);
 
     void deconnectionJoueur(UUID uuid);
 

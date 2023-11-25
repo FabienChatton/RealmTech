@@ -44,9 +44,9 @@ class SerializerControllerTest {
             inventoryManager.addItemToInventory(expectedChestInventory, newItemId);
         }
 
-        SerializedApplicationBytes serializedApplicationBytes = serializerController.getChestSerializerController().encode(serverContext.getEcsEngineServer().getWorld(), expectedChestId);
+        SerializedApplicationBytes serializedApplicationBytes = serializerController.getChestSerializerController().encode(expectedChestId);
 
-        int chestDecode = serializerController.getChestSerializerController().decode(serverContext.getEcsEngineServer().getWorld(), serializedApplicationBytes);
+        int chestDecode = serializerController.getChestSerializerController().decode(serializedApplicationBytes);
         InventoryComponent actualChestInventory = inventoryManager.getChestInventory(chestDecode);
 
         assertEquals(expectedChestInventory.numberOfRow, actualChestInventory.numberOfRow);
@@ -78,15 +78,30 @@ class SerializerControllerTest {
     void serializeChunk() {
         ComponentMapper<InfChunkComponent> mChunk = serverContext.getEcsEngineServer().getWorld().getMapper(InfChunkComponent.class);
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
-        InfMetaDonneesComponent metaDonnesComponent = infMapComponent.getMetaDonnesComponent(serverContext.getEcsEngineServer().getWorld());
+        SaveMetadataComponent metaDonnesComponent = infMapComponent.getMetaDonnesComponent(serverContext.getEcsEngineServer().getWorld());
         int chunkId = serverContext.getEcsEngineServer().getSystemsAdminServer().mapManager.generateNewChunk(metaDonnesComponent, 0, 0);
         InfChunkComponent expectedInfChunkComponent = mChunk.get(chunkId);
 
-        SerializedApplicationBytes expectedChunkEncoded = serializerController.getChunkSerializerController().encode(serverContext.getEcsEngineServer().getWorld(), expectedInfChunkComponent);
+        SerializedApplicationBytes expectedChunkEncoded = serializerController.getChunkSerializerController().encode(expectedInfChunkComponent);
 
-        int actualChunkId = serializerController.getChunkSerializerController().decode(serverContext.getEcsEngineServer().getWorld(), expectedChunkEncoded);
+        int actualChunkId = serializerController.getChunkSerializerController().decode(expectedChunkEncoded);
         InfChunkComponent actualInfChunkComponent = mChunk.get(actualChunkId);
 
         assertTrue(expectedInfChunkComponent.deepEquals(actualInfChunkComponent, serverContext.getEcsEngineServer().getWorld().getMapper(InfCellComponent.class)));
+    }
+
+    @Test
+    void serializedSaveMetadata() {
+        ComponentMapper<SaveMetadataComponent> mMetadata = serverContext.getEcsEngineServer().getWorld().getMapper(SaveMetadataComponent.class);
+        InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
+        SaveMetadataComponent expectedMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(serverContext.getEcsEngineServer().getWorld());
+
+        SerializedApplicationBytes expectedSerializedSaveMetadata = serializerController.getSaveMetadataSerializerController().encode(expectedMetaDonnesComponent);
+
+        int actualSaveMetadataId = serializerController.getSaveMetadataSerializerController().decode(expectedSerializedSaveMetadata);
+
+        SaveMetadataComponent actualSaveMetadata = mMetadata.get(actualSaveMetadataId);
+        assertEquals(expectedMetaDonnesComponent, actualSaveMetadata);
+
     }
 }

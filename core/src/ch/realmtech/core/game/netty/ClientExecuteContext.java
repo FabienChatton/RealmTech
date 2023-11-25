@@ -43,7 +43,7 @@ public class ClientExecuteContext implements ClientExecute {
         PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
         World world = context.getEcsEngine().getWorld();
-        Function<ItemManager, InventoryArgs> inventoryGet = context.getSerializerManagerController().getInventorySerializerManager().decode(world, connexionJoueurReussitArg.applicationInventoryBytes());
+        Function<ItemManager, InventoryArgs> inventoryGet = context.getSerializerController().getInventorySerializerManager().decode(connexionJoueurReussitArg.applicationInventoryBytes());
         // inventory chest
         InventoryArgs inventoryArgs = inventoryGet.apply(context.getSystem(ItemManager.class));
         context.getSystem(InventoryManager.class).createChest(playerId, inventoryArgs.inventory(), connexionJoueurReussitArg.inventoryUuid(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
@@ -70,9 +70,9 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
+    public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
 //        logger.debug("chunk à mounter {},{}", chunkPosX, chunkPosY);
-        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(chunkPosX, chunkPosY, chunkBytes));
+        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(applicationChunkBytes));
     }
 
     @Override
@@ -82,9 +82,9 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
+    public void chunkARemplacer(int chunkPosX, int chunkPosY, SerializedApplicationBytes chunkApplicationBytes, int oldChunkPosX, int oldChunkPosY) {
 //        logger.debug("chunk à remplacer old {},{}. new {},{} ", oldChunkPosX, oldChunkPosY, chunkPosX, chunkPosY);
-        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkBytes, oldChunkPosX, oldChunkPosY));
+        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkApplicationBytes, oldChunkPosX, oldChunkPosY));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class ClientExecuteContext implements ClientExecute {
             if (inventoryId == -1) return;
             int[][] inventory = mInventory.get(inventoryId).inventory;
             context.getSystem(InventoryManager.class).removeInventory(inventory);
-            InventoryArgs inventoryArgs = context.getSerializerManagerController().getInventorySerializerManager().decode(world, applicationInventoryBytes).apply(context.getSystem(ItemManagerClient.class));
+            InventoryArgs inventoryArgs = context.getSerializerController().getInventorySerializerManager().decode(applicationInventoryBytes).apply(context.getSystem(ItemManagerClient.class));
             int[][] newInventory = inventoryArgs.inventory();
             for (int i = 0; i < inventory.length; i++) {
                 System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);

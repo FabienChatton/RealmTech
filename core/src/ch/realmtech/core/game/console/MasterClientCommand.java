@@ -35,6 +35,6 @@ public class MasterClientCommand extends CommunMasterCommand implements Callable
 
     @Override
     public SerializerController getSerializerManagerController() {
-        return context.getSerializerManagerController();
+        return context.getSerializerController();
     }
 }

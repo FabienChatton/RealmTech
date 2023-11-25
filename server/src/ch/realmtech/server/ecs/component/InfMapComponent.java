@@ -15,8 +15,8 @@ public class InfMapComponent extends PooledComponent {
         return this;
     }
 
-    public InfMetaDonneesComponent getMetaDonnesComponent(World world) {
-        return world.getMapper(InfMetaDonneesComponent.class).get(infMetaDonnees);
+    public SaveMetadataComponent getMetaDonnesComponent(World world) {
+        return world.getMapper(SaveMetadataComponent.class).get(infMetaDonnees);
     }
 
     @Override

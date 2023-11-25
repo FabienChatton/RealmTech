@@ -14,6 +14,8 @@ import com.artemis.BaseSystem;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+import org.slf4j.spi.LoggingEventBuilder;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -28,8 +30,6 @@ public class ServerContext {
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
-
-    private final SerializerController serializerController = new SerializerController();
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -128,8 +128,7 @@ public class ServerContext {
     public CommandeServerExecute getCommandeExecute() {
         return commandeServerExecute;
     }
-
     public SerializerController getSerializerController() {
-        return serializerController;
+        return ecsEngineServer.getSerializerController();
     }
 }

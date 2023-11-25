@@ -44,7 +44,7 @@ public class DumpInventoryCommand implements Callable<Integer> {
             if (!stringBuilder.toString().isBlank()) {
                 dumpCommand.printlnVerbose(2, stringBuilder);
             }
-            SerializedApplicationBytes applicationInventoryBytes = dumpCommand.masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(dumpCommand.masterCommand.getWorld(), inventoryComponent);
+            SerializedApplicationBytes applicationInventoryBytes = dumpCommand.masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(inventoryComponent);
             dumpCommand.printlnVerbose(3, String.format("%s", Arrays.toString(applicationInventoryBytes.applicationBytes())));
 
         }

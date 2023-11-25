@@ -1,7 +1,9 @@
 package ch.realmtech.server.serialize.chunk;
 
+import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
+import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -25,10 +27,8 @@ public class ChunkSerializerV9 implements Serializer<InfChunkComponent, Integer>
 
         for (int i = 0; i < chunkToSerialize.infCellsId.length; i++) {
             InfCellComponent infCellComponent = mCell.get(chunkToSerialize.infCellsId[i]);
-            SerializedApplicationBytes encodeCell = serializerController.getCellSerializerController().encode(world, infCellComponent);
 
-            buffer.writeInt(encodeCell.applicationBytes().length);
-            buffer.writeBytes(encodeCell.applicationBytes());
+            ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getCellSerializerController(), infCellComponent);
         }
         return new SerializedRawBytes(buffer.array());
     }
@@ -37,26 +37,21 @@ public class ChunkSerializerV9 implements Serializer<InfChunkComponent, Integer>
     public Integer fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
         ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
 
+        int chunkId = world.create();
+
         int chunkPosX = buffer.readInt();
         int chunkPosY = buffer.readInt();
         short cellCount = buffer.readShort();
 
         int[] cells = new int[cellCount];
+        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cells);
 
         for (int i = 0; i < cells.length; i++) {
-            int cellBytesLength = buffer.readInt();
+            CellArgs cellArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCellSerializerController());
 
-            byte[] cellBuffer = new byte[cellBytesLength];
-            buffer.readBytes(cellBuffer);
-            CellArgs cellArgs = serializerController.getCellSerializerController().decode(world, new SerializedApplicationBytes(cellBuffer));
-
-            int cellId = world.create();
-            world.edit(cellId).create(InfCellComponent.class).set(Cells.getInnerChunkPosX(cellArgs.innerChunk()), Cells.getInnerChunkPosY(cellArgs.innerChunk()), cellArgs.cellRegisterEntry());
+            int cellId = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, Cells.getInnerChunkPosX(cellArgs.innerChunk()), Cells.getInnerChunkPosY(cellArgs.innerChunk()), cellArgs.cellRegisterEntry());
             cells[i] = cellId;
         }
-
-        int chunkId = world.create();
-        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cells);
         return chunkId;
     }
 
@@ -70,7 +65,7 @@ public class ChunkSerializerV9 implements Serializer<InfChunkComponent, Integer>
         int cellTotalSize = 0;
         for (int i = 0; i < chunkToSerialize.infCellsId.length; i++) {
             InfCellComponent infCellComponent = mCell.get(chunkToSerialize.infCellsId[i]);
-            cellTotalSize += serializerController.getApplicationBytesLength(world, serializerController.getCellSerializerController(), infCellComponent);
+            cellTotalSize += serializerController.getApplicationBytesLength(serializerController.getCellSerializerController(), infCellComponent);
         }
         return pos + cellCount + cellByteLength + cellTotalSize;
     }

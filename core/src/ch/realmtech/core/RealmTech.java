@@ -48,7 +48,6 @@ public final class RealmTech extends Game implements ClientContext {
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
     private final static Logger logger = LoggerFactory.getLogger(RealmTech.class);
-    private final SerializerController serializerController = new SerializerController();
     private InputMapper inputMapper;
     private AssetManager assetManager;
     private Stage gameStage;
@@ -66,7 +65,6 @@ public final class RealmTech extends Game implements ClientContext {
 
     @Override
     public void create() {
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         try {
             dataCtrl = new DataCtrl();
         } catch (IOException e) {
@@ -290,7 +288,7 @@ public final class RealmTech extends Game implements ClientContext {
         gameScreen.writeToConsole(s);
     }
 
-    public SerializerController getSerializerManagerController() {
-        return serializerController;
+    public SerializerController getSerializerController() {
+        return ecsEngine.getSerializerController();
     }
 }

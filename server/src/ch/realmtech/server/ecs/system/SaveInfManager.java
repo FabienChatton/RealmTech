@@ -3,6 +3,9 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.options.DataCtrl;
+import ch.realmtech.server.serialize.SerializerController;
+import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -11,21 +14,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class SaveInfManager extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(SaveInfManager.class);
     @Wire(name = "systemsAdmin")
     private SystemsAdminCommun systemsAdminCommun;
+    @Wire
+    private SerializerController serializerController;
     public final static int SAVE_PROTOCOLE_VERSION = 8;
     public final static String ROOT_PATH_SAVES = "saves";
     private ComponentMapper<InfMapComponent> mInfMap;
-    private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
+    private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<ItemComponent> mItem;
@@ -33,15 +39,15 @@ public class SaveInfManager extends Manager {
 
     public void saveInfMap(int mapId) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
-        InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMapComponent.infMetaDonnees);
-        saveInfMap(mapId, infMetaDonneesComponent.saveName);
+        SaveMetadataComponent saveMetadataComponent = mMetaDonnees.get(infMapComponent.infMetaDonnees);
+        saveInfMap(mapId, saveMetadataComponent.saveName);
     }
 
     public void saveInfMap(int mapId, String saveName) throws IOException {
         InfMapComponent infMapComponent = mInfMap.get(mapId);
         if (infMapComponent != null) {
             Path savePath = getSavePath(saveName);
-            saveInfHeaderFile(infMapComponent.infMetaDonnees, savePath);
+            saveSaveMetadata(infMapComponent.infMetaDonnees, savePath);
             for (int infChunkId : infMapComponent.infChunks) {
                 saveInfChunk(infChunkId, savePath);
             }
@@ -78,29 +84,21 @@ public class SaveInfManager extends Manager {
         if (saveName.contains("/")) throw new IllegalArgumentException("le nom du la sauvegarde ne peut pas contenir de \"/\"");
         creerHiearchieDUneSave(saveName);
         int mapId = world.create();
-        int metaDonneesId = world.create();
+        int metaDonneesId = createSaveMetadata(saveName);;
         InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
-        InfMetaDonneesComponent infMetaDonneesComponent = world.edit(metaDonneesId).create(InfMetaDonneesComponent.class);
-        infMetaDonneesComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), 0, 0, saveName, world);
         infMapComponent.set(new int[0], metaDonneesId);
         return mapId;
     }
 
-    public void saveInfHeaderFile(int infMetaDonneesId, Path rootSaveDirPath) throws IOException {
-        InfMetaDonneesComponent infMetaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
+    public void saveSaveMetadata(int infMetaDonneesId, Path rootSaveDirPath) throws IOException {
+        SaveMetadataComponent saveMetadataComponent = mMetaDonnees.get(infMetaDonneesId);
         //PositionComponent positionComponentPlayer = world.getSystem(TagManager.class).getEntity(PlayerComponent.TAG).getComponent(PositionComponent.class);
         File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath);
         metaDonneesFile.createNewFile();
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(metaDonneesFile)))) {
-            outputStream.write("RealmTech".getBytes());
-            outputStream.write(infMetaDonneesComponent.saveName.getBytes().length);
-            outputStream.write(infMetaDonneesComponent.saveName.getBytes());
-            outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
-            outputStream.writeLong(System.currentTimeMillis());
-            outputStream.writeLong(infMetaDonneesComponent.seed);
-            //outputStream.writeFloat(positionComponentPlayer.x);
-            //outputStream.writeFloat(positionComponentPlayer.y);
+            SerializedApplicationBytes encodeSaveMetadata = serializerController.getSaveMetadataSerializerController().encode(saveMetadataComponent);
+            outputStream.write(encodeSaveMetadata.applicationBytes());
             outputStream.flush();
         }
     }
@@ -112,8 +110,9 @@ public class SaveInfManager extends Manager {
             Files.createDirectories(chunksFile.toPath().getParent());
         }
 
-        try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(chunksFile)))) {
-            outputStream.write(infChunkComponent.toBytes(mCell));
+        try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(chunksFile))))) {
+            SerializedApplicationBytes encodeChunk = serializerController.getChunkSerializerController().encode(infChunkComponent);
+            outputStream.write(encodeChunk.applicationBytes());
             outputStream.flush();
         }
     }
@@ -126,68 +125,37 @@ public class SaveInfManager extends Manager {
         Path rootSaveDirPath = Path.of(DataCtrl.ROOT_PATH + "/" + ROOT_PATH_SAVES + "/" + saveName);
         logger.info("Lecture de la carte \"{}\"", rootSaveDirPath.toAbsolutePath());
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
-        int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath);
-        InfMetaDonneesComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
+        int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath, saveName);
+        SaveMetadataComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);
         infMapComponent.set(new int[0], infMetaDonneesId);
         return worldId;
     }
 
-    public int readInfMetaDonnees(Path rootSaveDirPath) throws IOException {
+    public int readInfMetaDonnees(Path rootSaveDirPath, String saveName) throws IOException {
         File metaDonneesFile = getMetaDonneesFile(rootSaveDirPath);
         try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(metaDonneesFile)))) {
-            ByteBuffer buffer = ByteBuffer.wrap(inputStream.readAllBytes());
-            byte[] realmTechMagic = new byte[9];
-            buffer.get(realmTechMagic, 0, realmTechMagic.length);
-            byte[] bytesExpected = "RealmTech".getBytes();
-            if (!Arrays.equals(realmTechMagic, bytesExpected)) {
-                throw new IOException("ce n'est pas un fichier header de RealmTech");
-            }
-            byte tailleSaveName = buffer.get();
-            byte[] saveNameChar = new byte[tailleSaveName];
-            for (int i = 0; i < saveNameChar.length; i++) {
-                saveNameChar[i] = buffer.get();
-            }
-            String saveName = new String(saveNameChar);
-            int version = buffer.getInt();
-            if (version != SAVE_PROTOCOLE_VERSION) {
-                throw new IOException("Ce n'est pas la bonne version. Fichier : " + version + " jeu : " + SAVE_PROTOCOLE_VERSION);
-            }
-            long dateSauvegarde = buffer.getLong();
-            long seed = buffer.getLong();
-            //float playerPosX = buffer.getFloat();
-            //float playerPosY = buffer.getFloat();
-            int metaDonnesId = world.create();
-            world.edit(metaDonnesId).create(InfMetaDonneesComponent.class).set(seed, 0, 0, saveName, world);
-            return metaDonnesId;
+            return serializerController.getSaveMetadataSerializerController().decode(new SerializedApplicationBytes(inputStream.readAllBytes()));
+        } catch (IllegalMagicNumbers e) {
+            logger.error("The saveMetadata file was not correctly read. Recreating a new one");
+            return createSaveMetadata(saveName);
         }
     }
 
-    public int readChunkFromBytes(int chunkPosX, int chunkPosY, byte[] bytes) {
-        ByteBuffer inputWrap = ByteBuffer.wrap(bytes);
-        int versionProtocole = inputWrap.getInt();
-        if (versionProtocole != SAVE_PROTOCOLE_VERSION) {
-            logger.error("La version de la sauvegarde ne correspond pas. Fichier : {}. Jeu : {}", versionProtocole, SAVE_PROTOCOLE_VERSION);
-        }
-        // Header
-        short nombreDeCellule = inputWrap.getShort();
-        // Body
-        int[] cellulesId = new int[nombreDeCellule];
-        int chunkId = world.create();
-        world.edit(chunkId).create(InfChunkComponent.class).set(chunkPosX, chunkPosY, cellulesId);
-        for (int i = 0; i < cellulesId.length; i++) {
-            byte[] cellBuff = new byte[InfCellComponent.TAILLE_BYTES];
-            inputWrap.get(cellBuff);
-            InfCellComponent.FromBytesArgs cellFromArgs = InfCellComponent.fromBytes(cellBuff);
-            cellulesId[i] = systemsAdminCommun.mapManager.newCell(chunkId, chunkPosX, chunkPosY, cellFromArgs.innerPosX(), cellFromArgs.innerPosY(), cellFromArgs.cellRegisterEntry());
-        }
-        return chunkId;
+    private int createSaveMetadata(String saveName) {
+        int saveMetadataId = world.create();
+        SaveMetadataComponent saveMetadataComponent = world.edit(saveMetadataId).create(SaveMetadataComponent.class);
+        saveMetadataComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), saveName, world);
+        return saveMetadataId;
     }
 
     public int readSavedInfChunk(int chunkPosX, int chunkPosY, String saveName) throws IOException {
         File chunksFile = getChunkFile(chunkPosX, chunkPosY, getSavePath(saveName));
-        try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(chunksFile)))) {
-            return InfChunkComponent.fromByte(world, inputStream.readAllBytes(), chunkPosX, chunkPosY);
+        byte[] chunkBytes;
+        // test with gzip format first
+        try (final DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(chunksFile))))) {
+            chunkBytes = inputStream.readAllBytes();
         }
+        return serializerController.getChunkSerializerController().decode(new SerializedApplicationBytes(chunkBytes));
     }
 
     public static List<File> listSauvegardeInfinie() throws IOException {

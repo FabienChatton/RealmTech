@@ -7,6 +7,8 @@ import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.level.map.WorldMap;
 import ch.realmtech.server.level.worldGeneration.PerlinNoise;
 import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.serialize.SerializerController;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.Manager;
@@ -30,8 +32,10 @@ public class MapManager extends Manager {
     private BodyDef bodyDef;
     @Wire
     private FixtureDef fixtureDef;
+    @Wire
+    private SerializerController serializerController;
     private ComponentMapper<InfMapComponent> mInfMap;
-    private ComponentMapper<InfMetaDonneesComponent> mMetaDonnees;
+    private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InfCellComponent> mCell;
     private ComponentMapper<PositionComponent> mPosition;
@@ -179,11 +183,11 @@ public class MapManager extends Manager {
         infChunkComponent.infCellsId = newCellIds;
         supprimeCell(cellId);
     }
-    public int generateNewChunk(InfMetaDonneesComponent infMetaDonneesComponent, int chunkPosX, int chunkPosY) {
+    public int generateNewChunk(SaveMetadataComponent saveMetadataComponent, int chunkPosX, int chunkPosY) {
         int chunkId = world.create();
         List<Integer> cellsId = new ArrayList<>(WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE);
         for (short i = 0; i < WorldMap.CHUNK_SIZE * WorldMap.CHUNK_SIZE; i++) {
-            int[] cells = generateNewCells(infMetaDonneesComponent, chunkId, chunkPosX, chunkPosY, i);
+            int[] cells = generateNewCells(saveMetadataComponent, chunkId, chunkPosX, chunkPosY, i);
             for (int j = 0; j < cells.length; j++) {
                 cellsId.add(cells[j]);
             }
@@ -193,12 +197,12 @@ public class MapManager extends Manager {
         return chunkId;
     }
 
-    private int[] generateNewCells(InfMetaDonneesComponent infMetaDonneesComponent, int chunkId, int chunkPosX, int chunkPosY, short index) {
+    private int[] generateNewCells(SaveMetadataComponent saveMetadataComponent, int chunkId, int chunkPosX, int chunkPosY, short index) {
         byte innerChunkX = MapManager.getInnerChunkX(index);
         byte innerChunkY = MapManager.getInnerChunkY(index);
         int worldX = MapManager.getWorldPos(chunkPosX, innerChunkX);
         int worldY = MapManager.getWorldPos(chunkPosY, innerChunkY);
-        PerlinNoise perlinNoise = infMetaDonneesComponent.perlinNoise;
+        PerlinNoise perlinNoise = saveMetadataComponent.perlinNoise;
         final CellRegisterEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
         final int[] cellIds = new int[(int) Arrays.stream(cellRegisterEntries).filter(Objects::nonNull).count()];
         for (int i = 0; i < cellRegisterEntries.length; i++) {
@@ -279,8 +283,8 @@ public class MapManager extends Manager {
         }
     }
 
-    public void chunkAMounter(int chunkPosX, int chunkPosY, byte[] chunkBytes) {
-        int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
+    public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
+        int chunkId = serializerController.getChunkSerializerController().decode(applicationChunkBytes);
         Entity infMapEntity = world.getSystem(TagManager.class).getEntity("infMap");
         InfMapComponent infMapComponent = infMapEntity.getComponent(InfMapComponent.class);
         infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, chunkId);
@@ -296,12 +300,12 @@ public class MapManager extends Manager {
         return ret;
     }
 
-    public void chunkARemplacer(int chunkPosX, int chunkPosY, byte[] chunkBytes, int oldChunkPosX, int oldChunkPosY) {
+    public void chunkARemplacer(int chunkPosX, int chunkPosY, SerializedApplicationBytes chunkApplicationBytes, int oldChunkPosX, int oldChunkPosY) {
         try {
             InfMapComponent infMap = getInfMap();
             int oldChunkId = getChunk(oldChunkPosX, oldChunkPosY, infMap.infChunks);
             if (oldChunkId == -1) throw new NoSuchElementException();
-            int chunkId = InfChunkComponent.fromByte(world, chunkBytes, chunkPosX, chunkPosY);
+            int chunkId = serializerController.getChunkSerializerController().decode(chunkApplicationBytes);
             replaceChunk(infMap.infChunks, oldChunkId, chunkId);
             supprimeChunk(oldChunkId);
         } catch (NoSuchElementException e) {

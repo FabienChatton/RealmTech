@@ -99,11 +99,11 @@ public class ServerExecuteContext implements ServerExecute {
                 ComponentMapper<UuidComponent> mUuid = serverContext.getEcsEngineServer().getWorld().getMapper(UuidComponent.class);
                 InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(srcInventory));
                 InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(dstInventory));
-                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(serverContext.getEcsEngineServer().getWorld(), srcInventoryComponent)), clientChannel);
-                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(serverContext.getEcsEngineServer().getWorld(), dstInventoryComponent)), clientChannel);
+                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), clientChannel);
+                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), clientChannel);
                 if (mutatedInventories != null) {
                     for (int mutatedInventory : mutatedInventories) {
-                        serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(mutatedInventory).getUuid(), serverContext.getSerializerController().getInventorySerializerManager().encode(serverContext.getEcsEngineServer().getWorld(), mInventory.get(mutatedInventory))), clientChannel);
+                        serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(mutatedInventory).getUuid(), serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(mutatedInventory))), clientChannel);
                     }
                 }
 
@@ -117,7 +117,7 @@ public class ServerExecuteContext implements ServerExecute {
     public void getInventory(Channel clientChannel, UUID inventoryUuid) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             InventoryComponent inventoryComponent = serverContext.getSystem(InventoryManager.class).getInventoryComponentByUUID(inventoryUuid);
-            SerializedApplicationBytes applicationInventoryBytes = serverContext.getSerializerController().getInventorySerializerManager().encode(serverContext.getEcsEngineServer().getWorld(), inventoryComponent);
+            SerializedApplicationBytes applicationInventoryBytes = serverContext.getSerializerController().getInventorySerializerManager().encode(inventoryComponent);
             clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, applicationInventoryBytes));
         });
     }
@@ -135,7 +135,7 @@ public class ServerExecuteContext implements ServerExecute {
 
                 UUID inventoryUuid = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId).getUuid();
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
-                clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(serverContext.getEcsEngineServer().getWorld(), mInventory.get(chestInventoryId))));
+                clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(chestInventoryId))));
             }
         });
     }

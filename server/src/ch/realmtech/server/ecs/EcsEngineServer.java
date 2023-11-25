@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.TickBeatPacket;
+import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
-public final class EcsEngineServer {
+public final class EcsEngineServer implements GetWorld {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
     private ServerContext serverContext;
     private World world;
@@ -32,6 +33,7 @@ public final class EcsEngineServer {
     private final Map<Long, List<Runnable>> nextTickSchedule = Collections.synchronizedMap(new HashMap<>());
     private static long tickCount;
     private final SystemsAdminServer systemsAdminServer;
+    private final SerializerController serializerController;
 
     public EcsEngineServer(ServerContext serverContext) throws IOException {
         logger.trace("debut de l'initialisation du ecs");
@@ -41,6 +43,7 @@ public final class EcsEngineServer {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
+        serializerController = new SerializerController(this);
 
         systemsAdminServer = new SystemsAdminServer();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
@@ -56,6 +59,7 @@ public final class EcsEngineServer {
         worldConfiguration.register(systemsAdminServer);
         worldConfiguration.register("itemManager", systemsAdminServer.itemManagerServer);
         worldConfiguration.register("systemsAdmin", systemsAdminServer);
+        worldConfiguration.register(serializerController);
         this.world = new World(worldConfiguration);
         logger.trace("fin de l'initialisation du ecs");
     }
@@ -137,5 +141,9 @@ public final class EcsEngineServer {
 
     public SystemsAdminServer getSystemsAdminServer() {
         return systemsAdminServer;
+    }
+
+    public SerializerController getSerializerController() {
+        return serializerController;
     }
 }
