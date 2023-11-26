@@ -4,6 +4,7 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -36,7 +37,7 @@ public class CraftingPlayerSystem extends IteratingSystem {
         if (craftingTableComponent.getCraftResultStrategy() != null) {
             if (craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(serverContext, world, craftResult, entityId)) {
                 UUID uuid = mUuid.get(craftingTableComponent.craftingResultInventory).getUuid();
-                serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory));
+                serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(uuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))));
             }
         }
     }

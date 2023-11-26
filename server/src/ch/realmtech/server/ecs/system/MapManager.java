@@ -8,6 +8,7 @@ import ch.realmtech.server.level.map.WorldMap;
 import ch.realmtech.server.level.worldGeneration.PerlinNoise;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.serialize.SerializerController;
+import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -139,7 +140,7 @@ public class MapManager extends Manager {
 
     public void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, innerX, innerY, cellRegisterEntry);
+        int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, new CellArgs(cellRegisterEntry, Cells.getInnerChunkPos(innerX, innerY)));
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
         System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
         newCellsArray[newCellsArray.length - 1] = cellId;
@@ -208,16 +209,21 @@ public class MapManager extends Manager {
         for (int i = 0; i < cellRegisterEntries.length; i++) {
             CellRegisterEntry cellRegisterEntry = cellRegisterEntries[i];
             if (cellRegisterEntry != null) {
-                cellIds[i] = newCell(chunkId, chunkPosX, chunkPosY, innerChunkX, innerChunkY, cellRegisterEntry);
+                cellIds[i] = newCell(chunkId, chunkPosX, chunkPosY, new CellArgs(cellRegisterEntry, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
             }
         }
         return cellIds;
     }
 
-    public int newCell(int chunkId, int chunkPosX, int chunkPosY, byte innerX, byte innerY, CellRegisterEntry cellRegisterEntry) {
+    public int newCell(int chunkId, int chunkPosX, int chunkPosY, CellArgs cellArgs) {
         int cellId = world.create();
+        byte innerX = Cells.getInnerChunkPosX(cellArgs.getInnerChunk());
+        byte innerY = Cells.getInnerChunkPosY(cellArgs.getInnerChunk());
+        CellRegisterEntry cellRegisterEntry = cellArgs.getCellRegisterEntry();
         world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
-        if (cellRegisterEntry.getCellBehavior().getEditEntity() != null) {
+        if (cellArgs.getOverrideEdit() != null) {
+            cellArgs.getOverrideEdit().accept(world, cellId);
+        } else if (cellRegisterEntry.getCellBehavior().getEditEntity() != null) {
             cellRegisterEntry.getCellBehavior().getEditEntity().accept(world, cellId);
         }
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {

@@ -1,6 +1,6 @@
 package ch.realmtech.server.ecs.component;
 
-import ch.realmtech.server.craft.CraftStrategy;
+import ch.realmtech.server.craft.CraftingStrategyItf;
 import com.artemis.Component;
 import com.artemis.annotations.EntityId;
 
@@ -11,15 +11,15 @@ public class CraftingTableComponent extends Component {
     @EntityId
     public int craftingResultInventory;
 
-    private CraftStrategy craftStrategy;
+    private CraftingStrategyItf craftStrategy;
 
-    public void set(int craftingInventory, int craftingResultInventory, CraftStrategy craftStrategy) {
+    public void set(int craftingInventory, int craftingResultInventory, CraftingStrategyItf craftStrategy) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.craftStrategy = craftStrategy;
     }
 
-    public CraftStrategy getCraftResultStrategy() {
+    public CraftingStrategyItf getCraftResultStrategy() {
         return craftStrategy;
     }
 }

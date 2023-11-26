@@ -185,7 +185,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
             if (e instanceof BufferUnderflowException) logger.error("The chunk {},{} was corrupted", chunkX, chunkY);
             if (e instanceof IllegalMagicNumbers) logger.error("The chunk {},{} was not recognise has a chunk file. Maybe the chunk version is < 9", chunkX, chunkY);
             if (e instanceof ZipException) logger.error("The chunk {},{} was not compressed", chunkX, chunkY);
-            logger.info("Regeneration the chunk {},{}", chunkX, chunkY);
+            logger.info("Generating the chunk {},{}", chunkX, chunkY);
 
             chunkId = systemsAdminServer.mapManager.generateNewChunk(saveMetadataComponent, chunkX, chunkY);
             try {

@@ -4,6 +4,7 @@ import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.serialize.cell.CellSerializerController;
 import ch.realmtech.server.serialize.chest.ChestSerializerController;
 import ch.realmtech.server.serialize.chunk.ChunkSerializerController;
+import ch.realmtech.server.serialize.craftingtable.CraftingTableController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.savemetadata.SaveMetadataSerializerController;
 import ch.realmtech.server.serialize.uuid.UuidSerializerController;
@@ -18,6 +19,7 @@ public class SerializerController {
     private final CellSerializerController cellSerializerController = new CellSerializerController(this);
     private final ChunkSerializerController chunkSerializerController = new ChunkSerializerController(this);
     private final SaveMetadataSerializerController saveMetadataSerializerController = new SaveMetadataSerializerController(this);
+    private final CraftingTableController craftingTableController = new CraftingTableController(this);
 
     public SerializerController(GetWorld getWorld) {
         this.getWorld = getWorld;
@@ -52,7 +54,11 @@ public class SerializerController {
         return saveMetadataSerializerController;
     }
 
-    protected World getGetWorld() {
+    public CraftingTableController getCraftingTableController() {
+        return craftingTableController;
+    }
+
+    World getGetWorld() {
         return getWorld.getWorld();
     }
 }

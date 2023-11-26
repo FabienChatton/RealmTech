@@ -3,7 +3,7 @@ package ch.realmtech.server.netty;
 public final class ConnexionBuilder {
     private String host = "localhost";
     private int port = ServerNetty.PREFERRED_PORT;
-    private String saveName;
+    private String saveName = "default";
 
     /**
      * default "localhost"

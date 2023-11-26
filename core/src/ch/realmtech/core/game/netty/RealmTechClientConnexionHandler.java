@@ -33,7 +33,7 @@ public class RealmTechClientConnexionHandler implements Closeable {
                         connexionBuilder.setPort(new Random().nextInt(1024, 65565));
                     } while (!ServerNetty.isPortAvailable(connexionBuilder.getPort()) || ++limite < 10);
                 }
-                server = new ServerContext(connexionBuilder.setSaveName("default"));
+                server = new ServerContext(connexionBuilder);
                 client = new RealmTechClient(connexionBuilder, clientExecute);
             } catch (Exception e) {
                 throw new IOException(e);

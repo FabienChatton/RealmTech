@@ -1,6 +1,6 @@
 package ch.realmtech.server.ecs.system;
 
-import ch.realmtech.server.craft.CraftStrategy;
+import ch.realmtech.server.craft.CraftingStrategyCraftingTable;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
@@ -438,7 +438,7 @@ public class InventoryManager extends Manager {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, CraftStrategy.craftingStrategyCraftingTable());
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable());
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingNumberOfSlotParRow, craftingNumberOfRow);
@@ -470,7 +470,11 @@ public class InventoryManager extends Manager {
      * @return The inventory craft component of the crafting table.
      */
     public InventoryComponent getCraftingInventory(int motherEntity) {
-        return mInventory.get(mCraftingTable.get(motherEntity).craftingInventory);
+        return getCraftingInventory(mCraftingTable.get(motherEntity));
+    }
+
+    public InventoryComponent getCraftingInventory(CraftingTableComponent craftingTableComponent) {
+        return mInventory.get(craftingTableComponent.craftingInventory);
     }
 
     /**
@@ -479,6 +483,10 @@ public class InventoryManager extends Manager {
      * @return The inventory result component of the crafting table.
      */
     public InventoryComponent getCraftingResultInventory(int motherEntity) {
-        return mInventory.get(mCraftingTable.get(motherEntity).craftingResultInventory);
+        return getCraftingResultInventory(mCraftingTable.get(motherEntity));
+    }
+
+    public InventoryComponent getCraftingResultInventory(CraftingTableComponent craftingTableComponent) {
+        return mInventory.get(craftingTableComponent.craftingResultInventory);
     }
 }
