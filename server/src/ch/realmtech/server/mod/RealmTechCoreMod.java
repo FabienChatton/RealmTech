@@ -5,6 +5,7 @@ import ch.realmtech.server.ecs.component.CellBeingMineComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.ecs.system.UuidComponentManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemBehavior;
@@ -12,6 +13,7 @@ import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
+import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.registery.*;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -194,9 +196,17 @@ public class RealmTechCoreMod extends ModInitializerManager {
                                 window.add(craftingTable).row();
                                 window.add(playerInventory);
                             };
-                            int inventoryPlayerId = clientContext.getPlayerId();
+                            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
                             int inventoryCraftId = craftingTableComponent.craftingInventory;
                             int inventoryResultId = craftingTableComponent.craftingResultInventory;
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
+                            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCraftId).getUuid();
+                            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryResultId).getUuid();
+
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
+
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
                                     DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
                                     DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).build(),

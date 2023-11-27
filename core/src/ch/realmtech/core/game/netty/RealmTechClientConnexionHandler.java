@@ -14,7 +14,7 @@ import java.util.Random;
 public class RealmTechClientConnexionHandler implements Closeable {
     private final RealmTech context;
     private ServerContext server;
-    private final RealmTechClient client;
+    private RealmTechClient client;
 
     public RealmTechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute, boolean ouvrirServeur, RealmTech context) throws Exception {
         this.context = context;
@@ -36,7 +36,8 @@ public class RealmTechClientConnexionHandler implements Closeable {
                 server = new ServerContext(connexionBuilder);
                 client = new RealmTechClient(connexionBuilder, clientExecute);
             } catch (Exception e) {
-                throw new IOException(e);
+                close();
+                throw e;
             }
         }
     }

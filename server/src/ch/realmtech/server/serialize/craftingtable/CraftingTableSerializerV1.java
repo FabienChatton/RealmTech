@@ -52,7 +52,7 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
 
         byte craftingStrategyId = buffer.readByte();
 
-        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.numberOfSlotParRow(), craftingResultInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
+        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
     }
 
     @Override

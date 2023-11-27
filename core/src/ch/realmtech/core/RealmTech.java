@@ -16,12 +16,12 @@ import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.options.DataCtrl;
+import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.serverPacket.DemandeDeConnexionJoueurPacket;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.BaseSystem;
 import com.artemis.World;
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -164,7 +164,12 @@ public final class RealmTech extends Game implements ClientContext {
 		return skin;
 	}
 
-	public Stage getGameStage() {
+    @Override
+    public void sendRequest(ServerPacket packet) {
+        ecsEngine.getConnexionHandler().sendAndFlushPacketToServer(packet);
+    }
+
+    public Stage getGameStage() {
 		return gameStage;
 	}
 

@@ -106,7 +106,6 @@ public class SelectionDeSauvegarde extends AbstractScreen {
             try {
                 context.rejoindreSoloServeur(file.getName());
             } catch (Exception e) {
-                Gdx.app.error(TAG, e.getMessage(), e);
                 Popup.popupErreur(context, e.getMessage(), uiStage);
                 context.supprimeECS();
             }

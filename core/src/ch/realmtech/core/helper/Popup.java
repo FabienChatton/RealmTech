@@ -55,7 +55,7 @@ public final class Popup {
     }
 
     private static float getWidht(RealmTech context, String message) {
-        glyphLayout.setText(context.getSkin().getFont("helvetica"), message);
+        glyphLayout.setText(context.getSkin().getFont("helvetica"), (message != null) ? message : "unknown message");
         return glyphLayout.width + 10;
     }
 }

@@ -3,8 +3,6 @@ package ch.realmtech.server.serialize.cell;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InfCellComponent;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.serialize.Serializer;
@@ -79,6 +77,6 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
 
     @Override
     public byte getVersion() {
-        return 1;
+        return 2;
     }
 }

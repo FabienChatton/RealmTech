@@ -41,6 +41,7 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void removePlayer(Channel channel) {
         int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(channel);
+        if (playerId == -1) return;
         serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
         serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(playerId).getUuid()), channel);
     }

@@ -31,7 +31,7 @@ public class CellSerializerV1 implements Serializer<Integer, CellArgs> {
 
         int hashCellRegisterEntry = buffer.readInt();
         byte innerChunkPos = buffer.readByte();
-        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, null);
+        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos);
     }
 
     @Override
