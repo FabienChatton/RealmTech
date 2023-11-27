@@ -347,11 +347,11 @@ public class InventoryManager extends Manager {
         int srcInventoryId = getInventoryByUUID(srcInventoryUUID);
         int dstInventoryId = getInventoryByUUID(dstInventoryUUID);
         if (srcInventoryId == -1) {
-            throw new IllegalAccessError("The src inventory: " + srcInventoryId + "  was not found");
+            throw new IllegalAccessError("The src inventory: " + srcInventoryId + "  was not found. Uuid: " + srcInventoryUUID);
         }
 
         if (dstInventoryId == -1) {
-            throw new IllegalAccessError("The dst inventory: " + srcInventoryId + "  was not found");
+            throw new IllegalAccessError("The dst inventory: " + srcInventoryId + "  was not found. Uuid " + dstInventoryUUID);
         }
 
         int[] itemsSrcId = new int[itemsToMove.length];
@@ -435,13 +435,17 @@ public class InventoryManager extends Manager {
 
     /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
+        return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid);
+    }
+
+    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable());
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
-        craftingInventoryEdit.create(InventoryComponent.class).set(craftingNumberOfSlotParRow, craftingNumberOfRow);
+        craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
         craftingInventoryEdit.create(InventoryUiComponent.class).set();
         craftingInventoryEdit.create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventoryId);
 

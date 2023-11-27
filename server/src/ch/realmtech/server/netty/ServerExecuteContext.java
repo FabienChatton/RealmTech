@@ -118,6 +118,7 @@ public class ServerExecuteContext implements ServerExecute {
     public void getInventory(Channel clientChannel, UUID inventoryUuid) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             InventoryComponent inventoryComponent = serverContext.getSystem(InventoryManager.class).getInventoryComponentByUUID(inventoryUuid);
+            if (inventoryComponent == null) return;
             SerializedApplicationBytes applicationInventoryBytes = serverContext.getSerializerController().getInventorySerializerManager().encode(inventoryComponent);
             clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, applicationInventoryBytes));
         });

@@ -22,6 +22,7 @@ public class CraftingStrategyCraftingTable implements CraftingStrategyItf {
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(id);
         InventoryComponent inventoryResultComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
+        if (inventoryResultComponent == null) return false;
         if (craftResult != null) {
             if (isModifierStackItemResultCraftingTable(craftResult, mItem, inventoryResultComponent)) {
                 world.getSystem(InventoryManager.class).removeInventory(inventoryResultComponent.inventory);

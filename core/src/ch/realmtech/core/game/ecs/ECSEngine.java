@@ -91,7 +91,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         worldConfiguration.register(context.getDataCtrl());
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
-        worldConfiguration.register("itemManager", systemAdminClient.itemBarManager);
+        worldConfiguration.register("itemManager", systemAdminClient.itemManagerClient);
         worldConfiguration.register(systemAdminClient);
         worldConfiguration.register("systemsAdmin", systemAdminClient);
         worldConfiguration.register(serializerController);

@@ -15,6 +15,7 @@ import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -33,7 +34,9 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingInventory);
 
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController(), craftingResultInventoryUuid);
-        ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingResultInventory);
+        // serialized a empty craft result inventory
+        InventoryComponent craftingResultInventoryCopyEmpty = new InventoryComponent().set(craftingResultInventory.numberOfSlotParRow, craftingInventory.numberOfRow);
+        ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingResultInventoryCopyEmpty);
 
         buffer.writeByte(craftingTableToSerialize.getCraftResultStrategy().getId());
         return new SerializedRawBytes(buffer.array());
@@ -42,8 +45,7 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
     @Override
     public Consumer<Integer> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
         ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
-        ItemManager itemManager = world.getSystem(ItemManager.class);
-
+        ItemManager itemManager = world.getRegistered("itemManager");
         UUID craftingInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
         InventoryArgs craftingInventoryArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager()).apply(itemManager);
 
@@ -52,7 +54,7 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
 
         byte craftingStrategyId = buffer.readByte();
 
-        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
+        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
         int craftingResultInventoryLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), craftingResultInventory);
 
         byte craftingStrategyIdLength = CraftingStrategyItf.ID_LENGTH;
-        return craftingInventoryUuidLength + craftingInventoryLength + craftingResultInventoryUuidLength + craftingResultInventoryLength + craftingStrategyIdLength;
+        return craftingInventoryUuidLength + craftingInventoryLength + craftingResultInventoryUuidLength + /* craftingResultInventoryLength + */ craftingStrategyIdLength;
     }
 
     @Override
