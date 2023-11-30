@@ -2,6 +2,7 @@ package ch.realmtech.server.mod;
 
 
 import ch.realmtech.server.ecs.component.CellBeingMineComponent;
+import ch.realmtech.server.ecs.component.ChestComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
@@ -222,36 +223,46 @@ public class RealmTechCoreMod extends ModInitializerManager {
                     .build()
     ));
 
-//    public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
-//            "chest-01",
-//            CellBehavior.builder(Cells.Layer.BUILD_DECO)
-//                    .breakWith(ItemType.TOUS, "realmtech.chest")
-//                    .editEntity((world, cellId) -> world.edit(cellId).create(InventoryComponent.class).set(9, 3, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME))
-//                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-//                    .interagieClickDroit((world, cellId) -> {
-//                        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-//                        InventoryComponent inventoryComponent = mInventory.get(cellId);
-//                        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
-//                            final Table playerInventory = new Table(context.getSkin());
-//                            final Table inventory = new Table(context.getSkin());
-//
-//                            Consumer<Window> addTable = window -> {
-//                                window.add(inventory).padBottom(10f).row();
-//                                window.add(playerInventory);
-//                            };
-//                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-//                                    DisplayInventoryArgs.builder(mInventory.get(context.getEcsEngine().getPlayerId()), playerInventory).build(),
-//                                    DisplayInventoryArgs.builder(inventoryComponent, inventory).build()
-//                            });
-//                        });
-//                    })
-//                    .build()
-//    ), new ItemRegisterEntry(
-//            "chest-01",
-//            ItemBehavior.builder()
-//                    .placeCell("realmtech.chest")
-//                    .build()
-//    ));
+    public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
+            "chest-01",
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.TOUS, "realmtech.chest")
+                    .editEntity((world, cellId) -> world.getSystem(InventoryManager.class).createChest(cellId, UUID.randomUUID(), 9, 3))
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .interagieClickDroit((clientContext, cellId) -> {
+                        ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
+                        ChestComponent chestComponent = mChest.get(cellId);
+                        clientContext.openPlayerInventory(() -> {
+                            final Table playerInventory = new Table(clientContext.getSkin());
+                            final Table inventory = new Table(clientContext.getSkin());
+
+                            Consumer<Window> addTable = window -> {
+                                window.add(inventory).padBottom(10f).row();
+                                window.add(playerInventory);
+                            };
+
+                            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+                            int inventoryChestId = chestComponent.getInventoryId();
+
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
+                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryChestId).getUuid();
+
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
+
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryChestId, inventory).build()
+                            });
+                        });
+                    })
+                    .build()
+    ), new ItemRegisterEntry(
+            "chest-01",
+            ItemBehavior.builder()
+                    .placeCell("realmtech.chest")
+                    .build()
+    ));
 
     public final static CellItemRegisterEntry COPPER_ORE = registerCellItem("copperOre", new CellRegisterEntry(
             "copper-ore-03",

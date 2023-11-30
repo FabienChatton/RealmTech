@@ -29,12 +29,12 @@ public class RealmTechCoreCraftingRecipe {
                 new char[]{'a', 'a'},
                 new char[]{'a', 'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
-//
-//        registry.add(new CraftPatternFix(RealmTechCoreMod.CHEST.itemRegisterEntry(), new char[]{
-//                'a', 'a', 'a',
-//                'a', ' ', 'a',
-//                'a', 'a', 'a'
-//        }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
+
+        registry.add(new CraftPatternFix(RealmTechCoreMod.CHEST.itemRegisterEntry(), new char[]{
+                'a', 'a', 'a',
+                'a', ' ', 'a',
+                'a', 'a', 'a'
+        }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.PIOCHE_BOIS_ITEM, new char[][]{
                 new char[]{'a', 'a', 'a'},

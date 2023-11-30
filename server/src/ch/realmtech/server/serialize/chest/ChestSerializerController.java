@@ -5,8 +5,9 @@ import ch.realmtech.server.serialize.SerializerController;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
-public class ChestSerializerController extends AbstractSerializerController<Integer, Integer> {
+public class ChestSerializerController extends AbstractSerializerController<Integer, Consumer<Integer>> {
 
     public ChestSerializerController(SerializerController serializerController) {
         super(serializerController, (byte) 11, new HashMap<>() {

@@ -1,6 +1,7 @@
 package ch.realmtech.server.serialize.cell;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
+import ch.realmtech.server.ecs.component.ChestComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.level.cell.Cells;
@@ -20,6 +21,7 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer cellToSerialize) {
         ComponentMapper<InfCellComponent> mCell = world.getMapper(InfCellComponent.class);
+        ComponentMapper<ChestComponent> mChest = world.getMapper(ChestComponent.class);
         ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
 
         InfCellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
@@ -32,6 +34,11 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
 
         byte paddingId = 0;
         Runnable writePadding = null;
+        if (mChest.has(cellToSerialize)) {
+            paddingId = 1;
+            writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getChestSerializerController(), cellToSerialize);
+        }
+
         if (mCraftingTable.has(cellToSerialize)) {
             paddingId = 2;
             writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController(), mCraftingTable.get(cellToSerialize));
@@ -52,6 +59,10 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
         byte innerChunkPos = buffer.readByte();
         byte paddingId = buffer.readByte();
         BiConsumer<World, Integer> overrideEdit = null;
+        if (paddingId == 1) {
+            Consumer<Integer> createChest = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getChestSerializerController());
+            overrideEdit = (__, chestId) -> createChest.accept(chestId);
+        }
         if (paddingId == 2) {
             Consumer<Integer> createCraftingTable = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
             overrideEdit = (__, cellId) -> createCraftingTable.accept(cellId);

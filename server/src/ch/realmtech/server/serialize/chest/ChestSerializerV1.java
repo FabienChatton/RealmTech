@@ -1,5 +1,7 @@
 package ch.realmtech.server.serialize.chest;
 
+import ch.realmtech.server.ctrl.ItemManager;
+import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
@@ -10,49 +12,37 @@ import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.World;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class ChestSerializerV1 implements Serializer<Integer, Integer> {
+public class ChestSerializerV1 implements Serializer<Integer, Consumer<Integer>> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer motherChestToSerializer) {
         int chestInventoryId = world.getSystem(InventoryManager.class).getChestInventoryId(motherChestToSerializer);
         InventoryComponent inventoryComponent = world.getSystem(InventoryManager.class).getChestInventory(motherChestToSerializer);
         UuidComponent uuidComponent = world.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId);
 
-        SerializedApplicationBytes uuidApplicationBytes = serializerController.getUuidSerializerController().encode(uuidComponent.getUuid());
-        SerializedApplicationBytes inventoryApplicationBytes = serializerController.getInventorySerializerManager().encode(inventoryComponent);
+        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, motherChestToSerializer));
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(getBytesSize(world, serializerController, motherChestToSerializer));
+        ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController(), uuidComponent.getUuid());
+        ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), inventoryComponent);
 
-        byteBuffer.putInt(uuidApplicationBytes.getLength());
-        byteBuffer.put(uuidApplicationBytes.applicationBytes());
-
-        byteBuffer.putInt(inventoryApplicationBytes.getLength());
-        byteBuffer.put(inventoryApplicationBytes.applicationBytes());
-        return new SerializedRawBytes(byteBuffer.array());
+        return new SerializedRawBytes(buffer.array());
     }
 
     @Override
-    public Integer fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(rawBytes.rawBytes());
+    public Consumer<Integer> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
+        ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
 
-        int lengthUuid = byteBuffer.getInt();
-        SerializedApplicationBytes uuidApplicationBytes = new SerializedApplicationBytes(new byte[lengthUuid]);
-        byteBuffer.get(uuidApplicationBytes.applicationBytes());
+        UUID uuidChest = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
+        InventoryArgs inventoryArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager()).apply(world.getRegistered("itemManager"));
 
-        int lengthInventory = byteBuffer.getInt();
-        SerializedApplicationBytes inventoryApplicationBytes = new SerializedApplicationBytes(new byte[lengthInventory]);
-        byteBuffer.get(inventoryApplicationBytes.applicationBytes());
-
-
-        UUID uuidChest = serializerController.getUuidSerializerController().decode(uuidApplicationBytes);
-        InventoryArgs inventoryArgs = serializerController.getInventorySerializerManager().decode(inventoryApplicationBytes).apply(world.getRegistered("itemManager"));
-
-        int mother = world.create();
-        world.getSystem(InventoryManager.class).createChest(mother, inventoryArgs.inventory(), uuidChest, inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
-        return mother;
+        return mother -> world.getSystem(InventoryManager.class).createChest(mother, inventoryArgs.inventory(), uuidChest, inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
     }
 
     @Override
