@@ -6,7 +6,6 @@ import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.level.cell.BreakCell;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.ServerExecute;
-import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ServerExecuteContext implements ServerExecute {
@@ -127,13 +127,14 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            CellRegisterEntry cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToBloc(itemToPlaceUuid, worldPosX, worldPosY);
-            if (cellPlaced != null) {
+            Optional<Integer> cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToBloc(itemToPlaceUuid, worldPosX, worldPosY);
+            if (cellPlaced.isPresent()) {
                 int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
                 int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
                 int itemId = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
                 serverContext.getSystem(InventoryManager.class).removeItemInInventory(chestInventoryId, itemId);
-                clientChannel.writeAndFlush(new CellAddPacket(worldPosX, worldPosY, CellRegisterEntry.getHash(cellPlaced)));
+                SerializedApplicationBytes cellApplicationBytes = serverContext.getSerializerController().getCellSerializerController().encode(cellPlaced.get());
+                clientChannel.writeAndFlush(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes));
 
                 UUID inventoryUuid = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId).getUuid();
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);

@@ -1,39 +1,41 @@
 package ch.realmtech.server.packet.clientPacket;
 
+import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.packet.ClientPacket;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import io.netty.buffer.ByteBuf;
 
 public class CellAddPacket implements ClientPacket {
-    private final int worldPosX;
-    private final int worldPosY;
-    private final int cellHash;
+    private final int worldX;
+    private final int worldY;
+    private final SerializedApplicationBytes cellApplicationBytes;
 
-    public CellAddPacket(int worldPosX, int worldPosY, int cellHash) {
-        this.worldPosX = worldPosX;
-        this.worldPosY = worldPosY;
-        this.cellHash = cellHash;
+    public CellAddPacket(int worldX, int worldY, SerializedApplicationBytes cellApplicationBytes) {
+        this.worldX = worldX;
+        this.worldY = worldY;
+        this.cellApplicationBytes = cellApplicationBytes;
     }
 
     public CellAddPacket(ByteBuf byteBuf) {
-        worldPosX = byteBuf.readInt();
-        worldPosY = byteBuf.readInt();
-        cellHash = byteBuf.readInt();
+        cellApplicationBytes = ByteBufferHelper.readSerializedApplicationBytes(byteBuf);
+        worldX = byteBuf.readInt();
+        worldY = byteBuf.readInt();
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.cellAdd(worldPosX, worldPosY, cellHash);
+        clientExecute.cellAdd(worldX, worldY, cellApplicationBytes);
     }
 
     @Override
     public void write(ByteBuf byteBuf) {
-        byteBuf.writeInt(worldPosX);
-        byteBuf.writeInt(worldPosY);
-        byteBuf.writeInt(cellHash);
+        ByteBufferHelper.writeSerializedApplicationBytes(byteBuf, cellApplicationBytes);
+        byteBuf.writeInt(worldX);
+        byteBuf.writeInt(worldY);
     }
 
     @Override
     public int getSize() {
-        return Integer.BYTES * 3;
+        return cellApplicationBytes.getLength() + 2 * Integer.BYTES;
     }
 }

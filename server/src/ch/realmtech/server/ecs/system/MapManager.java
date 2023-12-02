@@ -138,13 +138,14 @@ public class MapManager extends Manager {
         return ret;
     }
 
-    public void newCellInChunk(int chunkId, CellRegisterEntry cellRegisterEntry, byte innerX, byte innerY) {
+    public int newCellInChunk(int chunkId, CellArgs cellArgs) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, new CellArgs(cellRegisterEntry, Cells.getInnerChunkPos(innerX, innerY)));
+        int cellId = newCell(chunkId, infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, cellArgs);
         int[] newCellsArray = new int[infChunkComponent.infCellsId.length + 1];
         System.arraycopy(infChunkComponent.infCellsId, 0, newCellsArray, 0, infChunkComponent.infCellsId.length);
         newCellsArray[newCellsArray.length - 1] = cellId;
         infChunkComponent.infCellsId = newCellsArray;
+        return cellId;
     }
 
     public int findChunk(int[] chunks, int cellId) {

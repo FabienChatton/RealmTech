@@ -36,6 +36,7 @@ class SerializerControllerTest {
         InventoryManager inventoryManager = serverContext.getSystem(InventoryManager.class);
         ComponentMapper<ItemComponent> mItem = serverContext.getEcsEngineServer().getWorld().getMapper(ItemComponent.class);
         ComponentMapper<ChestComponent> mChest = serverContext.getEcsEngineServer().getWorld().getMapper(ChestComponent.class);
+        ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
         int expectedChestId = serverContext.getEcsEngineServer().getWorld().create();
         int expectedInventoryId = serverContext.getEcsEngineServer().getSystemsAdminServer().inventoryManager.createChest(expectedChestId, UUID.randomUUID(), 3, 9);
         InventoryComponent expectedChestInventory = inventoryManager.getChestInventory(expectedChestId);
@@ -46,8 +47,10 @@ class SerializerControllerTest {
 
         SerializedApplicationBytes serializedApplicationBytes = serializerController.getChestSerializerController().encode(expectedChestId);
 
-        int chestDecode = serializerController.getChestSerializerController().decode(serializedApplicationBytes);
-        InventoryComponent actualChestInventory = inventoryManager.getChestInventory(chestDecode);
+        int chestMother = serverContext.getEcsEngineServer().getWorld().create();
+        serializerController.getChestSerializerController().decode(serializedApplicationBytes).accept(chestMother);
+        int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(chestMother);
+        InventoryComponent actualChestInventory = mInventory.get(chestInventoryId);
 
         assertEquals(expectedChestInventory.numberOfRow, actualChestInventory.numberOfRow);
         assertEquals(expectedChestInventory.numberOfSlotParRow, actualChestInventory.numberOfSlotParRow);
@@ -69,7 +72,7 @@ class SerializerControllerTest {
         }
 
         UuidComponent expectedUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(expectedInventoryId);
-        UuidComponent actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(mChest.get(chestDecode).getInventoryId());
+        UuidComponent actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(chestInventoryId);
 
         assertEquals(expectedUuid, actualUuid);
     }

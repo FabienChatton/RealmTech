@@ -5,12 +5,14 @@ import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
+import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAReplacePacket;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipException;
 
@@ -212,12 +215,12 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
     }
 
-    public CellRegisterEntry placeItemToBloc(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
+    public Optional<Integer> placeItemToBloc(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         int itemId = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
-        if (itemId == -1) return null;
+        if (itemId == -1) return Optional.empty();
         ItemComponent itemComponent = mItem.get(itemId);
         CellRegisterEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell();
-        if (placeCell == null) return null;
+        if (placeCell == null) return Optional.empty();
 
         int chunkPosX = MapManager.getChunkPos(worldPosX);
         int chunkPosY = MapManager.getChunkPos(worldPosY);
@@ -227,10 +230,11 @@ public class MapSystemServer extends BaseSystem implements CellManager {
 
         // can only place on item per layer
         if (systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) != -1) {
-            return null;
+            return Optional.empty();
         }
 
-        systemsAdminServer.mapManager.newCellInChunk(chunkId, placeCell, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
-        return placeCell;
+        byte innerChunkX = MapManager.getInnerChunk(worldPosX);
+        byte innerChunkY = MapManager.getInnerChunk(worldPosY);
+        return Optional.of(systemsAdminServer.mapManager.newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY))));
     }
 }

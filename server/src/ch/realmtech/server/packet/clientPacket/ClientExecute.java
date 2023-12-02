@@ -23,7 +23,7 @@ public interface ClientExecute {
 
     void cellBreak(int worldPosX, int worldPosY);
 
-    void cellAdd(int worldPosX, int worldPosY, int cellHash);
+    void cellAdd(int worldX, int worldY, SerializedApplicationBytes cellApplicationBytes);
 
     void tickBeat(float tickElapseTime);
 
