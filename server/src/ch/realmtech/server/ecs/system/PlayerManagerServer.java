@@ -61,7 +61,6 @@ public class PlayerManagerServer extends BaseSystem {
     }
 
     public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid) {
-        logger.info("creation du joueur {}", channel.remoteAddress());
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
@@ -112,7 +111,6 @@ public class PlayerManagerServer extends BaseSystem {
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
         players.add(playerId);
-        logger.info("le joueur {} a été ajouté avec l'id dans le monde {}", channel.remoteAddress(), playerId);
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
@@ -152,6 +150,12 @@ public class PlayerManagerServer extends BaseSystem {
         }
         return new TousLesJoueursArg(players.size(), poss, uuids);
     }
+
+    public void setPlayerUsername(UUID uuid, String username) {
+        int playerByUuid = getPlayerByUuid(uuid);
+        mPlayerConnexion.get(playerByUuid).setUsername(username);
+    }
+
     public record TousLesJoueursArg(int nombreDeJoueur, Vector2[] pos, UUID[] uuids) { }
     public int getPlayerByChannel(Channel clientChannel) {
         int[] playersData = players.getData();

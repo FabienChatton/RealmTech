@@ -1,5 +1,6 @@
 package ch.realmtech.core;
 
+import ch.realmtech.core.auth.AuthControllerClient;
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
@@ -12,14 +13,13 @@ import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.core.sound.SoundManager;
-import ch.realmtech.server.auth.AuthController;
+import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
-import ch.realmtech.server.packet.serverPacket.DemandeDeConnexionJoueurPacket;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.BaseSystem;
 import com.artemis.World;
@@ -63,7 +63,8 @@ public final class RealmTech extends Game implements ClientContext {
     private ClientExecute clientExecute;
     private ScreenType currentScreenType;
     private GameScreen gameScreen;
-    private AuthController authController;
+    private AuthRequest authRequest;
+    private AuthControllerClient authControllerClient;
 
     @Override
     public void create() {
@@ -91,11 +92,12 @@ public final class RealmTech extends Game implements ClientContext {
         inputMapper = InputMapper.getInstance(this);
         clientExecute = new ClientExecuteContext(this);
         setScreen(ScreenType.LOADING);
-        authController = new AuthController();
+        authRequest = new AuthRequest();
+        authControllerClient = new AuthControllerClient(authRequest);
     }
 
     public void loadingFinish() {
-        setScreen(ScreenType.MENU);
+        setScreen(ScreenType.AUTHENTICATE);
     }
 
     @Override
@@ -252,7 +254,8 @@ public final class RealmTech extends Game implements ClientContext {
             if (ecsEngine == null) {
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false, this);
                 nouveauECS(clientConnexionHandler);
-                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket("amongus"));
+                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler);
+
             }
         }
     }
@@ -263,7 +266,7 @@ public final class RealmTech extends Game implements ClientContext {
                 ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true, this);
                 nouveauECS(clientConnexionHandler);
-                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket("amongus"));
+                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler);
             }
         }
     }
@@ -298,5 +301,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public SerializerController getSerializerController() {
         return ecsEngine.getSerializerController();
+    }
+
+    public AuthControllerClient getAuthControllerClient() {
+        return authControllerClient;
     }
 }

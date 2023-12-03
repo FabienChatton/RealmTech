@@ -29,21 +29,20 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void connexionPlayerRequest(Channel clientChanel, String username) {
-        String playerUuid;
+        logger.info("Player {} try to login. {}", username, clientChanel);
+        UUID playerUuid;
         try {
-            playerUuid = serverContext.getAuthController().verifyAccessToken(username);
+            playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
+            logger.info("Player {} has successfully been authenticated. {}", username, clientChanel);
         } catch (Exception e) {
-            serverContext.getServerHandler().broadCastPacket(new DisconnectMessage(e.getMessage()));
+            serverContext.getServerHandler().sendPacketTo(new DisconnectMessage(e.getMessage()), clientChanel);
+            logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
             clientChanel.close();
             return;
         }
-        // connexion réussie
-        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, UUID.fromString(playerUuid));
+        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
         serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
-
-//        // tous les joueurs
-//        PlayerManagerServer.TousLesJoueursArg tousLesJoueursArgs = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getTousLesJoueurs();
-//        serverContext.getServerHandler().sendPacketTo(new TousLesJoueurPacket(tousLesJoueursArgs.nombreDeJoueur(), tousLesJoueursArgs.pos(), tousLesJoueursArgs.uuids()), clientChanel);
+        serverContext.getSystem(PlayerManagerServer.class).setPlayerUsername(playerUuid, username);
     }
 
     @Override

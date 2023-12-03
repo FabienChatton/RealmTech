@@ -1,8 +1,9 @@
 package ch.realmtech.core.screen;
 
 public enum ScreenType {
-    LOADING(Loading.class),
-    MENU(Menu.class),
+    LOADING(LoadingScreen.class),
+    AUTHENTICATE(AuthenticateScreen.class),
+    MENU(MenuScreen.class),
     GAME_SCREEN(GameScreen.class),
     SELECTION_DE_SAUVEGARDE(SelectionDeSauvegarde.class),
     GAME_PAUSE(GamePauseScreen.class),

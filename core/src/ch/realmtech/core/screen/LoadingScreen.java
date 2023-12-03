@@ -4,8 +4,8 @@ import ch.realmtech.core.RealmTech;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 
-public class Loading extends AbstractScreen {
-    public Loading(RealmTech context) {
+public class LoadingScreen extends AbstractScreen {
+    public LoadingScreen(RealmTech context) {
         super(context);
     }
 

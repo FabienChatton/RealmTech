@@ -1,6 +1,6 @@
 package ch.realmtech.server;
 
-import ch.realmtech.server.auth.AuthController;
+import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
 import ch.realmtech.server.ecs.EcsEngineServer;
@@ -29,7 +29,7 @@ public class ServerContext {
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
-    private final AuthController authController;
+    private final AuthRequest authRequest;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -69,7 +69,7 @@ public class ServerContext {
             tickThread = new TickThread(this);
             commandServerThread.start();
             tickThread.start();
-            authController = new AuthController();
+            authRequest = new AuthRequest();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {
@@ -134,7 +134,7 @@ public class ServerContext {
         return ecsEngineServer.getSerializerController();
     }
 
-    public AuthController getAuthController() {
-        return authController;
+    public AuthRequest getAuthController() {
+        return authRequest;
     }
 }
