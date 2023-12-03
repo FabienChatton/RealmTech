@@ -32,11 +32,11 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveUp = new KeysMapper(context.getDataCtrl().option.keyMoveUp);
-        moveLeft = new KeysMapper(context.getDataCtrl().option.keyMoveLeft);
-        moveRight = new KeysMapper(context.getDataCtrl().option.keyMoveRight);
-        moveDown = new KeysMapper(context.getDataCtrl().option.keyMoveDown);
-        openInventory = new KeysMapper(context.getDataCtrl().option.openInventory);
+        moveUp = new KeysMapper(context.getOption().keyMoveUp);
+        moveLeft = new KeysMapper(context.getOption().keyMoveLeft);
+        moveRight = new KeysMapper(context.getOption().keyMoveRight);
+        moveDown = new KeysMapper(context.getOption().keyMoveDown);
+        openInventory = new KeysMapper(context.getOption().openInventory);
 
         keysMappers.add(moveUp);
         keysMappers.add(moveLeft);

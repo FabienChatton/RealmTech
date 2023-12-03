@@ -13,7 +13,6 @@ import ch.realmtech.core.game.ecs.system.PlayerInputSystem;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.server.ecs.GetWorld;
-import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.serialize.SerializerController;
@@ -29,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,7 +86,6 @@ public final class ECSEngine implements Disposable, GetWorld {
         worldConfiguration.register(context.getSkin());
         worldConfiguration.register(context.getSoundManager());
         worldConfiguration.register(context.getInputManager());
-        worldConfiguration.register(context.getDataCtrl());
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
         worldConfiguration.register("itemManager", systemAdminClient.itemManagerClient);

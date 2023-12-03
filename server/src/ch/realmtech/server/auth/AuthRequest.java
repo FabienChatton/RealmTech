@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class AuthRequest {
     private final static String BASE_URL = "http://localhost/RealmTech/auth/";
-    private final static boolean VERIFY_ACCESS_TOKEN = true;
+    private final static boolean VERIFY_ACCESS_TOKEN = false;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public String createAccessToken(String username, String password) throws IOException, InterruptedException, FailedRequest {

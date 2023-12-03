@@ -7,9 +7,8 @@ import ch.realmtech.core.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.observer.Subcriber;
-import ch.realmtech.server.options.BooleanRun;
-import ch.realmtech.server.options.DataCtrl;
-import ch.realmtech.server.options.IntegerRun;
+import ch.realmtech.core.option.BooleanRun;
+import ch.realmtech.core.option.IntegerRun;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -45,7 +44,7 @@ public class OptionsScreen extends AbstractScreen {
             InputMapper.reset();
         }));
         TextButtonMenu resetOptionButton = new TextButtonMenu(context, "reset options", new OnClick((event, x, y) -> {
-            context.getDataCtrl().option.setDefaultOption();
+            context.getOption().setDefaultOption();
             hide();
             show();
         }));
@@ -53,42 +52,36 @@ public class OptionsScreen extends AbstractScreen {
 
         // keyMoveForward
         optionTable.add(new Label("keyMoveForward", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveUp)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getOption().keyMoveUp)).padLeft(10f).padBottom(10f).row();
         // keyMoveLeft
         optionTable.add(new Label("keyMoveLeft", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveLeft)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getOption().keyMoveLeft)).padLeft(10f).padBottom(10f).row();
         // keyMoveRight
         optionTable.add(new Label("keyMoveRight", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveRight)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getOption().keyMoveRight)).padLeft(10f).padBottom(10f).row();
         // keyMoveBack
         optionTable.add(new Label("keyMoveBack", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyMoveDown)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getOption().keyMoveDown)).padLeft(10f).padBottom(10f).row();
         // keyDropItem
         optionTable.add(new Label("keyDropItem", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.keyDropItem)).padLeft(10f).padBottom(10f).row();
+        optionTable.add(newKeysBind(context.getOption().keyDropItem)).padLeft(10f).padBottom(10f).row();
         // openInventory
         optionTable.add(new Label("openInventory", skin)).left();
-        optionTable.add(newKeysBind(context.getDataCtrl().option.openInventory)).padLeft(10f).padBottom(10f).row();
-        // renderDistance
-        optionTable.add(new Label("renderDistance", skin)).left();
-        newSlider(optionTable, DataCtrl.Option.RENDER_DISTANCE_MIN, DataCtrl.Option.RENDER_DISTANCE_MAX, 1, false, skin, context.getDataCtrl().option.renderDistance);
-        // chunkUpdate
-        optionTable.add(new Label("chunkUpdate", skin)).left();
-        newSlider(optionTable, 1, 10, 1, false, skin, context.getDataCtrl().option.chunkParUpdate);
+        optionTable.add(newKeysBind(context.getOption().openInventory)).padLeft(10f).padBottom(10f).row();
         // full screen
         optionTable.add(new Label("fullScreen", skin)).left();
-        newBooleanRun(optionTable, context.getDataCtrl().option.fullScreen);
+        newBooleanRun(optionTable, context.getOption().fullScreen);
         // vsync
         optionTable.add(new Label("vsync", skin)).left();
-        newBooleanRun(optionTable, context.getDataCtrl().option.vsync);
+        newBooleanRun(optionTable, context.getOption().vsync);
         // fps
         optionTable.add(new Label("fps", skin)).left();
-        newSlider(optionTable, 0, 300, 5, false, skin, context.getDataCtrl().option.fps);
+        newSlider(optionTable, 0, 300, 5, false, skin, context.getOption().fps);
         optionTable.add(new Label("inventoryBlur", skin)).left();
-        newBoolean(optionTable, context.getDataCtrl().option.inventoryBlur);
+        newBoolean(optionTable, context.getOption().inventoryBlur);
         // sound
         optionTable.add(new Label("volume sonore", skin)).left();
-        newSlider(optionTable, 0, 100, 5, false, skin, context.getDataCtrl().option.sound);
+        newSlider(optionTable, 0, 100, 5, false, skin, context.getOption().sound);
 
         //reset button
         optionTable.add(resetOptionButton).left();

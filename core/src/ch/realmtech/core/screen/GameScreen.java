@@ -80,7 +80,7 @@ public class GameScreen extends AbstractScreen {
             }
         }
         // open inventory
-        if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.openInventory.get()) && consoleUi.getConsoleWindow().getParent() == null) {
+        if (Gdx.input.isKeyJustPressed(context.getOption().openInventory.get()) && consoleUi.getConsoleWindow().getParent() == null) {
             if (!context.getSystem(PlayerInventorySystem.class).isEnabled()) {
                 context.getConnexionHandler().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
                 context.getSystem(PlayerInventorySystem.class).openPlayerInventory(context.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
@@ -100,7 +100,7 @@ public class GameScreen extends AbstractScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(context.getDataCtrl().option.keyDropItem.get())) {
+        if (Gdx.input.isKeyJustPressed(context.getOption().keyDropItem.get())) {
             //context.getEcsEngine().dropCurentPlayerItem();
         }
 

@@ -155,7 +155,7 @@ public class PlayerInventorySystem extends BaseSystem {
             clearDisplayInventory();
             currentInventoryArgs = openPlayerInventoryFunction.get();
             refreshInventory(currentInventoryArgs);
-            if (context.getDataCtrl().option.inventoryBlur.get()) {
+            if (context.getOption().inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
             }
             context.getSoundManager().playOpenInventory();

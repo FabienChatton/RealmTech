@@ -1,12 +1,12 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
 import ch.realmtech.server.level.cell.Cells;
-import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAReplacePacket;
@@ -36,8 +36,7 @@ import java.util.zip.ZipException;
 
 public class MapSystemServer extends BaseSystem implements CellManager {
     private final static Logger logger = LoggerFactory.getLogger(MapSystemServer.class);
-//    @Wire
-//    private SoundManager soundManager;
+    private final static int RENDER_DISTANCE = 6;
     @Wire(name = "serverContext")
     private ServerContext serverContext;
     @Wire(name = "physicWorld")
@@ -78,8 +77,8 @@ public class MapSystemServer extends BaseSystem implements CellManager {
                 List<Position> chunkADamnerPos = trouveChunkADamner(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY);
 
                 int indexDamner = 0;
-                for (int i = -dataCtrl.option.renderDistance.get() + chunkPosX; i <= dataCtrl.option.renderDistance.get() + chunkPosX; i++) {
-                    for (int j = -dataCtrl.option.renderDistance.get() + chunkPosY; j <= dataCtrl.option.renderDistance.get() + chunkPosY; j++) {
+                for (int i = -RENDER_DISTANCE + chunkPosX; i <= RENDER_DISTANCE + chunkPosX; i++) {
+                    for (int j = -RENDER_DISTANCE + chunkPosY; j <= RENDER_DISTANCE + chunkPosY; j++) {
                         final boolean changement = chunkSansChangement(playerConnexionComponent.chunkPoss, i, j);
                         if (changement) {
                             int newChunkId = getCacheOrGenerateChunk(infMapComponent, infMetaDonnesComponent, i, j);
@@ -145,7 +144,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
     }
 
     public List<Position> trouveChunkADamner(List<Position> poss, int chunkPosX, int chunkPosY) {
-        List<Position> ret = new ArrayList<>(2 * dataCtrl.option.renderDistance.get() + 1);
+        List<Position> ret = new ArrayList<>(2 * RENDER_DISTANCE + 1);
         for (Position position : poss) {
             if (!chunkEstDansLaRenderDistance(position, chunkPosX, chunkPosY)) {
                 ret.add(position);
@@ -168,7 +167,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
     public boolean chunkEstDansLaRenderDistance(Position position, int posX, int posY) {
         int dstX = Math.abs(posX - position.x());
         int dstY = Math.abs(posY - position.y());
-        return dstX <= dataCtrl.option.renderDistance.get() && dstY <= dataCtrl.option.renderDistance.get();
+        return dstX <= RENDER_DISTANCE && dstY <= RENDER_DISTANCE;
     }
 
     public boolean chunkEstVisibleDansPoss(List<Position> positions, int chunkPosX, int chunkPosY) {

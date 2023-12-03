@@ -43,7 +43,7 @@ public class SoundManager {
     }
 
     private float getSoundPourCent() {
-        return context.getDataCtrl().option.sound.get() / 100f;
+        return context.getOption().sound.get() / 100f;
     }
 
     public static void initAsset(AssetManager assetManager) {

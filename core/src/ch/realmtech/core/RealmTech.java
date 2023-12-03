@@ -9,15 +9,16 @@ import ch.realmtech.core.game.netty.ClientExecuteContext;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
+import ch.realmtech.core.option.Option;
 import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.core.sound.SoundManager;
 import ch.realmtech.server.auth.AuthRequest;
+import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.netty.ConnexionBuilder;
-import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.serialize.SerializerController;
@@ -44,8 +45,8 @@ import java.util.function.Supplier;
 public final class RealmTech extends Game implements ClientContext {
     public final static float WORLD_WIDTH = 16f;
     public final static float WORLD_HEIGHT = 9f;
-    public final static int SCREEN_WIDTH = 1024;
-    public final static int SCREEN_HEIGHT = 576;
+    public final static int SCREEN_WIDTH = DataCtrl.SCREEN_WIDTH;
+    public final static int SCREEN_HEIGHT = DataCtrl.SCREEN_HEIGHT;
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
     private final static Logger logger = LoggerFactory.getLogger(RealmTech.class);
@@ -58,7 +59,7 @@ public final class RealmTech extends Game implements ClientContext {
     private Discord discord;
 
     private TextureAtlas textureAtlas;
-    private DataCtrl dataCtrl;
+    private Option option;
     private SoundManager soundManager;
     private ClientExecute clientExecute;
     private ScreenType currentScreenType;
@@ -69,9 +70,15 @@ public final class RealmTech extends Game implements ClientContext {
     @Override
     public void create() {
         try {
-            dataCtrl = new DataCtrl();
+            DataCtrl.creerHiearchieRealmTechData();
         } catch (IOException e) {
-            logger.error("La hiérarchie des dossier n'a pas pu être créer correctement", e);
+            logger.error("Can not create file structure", e);
+            Gdx.app.exit();
+        }
+        try {
+            option = Option.getOptionFileAndLoadOrCreate();
+        } catch (IOException e) {
+            logger.error("Can not create option properties.", e);
             Gdx.app.exit();
         }
         assetManager = new AssetManager();
@@ -199,7 +206,7 @@ public final class RealmTech extends Game implements ClientContext {
         gameStage.dispose();
         uiStage.dispose();
         assetManager.dispose();
-        dataCtrl.saveConfig();
+        option.saveOption();
         discord.stop();
         supprimeECS();
     }
@@ -271,10 +278,6 @@ public final class RealmTech extends Game implements ClientContext {
         }
     }
 
-    public DataCtrl getDataCtrl() {
-        return dataCtrl;
-    }
-
     public SoundManager getSoundManager() {
         return soundManager;
     }
@@ -305,5 +308,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public AuthControllerClient getAuthControllerClient() {
         return authControllerClient;
+    }
+
+    public Option getOption() {
+        return option;
     }
 }

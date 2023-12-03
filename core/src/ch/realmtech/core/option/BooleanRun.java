@@ -1,4 +1,4 @@
-package ch.realmtech.server.options;
+package ch.realmtech.core.option;
 
 import java.util.function.Consumer;
 

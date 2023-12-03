@@ -1,8 +1,8 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.options.DataCtrl;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
