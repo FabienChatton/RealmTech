@@ -17,8 +17,9 @@ public final class Popup {
         glyphLayout = new GlyphLayout();
     }
 
-    public static void popupErreur(RealmTech context, String message, Stage stage) {
+    public static void popupErreur(RealmTech context, String messageOriginal, Stage stage) {
         String erreur = "Erreur";
+        String message = messageOriginal != null ? messageOriginal : "unknown error message";
         float width = Math.min(getWidht(context, message), Gdx.graphics.getWidth() - 20);
         Label label = new Label(message, context.getSkin());
         label.setWrap(true);
