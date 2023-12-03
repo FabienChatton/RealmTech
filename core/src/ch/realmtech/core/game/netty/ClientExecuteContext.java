@@ -169,4 +169,13 @@ public class ClientExecuteContext implements ClientExecute {
     public void writeOnConsoleMessage(String consoleMessageToWrite) {
         context.nextFrame(() -> context.writeToConsole(consoleMessageToWrite));
     }
+
+    @Override
+    public void disconnectMessage(String message) {
+        context.supprimeECS();
+        Gdx.app.postRunnable(() -> {
+            context.setScreen(ScreenType.MENU);
+            Popup.popupErreur(context, message, context.getUiStage());
+        });
+    }
 }

@@ -1,5 +1,6 @@
 package ch.realmtech.server;
 
+import ch.realmtech.server.auth.AuthController;
 import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
 import ch.realmtech.server.ecs.EcsEngineServer;
@@ -14,8 +15,6 @@ import com.artemis.BaseSystem;
 import io.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
-import org.slf4j.spi.LoggingEventBuilder;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -30,6 +29,7 @@ public class ServerContext {
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
+    private final AuthController authController;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -53,6 +53,7 @@ public class ServerContext {
                 .put(InventoryGetPacket.class, InventoryGetPacket::new)
                 .put(ItemToCellPlaceRequestPacket.class, ItemToCellPlaceRequestPacket::new)
                 .put(CellAddPacket.class, CellAddPacket::new)
+                .put(DisconnectMessage.class, DisconnectMessage::new)
         ;
     }
 
@@ -68,6 +69,7 @@ public class ServerContext {
             tickThread = new TickThread(this);
             commandServerThread.start();
             tickThread.start();
+            authController = new AuthController();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {
@@ -130,5 +132,9 @@ public class ServerContext {
     }
     public SerializerController getSerializerController() {
         return ecsEngineServer.getSerializerController();
+    }
+
+    public AuthController getAuthController() {
+        return authController;
     }
 }

@@ -60,7 +60,7 @@ public class PlayerManagerServer extends BaseSystem {
 //        }
     }
 
-    public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel) {
+    public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid) {
         logger.info("creation du joueur {}", channel.remoteAddress());
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
@@ -86,7 +86,6 @@ public class PlayerManagerServer extends BaseSystem {
         box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
         // player connexion component
-        UUID playerUuid = UUID.randomUUID();
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
         playerConnexionComponent.set(channel);
         systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);

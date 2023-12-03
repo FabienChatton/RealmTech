@@ -28,9 +28,17 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void newPlayerConnect(Channel clientChanel) {
+    public void connexionPlayerRequest(Channel clientChanel, String username) {
+        String playerUuid;
+        try {
+            playerUuid = serverContext.getAuthController().verifyAccessToken(username);
+        } catch (Exception e) {
+            serverContext.getServerHandler().broadCastPacket(new DisconnectMessage(e.getMessage()));
+            clientChanel.close();
+            return;
+        }
         // connexion réussie
-        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel);
+        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, UUID.fromString(playerUuid));
         serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
 
 //        // tous les joueurs

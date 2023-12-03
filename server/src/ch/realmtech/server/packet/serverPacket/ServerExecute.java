@@ -5,7 +5,7 @@ import io.netty.channel.Channel;
 import java.util.UUID;
 
 public interface ServerExecute {
-    void newPlayerConnect(Channel clientChanel);
+    void connexionPlayerRequest(Channel clientChanel, String username);
 
     void removePlayer(Channel channel);
 

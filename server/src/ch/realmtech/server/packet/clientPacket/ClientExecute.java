@@ -36,4 +36,6 @@ public interface ClientExecute {
     void writeOnConsoleMessage(String consoleMessageToWrite);
 
     void setInventory(UUID inventoryUUID, SerializedApplicationBytes applicationInventoryBytes);
+
+    void disconnectMessage(String message);
 }

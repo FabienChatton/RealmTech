@@ -12,6 +12,7 @@ import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.core.sound.SoundManager;
+import ch.realmtech.server.auth.AuthController;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.netty.ConnexionBuilder;
@@ -62,6 +63,7 @@ public final class RealmTech extends Game implements ClientContext {
     private ClientExecute clientExecute;
     private ScreenType currentScreenType;
     private GameScreen gameScreen;
+    private AuthController authController;
 
     @Override
     public void create() {
@@ -89,6 +91,7 @@ public final class RealmTech extends Game implements ClientContext {
         inputMapper = InputMapper.getInstance(this);
         clientExecute = new ClientExecuteContext(this);
         setScreen(ScreenType.LOADING);
+        authController = new AuthController();
     }
 
     public void loadingFinish() {
@@ -249,7 +252,7 @@ public final class RealmTech extends Game implements ClientContext {
             if (ecsEngine == null) {
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false, this);
                 nouveauECS(clientConnexionHandler);
-                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket("amongus"));
             }
         }
     }
@@ -260,7 +263,7 @@ public final class RealmTech extends Game implements ClientContext {
                 ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true, this);
                 nouveauECS(clientConnexionHandler);
-                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket());
+                clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket("amongus"));
             }
         }
     }
