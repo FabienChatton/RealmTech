@@ -1,6 +1,7 @@
 package ch.realmtech.core;
 
 import ch.realmtech.core.auth.AuthControllerClient;
+import ch.realmtech.core.auth.AuthRequestClient;
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
@@ -14,7 +15,6 @@ import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.core.sound.SoundManager;
-import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
@@ -64,7 +64,7 @@ public final class RealmTech extends Game implements ClientContext {
     private ClientExecute clientExecute;
     private ScreenType currentScreenType;
     private GameScreen gameScreen;
-    private AuthRequest authRequest;
+    private AuthRequestClient authRequestClient;
     private AuthControllerClient authControllerClient;
 
     @Override
@@ -99,8 +99,8 @@ public final class RealmTech extends Game implements ClientContext {
         inputMapper = InputMapper.getInstance(this);
         clientExecute = new ClientExecuteContext(this);
         setScreen(ScreenType.LOADING);
-        authRequest = new AuthRequest();
-        authControllerClient = new AuthControllerClient(authRequest);
+        authRequestClient = new AuthRequestClient(this);
+        authControllerClient = new AuthControllerClient(authRequestClient);
     }
 
     public void loadingFinish() {

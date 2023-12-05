@@ -14,6 +14,7 @@ public class DataCtrl {
     public final static String ROOT_PATH = "RealmTechData";
     public final static String PATH_PROPERTIES = "properties";
     public final static String OPTIONS_FILE = "options.cfg";
+    public final static String OPTIONS_SERVER_FILE = "optionsServer.cfg";
     public final static int SCREEN_WIDTH = 1024;
     public final static int SCREEN_HEIGHT = 576;
 
@@ -38,9 +39,17 @@ public class DataCtrl {
         if (!optionFile.exists()) {
             Files.createFile(optionFile.toPath());
         }
+        File optionServer = getOptionServerFile();
+        if (!optionServer.exists()) {
+            Files.createFile(optionServer.toPath());
+        }
     }
 
     public static File getOptionFile() {
         return Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).toFile();
+    }
+
+    public static File getOptionServerFile() {
+        return Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_SERVER_FILE)).toFile();
     }
 }

@@ -3,6 +3,7 @@ package ch.realmtech.server;
 import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
+import ch.realmtech.server.datactrl.OptionServer;
 import ch.realmtech.server.ecs.EcsEngineServer;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.packet.PacketMap;
@@ -30,6 +31,7 @@ public class ServerContext {
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
     private final AuthRequest authRequest;
+    private final OptionServer optionServer;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -69,7 +71,8 @@ public class ServerContext {
             tickThread = new TickThread(this);
             commandServerThread.start();
             tickThread.start();
-            authRequest = new AuthRequest();
+            authRequest = new AuthRequest(this);
+            optionServer = OptionServer.getOptionFileAndLoadOrCreate();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {
@@ -98,6 +101,9 @@ public class ServerContext {
 
     public ChannelFuture close() throws InterruptedException, IOException {
         logger.info("Fermeture du serveur...");
+        try {
+            optionServer.saveOptionServer();
+        } catch (Exception ignored) {}
         try {
             ecsEngineServer.saveMap();
         } catch (IOException ignored) {}
@@ -136,5 +142,9 @@ public class ServerContext {
 
     public AuthRequest getAuthController() {
         return authRequest;
+    }
+
+    public OptionServer getOptionServer() {
+        return optionServer;
     }
 }
