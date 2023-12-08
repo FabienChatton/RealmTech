@@ -34,6 +34,9 @@ public class ServerExecuteContext implements ServerExecute {
         try {
             playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
             logger.info("Player {} has successfully been authenticated. {}", username, clientChanel);
+            if (serverContext.getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid) != -1) {
+                throw new IllegalArgumentException("A player with the same uuid already existe on the server");
+            }
         } catch (Exception e) {
             serverContext.getServerHandler().sendPacketTo(new DisconnectMessage(e.getMessage()), clientChanel);
             logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
