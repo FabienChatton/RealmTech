@@ -4,14 +4,14 @@ import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.packet.ClientPacket;
 import io.netty.buffer.ByteBuf;
 
-public class DisconnectMessage implements ClientPacket {
+public class DisconnectMessagePacket implements ClientPacket {
     private final String message;
 
-    public DisconnectMessage(String message) {
+    public DisconnectMessagePacket(String message) {
         this.message = message;
     }
 
-    public DisconnectMessage(ByteBuf byteBuf) {
+    public DisconnectMessagePacket(ByteBuf byteBuf) {
         message = ByteBufferHelper.getString(byteBuf);
     }
 

@@ -5,6 +5,7 @@ import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
 import ch.realmtech.server.datactrl.OptionServer;
 import ch.realmtech.server.ecs.EcsEngineServer;
+import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerResponseHandler;
@@ -55,7 +56,7 @@ public class ServerContext {
                 .put(InventoryGetPacket.class, InventoryGetPacket::new)
                 .put(ItemToCellPlaceRequestPacket.class, ItemToCellPlaceRequestPacket::new)
                 .put(CellAddPacket.class, CellAddPacket::new)
-                .put(DisconnectMessage.class, DisconnectMessage::new)
+                .put(DisconnectMessagePacket.class, DisconnectMessagePacket::new)
         ;
     }
 
@@ -106,6 +107,9 @@ public class ServerContext {
         } catch (Exception ignored) {}
         try {
             ecsEngineServer.saveMap();
+        } catch (IOException ignored) {}
+        try {
+            getSystem(PlayerManagerServer.class).savePlayersInventory();
         } catch (IOException ignored) {}
         tickThread.close();
         commandServerThread.close();

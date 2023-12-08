@@ -2,10 +2,12 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.TousLesJoueurPacket;
+import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -16,6 +18,12 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -64,6 +72,7 @@ public class PlayerManagerServer extends BaseSystem {
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
+        players.add(playerId);
         float x = 0, y = 0;
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
@@ -90,7 +99,13 @@ public class PlayerManagerServer extends BaseSystem {
         systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
 
         // inventory
-        int chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+        int chestId;
+        try {
+            serverContext.getSystem(PlayerManagerServer.class).loadPlayerInventory(playerUuid);
+            chestId = systemsAdminServer.inventoryManager.getChestInventoryId(playerId);
+        } catch (IOException e) {
+            chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+        }
         InventoryComponent chestInventoryComponent = mInventory.get(chestId);
 
         // inventory cursor
@@ -110,7 +125,6 @@ public class PlayerManagerServer extends BaseSystem {
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
-        players.add(playerId);
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
@@ -154,6 +168,46 @@ public class PlayerManagerServer extends BaseSystem {
     public void setPlayerUsername(UUID uuid, String username) {
         int playerByUuid = getPlayerByUuid(uuid);
         mPlayerConnexion.get(playerByUuid).setUsername(username);
+    }
+
+    public void savePlayersInventory() throws IOException {
+        int[] playersData = players.getData();
+        for (int i = 0; i < players.size(); i++) {
+            savePlayerInventory(playersData[i]);
+        }
+    }
+
+    public void savePlayerInventory(int playerId) throws IOException {
+        UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid();
+        Path playerDir = getPlayerDir(playerUuid);
+        if (!playerDir.toFile().exists()) Files.createDirectories(playerDir);
+        File playerInventoryFile = getPlayerInventoryFile(playerDir).toFile();
+
+        SerializedApplicationBytes chestInventoryBytes = serverContext.getSerializerController().getChestSerializerController().encode(playerId);
+
+        playerInventoryFile.createNewFile();
+        try (FileOutputStream fos = new FileOutputStream(playerInventoryFile)) {
+            fos.write(chestInventoryBytes.applicationBytes());
+        }
+    }
+
+    public void loadPlayerInventory(UUID playerUuid) throws IOException {
+        int playerId = getPlayerByUuid(playerUuid);
+        Path playerDir = getPlayerDir(playerUuid);
+        if (!playerDir.toFile().exists()) return;
+
+        try (FileInputStream fis = new FileInputStream(getPlayerInventoryFile(getPlayerDir(playerUuid)).toFile())) {
+            byte[] rawInventoryBytes = fis.readAllBytes();
+            serverContext.getSerializerController().getChestSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes)).accept(playerId);
+        }
+    }
+
+    private static Path getPlayerInventoryFile(Path playerDir) {
+        return Path.of(playerDir.toString(), "inventory.pis");
+    }
+
+    private Path getPlayerDir(UUID playerUuid) {
+        return Path.of(DataCtrl.getPlayersDir(systemsAdminServer.saveInfManager.getSaveName()).toPath().toString(), playerUuid.toString());
     }
 
     public record TousLesJoueursArg(int nombreDeJoueur, Vector2[] pos, UUID[] uuids) { }

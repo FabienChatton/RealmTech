@@ -9,6 +9,7 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -170,48 +170,6 @@ public class SaveInfManager extends Manager {
         return ret;
     }
 
-    public void savePlayerInventory(InventoryComponent playerInventory, int mapId) throws IOException {
-        File playerSaveInventoryFile = getPlayerSaveInventoryFile(mMetaDonnees.get(mInfMap.get(mapId).infMetaDonnees).saveName);
-        try (DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(playerSaveInventoryFile)))) {
-            // métadonnées
-            outputStream.writeInt(SAVE_PROTOCOLE_VERSION);
-            // header
-            outputStream.writeByte((byte) Arrays.stream(playerInventory.inventory).filter(stack -> stack[0] != 0).count());
-            // body
-            for (int i = 0; i < playerInventory.inventory.length; i++) {
-                if (playerInventory.inventory[i][0] != 0) {
-                    int[] stack = playerInventory.inventory[i];
-                    outputStream.writeInt(mItem.get(stack[0]).itemRegisterEntry.getHash());
-                    outputStream.writeByte(InventoryManager.tailleStack(stack));
-                    outputStream.writeByte(i);
-                }
-            }
-        }
-    }
-
-//    public int[][] getPlayerSaveInventory(int mapId) throws IOException {
-//        int[][] inventory = new int[InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW][InventoryComponent.DEFAULT_STACK_LIMITE];
-//        File playerSaveInventoryFile = getPlayerSaveInventoryFile(mMetaDonnees.get(mInfMap.get(mapId).infMetaDonnees).saveName);
-//        try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(playerSaveInventoryFile)))) {
-//            ByteBuffer byteBuffer = ByteBuffer.wrap(inputStream.readAllBytes());
-//            int version = byteBuffer.getInt();
-//            byte nombreSlot = byteBuffer.get();
-//            for (int i = 0; i < nombreSlot; i++) {
-//                int hashModIdItem = byteBuffer.getInt();
-//                byte nombre = byteBuffer.get();
-//                byte index = byteBuffer.get();
-//                ItemRegisterEntry itemRegisterEntry = ItemRegisterEntry.getItemByHash(hashModIdItem);
-//                int[] stack = inventory[index];
-//                for (int j = 0; j < nombre; j++) {
-//                    int nouvelItemId = systemsAdminCommun.itemManagerServer.newItemInventory(itemRegisterEntry);
-//                    stack[j] = nouvelItemId;
-//                }
-//            }
-//        }
-//
-//        return inventory;
-//    }
-
     private static File getMetaDonneesFile(Path rootSaveDirPath) {
         String headerPath = ("level/header.rsh");
         return Path.of(rootSaveDirPath.toFile().toString(), headerPath).toFile();
@@ -251,14 +209,15 @@ public class SaveInfManager extends Manager {
         }
     }
 
-    private static Path getLocalPathSaveRoot() throws IOException {
+    public static Path getLocalPathSaveRoot() throws IOException {
         DataCtrl.creerHiearchieRealmTechData();
         return Path.of(String.format("%s/%s", DataCtrl.ROOT_PATH, ROOT_PATH_SAVES));
     }
 
-    private static File getPlayerSaveInventoryFile(String saveName) throws IOException {
-        DataCtrl.creerHiearchieRealmTechData();
-        // psi -> playerSaveInventory
-        return Path.of(getSavePath(saveName).toFile().toString(), "playerInventory.pis").toFile();
+    public String getSaveName() {
+        int infMap = world.getSystem(TagManager.class).getEntityId("infMap");
+        InfMapComponent infMapComponent = mInfMap.get(infMap);
+        SaveMetadataComponent metaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
+        return metaDonnesComponent.saveName;
     }
 }

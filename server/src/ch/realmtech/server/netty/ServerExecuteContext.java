@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -38,7 +39,7 @@ public class ServerExecuteContext implements ServerExecute {
                 throw new IllegalArgumentException("A player with the same uuid already existe on the server");
             }
         } catch (Exception e) {
-            serverContext.getServerHandler().sendPacketTo(new DisconnectMessage(e.getMessage()), clientChanel);
+            serverContext.getServerHandler().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
             logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
             clientChanel.close();
             return;
@@ -52,6 +53,12 @@ public class ServerExecuteContext implements ServerExecute {
     public void removePlayer(Channel channel) {
         int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(channel);
         if (playerId == -1) return;
+        try {
+            serverContext.getSystem(PlayerManagerServer.class).savePlayerInventory(playerId);
+        } catch (IOException e) {
+            String username = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId).getUsername();
+            logger.warn("Can not save player inventory of {}. : {} ", username, e.getMessage());
+        }
         serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
         serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(playerId).getUuid()), channel);
     }

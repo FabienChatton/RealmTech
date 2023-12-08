@@ -13,6 +13,7 @@ public class DataCtrl {
     private final static Logger logger = LoggerFactory.getLogger(DataCtrl.class);
     public final static String ROOT_PATH = "RealmTechData";
     public final static String PATH_PROPERTIES = "properties";
+    public final static String PLAYERS_PATH = "players";
     public final static String OPTIONS_FILE = "options.cfg";
     public final static String OPTIONS_SERVER_FILE = "optionsServer.cfg";
     public final static int SCREEN_WIDTH = 1024;
@@ -51,5 +52,9 @@ public class DataCtrl {
 
     public static File getOptionServerFile() {
         return Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_SERVER_FILE)).toFile();
+    }
+
+    public static File getPlayersDir(String saveName) {
+        return Path.of(String.format("%s/%s/%s/%s", ROOT_PATH, SaveInfManager.ROOT_PATH_SAVES, saveName, PLAYERS_PATH)).toFile();
     }
 }
