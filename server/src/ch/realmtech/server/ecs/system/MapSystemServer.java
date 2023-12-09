@@ -72,6 +72,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
             int playerId = playersData[p];
             if (playerId == -1) return;
             PositionComponent positionPlayerComponent = mPosition.get(playerId);
+            if (positionPlayerComponent == null) return;
             PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
             int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
             int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);

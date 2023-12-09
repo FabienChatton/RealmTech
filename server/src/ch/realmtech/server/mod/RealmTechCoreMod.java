@@ -1,10 +1,7 @@
 package ch.realmtech.server.mod;
 
 
-import ch.realmtech.server.ecs.component.CellBeingMineComponent;
-import ch.realmtech.server.ecs.component.ChestComponent;
-import ch.realmtech.server.ecs.component.CraftingTableComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
@@ -320,76 +317,55 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "gold-ore-01",
             ItemBehavior.builder().build()
     ));
-//    public final static CellItemRegisterEntry FURNACE = registerCellItem("furnace", new CellRegisterEntry(
-//            "furnace-01",
-//            CellBehavior.builder(Cells.Layer.BUILD_DECO)
-//                    .editEntity((world, id) -> {
-//                        FurnaceComponent furnaceComponent = world.edit(id).create(FurnaceComponent.class);
-//                        int inventoryItemToSmelt = world.create();
-//                        int inventoryCarburant = world.create();
-//                        int inventoryResult = world.create();
-//                        int iconInventoryTimeToBurn = world.create();
-//                        int iconInventoryCurentBurnTime = world.create();
-//
-//                        world.edit(id).create(CraftingTableComponent.class).set(inventoryItemToSmelt, inventoryResult, CraftStrategy.craftingStrategyFurnace());
-//                        world.edit(inventoryItemToSmelt).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//                        world.edit(inventoryItemToSmelt).create(CraftingComponent.class).set(FURNACE_RECIPE, inventoryResult);
-//                        world.edit(inventoryCarburant).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//                        world.edit(inventoryResult).create(InventoryComponent.class).set(1, 1, InventoryComponent.DEFAULT_BACKGROUND_TEXTURE_NAME);
-//                        world.edit(iconInventoryTimeToBurn).create(InventoryComponent.class).set(1, 1, InventoryComponent.NO_BACKGROUND_TEXTURE_NAME);
-//                        world.edit(iconInventoryCurentBurnTime).create(InventoryComponent.class).set(1, 1, InventoryComponent.NO_BACKGROUND_TEXTURE_NAME);
-//                        furnaceComponent.set(inventoryCarburant, iconInventoryTimeToBurn, iconInventoryCurentBurnTime);
-//                    })
-//                    .interagieClickDroit((world, cellId) -> {
-//                        ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
-//                        ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
-//                        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-//                        FurnaceComponent furnaceComponent = mFurnace.get(cellId);
-//                        CraftingTableComponent craftingTableComponent = mCraftingTable.get(cellId);
-//
-//                        world.getSystem(PlayerInventorySystem.class).toggleInventoryWindow(context -> {
-//                            InventoryComponent inventoryItemToSmelt = mInventory.get(craftingTableComponent.craftingInventory);
-//                            InventoryComponent inventoryCarburant = mInventory.get(furnaceComponent.inventoryCarburant);
-//                            InventoryComponent inventoryResult = mInventory.get(craftingTableComponent.craftingResultInventory);
-//                            InventoryComponent inventoryPlayer = mInventory.get(context.getEcsEngine().getPlayerId());
-//                            InventoryComponent iconInventoryTimeToBurn = mInventory.get(furnaceComponent.iconInventoryTimeToBurn);
-//                            InventoryComponent iconInventoryCurentBurnTime = mInventory.get(furnaceComponent.iconInventoryCurentBurnTime);
-//
-//                            Table playerInventoryTable = new Table(context.getSkin());
-//                            Table itemToSmeltTable = new Table(context.getSkin());
-//                            Table midleTable = new Table(context.getSkin());
-//                            Table iconTimeToBurnTable = new Table(context.getSkin());
-//                            Table iconCurentBurnTime = new Table(context.getSkin());
-//                            Table carburantTable = new Table(context.getSkin());
-//                            Table resultTable = new Table(context.getSkin());
-//                            Consumer<Window> addTable = window -> {
-//                                window.add(itemToSmeltTable).padBottom(10f).row();
-//                                midleTable.add(iconTimeToBurnTable).padLeft(64 + 32).padRight(16);
-//                                midleTable.add(iconCurentBurnTime).padRight(16);
-//                                midleTable.add(resultTable).row();
-//                                window.add(midleTable).padBottom(10f).row();
-//                                window.add(carburantTable).padBottom(10f).row();
-//                                window.add(playerInventoryTable);
-//                            };
-//                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-//                                    DisplayInventoryArgs.builder(inventoryItemToSmelt, itemToSmeltTable).build(),
-//                                    DisplayInventoryArgs.builder(inventoryCarburant, carburantTable).build(),
-//                                    DisplayInventoryArgs.builder(inventoryResult, resultTable).notClickAndDropDst().build(),
-//                                    DisplayInventoryArgs.builder(inventoryPlayer, playerInventoryTable).build(),
-//                                    DisplayInventoryArgs.builder(iconInventoryTimeToBurn, iconTimeToBurnTable).icon().build(),
-//                                    DisplayInventoryArgs.builder(iconInventoryCurentBurnTime, iconCurentBurnTime).icon().build()
-//                            });
-//                        });
-//                    })
-//                    .breakWith(ItemType.PIOCHE, "realmtech.furnace")
-//                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-//                    .build()
-//    ), new ItemRegisterEntry(
-//            "furnace-01",
-//            ItemBehavior.builder()
-//                    .placeCell("realmtech.furnace")
-//                    .build()
-//    ));
+    public final static CellItemRegisterEntry FURNACE = registerCellItem("furnace", new CellRegisterEntry(
+            "furnace-01",
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                    .editEntity((world, id) -> {
+                        world.getSystem(InventoryManager.class).createFurnace(id, UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE], UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+                    })
+                    .interagieClickDroit((clientContext, cellId) -> {
+                        ComponentMapper<FurnaceComponent> mFurnace = clientContext.getWorld().getMapper(FurnaceComponent.class);
+                        ComponentMapper<CraftingTableComponent> mCraftingTable = clientContext.getWorld().getMapper(CraftingTableComponent.class);
+                        ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
+                        FurnaceComponent furnaceComponent = mFurnace.get(cellId);
+                        CraftingTableComponent craftingTableComponent = mCraftingTable.get(cellId);
+
+                        clientContext.openPlayerInventory(() -> {
+                            Table playerInventoryTable = new Table(clientContext.getSkin());
+                            Table itemToSmeltTable = new Table(clientContext.getSkin());
+                            Table midleTable = new Table(clientContext.getSkin());
+                            Table iconTimeToBurnTable = new Table(clientContext.getSkin());
+                            Table iconCurentBurnTime = new Table(clientContext.getSkin());
+                            Table carburantTable = new Table(clientContext.getSkin());
+                            Table resultTable = new Table(clientContext.getSkin());
+                            Consumer<Window> addTable = window -> {
+                                window.add(itemToSmeltTable).padBottom(10f).row();
+                                midleTable.add(iconTimeToBurnTable).padLeft(64 + 32).padRight(16);
+                                midleTable.add(iconCurentBurnTime).padRight(16);
+                                midleTable.add(resultTable).row();
+                                window.add(midleTable).padBottom(10f).row();
+                                window.add(carburantTable).padBottom(10f).row();
+                                window.add(playerInventoryTable);
+                            };
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                                    DisplayInventoryArgs.builder(craftingTableComponent.craftingInventory, itemToSmeltTable).build(),
+                                    DisplayInventoryArgs.builder(furnaceComponent.inventoryCarburant, carburantTable).build(),
+                                    DisplayInventoryArgs.builder(craftingTableComponent.craftingResultInventory, resultTable).notClickAndDropDst().build(),
+                                    DisplayInventoryArgs.builder(clientContext.getPlayerId(), playerInventoryTable).build(),
+                                    DisplayInventoryArgs.builder(furnaceComponent.iconInventoryTimeToBurn, iconTimeToBurnTable).icon().build(),
+                                    DisplayInventoryArgs.builder(furnaceComponent.iconInventoryCurentBurnTime, iconCurentBurnTime).icon().build()
+                            });
+                        });
+                    })
+                    .breakWith(ItemType.PIOCHE, "realmtech.furnace")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .build()
+    ), new ItemRegisterEntry(
+            "furnace-01",
+            ItemBehavior.builder()
+                    .placeCell("realmtech.furnace")
+                    .build()
+    ));
 
     //</editor-fold>
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {

@@ -107,7 +107,7 @@ public class ServerContext {
         } catch (Exception ignored) {}
         try {
             ecsEngineServer.saveMap();
-        } catch (IOException ignored) {}
+        } catch (Exception ignored) {}
         try {
             getSystem(PlayerManagerServer.class).savePlayersInventory();
         } catch (IOException ignored) {}

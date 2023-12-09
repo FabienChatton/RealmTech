@@ -7,6 +7,7 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.registery.RegistryEntryAnonyme;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -58,8 +59,8 @@ public class CraftingPlayerSystem extends IteratingSystem {
         }
 
         if (Arrays.stream(itemRegister).anyMatch(Objects::nonNull)) {
-            for (CraftingRecipeEntry craftingRecipeEntry : craftingComponent.craftingRecipe) {
-                Optional<CraftResult> craftResultOption = craftingRecipeEntry.craft(itemRegister, inventoryCraftComponent.numberOfSlotParRow, inventoryCraftComponent.numberOfRow);
+            for (RegistryEntryAnonyme<CraftingRecipeEntry> craftingRecipeEntry : craftingComponent.getRegistry().getEnfants()) {
+                Optional<CraftResult> craftResultOption = craftingRecipeEntry.getEntry().craft(itemRegister, inventoryCraftComponent.numberOfSlotParRow, inventoryCraftComponent.numberOfRow);
                 if (craftResultOption.isPresent()) {
                     return craftResultOption.get();
                 }

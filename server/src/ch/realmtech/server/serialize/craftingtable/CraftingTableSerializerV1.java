@@ -3,10 +3,14 @@ package ch.realmtech.server.serialize.craftingtable;
 import ch.realmtech.server.craft.CraftingStrategyItf;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
+import ch.realmtech.server.ecs.component.CraftingComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.registery.CraftingRecipeEntry;
+import ch.realmtech.server.registery.InfRegistryAnonyme;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
@@ -18,10 +22,13 @@ import io.netty.buffer.Unpooled;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class CraftingTableSerializerV1 implements Serializer<CraftingTableComponent, Consumer<Integer>> {
+public class CraftingTableSerializerV1 implements Serializer<Integer, Consumer<Integer>> {
     @Override
-    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, CraftingTableComponent craftingTableToSerialize) {
-        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, craftingTableToSerialize));
+    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer craftingTableToSerializeId) {
+        CraftingTableComponent craftingTableToSerialize = world.getMapper(CraftingTableComponent.class).get(craftingTableToSerializeId);
+        CraftingComponent craftingComponent = world.getMapper(CraftingComponent.class).get(craftingTableToSerialize.craftingInventory);
+
+        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, craftingTableToSerializeId));
         UUID craftingInventoryUuid = world.getSystem(UuidComponentManager.class).getRegisteredComponent(craftingTableToSerialize.craftingInventory).getUuid();
         InventoryComponent craftingInventory = world.getSystem(InventoryManager.class).getCraftingInventory(craftingTableToSerialize);
 
@@ -37,7 +44,11 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
         InventoryComponent craftingResultInventoryCopyEmpty = new InventoryComponent().set(craftingResultInventory.numberOfSlotParRow, craftingInventory.numberOfRow);
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingResultInventoryCopyEmpty);
 
-        buffer.writeByte(craftingTableToSerialize.getCraftResultStrategy().getId());
+        if (craftingComponent.getRegistry() == RealmTechCoreMod.CRAFT) {
+            buffer.writeByte(1);
+        } else {
+            buffer.writeByte(2);
+        }
         return new SerializedRawBytes(buffer.array());
     }
 
@@ -53,11 +64,18 @@ public class CraftingTableSerializerV1 implements Serializer<CraftingTableCompon
 
         byte craftingStrategyId = buffer.readByte();
 
-        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
+        InfRegistryAnonyme<CraftingRecipeEntry> craftingRegistry;
+        if (craftingStrategyId == 1) {
+            craftingRegistry = RealmTechCoreMod.CRAFT;
+        } else {
+            craftingRegistry = RealmTechCoreMod.FURNACE_RECIPE;
+        }
+        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid, craftingRegistry);
     }
 
     @Override
-    public int getBytesSize(World world, SerializerController serializerController, CraftingTableComponent craftingTableToSerialize) {
+    public int getBytesSize(World world, SerializerController serializerController, Integer craftingTableToSerializeId) {
+        CraftingTableComponent craftingTableToSerialize = world.getMapper(CraftingTableComponent.class).get(craftingTableToSerializeId);
         UUID craftingInventoryUuid = world.getSystem(UuidComponentManager.class).getRegisteredComponent(craftingTableToSerialize.craftingInventory).getUuid();
         InventoryComponent craftingInventory = world.getSystem(InventoryManager.class).getCraftingInventory(craftingTableToSerialize);
         UUID craftingResultInventoryUuid = world.getSystem(UuidComponentManager.class).getRegisteredComponent(craftingTableToSerialize.craftingResultInventory).getUuid();

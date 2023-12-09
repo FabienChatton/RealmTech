@@ -5,6 +5,8 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.registery.CraftingRecipeEntry;
+import ch.realmtech.server.registery.InfRegistryAnonyme;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.EntityEdit;
@@ -413,32 +415,23 @@ public class InventoryManager extends Manager {
     }
 
     public int createChest(int motherEntity, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
-        int inventoryId = world.create();
-        world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
-
-        EntityEdit inventoryEdit = world.edit(inventoryId);
-        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
-        inventoryEdit.create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow);
-        inventoryEdit.create(InventoryUiComponent.class).set();
-        return inventoryId;
+        return createChest(motherEntity, new int[numberOfSlotParRow * numberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], inventoryUuid, numberOfSlotParRow, numberOfRow);
     }
+
     public int createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
         world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
 
-        EntityEdit inventoryEdit = world.edit(inventoryId);
-        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
-        inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
-        inventoryEdit.create(InventoryUiComponent.class).set();
+        createInventoryUi(inventoryId, inventoryUuid, inventory, numberOfSlotParRow, numberOfRow);
         return inventoryId;
     }
 
     /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
-        return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid);
+        return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, RealmTechCoreMod.CRAFT);
     }
 
-    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
+    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid, InfRegistryAnonyme<CraftingRecipeEntry> craftingRegistry) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
@@ -447,13 +440,39 @@ public class InventoryManager extends Manager {
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
         craftingInventoryEdit.create(InventoryUiComponent.class).set();
-        craftingInventoryEdit.create(CraftingComponent.class).set(RealmTechCoreMod.CRAFT, craftingResultInventoryId);
+        craftingInventoryEdit.create(CraftingComponent.class).set(craftingRegistry, craftingResultInventoryId);
 
-        EntityEdit craftingResultInventoryEdit = world.edit(craftingResultInventoryId);
-        craftingResultInventoryEdit.create(UuidComponent.class).set(craftingResultInventoryUuid);
-        craftingResultInventoryEdit.create(InventoryComponent.class).set(1, 1);
-        craftingResultInventoryEdit.create(InventoryUiComponent.class).set();
+        createInventoryUi(craftingResultInventoryId, craftingResultInventoryUuid, 1,1);
         return new int[]{craftingInventoryId, craftingResultInventoryId};
+    }
+
+    public void createFurnace(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventory, UUID iconInventoryTimeToBurnUuid, UUID iconInventoryCurentBurnTimeUuid, UUID craftingResultInventoryUuid) {
+        int inventoryItemToSmelt;
+        int inventoryCarburant = world.create();
+        int inventoryResult;
+        int iconInventoryTimeToBurn = world.create();
+        int iconInventoryCurentBurnTime = world.create();
+
+        int[] craftingTable = createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventory, 1, 1, craftingResultInventoryUuid, RealmTechCoreMod.FURNACE_RECIPE);
+        inventoryItemToSmelt = craftingTable[0];
+        inventoryResult = craftingTable[1];
+        world.edit(motherEntity).create(FurnaceComponent.class).set(inventoryCarburant, iconInventoryTimeToBurn, iconInventoryCurentBurnTime);
+
+        createInventoryUi(inventoryCarburant, carburantInventory, 1, 1);
+        createInventoryUi(iconInventoryTimeToBurn, iconInventoryTimeToBurnUuid, 1, 1);
+        createInventoryUi(iconInventoryCurentBurnTime, iconInventoryCurentBurnTimeUuid, 1, 1);
+    }
+
+    private EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
+        EntityEdit inventoryEdit = world.edit(inventoryId);
+        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
+        inventoryEdit.create(InventoryUiComponent.class).set();
+        return inventoryEdit;
+    }
+
+    private EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
+        return createInventoryUi(inventoryId, inventoryUuid, new int[numberOfSlotParRow * numberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], numberOfSlotParRow, numberOfRow);
     }
 
     public InventoryComponent getChestInventory(int motherEntity) {

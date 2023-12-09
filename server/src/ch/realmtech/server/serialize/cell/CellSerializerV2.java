@@ -3,6 +3,7 @@ package ch.realmtech.server.serialize.cell;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.ChestComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
+import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.registery.CellRegisterEntry;
@@ -23,6 +24,7 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
         ComponentMapper<InfCellComponent> mCell = world.getMapper(InfCellComponent.class);
         ComponentMapper<ChestComponent> mChest = world.getMapper(ChestComponent.class);
         ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
+        ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
 
         InfCellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, cellToSerialize));
@@ -41,7 +43,12 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
 
         if (mCraftingTable.has(cellToSerialize)) {
             paddingId = 2;
-            writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController(), mCraftingTable.get(cellToSerialize));
+            writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController(), cellToSerialize);
+        }
+
+        if (mFurnace.has(cellToSerialize)) {
+            paddingId = 3;
+            writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController(), cellToSerialize);
         }
 
         buffer.writeByte(paddingId);
@@ -67,6 +74,10 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
             Consumer<Integer> createCraftingTable = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
             overrideEdit = (__, cellId) -> createCraftingTable.accept(cellId);
         }
+        if (paddingId == 3) {
+            Consumer<Integer> createCraftingTable = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
+            overrideEdit = (__, cellId) -> createCraftingTable.accept(cellId);
+        }
         return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, overrideEdit);
     }
 
@@ -80,7 +91,7 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
 
         int paddingLength = 0;
         if (mCraftingTable.has(cellToSerialize)) {
-            paddingLength = serializerController.getApplicationBytesLength(serializerController.getCraftingTableController(), mCraftingTable.get(cellToSerialize));
+            paddingLength = serializerController.getApplicationBytesLength(serializerController.getCraftingTableController(), cellToSerialize);
         }
 
         return hashCell + pos + paddingId + paddingLength;

@@ -54,6 +54,7 @@ public class PlayerManagerServer extends BaseSystem {
     @Override
     protected void processSystem() {
         TousLesJoueursArg tousLesJoueursArg = getTousLesJoueurs();
+        if (tousLesJoueursArg == null) return;
         TousLesJoueurPacket tousLesJoueurPacket = new TousLesJoueurPacket(tousLesJoueursArg.nombreDeJoueur(), tousLesJoueursArg.pos(), tousLesJoueursArg.uuids());
         serverContext.getServerHandler().broadCastPacket(tousLesJoueurPacket);
 
@@ -103,7 +104,7 @@ public class PlayerManagerServer extends BaseSystem {
         try {
             serverContext.getSystem(PlayerManagerServer.class).loadPlayerInventory(playerUuid);
             chestId = systemsAdminServer.inventoryManager.getChestInventoryId(playerId);
-        } catch (IOException e) {
+        } catch (Exception e) {
             chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         }
         InventoryComponent chestInventoryComponent = mInventory.get(chestId);
@@ -157,6 +158,7 @@ public class PlayerManagerServer extends BaseSystem {
         for (int i = 0; i < players.size(); i++) {
             int playerId = playersData[i];
             PositionComponent positionComponent = mPos.get(playerId);
+            if (positionComponent == null) return null;
             PlayerConnexionComponent playerComponent = mPlayer.get(playerId);
             poss[i] = new Vector2(positionComponent.x, positionComponent.y);
             UuidComponent uuidComponent = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId);
@@ -178,10 +180,16 @@ public class PlayerManagerServer extends BaseSystem {
     }
 
     public void savePlayerInventory(int playerId) throws IOException {
-        UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid();
-        Path playerDir = getPlayerDir(playerUuid);
-        if (!playerDir.toFile().exists()) Files.createDirectories(playerDir);
-        File playerInventoryFile = getPlayerInventoryFile(playerDir).toFile();
+        File playerInventoryFile;
+        try {
+            UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid();
+            Path playerDir = getPlayerDir(playerUuid);
+            if (!playerDir.toFile().exists()) Files.createDirectories(playerDir);
+            playerInventoryFile = getPlayerInventoryFile(playerDir).toFile();
+        } catch (Exception e) {
+            logger.warn("can not save player inventory.", e);
+            return;
+        }
 
         SerializedApplicationBytes chestInventoryBytes = serverContext.getSerializerController().getChestSerializerController().encode(playerId);
 
