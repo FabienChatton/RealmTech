@@ -1,16 +1,13 @@
-package ch.realmtech.core.sound;
+package sound;
 
-import ch.realmtech.core.RealmTech;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SoundManager {
-
-    private final RealmTech context;
-
     public final static String OPEN_INVENTORY = "sound/effects/inventory/cloth-inventory.wav";
     public final static String FOOT_STEP_GRASS_1 = "sound/effects/level/foot-step/sfx_step_grass_l.mp3";
     public final static String FOOT_STEP_GRASS_2 = "sound/effects/level/foot-step/sfx_step_grass_r.mp3";
@@ -25,12 +22,13 @@ public class SoundManager {
     public final static String BLIP = "sound/effects/menu/blip1.wav";
     public final static String DENY = "sound/effects/menu/launch_deny1.wav";
     public final static String BREAKING_CELL = "sound/effects/level/break/bfh1_breaking_02.ogg";
-    private HashMap<String, Long> soundLoop;
-    private AssetManager assetManager;
+    private final HashMap<String, Long> soundLoop;
+    private final AssetManager assetManager;
+    private final AtomicInteger optionSound;
 
-    public SoundManager(RealmTech context) {
-        this.context = context;
-        assetManager = context.getAssetManager();
+    public SoundManager(AssetManager assetManager, AtomicInteger optionSound) {
+        this.assetManager = assetManager;
+        this.optionSound = optionSound;
         soundLoop = new HashMap<>();
         soundLoop.put("footStep", System.currentTimeMillis());
         soundLoop.put("cellBreak", System.currentTimeMillis());
@@ -43,10 +41,10 @@ public class SoundManager {
     }
 
     private float getSoundPourCent() {
-        return context.getOption().sound.get() / 100f;
+        return optionSound.get() / 100f;
     }
 
-    public static void initAsset(AssetManager assetManager) {
+    public static void LoadAsset(AssetManager assetManager) {
         assetManager.load(OPEN_INVENTORY, Sound.class);
         assetManager.load(FOOT_STEP_GRASS_1, Sound.class);
         assetManager.load(FOOT_STEP_GRASS_2, Sound.class);
@@ -66,7 +64,7 @@ public class SoundManager {
     public void playFootStep(String playerWalkSound, float volume) {
         if (System.currentTimeMillis() - soundLoop.get("footStep") >= 300) {
             soundLoop.put("footStep", System.currentTimeMillis());
-            context.getAssetManager().get(playerWalkSound, Sound.class).play(getSoundPourCent() * volume);
+            assetManager.get(playerWalkSound, Sound.class).play(getSoundPourCent() * volume);
         }
     }
 

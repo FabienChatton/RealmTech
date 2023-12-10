@@ -14,7 +14,6 @@ import ch.realmtech.core.option.Option;
 import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
-import ch.realmtech.core.sound.SoundManager;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
@@ -38,6 +37,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sound.SoundManager;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -86,7 +86,7 @@ public final class RealmTech extends Game implements ClientContext {
         initMap();
         initSound();
         Box2D.init();
-        soundManager = new SoundManager(this);
+        soundManager = new SoundManager(assetManager, option.sound);
         discord = new Discord(Thread.currentThread());
         discord.init();
         gameStage = new Stage(
@@ -128,7 +128,7 @@ public final class RealmTech extends Game implements ClientContext {
     }
 
     private void initSound() {
-        SoundManager.initAsset(assetManager);
+        SoundManager.LoadAsset(assetManager);
     }
 
     public void setScreen(final ScreenType screenType) {

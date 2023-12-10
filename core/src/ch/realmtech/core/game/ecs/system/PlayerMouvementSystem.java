@@ -2,8 +2,8 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.input.InputMapper;
-import ch.realmtech.core.sound.SoundManager;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.PlayerMouvementSystemServer;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.packet.serverPacket.PlayerMovePacket;
@@ -11,6 +11,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import sound.SoundManager;
 
 @All({PlayerComponent.class,
         MovementComponent.class,
@@ -45,16 +46,27 @@ public class PlayerMouvementSystem extends IteratingSystem {
         );
         if (inputKeys != 0) {
             context.getConnexionHandler().sendAndFlushPacketToServer(new PlayerMovePacket(inputKeys));
+            int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+
+            PositionComponent positionComponent = mPosition.get(entityId);
+            int worldPosX = MapManager.getWorldPos(positionComponent.x);
+            int worldPosY = MapManager.getWorldPos(positionComponent.y);
+
+            int chunk = context.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
+            int cellId = context.getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+
+            InfCellComponent infCellComponent = mCell.get(cellId);
+            byte layer = infCellComponent.cellRegisterEntry.getCellBehavior().getLayer();
+
+            PlayerFootStepSound playerFootStepSound = infCellComponent.cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+            do {
+                if (playerFootStepSound != null) {
+                    soundManager.playFootStep(playerFootStepSound.playerFootStepSound(), playerFootStepSound.volume());
+                    return;
+                }
+                playerFootStepSound = mCell.get(context.getSystem(MapManager.class).getCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY), --layer)).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+            } while (layer >= 0);
         }
 
-    }
-
-    private void playFootStepSound(int cellId) {
-        if (cellId != -1) {
-            PlayerFootStepSound playerFootStepSound = mCell.get(cellId).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
-            if (playerFootStepSound != null) {
-                soundManager.playFootStep(playerFootStepSound.playerFootStepSound(), playerFootStepSound.volume());
-            }
-        }
     }
 }

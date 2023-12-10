@@ -13,7 +13,6 @@ import ch.realmtech.core.game.ecs.system.PlayerInputSystem;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.server.ecs.GetWorld;
-import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.*;
@@ -138,10 +137,6 @@ public final class ECSEngine implements Disposable, GetWorld {
         return world.getSystem(TagManager.class).getEntity("infMap");
     }
 
-
-    public void playFootStep(PlayerFootStepSound footStep) {
-        context.getSoundManager().playFootStep(footStep.playerFootStepSound(), footStep.volume());
-    }
 
 //    public void dropCurentPlayerItem() {
 //        ItemComponent itemComponent = world.getSystem(ItemBarManager.class).getSelectItemComponent();

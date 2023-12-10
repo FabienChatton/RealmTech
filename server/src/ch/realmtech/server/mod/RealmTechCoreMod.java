@@ -16,6 +16,7 @@ import ch.realmtech.server.registery.*;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import sound.SoundManager;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -128,14 +129,14 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static CellRegisterEntry GRASS_CELL = registerCell("grass", new CellRegisterEntry(
             "grass-01",
             CellBehavior.builder(Cells.Layer.GROUND)
-                    //.playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
+                    .playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
     public final static CellRegisterEntry SAND_CELL = registerCell("sand", new CellRegisterEntry(
             "sand-01",
             CellBehavior.builder(Cells.Layer.GROUND)
-                    //.playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
+                    .playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
@@ -143,7 +144,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "water-01",
             CellBehavior.builder(Cells.Layer.GROUND)
                     .speedEffect(0.5f)
-                    //.playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
+                    .playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
