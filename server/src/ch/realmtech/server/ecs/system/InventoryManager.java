@@ -447,16 +447,17 @@ public class InventoryManager extends Manager {
     }
 
     public void createFurnace(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventory, UUID iconInventoryTimeToBurnUuid, UUID iconInventoryCurentBurnTimeUuid, UUID craftingResultInventoryUuid) {
+        int craftingTableId = world.create();
         int inventoryItemToSmelt;
         int inventoryCarburant = world.create();
         int inventoryResult;
         int iconInventoryTimeToBurn = world.create();
         int iconInventoryCurentBurnTime = world.create();
 
-        int[] craftingTable = createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventory, 1, 1, craftingResultInventoryUuid, RealmTechCoreMod.FURNACE_RECIPE);
-        inventoryItemToSmelt = craftingTable[0];
-        inventoryResult = craftingTable[1];
-        world.edit(motherEntity).create(FurnaceComponent.class).set(inventoryCarburant, iconInventoryTimeToBurn, iconInventoryCurentBurnTime);
+        int[] craftingTableArgs = createCraftingTable(craftingTableId, craftingInventoryUuid, craftingInventory, 1, 1, craftingResultInventoryUuid, RealmTechCoreMod.FURNACE_RECIPE);
+        inventoryItemToSmelt = craftingTableArgs[0];
+        inventoryResult = craftingTableArgs[1];
+        world.edit(motherEntity).create(FurnaceComponent.class).set(craftingTableId, inventoryCarburant, iconInventoryTimeToBurn, iconInventoryCurentBurnTime);
 
         createInventoryUi(inventoryCarburant, carburantInventory, 1, 1);
         createInventoryUi(iconInventoryTimeToBurn, iconInventoryTimeToBurnUuid, 1, 1);

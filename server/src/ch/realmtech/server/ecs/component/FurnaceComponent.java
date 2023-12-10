@@ -6,6 +6,7 @@ import com.artemis.Component;
 import com.artemis.annotations.EntityId;
 
 public class FurnaceComponent extends Component {
+    public int craftingTableId;
     @EntityId
     public int inventoryCarburant;
     @EntityId
@@ -17,7 +18,8 @@ public class FurnaceComponent extends Component {
     public CraftResult curentCraftResult = null;
     public ItemRegisterEntry itemBurn;
 
-    public FurnaceComponent set(int inventoryCarburantId, int iconInventoryTimeToBurn, int iconInventoryCurentBurnTime) {
+    public FurnaceComponent set(int craftingTableId, int inventoryCarburantId, int iconInventoryTimeToBurn, int iconInventoryCurentBurnTime) {
+        this.craftingTableId = craftingTableId;
         this.inventoryCarburant = inventoryCarburantId;
         this.iconInventoryTimeToBurn = iconInventoryTimeToBurn;
         this.iconInventoryCurentBurnTime = iconInventoryCurentBurnTime;

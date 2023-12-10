@@ -48,7 +48,7 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
 
         if (mFurnace.has(cellToSerialize)) {
             paddingId = 3;
-            writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController(), cellToSerialize);
+            writePadding = () -> ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getFurnaceSerializerController(), cellToSerialize);
         }
 
         buffer.writeByte(paddingId);
