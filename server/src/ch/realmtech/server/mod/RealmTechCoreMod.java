@@ -13,10 +13,10 @@ import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.registery.*;
+import ch.realmtech.server.sound.SoundManager;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import sound.SoundManager;
 
 import java.util.UUID;
 import java.util.function.Consumer;

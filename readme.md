@@ -325,7 +325,7 @@ fichier de configuration ou les sauvegarde des mondes.
 ```
 
 ## Protocole de sauvegarde de RealmTech
-### version 8
+### version 9
 
 Le layer d'une cellule représente sa position dans la hauteur. C'est la
 cellule avec le plus grand layer qui sera affiché. Le layer ne peut
@@ -341,21 +341,20 @@ pas être négatif.
 |-- $nomDeLaSauvegarde
     |-- playerInventory.psi
     |-- level
-        |-- header.rsh
-        |-- chunks
-            |-- 0,0.rsc
-            |-- 0,1.rsc
-            |-- 1,0.rsc
-            |-- ...  
+    |   |-- header.rsh
+    |   |-- chunks
+    |       |-- 0,0.rsc
+    |       |-- 0,1.rsc
+    |       |-- 1,0.rsc
+    |       |-- ...  
+    |-- players
+        |-- [uuid]
+            |-- inventory.pis
 ```
 #### Fichier header.rsh
 Ce fichier contient des métadonnées sur le monde.
 ```text
-"RealmTech", String
-taille nom sauvegarde, byte
-nomSauvegade, bytes len n
-Version protocole file save, int
-save date, long
+nomSauvegade, bytes len n + '\n'
 seed, long
 ```
 #### Fichier .rsc
@@ -363,30 +362,16 @@ Un fichier .rsc contient les données d'un chunk. Le fichier est nommée en
 fonction du <code>chunk pos</code> du chunk. Les deux coordonnées sont
 séparés par une virgule, par exemple : 12,-34.rsc.
 ```text
-Métadonnées
-    - version du protocole, int
-Header
-    - nombre de cellule que contient le chunk, short
-Body
-    pour chaque cellule :
-        - hash du cellRegisterEntry, int
-        - position dans le chunk, byte
+- nombre de cellule que contient le chunk, short
+pour chaque cellule :
+    - hash du cellRegisterEntry, int
+    - position dans le chunk, byte
 ```
 Un chunk fait <code>version protocole (int) + nombre de cells (short) * taille cell (5 bytes) + chunkPosX (int) + chunkPosY (int)</code>.
 
 Une cellule fait <code>5 bytes</code>.
 #### Fichier .psi
 
-Le fichier contient l'inventaire du joueur (pas utilisé par le serveur)
-
-```text
-Métadonnées
-    - version du protocole, int
-Header
-    - nombre de slot contenant un item enregistré, byte
-Body
-    pour chaque slot :
-        - hash item mod id, int
-        - nombre d'item dans le stack, byte
-        - index du slot dans l'inventaire, byte
-```
+Le fichier de sauvegarde de l’inventaire d'un joueur.
+Il utiliser le serializer du coffre pour sauvegarder l'inventaire
+du joueur.

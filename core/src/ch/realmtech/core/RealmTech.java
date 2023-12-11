@@ -21,6 +21,7 @@ import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.serialize.SerializerController;
+import ch.realmtech.server.sound.SoundManager;
 import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.badlogic.gdx.Game;
@@ -37,7 +38,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sound.SoundManager;
 
 import java.io.IOException;
 import java.util.function.Supplier;

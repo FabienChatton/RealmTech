@@ -1,4 +1,4 @@
-package sound;
+package ch.realmtech.server.sound;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;

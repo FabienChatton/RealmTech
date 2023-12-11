@@ -7,11 +7,11 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.PlayerMouvementSystemServer;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.packet.serverPacket.PlayerMovePacket;
+import ch.realmtech.server.sound.SoundManager;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
-import sound.SoundManager;
 
 @All({PlayerComponent.class,
         MovementComponent.class,

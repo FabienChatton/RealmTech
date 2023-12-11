@@ -14,25 +14,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 public class MenuScreen extends AbstractScreen {
     public MenuScreen(RealmTech context) {
         super(context);
-        TextButton selectionnerSauvegarde = new TextButtonMenu(context, "Single player", new OnClick((event, x, y) -> context.setScreen(ScreenType.SELECTION_DE_SAUVEGARDE)));
-        TextButton rejoindreMulti = new TextButtonMenu(context, "Multi Player", new OnClick((event, x, y) -> context.setScreen(ScreenType.REJOINDRE_MULTI)));
-        TextButton option = new TextButtonMenu(context, "Options", new OnClick((event, x, y) -> context.setScreen(ScreenType.OPTION)));
-        TextButton quitter = new TextButtonMenu(context, "Quit", new OnClick(
-                (event, x, y) -> Popup.popupConfirmation(context, "Voulez-vous vraiment quitter ? :(", uiStage, () -> Gdx.app.exit())
+        TextButton singlePlayer = new TextButtonMenu(context, "Single player", new OnClick((event, x, y) -> context.setScreen(ScreenType.SELECTION_DE_SAUVEGARDE)));
+        TextButton multiPlayer = new TextButtonMenu(context, "Multi Player", new OnClick((event, x, y) -> context.setScreen(ScreenType.REJOINDRE_MULTI)));
+        TextButton options = new TextButtonMenu(context, "Options", new OnClick((event, x, y) -> context.setScreen(ScreenType.OPTION)));
+        TextButton quit = new TextButtonMenu(context, "Quit", new OnClick(
+                (event, x, y) -> Popup.popupConfirmation(context, "Do you really want to leave me :(", uiStage, () -> Gdx.app.exit())
         ));
-        uiTable.add(creerLogo()).padBottom(10f).row();
-        uiTable.add(selectionnerSauvegarde).width(250).padBottom(10f).row();
-        uiTable.add(rejoindreMulti).width(250).padBottom(10f).row();
-        uiTable.add(option).width(250).padBottom(10f).row();
-        uiTable.add(quitter).width(250).padBottom(10f).row();
+        TextButton reLogin = new TextButtonMenu(context, "re login", new OnClick(((event, x, y) -> context.setScreen(ScreenType.AUTHENTICATE))));
+        uiTable.add(createAnimatedLogo()).padBottom(10f).row();
+        uiTable.add(singlePlayer).width(250).padBottom(10f).row();
+        uiTable.add(multiPlayer).width(250).padBottom(10f).row();
+        uiTable.add(options).width(250).padBottom(10f).row();
+        uiTable.add(reLogin).width(250).padBottom(10f).row();
+        uiTable.add(quit).width(250).padBottom(10f).row();
     }
 
-    @Override
-    public void update(float delta) {
-        super.update(delta);
-    }
-
-    private Image creerLogo() {
+    private Image createAnimatedLogo() {
         Image logo = new Image(context.getTextureAtlas().findRegion("logo-RealmTech"));
         float amount = 10;
         float temps = 0.5f;
