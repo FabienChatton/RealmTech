@@ -3,9 +3,11 @@ package ch.realmtech.core.game.console;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.cli.CommunMasterCommand;
+import ch.realmtech.server.datactrl.OptionCtrl;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.World;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 
@@ -36,5 +38,15 @@ public class MasterClientCommand extends CommunMasterCommand implements Callable
     @Override
     public SerializerController getSerializerManagerController() {
         return context.getSerializerController();
+    }
+
+    @Override
+    public OptionCtrl getOptionCtrl() {
+        return context.getOption();
+    }
+
+    @Override
+    public void reloadOption() throws IOException {
+        context.reloadOption();
     }
 }

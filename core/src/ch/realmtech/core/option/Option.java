@@ -1,17 +1,21 @@
 package ch.realmtech.core.option;
 
 import ch.realmtech.server.datactrl.DataCtrl;
+import ch.realmtech.server.datactrl.OptionCtrl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class Option {
+public final class Option extends OptionCtrl {
     private final static Logger logger = LoggerFactory.getLogger(Option.class);
     public final AtomicInteger keyMoveUp = new AtomicInteger();
     public final AtomicInteger keyMoveLeft = new AtomicInteger();
@@ -78,28 +82,24 @@ public final class Option {
         return loadFromPropertiesFile(propertiesFile);
     }
 
-    public void saveOption() {
-        try {
-            properties.put("keyMoveForward", keyMoveUp.toString());
-            properties.put("keyMoveLeft", keyMoveLeft.toString());
-            properties.put("keyMoveRight", keyMoveRight.toString());
-            properties.put("keyMoveBack", keyMoveDown.toString());
-            properties.put("openInventory", openInventory.toString());
-            properties.put("keyDropItem", keyDropItem.toString());
-            properties.put("fullScreen", fullScreen.toString());
-            properties.put("fps", fps.toString());
-            properties.put("sound", sound.toString());
-            properties.put("vsync", vsync.toString());
-            properties.put("inventoryBlur", inventoryBlur.toString());
-            properties.put("authServerBaseUrl", authServerBaseUrl);
-            properties.put("createAccessTokenUrn", createAccessTokenUrn);
-            properties.put("verifyLoginUrn", verifyLoginUrn);
-            try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionFile())) {
-                properties.store(outputStream, "RealmTech option file");
-                outputStream.flush();
-            }
-        } catch (IOException e) {
-            logger.error("Option file can not be saved. {}", e.getMessage());
+    public void save() throws IOException {
+        properties.put("keyMoveForward", keyMoveUp.toString());
+        properties.put("keyMoveLeft", keyMoveLeft.toString());
+        properties.put("keyMoveRight", keyMoveRight.toString());
+        properties.put("keyMoveBack", keyMoveDown.toString());
+        properties.put("openInventory", openInventory.toString());
+        properties.put("keyDropItem", keyDropItem.toString());
+        properties.put("fullScreen", fullScreen.toString());
+        properties.put("fps", fps.toString());
+        properties.put("sound", sound.toString());
+        properties.put("vsync", vsync.toString());
+        properties.put("inventoryBlur", inventoryBlur.toString());
+        properties.put("authServerBaseUrl", authServerBaseUrl);
+        properties.put("createAccessTokenUrn", createAccessTokenUrn);
+        properties.put("verifyLoginUrn", verifyLoginUrn);
+        try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionFile())) {
+            properties.store(outputStream, "RealmTech option file");
+            outputStream.flush();
         }
     }
 
@@ -132,5 +132,68 @@ public final class Option {
 
     public String getVerifyLoginUrn() {
         return verifyLoginUrn;
+    }
+
+    @Override
+    public Optional<String> getOptionValue(String optionName) {
+        return switch (optionName) {
+            case "keyMoveUp" -> Optional.of(Input.Keys.toString(keyMoveUp.get()));
+            case "keyMoveLeft" -> Optional.of(Input.Keys.toString(keyMoveLeft.get()));
+            case "keyMoveRight" -> Optional.of(Input.Keys.toString(keyMoveRight.get()));
+            case "keyMoveDown" -> Optional.of(Input.Keys.toString(keyMoveDown.get()));
+            case "openInventory" -> Optional.of(Input.Keys.toString(openInventory.get()));
+            case "keyDropItem" -> Optional.of(Input.Keys.toString(keyDropItem.get()));
+            case "fullScreen" -> Optional.of(fullScreen.toString());
+            case "fps" -> Optional.of(fps.toString());
+            case "sound" -> Optional.of(sound.toString());
+            case "vsync" -> Optional.of(vsync.toString());
+            case "inventoryBlur" -> Optional.of(inventoryBlur.toString());
+            case "authServerBaseUrl" -> Optional.of(authServerBaseUrl);
+            case "createAccessTokenUrn" -> Optional.of(createAccessTokenUrn);
+            case "verifyLoginUrn" -> Optional.of(verifyLoginUrn);
+            default -> Optional.empty();
+        };
+    }
+
+    @Override
+    public void setOptionValue(String optionName, String optionValue) {
+        switch (optionName) {
+            case "keyMoveUp" -> keyMoveUp.set(Input.Keys.valueOf(optionValue));
+            case "keyMoveLeft" -> keyMoveLeft.set(Input.Keys.valueOf(optionValue));
+            case "keyMoveRight" -> keyMoveRight.set(Input.Keys.valueOf(optionValue));
+            case "keyMoveDown" -> keyMoveDown.set(Input.Keys.valueOf(optionValue));
+            case "openInventory" -> openInventory.set(Input.Keys.valueOf(optionValue));
+            case "keyDropItem" -> keyDropItem.set(Input.Keys.valueOf(optionValue));
+            case "fullScreen" -> fullScreen.set(Boolean.valueOf(optionValue));
+            case "fps" -> fps.set(Integer.parseInt(optionValue));
+            case "sound" -> sound.set(Integer.parseInt(optionValue));
+            case "vsync" -> vsync.set(Boolean.parseBoolean(optionValue));
+            case "inventoryBlur" -> inventoryBlur.set(Boolean.parseBoolean(optionValue));
+            case "authServerBaseUrl" -> authServerBaseUrl = optionValue;
+            case "createAccessTokenUrn" -> createAccessTokenUrn = optionValue;
+            case "verifyLoginUrn" -> verifyLoginUrn = optionValue;
+        }
+    }
+
+    @Override
+    public Map<String, String> listOptions() {
+        return new HashMap<>() {
+            {
+                putListOptions(this,"keyMoveUp");
+                putListOptions(this,"keyMoveLeft");
+                putListOptions(this,"keyMoveRight");
+                putListOptions(this,"keyMoveDown");
+                putListOptions(this,"openInventory");
+                putListOptions(this,"keyDropItem");
+                putListOptions(this,"fullScreen");
+                putListOptions(this,"fps");
+                putListOptions(this,"sound");
+                putListOptions(this,"vsync");
+                putListOptions(this,"inventoryBlur");
+                putListOptions(this,"authServerBaseUrl");
+                putListOptions(this,"createAccessTokenUrn");
+                putListOptions(this,"verifyLoginUrn");
+            }
+        };
     }
 }

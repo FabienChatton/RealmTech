@@ -32,7 +32,7 @@ public class ServerContext {
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
     private final AuthRequest authRequest;
-    private final OptionServer optionServer;
+    private OptionServer optionServer;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -73,7 +73,7 @@ public class ServerContext {
             commandServerThread.start();
             tickThread.start();
             authRequest = new AuthRequest(this);
-            optionServer = OptionServer.getOptionFileAndLoadOrCreate();
+            reloadOption();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {
@@ -103,8 +103,10 @@ public class ServerContext {
     public ChannelFuture close() throws InterruptedException, IOException {
         logger.info("Fermeture du serveur...");
         try {
-            optionServer.saveOptionServer();
-        } catch (Exception ignored) {}
+            optionServer.save();
+        } catch (Exception e) {
+            logger.error("Option file can not be saved. {}", e.getMessage());
+        }
         try {
             ecsEngineServer.saveMap();
         } catch (Exception ignored) {}
@@ -150,5 +152,9 @@ public class ServerContext {
 
     public OptionServer getOptionServer() {
         return optionServer;
+    }
+
+    public void reloadOption() throws IOException {
+        optionServer = OptionServer.getOptionFileAndLoadOrCreate();
     }
 }

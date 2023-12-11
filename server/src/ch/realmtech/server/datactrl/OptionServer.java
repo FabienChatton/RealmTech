@@ -4,10 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class OptionServer {
+public class OptionServer extends OptionCtrl {
     private final static Logger logger = LoggerFactory.getLogger(OptionServer.class);
     private String authServerBaseUrl;
     private String verifyAccessTokenUrn;
@@ -57,17 +60,13 @@ public class OptionServer {
         return optionServer;
     }
 
-    public void saveOptionServer() {
-        try {
-            properties.put("authServerBaseUrl", authServerBaseUrl);
-            properties.put("verifyAccessTokenUrn", verifyAccessTokenUrn);
-            properties.put("verifyAccessToken", verifyAccessToken.toString());
-            try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionServerFile())) {
-                properties.store(outputStream, "RealmTech option server file");
-                outputStream.flush();
-            }
-        } catch (IOException e) {
-            logger.error("Option file can not be saved. {}", e.getMessage());
+    public void save() throws IOException {
+        properties.put("authServerBaseUrl", authServerBaseUrl);
+        properties.put("verifyAccessTokenUrn", verifyAccessTokenUrn);
+        properties.put("verifyAccessToken", verifyAccessToken.toString());
+        try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionServerFile())) {
+            properties.store(outputStream, "RealmTech option server file");
+            outputStream.flush();
         }
     }
 
@@ -77,5 +76,33 @@ public class OptionServer {
 
     public String getVerifyAccessTokenUrn() {
         return verifyAccessTokenUrn;
+    }
+
+    public Optional<String> getOptionValue(String optionName) {
+        return switch (optionName) {
+            case "authServerBaseUrl" -> Optional.of(getAuthServerBaseUrl());
+            case "verifyAccessTokenUrn" -> Optional.of(getVerifyAccessTokenUrn());
+            case "verifyAccessToken" -> Optional.of(verifyAccessToken.toString());
+            default -> Optional.empty();
+        };
+    }
+
+    public Map<String, String> listOptions() {
+        return new HashMap<>() {
+            {
+                putListOptions(this, "authServerBaseUrl");
+                putListOptions(this, "verifyAccessTokenUrn");
+                putListOptions(this, "verifyAccessToken");
+            }
+        };
+    }
+
+    @Override
+    public void setOptionValue(String optionName, String optionValue) {
+        switch (optionName) {
+            case "authServerBaseUrl" -> authServerBaseUrl = optionValue;
+            case "verifyAccessTokenUrn" -> verifyAccessTokenUrn = optionValue;
+            case "verifyAccessToken" -> verifyAccessToken.set(Boolean.parseBoolean(optionValue));
+        }
     }
 }

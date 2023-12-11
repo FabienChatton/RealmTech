@@ -76,7 +76,7 @@ public final class RealmTech extends Game implements ClientContext {
             Gdx.app.exit();
         }
         try {
-            option = Option.getOptionFileAndLoadOrCreate();
+            reloadOption();
         } catch (IOException e) {
             logger.error("Can not create option properties.", e);
             Gdx.app.exit();
@@ -206,7 +206,11 @@ public final class RealmTech extends Game implements ClientContext {
         gameStage.dispose();
         uiStage.dispose();
         assetManager.dispose();
-        option.saveOption();
+        try {
+            option.save();
+        } catch (IOException e) {
+            logger.error("Option file can not be saved. {}", e.getMessage());
+        }
         discord.stop();
         supprimeECS();
     }
@@ -312,5 +316,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public Option getOption() {
         return option;
+    }
+
+    public void reloadOption() throws IOException {
+        option = Option.getOptionFileAndLoadOrCreate();
     }
 }
