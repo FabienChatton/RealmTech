@@ -22,6 +22,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
     public final PlayerInventorySystem playerInventorySystem;
     public final ItemBarManager itemBarManager;
     public final CellBeingMineSystem cellBeingMineSystem;
+    public final LightSystem lightSystem;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -40,6 +41,8 @@ public class SystemsAdminClient extends SystemsAdminCommun {
 
         playerInventorySystem = new PlayerInventorySystem();
         itemBarManager = new ItemBarManager();
+
+        lightSystem = new LightSystem();
 
 
         // tick simulation
@@ -65,7 +68,8 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 textureRenderer,
                 playerInventorySystem,
                 itemBarManager,
-                cellBeingMineSystem
+                cellBeingMineSystem,
+                lightSystem
         );
     }
 }

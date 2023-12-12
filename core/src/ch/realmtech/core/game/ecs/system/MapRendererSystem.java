@@ -42,9 +42,6 @@ public class MapRendererSystem extends IteratingSystem {
     @Override
     protected void process(int mapId) {
         InfMapComponent infMapComponent = mMap.get(mapId);
-        for (int i = 0; i < infMapComponent.infChunks.length; i++) {
-            createFbo(infMapComponent.infChunks[i]);
-        }
         List<List<List<InfCellComponent>>> chunks = getInOrder(infMapComponent);
         draw(chunks, infMapComponent);
     }
