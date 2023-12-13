@@ -4,6 +4,7 @@ import ch.realmtech.core.auth.AuthControllerClient;
 import ch.realmtech.core.auth.AuthRequestClient;
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
+import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.game.netty.ClientExecuteContext;
@@ -288,6 +289,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public <T extends BaseSystem> T getSystem(Class<T> type) {
         return ecsEngine.getSystem(type);
+    }
+    public SystemsAdminClient getSystemsAdminClient() {
+        return ecsEngine.getSystemsAdminClient();
     }
 
     public ClientExecute getClientExecute() {

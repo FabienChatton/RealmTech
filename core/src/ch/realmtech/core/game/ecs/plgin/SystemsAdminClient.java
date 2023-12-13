@@ -23,6 +23,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
     public final ItemBarManager itemBarManager;
     public final CellBeingMineSystem cellBeingMineSystem;
     public final LightSystem lightSystem;
+    public final TimeSystemSimulation timeSystemSimulation;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -32,6 +33,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
         playerMouvementSystem = new PlayerMouvementSystem();
         playerTextureAnimated = new PlayerTextureAnimated();
         updateBox2dWithPosition = new UpdateBox2dWithPosition();
+        timeSystemSimulation = new TimeSystemSimulation();
         // render
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
@@ -57,6 +59,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 playerManagerClient,
                 itemManagerClient,
                 playerInputSystem,
+                timeSystemSimulation,
                 // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
@@ -64,12 +67,12 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
                 mapRendererSystem,
+                textureRenderer,
                 lightSystem,
 
                 // ui
                 cellBeingMineRenderSystem,
                 cellHoverEtWailaSystem,
-                textureRenderer,
                 playerInventorySystem,
                 itemBarManager,
                 cellBeingMineSystem

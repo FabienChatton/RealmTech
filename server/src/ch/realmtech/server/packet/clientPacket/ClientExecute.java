@@ -38,4 +38,6 @@ public interface ClientExecute {
     void setInventory(UUID inventoryUUID, SerializedApplicationBytes applicationInventoryBytes);
 
     void disconnectMessage(String message);
+
+    void timeSet(float time);
 }

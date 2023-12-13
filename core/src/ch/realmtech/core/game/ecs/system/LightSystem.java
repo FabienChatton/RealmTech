@@ -2,9 +2,9 @@ package ch.realmtech.core.game.ecs.system;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,9 +17,10 @@ public class LightSystem extends BaseSystem {
 
     @Wire(name = "gameStage")
     private Stage gameStage;
+    @Wire
+    private SystemsAdminClient systemsAdminClient;
 
     private RayHandler rayHandler;
-    private float upTime;
 
     @Override
     protected void initialize() {
@@ -29,8 +30,9 @@ public class LightSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        upTime += Gdx.graphics.getDeltaTime();
-        float alpha = Math.abs((float) Math.sin(upTime));
+        float time = systemsAdminClient.timeSystemSimulation.getAccumulatedDelta();
+        float alpha = (float) (Math.cos(Math.toRadians(time)) + 1) / 2f;
+
         gameStage.getBatch().begin();
         rayHandler.setCombinedMatrix(gameCamera.combined, 0, 0, gameCamera.viewportWidth, gameCamera.viewportHeight);
         rayHandler.setAmbientLight(new Color(0,0,0, alpha));

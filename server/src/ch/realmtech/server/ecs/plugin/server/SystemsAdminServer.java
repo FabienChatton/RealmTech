@@ -17,6 +17,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final PhysiqueWorldStepSystem physiqueWorldStepSystem;
     public final PickerGroundItemContactSystem pickerGroundItemContactSystem;
     public final PlayerManagerServer playerManagerServer;
+    public final TimeSystem timeSystem;
 
     public SystemsAdminServer() {
         itemManagerServer = new ItemManagerServer();
@@ -26,6 +27,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         craftingPlayerSystem = new CraftingPlayerSystem();
         pickUpOnGroundItemSystem = new PickUpOnGroundItemSystem();
 
+        timeSystem = new TimeSystem();
         box2dFrotementSystem = new Box2dFrotementSystem();
         itemOnGroundPosSyncSystem = new ItemOnGroundPosSyncSystem();
         updateBox2dWithPosition = new UpdateBox2dWithPosition();
@@ -44,6 +46,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 mapSystemServer,
                 craftingPlayerSystem,
                 pickUpOnGroundItemSystem,
+
+                timeSystem,
                 box2dFrotementSystem,
                 itemOnGroundPosSyncSystem,
                 updateBox2dWithPosition,

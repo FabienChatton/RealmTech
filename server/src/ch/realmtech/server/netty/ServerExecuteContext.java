@@ -159,4 +159,12 @@ public class ServerExecuteContext implements ServerExecute {
             }
         });
     }
+
+    @Override
+    public void getTime(Channel clientChannel) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            float time = serverContext.getSystemsAdmin().timeSystem.getAccumulatedDelta();
+            clientChannel.writeAndFlush(new TimeSetPacket(time));
+        });
+    }
 }

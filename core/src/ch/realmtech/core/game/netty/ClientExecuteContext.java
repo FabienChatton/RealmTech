@@ -178,4 +178,9 @@ public class ClientExecuteContext implements ClientExecute {
             Popup.popupErreur(context, message, context.getUiStage());
         });
     }
+
+    @Override
+    public void timeSet(float time) {
+        context.nextFrame(() -> context.getSystemsAdminClient().timeSystemSimulation.setAccumulatedDelta(time));
+    }
 }

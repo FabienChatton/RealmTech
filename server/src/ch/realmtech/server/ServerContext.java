@@ -5,6 +5,7 @@ import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
 import ch.realmtech.server.datactrl.OptionServer;
 import ch.realmtech.server.ecs.EcsEngineServer;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.packet.PacketMap;
@@ -57,6 +58,8 @@ public class ServerContext {
                 .put(ItemToCellPlaceRequestPacket.class, ItemToCellPlaceRequestPacket::new)
                 .put(CellAddPacket.class, CellAddPacket::new)
                 .put(DisconnectMessagePacket.class, DisconnectMessagePacket::new)
+                .put(TimeGetRequestPacket.class, TimeGetRequestPacket::new)
+                .put(TimeSetPacket.class, TimeSetPacket::new)
         ;
     }
 
@@ -137,6 +140,10 @@ public class ServerContext {
 
     public <T extends BaseSystem> T getSystem(Class<T> systemClass) {
         return ecsEngineServer.getWorld().getSystem(systemClass);
+    }
+
+    public SystemsAdminServer getSystemsAdmin() {
+        return ecsEngineServer.getSystemsAdminServer();
     }
 
     public CommandeServerExecute getCommandeExecute() {

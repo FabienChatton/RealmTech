@@ -22,4 +22,6 @@ public interface ServerExecute {
     void getInventory(Channel clientChannel, UUID inventoryUuid);
 
     void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldX, int worldY);
+
+    void getTime(Channel clientChannel);
 }

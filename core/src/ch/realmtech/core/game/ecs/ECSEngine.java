@@ -44,6 +44,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
+    private final SystemsAdminClient systemAdminClient;
     private final CommandClientExecute commandClientExecute;
     private final SerializerController serializerController;
 
@@ -58,7 +59,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController(this);
-        SystemsAdminClient systemAdminClient = new SystemsAdminClient();
+        systemAdminClient = new SystemsAdminClient();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemAdminClient)
@@ -184,4 +185,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     }
 
 
+    public SystemsAdminClient getSystemsAdminClient() {
+        return systemAdminClient;
+    }
 }
