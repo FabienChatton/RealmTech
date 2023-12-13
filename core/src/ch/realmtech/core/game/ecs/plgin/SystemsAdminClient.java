@@ -57,19 +57,22 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 playerManagerClient,
                 itemManagerClient,
                 playerInputSystem,
+                // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
                 playerTextureAnimated,
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
                 mapRendererSystem,
+                lightSystem,
+
+                // ui
                 cellBeingMineRenderSystem,
                 cellHoverEtWailaSystem,
                 textureRenderer,
                 playerInventorySystem,
                 itemBarManager,
-                cellBeingMineSystem,
-                lightSystem
+                cellBeingMineSystem
         );
     }
 }
