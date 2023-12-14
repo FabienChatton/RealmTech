@@ -38,7 +38,6 @@ public class ServerContext {
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
                 .put(DemandeDeConnexionJoueurPacket.class, DemandeDeConnexionJoueurPacket::new)
-                .put(TousLesJoueurPacket.class, TousLesJoueurPacket::new)
                 .put(PlayerMovePacket.class, PlayerMovePacket::new)
                 .put(ChunkAMonterPacket.class, ChunkAMonterPacket::new)
                 .put(ChunkADamnePacket.class, ChunkADamnePacket::new)
@@ -60,6 +59,7 @@ public class ServerContext {
                 .put(DisconnectMessagePacket.class, DisconnectMessagePacket::new)
                 .put(TimeGetRequestPacket.class, TimeGetRequestPacket::new)
                 .put(TimeSetPacket.class, TimeSetPacket::new)
+                .put(PhysicEntitySetPacket.class, PhysicEntitySetPacket::new)
         ;
     }
 

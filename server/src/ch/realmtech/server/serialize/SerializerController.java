@@ -7,6 +7,7 @@ import ch.realmtech.server.serialize.chunk.ChunkSerializerController;
 import ch.realmtech.server.serialize.craftingtable.CraftingTableController;
 import ch.realmtech.server.serialize.furnace.FurnaceSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
+import ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController;
 import ch.realmtech.server.serialize.savemetadata.SaveMetadataSerializerController;
 import ch.realmtech.server.serialize.uuid.UuidSerializerController;
 import com.artemis.World;
@@ -22,6 +23,7 @@ public class SerializerController {
     private final SaveMetadataSerializerController saveMetadataSerializerController = new SaveMetadataSerializerController(this);
     private final CraftingTableController craftingTableController = new CraftingTableController(this);
     private final FurnaceSerializerController furnaceSerializerController = new FurnaceSerializerController(this);
+    private final PhysicEntitySerializerController physicEntitySerializerController = new PhysicEntitySerializerController(this);
 
     public SerializerController(GetWorld getWorld) {
         this.getWorld = getWorld;
@@ -62,6 +64,10 @@ public class SerializerController {
 
     public FurnaceSerializerController getFurnaceSerializerController() {
         return furnaceSerializerController;
+    }
+
+    public PhysicEntitySerializerController getPhysicEntitySerializerController() {
+        return physicEntitySerializerController;
     }
 
     World getGetWorld() {

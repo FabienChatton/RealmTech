@@ -6,6 +6,7 @@ import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import ch.realmtech.server.serialize.types.SerializedVersionAndBytes;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -38,8 +39,13 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
         return magicNumber;
     }
 
+
+    Map<Byte, Serializer<InputType, OutputType>> getSerializers() {
+        return Collections.unmodifiableMap(serializerMap);
+    }
+
     Serializer<InputType, OutputType> getSerializer(byte version) {
-        return serializerMap.get(version);
+        return getSerializers().get(version);
     }
 
     Serializer<InputType, OutputType> getSerializer() {

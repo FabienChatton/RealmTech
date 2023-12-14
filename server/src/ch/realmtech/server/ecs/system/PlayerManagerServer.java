@@ -6,11 +6,13 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
-import ch.realmtech.server.packet.clientPacket.TousLesJoueurPacket;
+import ch.realmtech.server.packet.clientPacket.PhysicEntitySetPacket;
+import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
-import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
+import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
+import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -28,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerManagerServer extends BaseSystem {
+@All({PlayerConnexionComponent.class, PositionComponent.class, UuidComponent.class})
+public class PlayerManagerServer extends IteratingSystem {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerServer.class);
     @Wire
     private SystemsAdminServer systemsAdminServer;
@@ -52,21 +55,9 @@ public class PlayerManagerServer extends BaseSystem {
     }
 
     @Override
-    protected void processSystem() {
-        TousLesJoueursArg tousLesJoueursArg = getTousLesJoueurs();
-        if (tousLesJoueursArg == null) return;
-        TousLesJoueurPacket tousLesJoueurPacket = new TousLesJoueurPacket(tousLesJoueursArg.nombreDeJoueur(), tousLesJoueursArg.pos(), tousLesJoueursArg.uuids());
-        serverContext.getServerHandler().broadCastPacket(tousLesJoueurPacket);
-
-//        // devrait pas etre ici, devrait etre appelé quand l'inventaire change
-//        ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-//        IntBag inventoryEntities = world.getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
-//        int[] inventoryData = inventoryEntities.getData();
-//        for (int i = 0; i < inventoryEntities.size(); i++) {
-//            int inventoryId = inventoryData[i];
-//            InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-//            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(mUuid.get(inventoryId).getUuid(), InventorySerializer.toBytes(world, inventoryComponent)));
-//        }
+    protected void process(int entityId) {
+        SerializedApplicationBytes physicEntityBytes = world.getRegistered(SerializerController.class).getPhysicEntitySerializerController().encode(entityId);
+        serverContext.getServerHandler().broadCastPacket(new PhysicEntitySetPacket(physicEntityBytes));
     }
 
     public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid) {

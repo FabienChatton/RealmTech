@@ -1,9 +1,14 @@
 package ch.realmtech.server.ecs;
 
+import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
+import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.SaveInfManager;
+import ch.realmtech.server.ia.IaComponent;
+import ch.realmtech.server.ia.IaTestAgent;
+import ch.realmtech.server.ia.IaTestSteerable;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.packet.clientPacket.TickBeatPacket;
 import ch.realmtech.server.serialize.SerializerController;
@@ -13,9 +18,7 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +64,26 @@ public final class EcsEngineServer implements GetWorld {
         worldConfiguration.register("systemsAdmin", systemsAdminServer);
         worldConfiguration.register(serializerController);
         this.world = new World(worldConfiguration);
+
+        float x = 5, y = 5;
+        int iaTestId = world.create();
+        PhysiqueWorldHelper.resetBodyDef(bodyDef);
+        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        Body bodyIaTest = physicWorld.createBody(bodyDef);
+        bodyIaTest.setUserData(iaTestId);
+        PolygonShape playerShape = new PolygonShape();
+        playerShape.setAsBox(iaTestId / 2f, iaTestId / 2f);
+        fixtureDef.shape = playerShape;
+        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
+        bodyIaTest.createFixture(fixtureDef);
+
+        playerShape.dispose();
+        world.edit(iaTestId).create(IaComponent.class).set(new IaTestAgent(), new IaTestSteerable(bodyIaTest, 4));
+        PositionComponent positionComponent = world.edit(iaTestId).create(PositionComponent.class);
+        positionComponent.set(x, y);
+
         logger.trace("fin de l'initialisation du ecs");
     }
 

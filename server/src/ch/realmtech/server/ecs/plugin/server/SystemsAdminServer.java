@@ -2,12 +2,14 @@ package ch.realmtech.server.ecs.plugin.server;
 
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.*;
+import ch.realmtech.server.ia.IaTestSystem;
 import com.artemis.WorldConfigurationBuilder;
 
 public class SystemsAdminServer extends SystemsAdminCommun {
     public final ItemManagerServer itemManagerServer;
     public final PlayerMouvementSystemServer playerMouvementSystemServer;
     public final MapSystemServer mapSystemServer;
+    public final IaTestSystem iaTestSystem;
     public final CraftingPlayerSystem craftingPlayerSystem;
     public final PickUpOnGroundItemSystem pickUpOnGroundItemSystem;
     public final Box2dFrotementSystem box2dFrotementSystem;
@@ -23,6 +25,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         itemManagerServer = new ItemManagerServer();
         playerMouvementSystemServer = new PlayerMouvementSystemServer();
         mapSystemServer = new MapSystemServer();
+        iaTestSystem = new IaTestSystem();
 
         craftingPlayerSystem = new CraftingPlayerSystem();
         pickUpOnGroundItemSystem = new PickUpOnGroundItemSystem();
@@ -44,6 +47,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 itemManagerServer,
                 playerMouvementSystemServer,
                 mapSystemServer,
+                iaTestSystem,
+
                 craftingPlayerSystem,
                 pickUpOnGroundItemSystem,
 

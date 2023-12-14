@@ -1,5 +1,6 @@
 package ch.realmtech.server.packet.clientPacket;
 
+import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -7,6 +8,7 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import java.util.UUID;
 
 public interface ClientExecute {
+    ClientContext getContext();
     void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg);
 
     void autreJoueur(float x, float y, UUID uuid);

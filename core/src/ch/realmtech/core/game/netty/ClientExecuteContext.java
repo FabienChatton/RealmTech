@@ -12,6 +12,7 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
@@ -35,6 +36,11 @@ public class ClientExecuteContext implements ClientExecute {
 
     public ClientExecuteContext(RealmTech context) {
         this.context = context;
+    }
+
+    @Override
+    public ClientContext getContext() {
+        return context;
     }
 
     @Override
