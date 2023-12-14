@@ -19,6 +19,8 @@ import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
+import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
+import ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -61,17 +63,6 @@ public class ClientExecuteContext implements ClientExecute {
         Gdx.app.postRunnable(() -> {
             context.getSystem(PlayerInventorySystem.class).createClickAndDrop(playerId);
             context.setScreen(ScreenType.GAME_SCREEN);
-        });
-    }
-
-    @Override
-    public void autreJoueur(float x, float y, UUID uuid) {
-        context.nextFrame(() -> {
-            HashMap<UUID, Integer> players = context.getEcsEngine().getSystem(PlayerManagerClient.class).getPlayers();
-            if (!players.containsKey(uuid)) {
-                context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
-            }
-            context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
         });
     }
 
@@ -188,5 +179,23 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void timeSet(float time) {
         context.nextFrame(() -> context.getSystemsAdminClient().timeSystemSimulation.setAccumulatedDelta(time));
+    }
+
+    @Override
+    public void physicEntity(PhysicEntityArgs physicEntityArgs) {
+        UUID uuid = physicEntityArgs.uuid();
+        float x = physicEntityArgs.x();
+        float y = physicEntityArgs.y();
+        if (physicEntityArgs.flag() == PhysicEntitySerializerController.PLAYER_FLAG) {
+            context.nextFrame(() -> {
+                HashMap<UUID, Integer> players = context.getEcsEngine().getSystem(PlayerManagerClient.class).getPlayers();
+                if (!players.containsKey(uuid)) {
+                    context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
+                }
+                context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
+            });
+        } else if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
+            context.nextFrame(() -> context.getSystemsAdminClient().iaManagerClient.otherIa(uuid, x, y));
+        }
     }
 }

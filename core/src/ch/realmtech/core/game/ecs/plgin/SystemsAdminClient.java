@@ -13,6 +13,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
     public final PlayerMouvementTextureSystem playerMouvementTextureSystem;
     public final PlayerMouvementSystem playerMouvementSystem;
     public final PlayerTextureAnimated playerTextureAnimated;
+    public final IaManagerClient iaManagerClient;
     public final UpdateBox2dWithPosition updateBox2dWithPosition;
     public final CameraFollowPlayerSystem cameraFollowPlayerSystem;
     public final MapRendererSystem mapRendererSystem;
@@ -32,6 +33,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
         playerMouvementTextureSystem = new PlayerMouvementTextureSystem();
         playerMouvementSystem = new PlayerMouvementSystem();
         playerTextureAnimated = new PlayerTextureAnimated();
+        iaManagerClient = new IaManagerClient();
         updateBox2dWithPosition = new UpdateBox2dWithPosition();
         timeSystemSimulation = new TimeSystemSimulation();
         // render
@@ -60,6 +62,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 itemManagerClient,
                 playerInputSystem,
                 timeSystemSimulation,
+                iaManagerClient,
                 // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,

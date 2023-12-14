@@ -27,7 +27,6 @@ public class PlayerManagerClient extends Manager {
     private FixtureDef fixtureDef;
     @Wire
     private BodyDef bodyDef;
-    private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;

@@ -160,7 +160,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     @Override
     public World getWorld() {
-        return getEcsEngine().getWorld();
+        synchronized (this) {
+            return getEcsEngine().getWorld();
+        }
     }
 
     @Override

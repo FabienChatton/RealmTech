@@ -6,13 +6,10 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
-import ch.realmtech.server.packet.clientPacket.PhysicEntitySetPacket;
-import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
-import com.artemis.annotations.All;
+import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -30,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@All({PlayerConnexionComponent.class, PositionComponent.class, UuidComponent.class})
-public class PlayerManagerServer extends IteratingSystem {
+public class PlayerManagerServer extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerServer.class);
     @Wire
     private SystemsAdminServer systemsAdminServer;
@@ -52,12 +48,6 @@ public class PlayerManagerServer extends IteratingSystem {
 
     public PlayerManagerServer() {
         players = new IntBag();
-    }
-
-    @Override
-    protected void process(int entityId) {
-        SerializedApplicationBytes physicEntityBytes = world.getRegistered(SerializerController.class).getPhysicEntitySerializerController().encode(entityId);
-        serverContext.getServerHandler().broadCastPacket(new PhysicEntitySetPacket(physicEntityBytes));
     }
 
     public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid) {
@@ -117,6 +107,8 @@ public class PlayerManagerServer extends IteratingSystem {
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
+
+        serverContext.getEcsEngineServer().nextTick(() -> systemsAdminServer.iaManagerServer.createIaTest(box2dComponent));
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),

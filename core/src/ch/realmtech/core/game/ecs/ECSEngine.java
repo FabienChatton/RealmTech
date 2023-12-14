@@ -173,7 +173,9 @@ public final class ECSEngine implements Disposable, GetWorld {
         return new Vector2(unproject.x, unproject.y);
     }
     public void nextFrame(Runnable runnable) {
-        nextFrameRunnable.add(runnable);
+        synchronized (nextFrameRunnable) {
+            nextFrameRunnable.add(runnable);
+        }
     }
 
     public CommandClientExecute getCommandClientExecute() {

@@ -47,6 +47,8 @@ public class ServerExecuteContext implements ServerExecute {
         ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
         serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
         serverContext.getSystem(PlayerManagerServer.class).setPlayerUsername(playerUuid, username);
+
+
     }
 
     @Override
