@@ -1,16 +1,11 @@
 package ch.realmtech.server.registery;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class Registry<T extends Entry<T>> {
-    private final static Logger logger = LoggerFactory.getLogger(Registry.class);
-    private final static String TAG = Registry.class.getSimpleName();
     private final Registry<T> parent;
     private final String name;
     private final List<RegistryEntry<T>> enfants;
@@ -20,7 +15,7 @@ public class Registry<T extends Entry<T>> {
         this.name = name;
         enfants = new ArrayList<>();
         if (!name.matches("^[a-zA-Z]+$"))
-            throw new IllegalArgumentException("le nom du registre doit contenir uniquement des lettres entre a et z en minuscule ou majuscule " + getID());
+            throw new IllegalArgumentException("Registry name must contain only lower or upper case letter" + getID());
     }
 
     public static <T extends Entry<T>> Registry<T> create(String name) {

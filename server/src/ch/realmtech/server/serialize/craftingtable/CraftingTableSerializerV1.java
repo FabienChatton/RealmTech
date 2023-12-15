@@ -8,6 +8,7 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.level.cell.CraftingTableEditEntity;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.InfRegistryAnonyme;
@@ -20,9 +21,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 
-public class CraftingTableSerializerV1 implements Serializer<Integer, Consumer<Integer>> {
+public class CraftingTableSerializerV1 implements Serializer<Integer, CraftingTableEditEntity> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer craftingTableToSerializeId) {
         CraftingTableComponent craftingTableToSerialize = world.getMapper(CraftingTableComponent.class).get(craftingTableToSerializeId);
@@ -53,7 +53,7 @@ public class CraftingTableSerializerV1 implements Serializer<Integer, Consumer<I
     }
 
     @Override
-    public Consumer<Integer> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
+    public CraftingTableEditEntity fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
         ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
         ItemManager itemManager = world.getRegistered("itemManager");
         UUID craftingInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
@@ -70,7 +70,7 @@ public class CraftingTableSerializerV1 implements Serializer<Integer, Consumer<I
         } else {
             craftingRegistry = RealmTechCoreMod.FURNACE_RECIPE;
         }
-        return motherEntity -> world.getSystem(InventoryManager.class).createCraftingTable(motherEntity, craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid, craftingRegistry);
+        return CraftingTableEditEntity.createSetCraftingTable(craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
     }
 
     @Override

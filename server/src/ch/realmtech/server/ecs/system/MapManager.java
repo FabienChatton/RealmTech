@@ -222,11 +222,9 @@ public class MapManager extends Manager {
         byte innerY = Cells.getInnerChunkPosY(cellArgs.getInnerChunk());
         CellRegisterEntry cellRegisterEntry = cellArgs.getCellRegisterEntry();
         world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
-        if (cellArgs.getOverrideEdit() != null) {
-            cellArgs.getOverrideEdit().accept(world, cellId);
-        } else if (cellRegisterEntry.getCellBehavior().getEditEntity() != null) {
-            cellRegisterEntry.getCellBehavior().getEditEntity().accept(world, cellId);
-        }
+        cellArgs.getEditEntityArgs()
+                .or(() -> cellRegisterEntry.getCellBehavior().getDefaultEditEntityArgs())
+                .ifPresent(editEntityArg -> editEntityArg.editEntity(world, cellId));
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
             CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
                     .getCellBehavior()

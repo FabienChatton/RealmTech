@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.level.cell.Cells;
+import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -14,9 +15,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
     @Override
@@ -65,20 +63,14 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
         int hashCellRegisterEntry = buffer.readInt();
         byte innerChunkPos = buffer.readByte();
         byte paddingId = buffer.readByte();
-        BiConsumer<World, Integer> overrideEdit = null;
+        EditEntity editEntityArgs = null;
         if (paddingId == 1) {
-            Consumer<Integer> createChest = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getChestSerializerController());
-            overrideEdit = (__, chestId) -> createChest.accept(chestId);
+            editEntityArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getChestSerializerController());
         }
         if (paddingId == 2) {
-            Consumer<Integer> createCraftingTable = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
-            overrideEdit = (__, cellId) -> createCraftingTable.accept(cellId);
+            editEntityArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
         }
-        if (paddingId == 3) {
-            Consumer<Integer> createCraftingTable = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
-            overrideEdit = (__, cellId) -> createCraftingTable.accept(cellId);
-        }
-        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, overrideEdit);
+        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, editEntityArgs);
     }
 
     @Override

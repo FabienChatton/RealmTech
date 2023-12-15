@@ -1,4 +1,4 @@
-package ch.realmtech.core.game.ecs.plgin.strategy;
+package ch.realmtech.core.game.ecs.plugin.strategy;
 
 import com.artemis.BaseSystem;
 import com.artemis.World;

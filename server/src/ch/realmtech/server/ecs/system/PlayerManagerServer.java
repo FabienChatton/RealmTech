@@ -5,6 +5,7 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
@@ -189,7 +190,7 @@ public class PlayerManagerServer extends Manager {
 
         try (FileInputStream fis = new FileInputStream(getPlayerInventoryFile(getPlayerDir(playerUuid)).toFile())) {
             byte[] rawInventoryBytes = fis.readAllBytes();
-            serverContext.getSerializerController().getChestSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes)).accept(playerId);
+            ChestEditEntity chestEditEntityArg = serverContext.getSerializerController().getChestSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes));
         }
     }
 

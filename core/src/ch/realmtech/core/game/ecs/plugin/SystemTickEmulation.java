@@ -1,4 +1,4 @@
-package ch.realmtech.core.game.ecs.plgin;
+package ch.realmtech.core.game.ecs.plugin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package ch.realmtech.core.game.ecs.plgin;
+package ch.realmtech.core.game.ecs.plugin;
 
 import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
@@ -23,8 +23,9 @@ public class SystemsAdminClient extends SystemsAdminCommun {
     public final PlayerInventorySystem playerInventorySystem;
     public final ItemBarManager itemBarManager;
     public final CellBeingMineSystem cellBeingMineSystem;
-    public final LightSystem lightSystem;
+    public final LightCycleSystem lightCycleSystem;
     public final TimeSystemSimulation timeSystemSimulation;
+    public final LightManager lightManager;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -36,6 +37,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
         iaManagerClient = new IaManagerClient();
         updateBox2dWithPosition = new UpdateBox2dWithPosition();
         timeSystemSimulation = new TimeSystemSimulation();
+        lightManager = new LightManager();
         // render
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
@@ -46,7 +48,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
         playerInventorySystem = new PlayerInventorySystem();
         itemBarManager = new ItemBarManager();
 
-        lightSystem = new LightSystem();
+        lightCycleSystem = new LightCycleSystem();
 
 
         // tick simulation
@@ -63,6 +65,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 playerInputSystem,
                 timeSystemSimulation,
                 iaManagerClient,
+                lightManager,
                 // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
@@ -71,7 +74,7 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 cameraFollowPlayerSystem,
                 mapRendererSystem,
                 textureRenderer,
-                lightSystem,
+                lightCycleSystem,
 
                 // ui
                 cellBeingMineRenderSystem,

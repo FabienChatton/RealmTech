@@ -4,7 +4,7 @@ import ch.realmtech.core.auth.AuthControllerClient;
 import ch.realmtech.core.auth.AuthRequestClient;
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
-import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
+import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.game.netty.ClientExecuteContext;

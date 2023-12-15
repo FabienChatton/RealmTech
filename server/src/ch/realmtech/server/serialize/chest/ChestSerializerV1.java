@@ -1,26 +1,22 @@
 package ch.realmtech.server.serialize.chest;
 
-import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
-import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
-public class ChestSerializerV1 implements Serializer<Integer, Consumer<Integer>> {
+public class ChestSerializerV1 implements Serializer<Integer, ChestEditEntity> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer motherChestToSerializer) {
         int chestInventoryId = world.getSystem(InventoryManager.class).getChestInventoryId(motherChestToSerializer);
@@ -36,13 +32,13 @@ public class ChestSerializerV1 implements Serializer<Integer, Consumer<Integer>>
     }
 
     @Override
-    public Consumer<Integer> fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
+    public ChestEditEntity fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
         ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
 
         UUID uuidChest = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
         InventoryArgs inventoryArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager()).apply(world.getRegistered("itemManager"));
 
-        return mother -> world.getSystem(InventoryManager.class).createChest(mother, inventoryArgs.inventory(), uuidChest, inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
+        return ChestEditEntity.createSetInventory(uuidChest, inventoryArgs.inventory(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
     }
 
     @Override

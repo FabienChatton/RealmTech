@@ -4,6 +4,7 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
+import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.netty.ConnexionBuilder;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -48,7 +49,8 @@ class SerializerControllerTest {
         SerializedApplicationBytes serializedApplicationBytes = serializerController.getChestSerializerController().encode(expectedChestId);
 
         int chestMother = serverContext.getEcsEngineServer().getWorld().create();
-        serializerController.getChestSerializerController().decode(serializedApplicationBytes).accept(chestMother);
+        ChestEditEntity chestEditEntityArg = serializerController.getChestSerializerController().decode(serializedApplicationBytes);
+        serverContext.getEcsEngineServer().getWorld().getSystem(InventoryManager.class).createChest(chestMother, chestEditEntityArg.getInventory(), chestEditEntityArg.getUuid(), chestEditEntityArg.getNumberOfSlotParRow(), chestEditEntityArg.getNumberOfRow());
         int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(chestMother);
         InventoryComponent actualChestInventory = mInventory.get(chestInventoryId);
 

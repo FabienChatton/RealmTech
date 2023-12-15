@@ -1,12 +1,12 @@
 package ch.realmtech.server.serialize.craftingtable;
 
+import ch.realmtech.server.level.cell.CraftingTableEditEntity;
 import ch.realmtech.server.serialize.AbstractSerializerController;
 import ch.realmtech.server.serialize.SerializerController;
 
 import java.util.HashMap;
-import java.util.function.Consumer;
 
-public class CraftingTableController extends AbstractSerializerController<Integer, Consumer<Integer>> {
+public class CraftingTableController extends AbstractSerializerController<Integer, CraftingTableEditEntity> {
 
     public CraftingTableController(SerializerController serializerController) {
         super(serializerController, (byte) 17, new HashMap<>() {

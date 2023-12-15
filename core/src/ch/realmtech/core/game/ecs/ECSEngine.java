@@ -1,11 +1,12 @@
 package ch.realmtech.core.game.ecs;
 
+import box2dLight.RayHandler;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.console.CommandClientExecute;
-import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
-import ch.realmtech.core.game.ecs.plgin.strategy.DefaultInGameSystemOnInventoryOpen;
-import ch.realmtech.core.game.ecs.plgin.strategy.InGameSystemOnInventoryOpen;
-import ch.realmtech.core.game.ecs.plgin.strategy.TickEmulationInvocationStrategy;
+import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
+import ch.realmtech.core.game.ecs.plugin.strategy.DefaultInGameSystemOnInventoryOpen;
+import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
+import ch.realmtech.core.game.ecs.plugin.strategy.TickEmulationInvocationStrategy;
 import ch.realmtech.core.game.ecs.system.CellBeingMineRenderSystem;
 import ch.realmtech.core.game.ecs.system.CellBeingMineSystem;
 import ch.realmtech.core.game.ecs.system.CellHoverEtWailaSystem;
@@ -47,12 +48,14 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final SystemsAdminClient systemAdminClient;
     private final CommandClientExecute commandClientExecute;
     private final SerializerController serializerController;
+    private final RayHandler rayHandler;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
         this.connexionHandler = connexionHandler;
         TickEmulationInvocationStrategy tickEmulationInvocationStrategy = new TickEmulationInvocationStrategy();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
+        rayHandler = new RayHandler(physicWorld);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
@@ -92,6 +95,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         worldConfiguration.register(systemAdminClient);
         worldConfiguration.register("systemsAdmin", systemAdminClient);
         worldConfiguration.register(serializerController);
+        worldConfiguration.register(rayHandler);
 
         worldConfiguration.setInvocationStrategy(tickEmulationInvocationStrategy);
         world = new World(worldConfiguration);

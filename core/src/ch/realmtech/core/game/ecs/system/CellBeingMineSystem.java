@@ -1,8 +1,8 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.core.game.ecs.plgin.SystemTickEmulation;
-import ch.realmtech.core.game.ecs.plgin.SystemsAdminClient;
+import ch.realmtech.core.game.ecs.plugin.SystemTickEmulation;
+import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.server.ecs.component.CellBeingMineComponent;
 import ch.realmtech.server.ecs.component.InfCellComponent;

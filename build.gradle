@@ -66,6 +66,7 @@ project(":server") {
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-ai:1.8.1"
+        api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
     }
 }
 
@@ -76,7 +77,6 @@ project(":core") {
     dependencies {
         implementation project(":server")
         api 'club.minnced:java-discord-rpc:2.0.1'
-        api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
     }
 }
 

@@ -1,10 +1,9 @@
-package ch.realmtech.core.game.ecs.plgin.strategy;
+package ch.realmtech.core.game.ecs.plugin.strategy;
 
-import ch.realmtech.core.game.ecs.plgin.SystemTickEmulation;
+import ch.realmtech.core.game.ecs.plugin.SystemTickEmulation;
 import ch.realmtech.server.tick.TickThread;
 import com.artemis.BaseSystem;
 import com.artemis.InvocationStrategy;
-import com.artemis.utils.Bag;
 
 public class TickEmulationInvocationStrategy extends InvocationStrategy {
     private long time = System.currentTimeMillis();

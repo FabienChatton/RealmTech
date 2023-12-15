@@ -8,13 +8,13 @@ import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemBehavior;
 import ch.realmtech.server.item.ItemType;
-import ch.realmtech.server.level.cell.CellBehavior;
-import ch.realmtech.server.level.cell.Cells;
-import ch.realmtech.server.level.cell.CreatePhysiqueBody;
+import ch.realmtech.server.level.cell.*;
 import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.registery.*;
 import ch.realmtech.server.sound.SoundManager;
+import com.artemis.ArtemisPlugin;
 import com.artemis.ComponentMapper;
+import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 
-public class RealmTechCoreMod extends ModInitializerManager {
+public class RealmTechCoreMod implements ArtemisPlugin {
 
     public final static String MOD_ID = "realmtech";
     public final static Registry<CellRegisterEntry> CELLS = Registry.create(MOD_ID);
@@ -31,7 +31,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static InfRegistryAnonyme<CraftingRecipeEntry> FURNACE_RECIPE = InfRegistryAnonyme.create();
 
     @Override
-    public void initialize() {
+    public void setup(WorldConfigurationBuilder b) {
         RealmTechCoreCraftingRecipe.initCraftingRecipe(CRAFT);
         RealmTechCoreCraftingRecipe.initFurnaceRecipe(FURNACE_RECIPE);
     }
@@ -176,9 +176,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.craftingTable")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntity((world, cellId) -> {
-                        world.getSystem(InventoryManager.class).createCraftingTable(cellId, UUID.randomUUID(), 3, 3, UUID.randomUUID());
-                    })
+                    .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
@@ -225,7 +223,7 @@ public class RealmTechCoreMod extends ModInitializerManager {
             "chest-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.chest")
-                    .editEntity((world, cellId) -> world.getSystem(InventoryManager.class).createChest(cellId, UUID.randomUUID(), 9, 3))
+                    .editEntity(ChestEditEntity.createNewInventory(9, 3))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
@@ -321,9 +319,9 @@ public class RealmTechCoreMod extends ModInitializerManager {
     public final static CellItemRegisterEntry FURNACE = registerCellItem("furnace", new CellRegisterEntry(
             "furnace-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                    .editEntity((world, id) -> {
-                        world.getSystem(InventoryManager.class).createFurnace(id, UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE], UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
-                    })
+//                    .editEntity((world, id) -> {
+//                        world.getSystem(InventoryManager.class).createFurnace(id, UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE], UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+//                    })
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<FurnaceComponent> mFurnace = clientContext.getWorld().getMapper(FurnaceComponent.class);
                         ComponentMapper<CraftingTableComponent> mCraftingTable = clientContext.getWorld().getMapper(CraftingTableComponent.class);

@@ -1,21 +1,21 @@
 package ch.realmtech.server.serialize.cell;
 
+import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.registery.CellRegisterEntry;
-import com.artemis.World;
 import com.badlogic.gdx.utils.Null;
 
-import java.util.function.BiConsumer;
+import java.util.Optional;
 
 public final class CellArgs {
     private final CellRegisterEntry cellRegisterEntry;
     private final byte innerChunk;
     @Null
-    private final BiConsumer<World, Integer> overrideEdit;
+    private final EditEntity editEntityArgs;
 
-    public CellArgs(CellRegisterEntry cellRegisterEntry, byte innerChunk, BiConsumer<World, Integer> overrideEdit) {
+    public CellArgs(CellRegisterEntry cellRegisterEntry, byte innerChunk, EditEntity editEntityArgs) {
         this.cellRegisterEntry = cellRegisterEntry;
         this.innerChunk = innerChunk;
-        this.overrideEdit = overrideEdit;
+        this.editEntityArgs = editEntityArgs;
     }
 
     public CellArgs(CellRegisterEntry cellRegisterEntry, byte innerChunk) {
@@ -29,8 +29,7 @@ public final class CellArgs {
     public byte getInnerChunk() {
         return innerChunk;
     }
-
-    public BiConsumer<World, Integer> getOverrideEdit() {
-        return overrideEdit;
+    public Optional<EditEntity> getEditEntityArgs() {
+        return Optional.ofNullable(editEntityArgs);
     }
 }

@@ -7,6 +7,7 @@ import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -20,7 +21,7 @@ public class CellBehavior {
     private int breakStepNeed = 20;
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
-    private BiConsumer<com.artemis.World, Integer> editEntity;
+    private EditEntity defaultEditEntityArgs;
     private BiConsumer<ClientContext, Integer> interagieClickDroit;
 
     public static CellBehaviorBuilder builder(byte layer) {
@@ -60,9 +61,10 @@ public class CellBehavior {
         return breakStepNeed;
     }
 
-    public BiConsumer<com.artemis.World, Integer> getEditEntity() {
-        return editEntity;
+    public Optional<EditEntity> getDefaultEditEntityArgs() {
+        return Optional.ofNullable(defaultEditEntityArgs);
     }
+
 
     public CreatePhysiqueBody getCreateBody() {
         return createBody;
@@ -118,8 +120,8 @@ public class CellBehavior {
             return this;
         }
 
-        public CellBehaviorBuilder editEntity(BiConsumer<com.artemis.World, Integer> editEntity) {
-            cellBehavior.editEntity = editEntity;
+        public CellBehaviorBuilder editEntity(EditEntity defaultEditEntityArgs) {
+            cellBehavior.defaultEditEntityArgs = defaultEditEntityArgs;
             return this;
         }
 
