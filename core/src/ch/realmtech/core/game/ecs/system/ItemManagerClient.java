@@ -91,7 +91,7 @@ public class ItemManagerClient extends ItemManager {
             }
         }
         if (item == -1) {
-            item = systemsAdminClient.itemManagerClient.newItemOnGround(worldPosX, worldPosY, uuid, itemRegisterEntry);
+            item = systemsAdminClient.getItemManagerClient().newItemOnGround(worldPosX, worldPosY, uuid, itemRegisterEntry);
         }
         Box2dComponent box2dComponent = mBox2d.get(item);
         box2dComponent.body.setTransform(worldPosX, worldPosY, box2dComponent.body.getAngle());

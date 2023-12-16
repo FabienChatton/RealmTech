@@ -109,7 +109,6 @@ public class PlayerManagerServer extends Manager {
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
 
-        serverContext.getEcsEngineServer().nextTick(() -> systemsAdminServer.iaManagerServer.createIaTest(box2dComponent));
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),

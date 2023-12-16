@@ -64,7 +64,12 @@ public class PlayerMouvementSystem extends IteratingSystem {
                     soundManager.playFootStep(playerFootStepSound.playerFootStepSound(), playerFootStepSound.volume());
                     return;
                 }
-                playerFootStepSound = mCell.get(context.getSystem(MapManager.class).getCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY), --layer)).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+                byte layer1 = --layer;
+                int cell = context.getSystem(MapManager.class).getCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY), layer1);
+                if (cell == -1) {
+                    continue;
+                }
+                playerFootStepSound = mCell.get(cell).cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
             } while (layer >= 0);
         }
 

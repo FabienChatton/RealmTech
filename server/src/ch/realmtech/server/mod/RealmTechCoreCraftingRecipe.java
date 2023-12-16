@@ -64,6 +64,11 @@ public class RealmTechCoreCraftingRecipe {
         }, new CraftPatternArgs('a', RealmTechCoreMod.STONE.itemRegisterEntry()),
                 new CraftPatternArgs('b', RealmTechCoreMod.STICK_ITEM)));
 
+        registry.add(new CraftPatternShape(RealmTechCoreMod.TORCH.itemRegisterEntry(), new char[][] {
+                {'c'},
+                {'s'}
+        }, new CraftPatternArgs('c', RealmTechCoreMod.COAL), new CraftPatternArgs('s', RealmTechCoreMod.STICK_ITEM)));
+
 //        registry.add(new CraftPatternShape(RealmTechCoreMod.FURNACE.itemRegisterEntry(), new char[][]{
 //                new char[]{'a', 'a', 'a'},
 //                new char[]{'a', ' ', 'a'},

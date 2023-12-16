@@ -30,7 +30,7 @@ public class LightCycleSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        float time = systemsAdminClient.timeSystemSimulation.getAccumulatedDelta();
+        float time = systemsAdminClient.getTimeSystemSimulation().getAccumulatedDelta();
         float alpha = (float) (Math.cos(Math.toRadians(time)) + 1) / 2f;
 
         gameStage.getBatch().begin();

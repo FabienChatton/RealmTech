@@ -15,6 +15,7 @@ import ch.realmtech.server.sound.SoundManager;
 import com.artemis.ArtemisPlugin;
 import com.artemis.ComponentMapper;
 import com.artemis.WorldConfigurationBuilder;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
@@ -365,6 +366,18 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .placeCell("realmtech.furnace")
                     .build()
     ));
+
+    public static CellItemRegisterEntry TORCH = registerCellItem("torch", new CellRegisterEntry("torch-01", CellBehavior
+                    .builder(Cells.Layer.BUILD_DECO)
+                    .editEntity((executeOnContext, entityId) -> {
+                        executeOnContext.onClient(systemsAdminClient -> {
+                            systemsAdminClient.getLightManager().createLight(new Color(1,1,1,1), 15, 10, 10);
+                        });
+                    })
+                    .build()),
+            new ItemRegisterEntry("torch-01", ItemBehavior.builder()
+                    .placeCell("realmtech.torch")
+                    .build()));
 
     //</editor-fold>
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {

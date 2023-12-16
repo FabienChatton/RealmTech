@@ -178,7 +178,7 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void timeSet(float time) {
-        context.nextFrame(() -> context.getSystemsAdminClient().timeSystemSimulation.setAccumulatedDelta(time));
+        context.nextFrame(() -> context.getSystemsAdminClient().getTimeSystemSimulation().setAccumulatedDelta(time));
     }
 
     @Override
@@ -194,8 +194,6 @@ public class ClientExecuteContext implements ClientExecute {
                 }
                 context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
             });
-        } else if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
-            context.nextFrame(() -> context.getSystemsAdminClient().iaManagerClient.otherIa(uuid, x, y));
         }
     }
 }

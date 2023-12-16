@@ -3,6 +3,7 @@ package ch.realmtech.core.game.ecs;
 import box2dLight.RayHandler;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.console.CommandClientExecute;
+import ch.realmtech.core.game.ecs.plugin.ExecuteOnContextClient;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.plugin.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
@@ -49,6 +50,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final CommandClientExecute commandClientExecute;
     private final SerializerController serializerController;
     private final RayHandler rayHandler;
+    private final ExecuteOnContextClient executeOnContextClient;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
         this.context = context;
@@ -63,6 +65,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController(this);
         systemAdminClient = new SystemsAdminClient();
+        executeOnContextClient = new ExecuteOnContextClient();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemAdminClient)
@@ -91,14 +94,17 @@ public final class ECSEngine implements Disposable, GetWorld {
         worldConfiguration.register(context.getInputManager());
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
-        worldConfiguration.register("itemManager", systemAdminClient.itemManagerClient);
+        worldConfiguration.register("itemManager", systemAdminClient.getItemManagerClient());
         worldConfiguration.register(systemAdminClient);
         worldConfiguration.register("systemsAdmin", systemAdminClient);
         worldConfiguration.register(serializerController);
         worldConfiguration.register(rayHandler);
+        worldConfiguration.register("executeOnContext", executeOnContextClient);
 
         worldConfiguration.setInvocationStrategy(tickEmulationInvocationStrategy);
         world = new World(worldConfiguration);
+
+        executeOnContextClient.initialize(world);
     }
 
     public void process(float delta) {

@@ -46,7 +46,7 @@ public class PlayerInputSystem extends BaseSystem {
                 infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(context, topCell);
             } else {
                 // place un bloc
-                int selectItem = systemsAdminClient.itemBarManager.getSelectItem();
+                int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
                 if (selectItem != 0) {
                     UUID itemUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
                     context.getConnexionHandler().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));

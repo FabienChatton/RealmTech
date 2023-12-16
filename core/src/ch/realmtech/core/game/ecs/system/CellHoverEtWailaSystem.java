@@ -103,10 +103,10 @@ public class CellHoverEtWailaSystem extends BaseSystem {
         wailaCellInfoHash.setText("Id: " + CellRegisterEntry.hashString(infCellComponent.cellRegisterEntry.toString()));
 
         ItemType curentItemType;
-        if (!mItem.has(systemsAdminClient.itemBarManager.getSelectItem())) {
+        if (!mItem.has(systemsAdminClient.getItemBarManager().getSelectItem())) {
             curentItemType = ItemType.TOUS;
         } else {
-            ItemComponent curentItemComponent = mItem.get(systemsAdminClient.itemBarManager.getSelectItem());
+            ItemComponent curentItemComponent = mItem.get(systemsAdminClient.getItemBarManager().getSelectItem());
             curentItemType = curentItemComponent.itemRegisterEntry.getItemBehavior().getItemType();
         }
         ItemType itemTypeToMine;

@@ -1,6 +1,7 @@
 package ch.realmtech.server.serialize.physicEntity;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
+import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
@@ -14,8 +15,7 @@ import io.netty.buffer.Unpooled;
 
 import java.util.UUID;
 
-import static ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController.ENEMY_FLAG;
-import static ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController.PLAYER_FLAG;
+import static ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController.*;
 
 public class PhysicEntitySerializerV1 implements Serializer<Integer, PhysicEntityArgs> {
     @Override
@@ -25,10 +25,18 @@ public class PhysicEntitySerializerV1 implements Serializer<Integer, PhysicEntit
         ComponentMapper<PositionComponent> mPos = world.getMapper(PositionComponent.class);
         ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = world.getMapper(PlayerConnexionComponent.class);
+        ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
         PositionComponent positionComponent = mPos.get(physicEntityToSerialize);
         UUID uuid = mUuid.get(physicEntityToSerialize).getUuid();
-        byte flag = mPlayerConnexion.has(physicEntityToSerialize) ? PLAYER_FLAG : ENEMY_FLAG;
+        byte flag;
+        if (mPlayerConnexion.has(physicEntityToSerialize)) {
+            flag = PLAYER_FLAG;
+        } else if (mItem.has(physicEntityToSerialize)) {
+            flag = ITEM_FLAG;
+        } else {
+           flag = ENEMY_FLAG;
+        }
 
         ByteBufferHelper.writeUUID(buffer, uuid);
         buffer.writeFloat(positionComponent.x);

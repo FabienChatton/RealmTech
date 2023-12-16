@@ -1,7 +1,7 @@
 package ch.realmtech.server.level.cell;
 
-import com.artemis.World;
+import ch.realmtech.server.ecs.ExecuteOnContext;
 
 public interface EditEntity {
-    void editEntity(World world, int entityId);
+    void editEntity(ExecuteOnContext executeOnContext, int entityId);
 }

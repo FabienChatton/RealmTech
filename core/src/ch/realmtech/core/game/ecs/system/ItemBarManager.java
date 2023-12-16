@@ -45,12 +45,12 @@ public class ItemBarManager extends BaseSystem {
 
     public void displayPlayerItemBar() {
         itemBar.clear();
-        int player = systemsAdminClient.playerManagerClient.getMainPlayer();
+        int player = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         int chestInventoryId = systemsAdminClient.inventoryManager.getChestInventoryId(player);
         InventoryComponent chestInventory = mInventory.get(chestInventoryId);
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
-            Table stackImage = systemsAdminClient.playerInventorySystem.createItemSlotToDisplay(chestInventory.inventory[i], chestInventoryId);
+            Table stackImage = systemsAdminClient.getPlayerInventorySystem().createItemSlotToDisplay(chestInventory.inventory[i], chestInventoryId);
             if (j == slotSelected) {
                 final Image selectedSlot = new Image(new TextureRegionDrawable(context.getTextureAtlas().findRegion("inventory-01")));
                 selectedSlot.setScale(1.2f);
@@ -70,7 +70,7 @@ public class ItemBarManager extends BaseSystem {
     }
 
     public void setSlotSelected(byte newSlotDesired) {
-        int player = systemsAdminClient.playerManagerClient.getMainPlayer();
+        int player = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         byte newSlot = newSlotDesired;
         int numberOfSlotParRow = systemsAdminClient.inventoryManager.getChestInventory(player).numberOfSlotParRow;
         if (newSlotDesired >= numberOfSlotParRow) {
@@ -90,7 +90,7 @@ public class ItemBarManager extends BaseSystem {
     }
 
     public int[][] getItemBarItems() {
-        int player = systemsAdminClient.playerManagerClient.getMainPlayer();
+        int player = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         int[][] inventory = systemsAdminClient.inventoryManager.getChestInventory(player).inventory;
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
         int[][] ret = new int[InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW][InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW];

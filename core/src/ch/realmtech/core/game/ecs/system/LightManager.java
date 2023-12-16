@@ -2,13 +2,13 @@ package ch.realmtech.core.game.ecs.system;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import ch.realmtech.server.ecs.LightManagerForClient;
 import ch.realmtech.server.ecs.component.LightComponent;
 import com.artemis.ComponentMapper;
-import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.Color;
 
-public class LightManager extends Manager {
+public class LightManager extends LightManagerForClient {
     private ComponentMapper<LightComponent> mLight;
     @Wire
     private RayHandler rayHandler;

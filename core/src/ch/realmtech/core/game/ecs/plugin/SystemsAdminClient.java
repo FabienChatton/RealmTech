@@ -1,31 +1,32 @@
 package ch.realmtech.core.game.ecs.plugin;
 
 import ch.realmtech.core.game.ecs.system.*;
+import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.UpdateBox2dWithPosition;
 import com.artemis.WorldConfigurationBuilder;
 
-public class SystemsAdminClient extends SystemsAdminCommun {
+public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdminClientForClient {
 
-    public final PlayerManagerClient playerManagerClient;
-    public final ItemManagerClient itemManagerClient;
-    public final PlayerInputSystem playerInputSystem;
-    public final PlayerMouvementTextureSystem playerMouvementTextureSystem;
-    public final PlayerMouvementSystem playerMouvementSystem;
-    public final PlayerTextureAnimated playerTextureAnimated;
-    public final IaManagerClient iaManagerClient;
-    public final UpdateBox2dWithPosition updateBox2dWithPosition;
-    public final CameraFollowPlayerSystem cameraFollowPlayerSystem;
-    public final MapRendererSystem mapRendererSystem;
-    public final CellBeingMineRenderSystem cellBeingMineRenderSystem;
-    public final CellHoverEtWailaSystem cellHoverEtWailaSystem;
-    public final TextureRenderer textureRenderer;
-    public final PlayerInventorySystem playerInventorySystem;
-    public final ItemBarManager itemBarManager;
-    public final CellBeingMineSystem cellBeingMineSystem;
-    public final LightCycleSystem lightCycleSystem;
-    public final TimeSystemSimulation timeSystemSimulation;
-    public final LightManager lightManager;
+    private final PlayerManagerClient playerManagerClient;
+    private final ItemManagerClient itemManagerClient;
+    private final PlayerInputSystem playerInputSystem;
+    private final PlayerMouvementTextureSystem playerMouvementTextureSystem;
+    private final PlayerMouvementSystem playerMouvementSystem;
+    private final PlayerTextureAnimated playerTextureAnimated;
+    private final IaManagerClient iaManagerClient;
+    private final UpdateBox2dWithPosition updateBox2dWithPosition;
+    private final CameraFollowPlayerSystem cameraFollowPlayerSystem;
+    private final MapRendererSystem mapRendererSystem;
+    private final CellBeingMineRenderSystem cellBeingMineRenderSystem;
+    private final CellHoverEtWailaSystem cellHoverEtWailaSystem;
+    private final TextureRenderer textureRenderer;
+    private final PlayerInventorySystem playerInventorySystem;
+    private final ItemBarManager itemBarManager;
+    private final CellBeingMineSystem cellBeingMineSystem;
+    private final LightCycleSystem lightCycleSystem;
+    private final TimeSystemSimulation timeSystemSimulation;
+    private final LightManager lightManager;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -83,5 +84,82 @@ public class SystemsAdminClient extends SystemsAdminCommun {
                 itemBarManager,
                 cellBeingMineSystem
         );
+    }
+
+    public PlayerManagerClient getPlayerManagerClient() {
+        return playerManagerClient;
+    }
+
+    public ItemManagerClient getItemManagerClient() {
+        return itemManagerClient;
+    }
+
+    public PlayerInputSystem getPlayerInputSystem() {
+        return playerInputSystem;
+    }
+
+    public PlayerMouvementTextureSystem getPlayerMouvementTextureSystem() {
+        return playerMouvementTextureSystem;
+    }
+
+    public PlayerMouvementSystem getPlayerMouvementSystem() {
+        return playerMouvementSystem;
+    }
+
+    public PlayerTextureAnimated getPlayerTextureAnimated() {
+        return playerTextureAnimated;
+    }
+
+    public IaManagerClient getIaManagerClient() {
+        return iaManagerClient;
+    }
+
+    public UpdateBox2dWithPosition getUpdateBox2dWithPosition() {
+        return updateBox2dWithPosition;
+    }
+
+    public CameraFollowPlayerSystem getCameraFollowPlayerSystem() {
+        return cameraFollowPlayerSystem;
+    }
+
+    public MapRendererSystem getMapRendererSystem() {
+        return mapRendererSystem;
+    }
+
+    public CellBeingMineRenderSystem getCellBeingMineRenderSystem() {
+        return cellBeingMineRenderSystem;
+    }
+
+    public CellHoverEtWailaSystem getCellHoverEtWailaSystem() {
+        return cellHoverEtWailaSystem;
+    }
+
+    public TextureRenderer getTextureRenderer() {
+        return textureRenderer;
+    }
+
+    public PlayerInventorySystem getPlayerInventorySystem() {
+        return playerInventorySystem;
+    }
+
+    public ItemBarManager getItemBarManager() {
+        return itemBarManager;
+    }
+
+    public CellBeingMineSystem getCellBeingMineSystem() {
+        return cellBeingMineSystem;
+    }
+
+    public LightCycleSystem getLightCycleSystem() {
+        return lightCycleSystem;
+    }
+
+    public TimeSystemSimulation getTimeSystemSimulation() {
+        return timeSystemSimulation;
+    }
+
+    @Override
+    public LightManager getLightManager() {
+        return lightManager;
     }
 }

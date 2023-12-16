@@ -1,7 +1,7 @@
 package ch.realmtech.server.level.cell;
 
+import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import com.artemis.World;
 import com.badlogic.gdx.utils.Null;
 
 import java.util.UUID;
@@ -29,8 +29,8 @@ public class ChestEditEntity implements EditEntity {
     }
 
     @Override
-    public void editEntity(World world, int entityId) {
-        world.getSystem(InventoryManager.class).createChest(entityId, getUuid(), getNumberOfSlotParRow(), getNumberOfRow());
+    public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onCommun((world -> world.getSystem(InventoryManager.class).createChest(entityId, getUuid(), getNumberOfSlotParRow(), getNumberOfRow())));
     }
 
     public UUID getUuid() {

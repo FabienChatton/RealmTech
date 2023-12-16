@@ -24,6 +24,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
@@ -186,8 +187,8 @@ public class MapSystemServer extends BaseSystem implements CellManager {
 
         try {
             chunkId = systemsAdminServer.saveInfManager.readSavedInfChunk(chunkX, chunkY, saveMetadataComponent.saveName);
-        } catch (FileNotFoundException | BufferUnderflowException | IllegalMagicNumbers | ZipException e) {
-            if (e instanceof BufferUnderflowException) logger.error("The chunk {},{} was corrupted", chunkX, chunkY);
+        } catch (FileNotFoundException | BufferUnderflowException | IllegalMagicNumbers | ZipException | EOFException e) {
+            if (e instanceof BufferUnderflowException || e instanceof EOFException) logger.error("The chunk {},{} was corrupted", chunkX, chunkY);
             if (e instanceof IllegalMagicNumbers) logger.error("The chunk {},{} was not recognise has a chunk file. Maybe the chunk version is < 9", chunkX, chunkY);
             if (e instanceof ZipException) logger.error("The chunk {},{} was not compressed", chunkX, chunkY);
             logger.info("Generating the chunk {},{}", chunkX, chunkY);

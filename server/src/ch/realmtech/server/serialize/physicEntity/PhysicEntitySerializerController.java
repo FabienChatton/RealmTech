@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class PhysicEntitySerializerController extends AbstractSerializerController<Integer, PhysicEntityArgs> {
     public final static byte PLAYER_FLAG = 1;
     public final static byte ENEMY_FLAG = 2;
+    public final static byte ITEM_FLAG = 3;
 
     public PhysicEntitySerializerController(SerializerController serializerController) {
         super(serializerController, (byte) 19, new HashMap<>() {
