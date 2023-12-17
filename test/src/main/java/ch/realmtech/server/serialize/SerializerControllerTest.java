@@ -92,7 +92,7 @@ class SerializerControllerTest {
         int actualChunkId = serializerController.getChunkSerializerController().decode(expectedChunkEncoded);
         InfChunkComponent actualInfChunkComponent = mChunk.get(actualChunkId);
 
-        assertTrue(expectedInfChunkComponent.deepEquals(actualInfChunkComponent, serverContext.getEcsEngineServer().getWorld().getMapper(InfCellComponent.class)));
+        assertTrue(expectedInfChunkComponent.deepEquals(actualInfChunkComponent, serverContext.getEcsEngineServer().getWorld().getMapper(CellComponent.class)));
     }
 
     @Test

@@ -1,10 +1,9 @@
 package ch.realmtech.server.serialize.chunk;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.cell.CellArgs;
@@ -17,7 +16,7 @@ import io.netty.buffer.Unpooled;
 public class ChunkSerializerV9 implements Serializer<InfChunkComponent, Integer> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, InfChunkComponent chunkToSerialize) {
-        ComponentMapper<InfCellComponent> mCell = world.getMapper(InfCellComponent.class);
+        ComponentMapper<CellComponent> mCell = world.getMapper(CellComponent.class);
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, chunkToSerialize));
 
         buffer.writeInt(chunkToSerialize.chunkPosX);

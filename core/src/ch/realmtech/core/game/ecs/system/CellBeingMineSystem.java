@@ -5,7 +5,7 @@ import ch.realmtech.core.game.ecs.plugin.SystemTickEmulation;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.server.ecs.component.CellBeingMineComponent;
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -26,7 +26,7 @@ public class CellBeingMineSystem extends IteratingSystem {
     @Wire
     private SystemsAdminClient systemsAdminClient;
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
 
     @Override
@@ -41,7 +41,7 @@ public class CellBeingMineSystem extends IteratingSystem {
         int chunk = systemsAdminClient.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
         int topCell = systemsAdminClient.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         InfChunkComponent infChunkComponent = mChunk.get(chunk);
-        InfCellComponent infCellComponent = mCell.get(topCell);
+        CellComponent cellComponent = mCell.get(topCell);
 
         if (topCell == entityId && InputMapper.leftClick.isPressed) {
             CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);

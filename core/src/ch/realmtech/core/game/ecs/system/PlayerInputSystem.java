@@ -2,7 +2,7 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -21,7 +21,7 @@ public class PlayerInputSystem extends BaseSystem {
     private RealmTech context;
     @Wire
     private SystemsAdminClient systemsAdminClient;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<ItemComponent> mItem;
 
     @Override
@@ -40,10 +40,10 @@ public class PlayerInputSystem extends BaseSystem {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             systemsAdminClient.mapManager.addCellBeingMine(topCell);
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            InfCellComponent infCellComponent = mCell.get(topCell);
+            CellComponent cellComponent = mCell.get(topCell);
             // interagie avec clique droite
-            if (infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
-                infCellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(context, topCell);
+            if (cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
+                cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(context, topCell);
             } else {
                 // place un bloc
                 int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();

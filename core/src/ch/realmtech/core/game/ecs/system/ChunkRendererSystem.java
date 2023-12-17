@@ -1,7 +1,7 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -26,7 +26,7 @@ public class ChunkRendererSystem extends IteratingSystem {
     private TextureAtlas textureAtlas;
     private ComponentMapper<InfMapComponent> mMap;
     private ComponentMapper<InfChunkComponent> mChunk;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private OrthogonalTiledMapRenderer mapRenderer;
 
     @Override
@@ -38,22 +38,22 @@ public class ChunkRendererSystem extends IteratingSystem {
     @Override
     protected void process(int chunkId) {
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        List<List<InfCellComponent>> arrayLayerCell = new ArrayList<>();
+        List<List<CellComponent>> arrayLayerCell = new ArrayList<>();
         for (int j = 0; j < WorldMap.NUMBER_LAYER; j++) {
             arrayLayerCell.add(new ArrayList<>());
         }
         for (int j = infChunkComponent.infCellsId.length -1; j >= 0; j--) {
             int cellId = infChunkComponent.infCellsId[j];
-            InfCellComponent infCellComponent = mCell.get(cellId);
-            byte layer = infCellComponent.cellRegisterEntry.getCellBehavior().getLayer();
-            arrayLayerCell.get(layer).add(infCellComponent);
+            CellComponent cellComponent = mCell.get(cellId);
+            byte layer = cellComponent.cellRegisterEntry.getCellBehavior().getLayer();
+            arrayLayerCell.get(layer).add(cellComponent);
         }
-        for (List<InfCellComponent> infCellComponents : arrayLayerCell) {
-            if (infCellComponents != null) {
-                for (InfCellComponent infCellComponent : infCellComponents) {
-                    int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
-                    int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
-                    TextureRegion textureRegion = infCellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
+        for (List<CellComponent> cellComponents : arrayLayerCell) {
+            if (cellComponents != null) {
+                for (CellComponent cellComponent : cellComponents) {
+                    int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+                    int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
+                    TextureRegion textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
                     gameStage.getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
                 }
             }

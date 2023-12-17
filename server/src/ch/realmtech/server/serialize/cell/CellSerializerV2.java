@@ -1,10 +1,10 @@
 package ch.realmtech.server.serialize.cell;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.ChestComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.FurnaceComponent;
-import ch.realmtech.server.ecs.component.InfCellComponent;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.registery.CellRegisterEntry;
@@ -19,12 +19,12 @@ import io.netty.buffer.Unpooled;
 public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer cellToSerialize) {
-        ComponentMapper<InfCellComponent> mCell = world.getMapper(InfCellComponent.class);
+        ComponentMapper<CellComponent> mCell = world.getMapper(CellComponent.class);
         ComponentMapper<ChestComponent> mChest = world.getMapper(ChestComponent.class);
         ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
         ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
 
-        InfCellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
+        CellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, cellToSerialize));
         int hashCellRegisterEntry = CellRegisterEntry.getHash(cellComponentToSerialize.cellRegisterEntry);
         byte innerChunkPos = Cells.getInnerChunkPos(cellComponentToSerialize.getInnerPosX(), cellComponentToSerialize.getInnerPosY());

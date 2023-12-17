@@ -3,7 +3,7 @@ package ch.realmtech.core.game.ecs.system;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.CellBeingMineComponent;
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -13,7 +13,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-@All({CellBeingMineComponent.class, InfCellComponent.class})
+@All({CellBeingMineComponent.class, CellComponent.class})
 public class CellBeingMineRenderSystem extends IteratingSystem {
 
     @Wire(name = "context")
@@ -21,7 +21,7 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
     @Wire
     private SystemsAdminClient systemsAdminClient;
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
 
     @Override
@@ -33,12 +33,12 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
-        InfCellComponent infCellComponent = mCell.get(entityId);
+        CellComponent cellComponent = mCell.get(entityId);
         int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
         int chunkId = systemsAdminClient.mapManager.findChunk(infChunks, entityId);
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, infCellComponent.getInnerPosX());
-        int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, infCellComponent.getInnerPosY());
+        int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+        int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
         TextureRegion texture = getTextureViaPourCent(cellBeingMineComponent);
 
         context.getGameStage().getBatch().draw(

@@ -1,6 +1,6 @@
 package ch.realmtech.server.serialize.cell;
 
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.serialize.Serializer;
@@ -14,8 +14,8 @@ import io.netty.buffer.Unpooled;
 public class CellSerializerV1 implements Serializer<Integer, CellArgs> {
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer cellToSerialize) {
-        ComponentMapper<InfCellComponent> mCell = world.getMapper(InfCellComponent.class);
-        InfCellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
+        ComponentMapper<CellComponent> mCell = world.getMapper(CellComponent.class);
+        CellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, cellToSerialize));
         int hashCellRegisterEntry = CellRegisterEntry.getHash(cellComponentToSerialize.cellRegisterEntry);
         byte innerChunkPos = Cells.getInnerChunkPos(cellComponentToSerialize.getInnerPosX(), cellComponentToSerialize.getInnerPosY());

@@ -4,6 +4,7 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
 import com.artemis.World;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ExecuteOnContextClient implements ExecuteOnContext {
@@ -11,9 +12,10 @@ public class ExecuteOnContextClient implements ExecuteOnContext {
     public void initialize(World world) {
         this.world = world;
     }
+
     @Override
-    public void onClient(Consumer<SystemsAdminClientForClient> onClientRun) {
-        onClientRun.accept(world.getRegistered("systemsAdmin"));
+    public void onClient(BiConsumer<SystemsAdminClientForClient, World> onClientRun) {
+        onClientRun.accept(world.getRegistered("systemsAdmin"), world);
     }
 
     @Override

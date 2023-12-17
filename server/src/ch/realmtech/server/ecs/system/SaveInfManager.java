@@ -33,7 +33,7 @@ public class SaveInfManager extends Manager {
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PositionComponent> mPosition;
 

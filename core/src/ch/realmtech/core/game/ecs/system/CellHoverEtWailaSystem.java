@@ -2,7 +2,7 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
@@ -35,7 +35,7 @@ public class CellHoverEtWailaSystem extends BaseSystem {
     private Label wailaCellInfoHash;
     private Label wailaCellInfoCanBreak;
     private Image wailaCellImage;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<ItemComponent> mItem;
 
@@ -87,7 +87,7 @@ public class CellHoverEtWailaSystem extends BaseSystem {
         int topCell = systemsAdminClient.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         if (topCell == -1) return;
         InfChunkComponent infChunkComponent = mChunk.get(chunk);
-        InfCellComponent infCellComponent = mCell.get(topCell);
+        CellComponent cellComponent = mCell.get(topCell);
         TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
         context.getGameStage().getBatch().draw(
                 region,
@@ -98,9 +98,9 @@ public class CellHoverEtWailaSystem extends BaseSystem {
         );
 
         // waila
-        wailaWindow.getTitleLabel().setText(infCellComponent.cellRegisterEntry.toString());
-        wailaCellImage.setDrawable(new TextureRegionDrawable(infCellComponent.cellRegisterEntry.getTextureRegion(textureAtlas)));
-        wailaCellInfoHash.setText("Id: " + CellRegisterEntry.hashString(infCellComponent.cellRegisterEntry.toString()));
+        wailaWindow.getTitleLabel().setText(cellComponent.cellRegisterEntry.toString());
+        wailaCellImage.setDrawable(new TextureRegionDrawable(cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas)));
+        wailaCellInfoHash.setText("Id: " + CellRegisterEntry.hashString(cellComponent.cellRegisterEntry.toString()));
 
         ItemType curentItemType;
         if (!mItem.has(systemsAdminClient.getItemBarManager().getSelectItem())) {
@@ -110,12 +110,12 @@ public class CellHoverEtWailaSystem extends BaseSystem {
             curentItemType = curentItemComponent.itemRegisterEntry.getItemBehavior().getItemType();
         }
         ItemType itemTypeToMine;
-        if (infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() != null) {
-            itemTypeToMine = infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith();
+        if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() != null) {
+            itemTypeToMine = cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith();
         } else {
             itemTypeToMine = ItemType.RIEN;
         }
-        if (curentItemType == itemTypeToMine || infCellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS) {
+        if (curentItemType == itemTypeToMine || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS) {
             wailaCellInfoCanBreak.setColor(Color.GREEN);
         } else {
             wailaCellInfoCanBreak.setColor(Color.RED);

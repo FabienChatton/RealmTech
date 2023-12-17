@@ -38,7 +38,7 @@ public class MapManager extends Manager {
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PlayerComponent> mPlayer;
@@ -115,8 +115,8 @@ public class MapManager extends Manager {
         int ret = -1;
         int[] cells = mChunk.get(chunk).infCellsId;
         for (int i = 0; i < cells.length; i++) {
-            InfCellComponent infCellComponent = mCell.get(cells[i]);
-            if (infCellComponent.getInnerPosX() == innerX && infCellComponent.getInnerPosY() == innerY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
+            CellComponent cellComponent = mCell.get(cells[i]);
+            if (cellComponent.getInnerPosX() == innerX && cellComponent.getInnerPosY() == innerY && cellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
                 ret = cells[i];
                 break;
             }
@@ -129,8 +129,8 @@ public class MapManager extends Manager {
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         for (int i = 0; i < cells.length; i++) {
-            InfCellComponent infCellComponent = mCell.get(cells[i]);
-            if (infCellComponent.getInnerPosX() == innerChunkX && infCellComponent.getInnerPosY() == innerChunkY && infCellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
+            CellComponent cellComponent = mCell.get(cells[i]);
+            if (cellComponent.getInnerPosX() == innerChunkX && cellComponent.getInnerPosY() == innerChunkY && cellComponent.cellRegisterEntry.getCellBehavior().getLayer() == layer) {
                 ret = cells[i];
                 break;
             }
@@ -221,9 +221,9 @@ public class MapManager extends Manager {
         byte innerX = Cells.getInnerChunkPosX(cellArgs.getInnerChunk());
         byte innerY = Cells.getInnerChunkPosY(cellArgs.getInnerChunk());
         CellRegisterEntry cellRegisterEntry = cellArgs.getCellRegisterEntry();
-        world.edit(cellId).create(InfCellComponent.class).set(innerX, innerY, cellRegisterEntry);
+        world.edit(cellId).create(CellComponent.class).set(innerX, innerY, cellRegisterEntry, chunkId);
         cellArgs.getEditEntityArgs()
-                .or(() -> cellRegisterEntry.getCellBehavior().getDefaultEditEntityArgs())
+                .or(() -> cellRegisterEntry.getCellBehavior().getEditEntityOnCreate())
                 .ifPresent(editEntityArg -> editEntityArg.editEntity(world.getRegistered("executeOnContext"), cellId));
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
             CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
@@ -244,12 +244,14 @@ public class MapManager extends Manager {
     }
 
     public void supprimeCell(int cellId) {
-        InfCellComponent infCellComponent = mCell.get(cellId);
-        if (infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
+        CellComponent cellComponent = mCell.get(cellId);
+        if (cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
             Box2dComponent box2dComponent = mBox2d.get(cellId);
             Body body = box2dComponent.body;
-            infCellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
+            cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
         }
+        cellComponent.cellRegisterEntry.getCellBehavior().getEditEntityOnDelete()
+                .ifPresent(editEntity -> editEntity.editEntity(world.getRegistered("executeOnContext"), cellId));
         world.delete(cellId);
     }
 

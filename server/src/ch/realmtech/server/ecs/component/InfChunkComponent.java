@@ -1,16 +1,8 @@
 package ch.realmtech.server.ecs.component;
 
-import ch.realmtech.server.ecs.system.MapManager;
 import com.artemis.ComponentMapper;
 import com.artemis.PooledComponent;
-import com.artemis.World;
 import com.artemis.annotations.EntityId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.nio.ByteBuffer;
-
-import static ch.realmtech.server.ecs.system.SaveInfManager.SAVE_PROTOCOLE_VERSION;
 
 public class InfChunkComponent extends PooledComponent {
     public int chunkPosX;
@@ -47,7 +39,7 @@ public class InfChunkComponent extends PooledComponent {
         return false;
     }
 
-    public boolean deepEquals(Object obj, ComponentMapper<InfCellComponent> mCell) {
+    public boolean deepEquals(Object obj, ComponentMapper<CellComponent> mCell) {
         if (equals(obj)) {
             InfChunkComponent testInfChunkComponent = (InfChunkComponent) obj;
             for (int i = 0; i < infCellsId.length; i++) {

@@ -5,7 +5,6 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
-import com.artemis.managers.TagManager;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
@@ -16,7 +15,7 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
     private ComponentMapper<MovementComponent> mMovement;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PositionComponent> mPos;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private final static float FORCE = 8f;
     @Override
     protected void process(int entityId) {
@@ -50,8 +49,8 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCellId = systemsAdminServer.mapManager.getTopCell(chunkId, innerChunkX, innerChunkY);
         if (topCellId == -1) return;
-        InfCellComponent infCellComponent = mCell.get(topCellId);
-        float cellSpeedEffect = infCellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
+        CellComponent cellComponent = mCell.get(topCellId);
+        float cellSpeedEffect = cellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();
 
         float acceleration = FORCE * cellSpeedEffect;
 

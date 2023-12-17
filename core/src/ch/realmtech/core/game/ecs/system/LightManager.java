@@ -13,16 +13,15 @@ public class LightManager extends LightManagerForClient {
     @Wire
     private RayHandler rayHandler;
 
-    public int createLight(Color color, float distance, float x, float y) {
-        PointLight pointLight = new PointLight(rayHandler, 360, color, distance, x, y);
-        int lightId = world.create();
-        world.edit(lightId).create(LightComponent.class).set(pointLight);
-        return lightId;
+    public int createLight(int entityId, Color color, float distance, float x, float y) {
+        PointLight pointLight = new PointLight(rayHandler, 360, color, distance, x + 0.5f, y + 0.5f);
+        world.edit(entityId).create(LightComponent.class).set(pointLight);
+        return entityId;
     }
 
-    public void disposeLight(int lightId) {
-        LightComponent lightComponent = mLight.get(lightId);
-        lightComponent.getLight().dispose();
-        world.delete(lightId);
+    public void disposeLight(int entityId) {
+        LightComponent lightComponent = mLight.get(entityId);
+        lightComponent.getLight().remove();
+        world.delete(entityId);
     }
 }

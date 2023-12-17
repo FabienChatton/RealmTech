@@ -1,6 +1,6 @@
 package ch.realmtech.server.level.cell;
 
-import ch.realmtech.server.ecs.component.InfCellComponent;
+import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.item.ItemType;
@@ -11,7 +11,7 @@ public class BreakCellEvent {
     public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntry) {
         return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
             if (itemRegisterEntry != null) {
-                InfCellComponent cellComponent = world.getMapper(InfCellComponent.class).get(cellId);
+                CellComponent cellComponent = world.getMapper(CellComponent.class).get(cellId);
                 InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
                 if (cellComponent != null) {
                     final ItemType itemTypeUse = itemUseByPlayer != null
@@ -34,7 +34,11 @@ public class BreakCellEvent {
 
     public static BreakCell dropNothing() {
         return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
-            world.getSystem(MapManager.class).damneCell(chunkId, cellId);
+            CellComponent cellComponent = world.getMapper(CellComponent.class).get(cellId);
+            InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
+            int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+            int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
+            cellManager.breakCell(worldPosX, worldPosY, null);
             return true;
         };
     }

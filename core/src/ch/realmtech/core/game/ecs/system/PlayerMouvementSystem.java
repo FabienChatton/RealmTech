@@ -25,7 +25,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
     @Wire
     private SoundManager soundManager;
     private ComponentMapper<PlayerComponent> mPlayer;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<MovementComponent> mMouvement;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
@@ -55,10 +55,10 @@ public class PlayerMouvementSystem extends IteratingSystem {
             int chunk = context.getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
             int cellId = context.getSystem(MapManager.class).getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
 
-            InfCellComponent infCellComponent = mCell.get(cellId);
-            byte layer = infCellComponent.cellRegisterEntry.getCellBehavior().getLayer();
+            CellComponent cellComponent = mCell.get(cellId);
+            byte layer = cellComponent.cellRegisterEntry.getCellBehavior().getLayer();
 
-            PlayerFootStepSound playerFootStepSound = infCellComponent.cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
+            PlayerFootStepSound playerFootStepSound = cellComponent.cellRegisterEntry.getCellBehavior().getPlayerFootStepSound();
             do {
                 if (playerFootStepSound != null) {
                     soundManager.playFootStep(playerFootStepSound.playerFootStepSound(), playerFootStepSound.volume());

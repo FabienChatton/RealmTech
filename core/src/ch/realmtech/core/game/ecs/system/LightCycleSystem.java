@@ -1,6 +1,5 @@
 package ch.realmtech.core.game.ecs.system;
 
-import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import com.artemis.BaseSystem;
@@ -22,11 +21,6 @@ public class LightCycleSystem extends BaseSystem {
 
     @Wire
     private RayHandler rayHandler;
-
-    @Override
-    protected void initialize() {
-        new PointLight(rayHandler, 360, new Color(1,1,1,1), 10, 0, 0);
-    }
 
     @Override
     protected void processSystem() {

@@ -3,16 +3,18 @@ package ch.realmtech.server.ecs.component;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import com.artemis.PooledComponent;
+import com.artemis.annotations.EntityId;
 
-import java.nio.ByteBuffer;
-
-public class InfCellComponent extends PooledComponent {
+public class CellComponent extends PooledComponent {
     private byte innerPos;
     public CellRegisterEntry cellRegisterEntry;
+    @EntityId
+    public int chunkId;
 
-    public InfCellComponent set(byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry) {
+    public CellComponent set(byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry, int chunkId) {
         innerPos = Cells.getInnerChunkPos(innerPosX, innerPosY);
         this.cellRegisterEntry = cellRegisterEntry;
+        this.chunkId = chunkId;
         return this;
     }
 
@@ -31,8 +33,8 @@ public class InfCellComponent extends PooledComponent {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof InfCellComponent testInfCellComponent) {
-            return innerPos == testInfCellComponent.innerPos && cellRegisterEntry == testInfCellComponent.cellRegisterEntry;
+        if (obj instanceof CellComponent testCellComponent) {
+            return innerPos == testCellComponent.innerPos && cellRegisterEntry == testCellComponent.cellRegisterEntry;
         }
         return false;
     }

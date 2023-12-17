@@ -3,6 +3,7 @@ package ch.realmtech.server.mod;
 
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
@@ -177,7 +178,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.craftingTable")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
+                    .editEntityOnCreate(CraftingTableEditEntity.createCraftingTable(3, 3))
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
@@ -224,7 +225,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "chest-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.TOUS, "realmtech.chest")
-                    .editEntity(ChestEditEntity.createNewInventory(9, 3))
+                    .editEntityOnCreate(ChestEditEntity.createNewInventory(9, 3))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
@@ -369,11 +370,15 @@ public class RealmTechCoreMod implements ArtemisPlugin {
 
     public static CellItemRegisterEntry TORCH = registerCellItem("torch", new CellRegisterEntry("torch-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
-                    .editEntity((executeOnContext, entityId) -> {
-                        executeOnContext.onClient(systemsAdminClient -> {
-                            systemsAdminClient.getLightManager().createLight(new Color(1,1,1,1), 15, 10, 10);
-                        });
-                    })
+                    .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClient, world) -> {
+                        CellComponent cellComponent = world.getMapper(CellComponent.class).get(entityId);
+                        InfChunkComponent chunkComponent = world.getMapper(InfChunkComponent.class).get(cellComponent.chunkId);
+                        int worldX = MapManager.getWorldPos(chunkComponent.chunkPosX, cellComponent.getInnerPosX());
+                        int worldY = MapManager.getWorldPos(chunkComponent.chunkPosY, cellComponent.getInnerPosY());
+                        systemsAdminClient.getLightManager().createLight(entityId, Color.valueOf("ef540b"), 15, worldX, worldY);
+                    }))
+                    .editEntityOnDelete(((executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId))))
+                    .breakWith(ItemType.TOUS, "realmtech.torch")
                     .build()),
             new ItemRegisterEntry("torch-01", ItemBehavior.builder()
                     .placeCell("realmtech.torch")

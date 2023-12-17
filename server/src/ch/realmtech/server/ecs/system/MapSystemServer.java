@@ -21,6 +21,7 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class MapSystemServer extends BaseSystem implements CellManager {
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
-    private ComponentMapper<InfCellComponent> mCell;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PlayerComponent> mPlayer;
@@ -208,13 +209,15 @@ public class MapSystemServer extends BaseSystem implements CellManager {
     }
 
     @Override
-    public void breakCell(int worldPosX, int worldPosY, ItemRegisterEntry itemDropRegisterEntry) {
+    public void breakCell(int worldPosX, int worldPosY, @Null ItemRegisterEntry itemDropRegisterEntry) {
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
         int chunk = systemsAdminServer.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
         int topCell = systemsAdminServer.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         if (topCell == -1) return;
         systemsAdminServer.mapManager.damneCell(chunk, topCell);
-        systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
+        if (itemDropRegisterEntry != null) {
+            systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
+        }
         serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
     }
 
