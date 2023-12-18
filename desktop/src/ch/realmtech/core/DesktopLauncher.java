@@ -1,5 +1,6 @@
 package ch.realmtech.core;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
@@ -10,6 +11,7 @@ public class DesktopLauncher {
 		//config.useVsync(false);
 		config.setForegroundFPS(60);
 		config.setWindowedMode(RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
+		config.setWindowIcon(Files.FileType.Internal, "logo/logo-RealmTech-icon.png");
 		new Lwjgl3Application(new RealmTech(), config);
 	}
 }
