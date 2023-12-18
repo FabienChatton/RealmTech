@@ -24,15 +24,14 @@ public class GiveCommand implements Callable<Integer> {
     @ParentCommand
     private MasterServerCommand masterCommand;
 
-    @Parameters(index = "0", description = "The uuid of the player")
-    private String playerUuid;
+    @Parameters(index = "0", description = "The player identifier, username or uuid")
+    private String playerIdentifier;
 
     @Parameters(index = "1", description = "The registry id of the item")
     private String itemRegistryId;
 
-// pour une future implémentation
-//    @Parameters(index = "2", defaultValue = "1", description = "Number of items to give")
-//    private int numberOfItems;
+    @Parameters(index = "2", defaultValue = "1", description = "Number of items to give")
+    private int numberOfItems;
 
     @Override
     public Integer call() throws Exception {
@@ -41,32 +40,35 @@ public class GiveCommand implements Callable<Integer> {
             masterCommand.output.println(String.format("This item registry id doesn't existe, %s", itemRegistryId));
             return 1;
         }
-        
-        UUID uuid;
+
+        int playerId;
         try {
-            uuid = UUID.fromString(playerUuid);
+            UUID playerUuid = UUID.fromString(playerIdentifier);
+            playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid);
         } catch (IllegalArgumentException e) {
-            masterCommand.output.println(e.getMessage());
-            return -1;
+            // uuid not valid
+            playerId = masterCommand.serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(playerIdentifier);
+            if (playerId == -1) {
+                return -1;
+            }
         }
         ComponentMapper<InventoryComponent> mInventory = masterCommand.getWorld().getMapper(InventoryComponent.class);
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = masterCommand.getWorld().getMapper(PlayerConnexionComponent.class);
         ComponentMapper<UuidComponent> mUuid = masterCommand.getWorld().getMapper(UuidComponent.class);
 
-        int playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(uuid);
-
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         InventoryComponent inventoryComponent = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
         int chestInventoryId = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
-        int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry(), UUID.randomUUID());
-        try {
-            masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId);
-            SerializedApplicationBytes ApplicationInventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(inventoryComponent);
-            masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), ApplicationInventoryBytes), playerConnexionComponent.channel);
-        } catch (Exception e) {
-            masterCommand.getWorld().delete(itemId);
-            return -1;
+        for (int i = 0; i < numberOfItems; i++) {
+            int itemId = masterCommand.getWorld().getSystem(ItemManagerServer.class).newItemInventory(itemRegisterEntry.getEntry(), UUID.randomUUID());
+            if (!masterCommand.getWorld().getSystem(InventoryManager.class).addItemToInventory(inventoryComponent, itemId)) {
+                // can not put item in inventory
+                masterCommand.getWorld().delete(itemId);
+                return 0;
+            }
         }
+        SerializedApplicationBytes ApplicationInventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(inventoryComponent);
+        masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), ApplicationInventoryBytes), playerConnexionComponent.channel);
         return 0;
     }
 }

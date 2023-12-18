@@ -49,9 +49,13 @@ public class CellBeingMineSystem extends IteratingSystem {
             context.getSoundManager().playBreakingCell();
             if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) return;
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
-                UUID itemUsedUuid = systemsAdminClient.getItemBarManager().getSelectItemOrNoting()
-                        .map((itemId) -> systemsAdminClient.uuidComponentManager.getRegisteredComponent(itemId).getUuid())
-                        .orElse(null);
+                UUID itemUsedUuid;
+                int selectItem = systemsAdminClient.getItemBarManager().getSelectItemOrNoting();
+                if (selectItem != -1) {
+                    itemUsedUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
+                } else {
+                    itemUsedUuid = null;
+                }
                 context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(worldPosX, worldPosY, itemUsedUuid));
                 mCellBeingMine.remove(topCell);
             }

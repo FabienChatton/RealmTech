@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ServerExecuteContext implements ServerExecute {
@@ -79,9 +78,13 @@ public class ServerExecuteContext implements ServerExecute {
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
 
             InventoryComponent playerChestInventory = serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
-            ItemRegisterEntry itemUsed = serverContext.getSystem(InventoryManager.class).getItemInInventoryByUuid(playerChestInventory, itemUsedUuid)
-                    .map(itemId -> serverContext.getEcsEngineServer().getWorld().getMapper(ItemComponent.class).get(itemId).itemRegisterEntry)
-                    .orElse(null);
+            int itemUsedId = serverContext.getSystem(InventoryManager.class).getItemInInventoryByUuid(playerChestInventory, itemUsedUuid);
+            ItemRegisterEntry itemUsed;
+            if (itemUsedId == -1) {
+                itemUsed = null;
+            } else {
+                itemUsed = serverContext.getEcsEngineServer().getWorld().getMapper(ItemComponent.class).get(itemUsedId).itemRegisterEntry;
+            }
             InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
             int[] infChunks = infMapComponent.infChunks;
             int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
@@ -151,13 +154,13 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            Optional<Integer> cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToBloc(itemToPlaceUuid, worldPosX, worldPosY);
-            if (cellPlaced.isPresent()) {
+            int cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToBloc(itemToPlaceUuid, worldPosX, worldPosY);
+            if (cellPlaced != -1) {
                 int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
                 int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
                 int itemId = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
                 serverContext.getSystem(InventoryManager.class).removeItemInInventory(chestInventoryId, itemId);
-                SerializedApplicationBytes cellApplicationBytes = serverContext.getSerializerController().getCellSerializerController().encode(cellPlaced.get());
+                SerializedApplicationBytes cellApplicationBytes = serverContext.getSerializerController().getCellSerializerController().encode(cellPlaced);
                 clientChannel.writeAndFlush(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes));
 
                 UUID inventoryUuid = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId).getUuid();

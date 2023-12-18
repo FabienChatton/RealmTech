@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipException;
 
@@ -221,12 +220,12 @@ public class MapSystemServer extends BaseSystem implements CellManager {
         serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
     }
 
-    public Optional<Integer> placeItemToBloc(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
+    public int placeItemToBloc(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         int itemId = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
-        if (itemId == -1) return Optional.empty();
+        if (itemId == -1) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
         CellRegisterEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell();
-        if (placeCell == null) return Optional.empty();
+        if (placeCell == null) return -1;
 
         int chunkPosX = MapManager.getChunkPos(worldPosX);
         int chunkPosY = MapManager.getChunkPos(worldPosY);
@@ -236,11 +235,11 @@ public class MapSystemServer extends BaseSystem implements CellManager {
 
         // can only place on item per layer
         if (systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) != -1) {
-            return Optional.empty();
+            return -1;
         }
 
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
-        return Optional.of(systemsAdminServer.mapManager.newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY))));
+        return systemsAdminServer.mapManager.newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
     }
 }

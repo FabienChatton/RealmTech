@@ -201,6 +201,18 @@ public class PlayerManagerServer extends Manager {
         return Path.of(DataCtrl.getPlayersDir(systemsAdminServer.saveInfManager.getSaveName()).toPath().toString(), playerUuid.toString());
     }
 
+    public int getPlayerByUsername(String username) {
+        IntBag players = getPlayers();
+        int[] playersData = players.getData();
+        for (int i = 0; i < players.size(); i++) {
+            int playerId = playersData[i];
+            if (mPlayerConnexion.get(playerId).getUsername().equals(username)) {
+                return playerId;
+            }
+        }
+        return -1;
+    }
+
     public record TousLesJoueursArg(int nombreDeJoueur, Vector2[] pos, UUID[] uuids) { }
     public int getPlayerByChannel(Channel clientChannel) {
         int[] playersData = players.getData();
