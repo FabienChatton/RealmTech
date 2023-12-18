@@ -6,6 +6,7 @@ import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class LightCycleSystem extends BaseSystem {
@@ -27,12 +28,9 @@ public class LightCycleSystem extends BaseSystem {
         float time = systemsAdminClient.getTimeSystemSimulation().getAccumulatedDelta();
         float alpha = (float) (Math.cos(Math.toRadians(time)) + 1) / 2f;
 
-        gameStage.getBatch().begin();
-        rayHandler.setCombinedMatrix(gameCamera.combined, 0, 0, gameCamera.viewportWidth, gameCamera.viewportHeight);
+        rayHandler.setCombinedMatrix(((OrthographicCamera) gameCamera));
         rayHandler.setAmbientLight(new Color(0,0,0, alpha));
-        rayHandler.setShadows(true);
         rayHandler.updateAndRender();
-        gameStage.getBatch().end();
     }
 
     @Override
