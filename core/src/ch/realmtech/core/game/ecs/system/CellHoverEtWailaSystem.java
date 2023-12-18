@@ -104,7 +104,7 @@ public class CellHoverEtWailaSystem extends BaseSystem {
 
         ItemType curentItemType;
         if (!mItem.has(systemsAdminClient.getItemBarManager().getSelectItem())) {
-            curentItemType = ItemType.TOUS;
+            curentItemType = ItemType.HAND;
         } else {
             ItemComponent curentItemComponent = mItem.get(systemsAdminClient.getItemBarManager().getSelectItem());
             curentItemType = curentItemComponent.itemRegisterEntry.getItemBehavior().getItemType();
@@ -113,9 +113,9 @@ public class CellHoverEtWailaSystem extends BaseSystem {
         if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() != null) {
             itemTypeToMine = cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith();
         } else {
-            itemTypeToMine = ItemType.RIEN;
+            itemTypeToMine = ItemType.UNBREAKABLE;
         }
-        if (curentItemType == itemTypeToMine || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS) {
+        if (curentItemType == itemTypeToMine || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.HAND) {
             wailaCellInfoCanBreak.setColor(Color.GREEN);
         } else {
             wailaCellInfoCanBreak.setColor(Color.RED);

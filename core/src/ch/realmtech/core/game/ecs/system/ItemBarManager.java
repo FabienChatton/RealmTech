@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import java.util.Optional;
+
 public class ItemBarManager extends BaseSystem {
     private Stage itemBarStage;
     private Table itemBarTable;
@@ -104,8 +106,9 @@ public class ItemBarManager extends BaseSystem {
         return getSelectStack()[0];
     }
 
-    public ItemComponent getSelectItemComponent() {
-        return mItem.get(getSelectItem());
+    public Optional<Integer> getSelectItemOrNoting() {
+        int selectItem = getSelectItem();
+        return mItem.has(selectItem) ? Optional.of(selectItem) : Optional.empty();
     }
 
     public int[] getSelectStack() {

@@ -8,27 +8,22 @@ import ch.realmtech.server.registery.ItemRegisterEntry;
 
 public class BreakCellEvent {
 
-    public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntry) {
+    public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntryToDrop) {
         return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
-            if (itemRegisterEntry != null) {
-                CellComponent cellComponent = world.getMapper(CellComponent.class).get(cellId);
-                InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
-                if (cellComponent != null) {
-                    final ItemType itemTypeUse = itemUseByPlayer != null
-                            ? itemUseByPlayer.getItemBehavior().getItemType()
-                            : ItemType.TOUS;
-                    if (cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.TOUS
-                            || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == itemTypeUse) {
-                        cellManager.breakCell(
-                                MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX()),
-                                MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY()),
-                                itemRegisterEntry
-                        );
-                        return true;
-                    }
-                }
+            CellComponent cellToBreak = world.getMapper(CellComponent.class).get(cellId);
+            InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
+            final ItemType itemUsedType = itemUseByPlayer != null ? itemUseByPlayer.getItemBehavior().getItemType() : ItemType.HAND;
+
+            if (Cells.testRequireTools(itemUsedType, cellToBreak.cellRegisterEntry.getCellBehavior().getBreakWith())) {
+                cellManager.breakCell(
+                        MapManager.getWorldPos(infChunkComponent.chunkPosX, cellToBreak.getInnerPosX()),
+                        MapManager.getWorldPos(infChunkComponent.chunkPosY, cellToBreak.getInnerPosY()),
+                        itemRegisterEntryToDrop
+                );
+                return true;
+            } else {
+                return false;
             }
-            return false;
         };
     }
 
@@ -42,4 +37,6 @@ public class BreakCellEvent {
             return true;
         };
     }
+
+
 }

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 public class InventoryManager extends Manager {
@@ -343,6 +344,21 @@ public class InventoryManager extends Manager {
     public InventoryComponent getInventoryComponentByUUID(UUID uuid) {
         int inventoryId = getInventoryByUUID(uuid);
         return inventoryId != -1 ? mInventory.get(inventoryId) : null;
+    }
+
+    public Optional<Integer> getItemInInventoryByUuid(InventoryComponent inventoryComponent, UUID itemUuidToFind) {
+        if (itemUuidToFind == null) return Optional.empty();
+        for (int i = 0; i < inventoryComponent.inventory.length; i++) {
+            for (int j = 0; j < inventoryComponent.inventory[i].length; j++) {
+                int itemId = inventoryComponent.inventory[i][j];
+                if (mUuid.has(itemId)) {
+                    if (mUuid.get(itemId).getUuid().equals(itemUuidToFind)) {
+                        return Optional.of(itemId);
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     public int[] moveStackToStackRequest(UUID srcInventoryUUID, UUID dstInventoryUUID, UUID[] itemsToMove, int slotIndex) throws IllegalAccessError {

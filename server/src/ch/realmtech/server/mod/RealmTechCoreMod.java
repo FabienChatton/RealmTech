@@ -41,30 +41,30 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     //<editor-fold desc="registre des items">
     public final static ItemRegisterEntry NO_ITEM = registerItem("noitem", new ItemRegisterEntry(
             "default-texture",
-            ItemBehavior.builder().setItemType(ItemType.TOUS).build()
+            ItemBehavior.builder().setItemType(ItemType.HAND).build()
     ));
     public final static ItemRegisterEntry PIOCHE_BOIS_ITEM = registerItem("piocheBois", new ItemRegisterEntry(
             "pioche-bois-01",
             ItemBehavior.builder()
-                    .setItemType(ItemType.PIOCHE)
+                    .setItemType(ItemType.PICKAXE)
                     .build()
     ));
     public final static ItemRegisterEntry PIOCHE_STONE_ITEM = registerItem("piocheStone", new ItemRegisterEntry(
             "pioche-stone-01",
             ItemBehavior.builder()
-                    .setItemType(ItemType.PIOCHE)
+                    .setItemType(ItemType.PICKAXE)
                     .build()
     ));
     public final static ItemRegisterEntry PELLE_BOIS_ITEM = registerItem("pelleBois", new ItemRegisterEntry(
             "pelle-bois-01",
             ItemBehavior.builder()
-                    .setItemType(ItemType.PELLE)
+                    .setItemType(ItemType.SHOVEL)
                     .build()
     ));
     public final static ItemRegisterEntry PELLE_STONE_ITEM = registerItem("pelleStone", new ItemRegisterEntry(
             "pelle-stone-01",
             ItemBehavior.builder()
-                    .setItemType(ItemType.PELLE)
+                    .setItemType(ItemType.SHOVEL)
                     .build()
     ));
     public final static ItemRegisterEntry SANDALES_ITEM = registerItem("sandales", new ItemRegisterEntry(
@@ -153,7 +153,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
             "tree-02",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.TOUS, "realmtech.buche")
+                    .breakWith(ItemType.HAND, "realmtech.buche")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .build()
     ));
@@ -164,7 +164,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry PLANCHE_CELL_ITEM = registerCellItem("planche", new CellRegisterEntry(
             "plank-cell-01",
             CellBehavior.builder(Cells.Layer.BUILD)
-                    .breakWith(ItemType.TOUS)
+                    .breakWith(ItemType.HAND)
                     .dropOnBreak("realmtech.planche")
                     .build()
     ), new ItemRegisterEntry(
@@ -176,7 +176,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry CRAFTING_TABLE = registerCellItem("craftingTable", new CellRegisterEntry(
             "table-craft-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                    .breakWith(ItemType.TOUS, "realmtech.craftingTable")
+                    .breakWith(ItemType.HAND, "realmtech.craftingTable")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntityOnCreate(CraftingTableEditEntity.createCraftingTable(3, 3))
                     .interagieClickDroit((clientContext, cellId) -> {
@@ -224,7 +224,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
             "chest-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                    .breakWith(ItemType.TOUS, "realmtech.chest")
+                    .breakWith(ItemType.HAND, "realmtech.chest")
                     .editEntityOnCreate(ChestEditEntity.createNewInventory(9, 3))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
@@ -265,7 +265,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry COPPER_ORE = registerCellItem("copperOre", new CellRegisterEntry(
             "copper-ore-03",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.copperOre")
+                    .breakWith(ItemType.PICKAXE, "realmtech.copperOre")
                     .build()
     ), new ItemRegisterEntry(
             "copper-ore-03",
@@ -275,7 +275,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry STONE = registerCellItem("stone", new CellRegisterEntry(
             "stone-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.stone")
+                    .breakWith(ItemType.PICKAXE, "realmtech.stone")
                     .build()
     ), new ItemRegisterEntry(
             "stone-ore-01",
@@ -285,7 +285,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry IRON_ORE = registerCellItem("ironOre", new CellRegisterEntry(
             "iron-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.ironOre")
+                    .breakWith(ItemType.PICKAXE, "realmtech.ironOre")
                     .build()
     ), new ItemRegisterEntry(
             "iron-ore-01",
@@ -294,7 +294,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry TIN_ORE = registerCellItem("tinOre", new CellRegisterEntry(
             "tin-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.tinOre")
+                    .breakWith(ItemType.PICKAXE, "realmtech.tinOre")
                     .build()
     ), new ItemRegisterEntry(
             "tin-ore-01",
@@ -303,7 +303,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry COAL_ORE = registerCellItem("coalOre", new CellRegisterEntry(
             "coal-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.coal")
+                    .breakWith(ItemType.PICKAXE, "realmtech.coal")
                     .build()
     ), new ItemRegisterEntry(
             "coal-ore-01",
@@ -312,7 +312,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellItemRegisterEntry GOLD_ORE = registerCellItem("goldOre", new CellRegisterEntry(
             "gold-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                    .breakWith(ItemType.PIOCHE, "realmtech.goldOre")
+                    .breakWith(ItemType.PICKAXE, "realmtech.goldOre")
                     .build()
     ), new ItemRegisterEntry(
             "gold-ore-01",
@@ -358,7 +358,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             });
                         });
                     })
-                    .breakWith(ItemType.PIOCHE, "realmtech.furnace")
+                    .breakWith(ItemType.PICKAXE, "realmtech.furnace")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .build()
     ), new ItemRegisterEntry(
@@ -378,7 +378,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                         systemsAdminClient.getLightManager().createLight(entityId, Color.valueOf("ef540b"), 15, worldX, worldY);
                     }))
                     .editEntityOnDelete(((executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId))))
-                    .breakWith(ItemType.TOUS, "realmtech.torch")
+                    .breakWith(ItemType.HAND, "realmtech.torch")
                     .build()),
             new ItemRegisterEntry("torch-01", ItemBehavior.builder()
                     .placeCell("realmtech.torch")

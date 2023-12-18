@@ -73,10 +73,15 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void cellBreakRequest(Channel clientChannel, int worldPosX, int worldPosY, int itemUseByPlayerHash) {
+    public void cellBreakRequest(Channel clientChannel, int worldPosX, int worldPosY, UUID itemUsedUuid) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
             PlayerConnexionComponent playerConnexionComponent = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerConnexionComponentByChannel(clientChannel);
+
+            InventoryComponent playerChestInventory = serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
+            ItemRegisterEntry itemUsed = serverContext.getSystem(InventoryManager.class).getItemInInventoryByUuid(playerChestInventory, itemUsedUuid)
+                    .map(itemId -> serverContext.getEcsEngineServer().getWorld().getMapper(ItemComponent.class).get(itemId).itemRegisterEntry)
+                    .orElse(null);
             InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
             int[] infChunks = infMapComponent.infChunks;
             int chunkId = serverContext.getEcsEngineServer().getWorld().getSystem(MapManager.class).getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
@@ -85,7 +90,7 @@ public class ServerExecuteContext implements ServerExecute {
             CellComponent cellComponent = mCell.get(cellId);
             BreakCell breakCellEvent = cellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
             if (breakCellEvent != null) {
-                breakCellEvent.breakCell(serverContext.getSystem(MapSystemServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, ItemRegisterEntry.getItemByHash(itemUseByPlayerHash));
+                breakCellEvent.breakCell(serverContext.getSystem(MapSystemServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, itemUsed);
             }
         });
     }

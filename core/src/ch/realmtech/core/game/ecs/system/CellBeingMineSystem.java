@@ -9,7 +9,6 @@ import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.packet.serverPacket.CellBreakRequestPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -17,6 +16,8 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.UUID;
 
 @SystemTickEmulation
 @All({CellBeingMineComponent.class})
@@ -48,8 +49,10 @@ public class CellBeingMineSystem extends IteratingSystem {
             context.getSoundManager().playBreakingCell();
             if (cellBeingMineComponent.step == CellBeingMineComponent.INFINITE_MINE) return;
             if (cellBeingMineComponent.currentStep++ >= cellBeingMineComponent.step) {
-
-                context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(worldPosX, worldPosY, RealmTechCoreMod.NO_ITEM));
+                UUID itemUsedUuid = systemsAdminClient.getItemBarManager().getSelectItemOrNoting()
+                        .map((itemId) -> systemsAdminClient.uuidComponentManager.getRegisteredComponent(itemId).getUuid())
+                        .orElse(null);
+                context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(worldPosX, worldPosY, itemUsedUuid));
                 mCellBeingMine.remove(topCell);
             }
         } else {

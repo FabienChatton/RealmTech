@@ -1,5 +1,6 @@
 package ch.realmtech.server.packet.serverPacket;
 
+import com.badlogic.gdx.utils.Null;
 import io.netty.channel.Channel;
 
 import java.util.UUID;
@@ -11,7 +12,7 @@ public interface ServerExecute {
 
     void playerMove(Channel clientChannel, byte inputKeys);
 
-    void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, int itemUseByPlayerHash);
+    void cellBreakRequest(Channel clientChannel, int chunkPosX, int chunkPosY, @Null UUID itemUsedUuid);
 
     void getPlayerInventorySession(Channel clientChannel);
 
