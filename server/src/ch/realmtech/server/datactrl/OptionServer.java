@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OptionServer extends OptionCtrl {
     private final static Logger logger = LoggerFactory.getLogger(OptionServer.class);
     private String authServerBaseUrl;
     private String verifyAccessTokenUrn;
     public final AtomicBoolean verifyAccessToken = new AtomicBoolean();
+    public final AtomicInteger renderDistance = new AtomicInteger();
     private final Properties properties;
 
     private OptionServer(Properties properties) {
@@ -37,6 +39,7 @@ public class OptionServer extends OptionCtrl {
         authServerBaseUrl = "https://chattonf01.emf-informatique.ch/RealmTech/auth";
         verifyAccessTokenUrn = "verifyAccessToken.php";
         verifyAccessToken.set(true);
+        renderDistance.set(6);
     }
 
     private static OptionServer loadOptionFromFile(Properties propertiesFile) {
@@ -57,6 +60,7 @@ public class OptionServer extends OptionCtrl {
         optionServer.authServerBaseUrl = propertiesFile.getProperty("authServerBaseUrl");
         optionServer.verifyAccessTokenUrn = propertiesFile.getProperty("verifyAccessTokenUrn");
         optionServer.verifyAccessToken.set(Boolean.parseBoolean(propertiesFile.getProperty("verifyAccessToken")));
+        optionServer.renderDistance.set(Integer.parseInt(propertiesFile.getProperty("renderDistance")));
         return optionServer;
     }
 
@@ -64,6 +68,7 @@ public class OptionServer extends OptionCtrl {
         properties.put("authServerBaseUrl", authServerBaseUrl);
         properties.put("verifyAccessTokenUrn", verifyAccessTokenUrn);
         properties.put("verifyAccessToken", verifyAccessToken.toString());
+        properties.put("renderDistance", renderDistance.toString());
         try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionServerFile())) {
             properties.store(outputStream, "RealmTech option server file");
             outputStream.flush();
@@ -83,6 +88,7 @@ public class OptionServer extends OptionCtrl {
             case "authServerBaseUrl" -> Optional.of(getAuthServerBaseUrl());
             case "verifyAccessTokenUrn" -> Optional.of(getVerifyAccessTokenUrn());
             case "verifyAccessToken" -> Optional.of(verifyAccessToken.toString());
+            case "renderDistance" -> Optional.of(renderDistance.toString());
             default -> Optional.empty();
         };
     }
@@ -93,6 +99,7 @@ public class OptionServer extends OptionCtrl {
                 putListOptions(this, "authServerBaseUrl");
                 putListOptions(this, "verifyAccessTokenUrn");
                 putListOptions(this, "verifyAccessToken");
+                putListOptions(this, "renderDistance");
             }
         };
     }
@@ -103,6 +110,7 @@ public class OptionServer extends OptionCtrl {
             case "authServerBaseUrl" -> authServerBaseUrl = optionValue;
             case "verifyAccessTokenUrn" -> verifyAccessTokenUrn = optionValue;
             case "verifyAccessToken" -> verifyAccessToken.set(Boolean.parseBoolean(optionValue));
+            case "renderDistance" -> renderDistance.set(Integer.parseInt(optionValue));
         }
     }
 }

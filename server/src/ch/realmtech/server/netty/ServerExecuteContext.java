@@ -93,7 +93,7 @@ public class ServerExecuteContext implements ServerExecute {
             CellComponent cellComponent = mCell.get(cellId);
             BreakCell breakCellEvent = cellComponent.cellRegisterEntry.getCellBehavior().getBreakCellEvent();
             if (breakCellEvent != null) {
-                breakCellEvent.breakCell(serverContext.getSystem(MapSystemServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, itemUsed);
+                breakCellEvent.breakCell(serverContext.getSystem(MapSystemServer.class), serverContext.getEcsEngineServer().getWorld(), chunkId, cellId, itemUsed, playerId);
             }
         });
     }

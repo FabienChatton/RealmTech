@@ -69,7 +69,7 @@ public class ServerContext {
             ecsEngineServer.prepareSaveToLoad(connexionBuilder.getSaveName());
             serverExecuteContext = new ServerExecuteContext(this);
             serverNetty = new ServerNetty(connexionBuilder, serverExecuteContext);
-            serverResponseHandler = new ServerResponse();
+            serverResponseHandler = new ServerResponse(this);
             commandeServerExecute = new CommandeServerExecute(this);
             commandServerThread = new CommandServerThread(this, commandeServerExecute);
             tickThread = new TickThread(this);

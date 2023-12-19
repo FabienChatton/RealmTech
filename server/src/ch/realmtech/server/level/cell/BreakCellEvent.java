@@ -9,7 +9,7 @@ import ch.realmtech.server.registery.ItemRegisterEntry;
 public class BreakCellEvent {
 
     public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntryToDrop) {
-        return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
+        return (cellManager, world, chunkId, cellId, itemUseByPlayer, playerSrc) -> {
             CellComponent cellToBreak = world.getMapper(CellComponent.class).get(cellId);
             InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
             final ItemType itemUsedType = itemUseByPlayer != null ? itemUseByPlayer.getItemBehavior().getItemType() : ItemType.HAND;
@@ -18,8 +18,8 @@ public class BreakCellEvent {
                 cellManager.breakCell(
                         MapManager.getWorldPos(infChunkComponent.chunkPosX, cellToBreak.getInnerPosX()),
                         MapManager.getWorldPos(infChunkComponent.chunkPosY, cellToBreak.getInnerPosY()),
-                        itemRegisterEntryToDrop
-                );
+                        itemRegisterEntryToDrop,
+                        playerSrc);
                 return true;
             } else {
                 return false;
@@ -28,12 +28,12 @@ public class BreakCellEvent {
     }
 
     public static BreakCell dropNothing() {
-        return (cellManager, world, chunkId, cellId, itemUseByPlayer) -> {
+        return (cellManager, world, chunkId, cellId, itemUseByPlayer, playerSrc) -> {
             CellComponent cellComponent = world.getMapper(CellComponent.class).get(cellId);
             InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
             int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
             int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
-            cellManager.breakCell(worldPosX, worldPosY, null);
+            cellManager.breakCell(worldPosX, worldPosY, null, playerSrc);
             return true;
         };
     }

@@ -50,4 +50,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> {
         logger.error("Une erreur est survenue {}", cause.getMessage());
         ctx.channel().close();
     }
+
+    public static void flushAllChanel() {
+        for (Channel channel : channels) {
+            channel.flush();
+        }
+    }
 }

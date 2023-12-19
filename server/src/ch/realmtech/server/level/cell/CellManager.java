@@ -5,5 +5,5 @@ import com.badlogic.gdx.utils.Null;
 
 public interface CellManager {
 
-    void breakCell(int worldPosX, int worldPosY, @Null ItemRegisterEntry itemDropRegisterEntry);
+    void breakCell(int worldPosX, int worldPosY, @Null ItemRegisterEntry itemDropRegisterEntry, int playerSrc);
 }
