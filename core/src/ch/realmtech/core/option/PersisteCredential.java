@@ -105,4 +105,9 @@ public class PersisteCredential {
         byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
         return new String(plainText);
     }
+
+    public static void forget() {
+        realmTechExternalFs.delete();
+        realmTechCredentialsKey.delete();
+    }
 }

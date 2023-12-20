@@ -45,6 +45,9 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
         int worldPosY = MapManager.getWorldPos(positionComponent.y);
 
         int chunkId = systemsAdminServer.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY) ,infMapComponent.infChunks);
+        if (chunkId == -1) {
+            System.out.println();
+        }
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCellId = systemsAdminServer.mapManager.getTopCell(chunkId, innerChunkX, innerChunkY);

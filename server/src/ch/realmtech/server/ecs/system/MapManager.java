@@ -274,6 +274,40 @@ public class MapManager extends Manager {
         }
     }
 
+    public int[] ajouterChunkAMap(int[] currentChunks, int[] newChunkId, int[] oldChunkId) {
+        List<Integer> realNewChunkIdList = new ArrayList<>(newChunkId.length);
+        loop:
+        for (int i = 0; i < newChunkId.length; i++) {
+            for (int j = 0; j < currentChunks.length; j++) {
+                if (currentChunks[j] == newChunkId[i]) {
+                    continue loop;
+                }
+            }
+            realNewChunkIdList.add(newChunkId[i]);
+        }
+        int[] realNewChunkId = new int[realNewChunkIdList.size()];
+        for (int i = 0; i < realNewChunkIdList.size(); i++) {
+            realNewChunkId[i] = realNewChunkIdList.get(i);
+        }
+
+        int[] ret = new int[currentChunks.length + realNewChunkId.length - oldChunkId.length];
+        System.arraycopy(realNewChunkId, 0, ret, 0, realNewChunkId.length);
+
+        int r = realNewChunkId.length;
+        int c = 0;
+        loop:
+        while (r < ret.length) {
+            for (int o = 0; o < oldChunkId.length; o++) {
+                if (oldChunkId[o] == currentChunks[c]) {
+                    ++c;
+                    continue loop;
+                }
+            }
+            ret[r++] = currentChunks[c++];
+        }
+        return ret;
+    }
+
     public int[] ajouterChunkAMap(int[] infChunks, int chunkId) {
         int[] ret = new int[infChunks.length + 1];
         System.arraycopy(infChunks, 0, ret, 0, infChunks.length);

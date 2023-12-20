@@ -29,10 +29,17 @@ public class AuthenticateScreen extends AbstractScreen {
         passwordTextField.setMessageText("password");
         passwordTextField.setPasswordMode(true);
         loginAction = new OnClick((event, x, y)  -> verifyCredential());
-        anonymousAction = new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU));
+        saveCredentialCheckBox = new CheckBox("save credential", skin);
+        anonymousAction = new OnClick((event, x, y) -> {
+            if (!saveCredentialCheckBox.isChecked()) {
+                PersisteCredential.forget();
+            }
+            context.getAuthControllerClient().anonyme();
+            context.setScreen(ScreenType.MENU);
+        });
         loginButton = new ButtonsMenu.TextButtonMenu(context, "login", loginAction);
         anonymousButton = new ButtonsMenu.TextButtonMenu(context, "continue as anonymous", anonymousAction);
-        saveCredentialCheckBox = new CheckBox("save credential", skin);
+
 
         uiTable.add(new Label("Login", skin)).pad(50f);
         uiTable.row();
@@ -44,7 +51,9 @@ public class AuthenticateScreen extends AbstractScreen {
         uiTable.add(saveCredentialCheckBox);
         uiTable.row();
         uiTable.add(anonymousButton);
+    }
 
+    public void hasPersisteCredential() {
         PersisteCredential.loadCredential().ifPresent(credential -> {
             String username = credential[0];
             String password = credential[1];
@@ -62,6 +71,9 @@ public class AuthenticateScreen extends AbstractScreen {
             String username = usernameTextField.getText();
             String password = passwordTextField.getText();
             context.getAuthControllerClient().verifyLogin(username, password);
+            if (!saveCredentialCheckBox.isChecked()) {
+                PersisteCredential.forget();
+            }
             if (saveCredentialCheckBox.isChecked()) {
                 PersisteCredential.persisteCredential(username, password);
             }

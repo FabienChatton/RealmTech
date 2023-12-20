@@ -20,6 +20,11 @@ public class AuthControllerClient {
         this.password = password;
     }
 
+    public void anonyme() {
+        this.username = UN_REGISTERED_USERNAME;
+        this.password = null;
+    }
+
     public void sendAuthAndJoinServer(RealmTechClientConnexionHandler clientConnexionHandler) throws Exception {
         if (!username.equals(UN_REGISTERED_USERNAME)) {
             authRequestClient.createAccessToken(username, password);

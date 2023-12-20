@@ -13,6 +13,7 @@ import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.option.Option;
 import ch.realmtech.core.screen.AbstractScreen;
+import ch.realmtech.core.screen.AuthenticateScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.datactrl.DataCtrl;
@@ -106,6 +107,7 @@ public final class RealmTech extends Game implements ClientContext {
 
     public void loadingFinish() {
         setScreen(ScreenType.AUTHENTICATE);
+        ((AuthenticateScreen) getScreen()).hasPersisteCredential();
     }
 
     @Override
@@ -146,7 +148,10 @@ public final class RealmTech extends Game implements ClientContext {
                 setScreen(screen);
             }
             if (!(currentScreenType == ScreenType.GAME_SCREEN && screenType == ScreenType.GAME_PAUSE)) {
-                if (currentScreen != null) currentScreen.dispose();
+                if (currentScreen != null) {
+                    currentScreen.dispose();
+                    currentScreen = null;
+                }
             }
             currentScreenType = screenType;
         } catch (ReflectiveOperationException e) {

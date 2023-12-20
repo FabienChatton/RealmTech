@@ -118,6 +118,7 @@ public class PlayerManagerClient extends Manager {
 
     public void setPlayerPos(float x, float y, UUID uuid) {
         int playerId = players.get(uuid);
+        if (playerId == -1) return;
         Box2dComponent box2dComponent = mBox2d.get(playerId);
         box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
     }
