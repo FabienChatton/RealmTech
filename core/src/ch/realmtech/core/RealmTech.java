@@ -156,6 +156,9 @@ public final class RealmTech extends Game implements ClientContext {
             currentScreenType = screenType;
         } catch (ReflectiveOperationException e) {
             logger.error("La class {} n'a pas pu etre cree", screenType, e);
+        } catch (Exception e) {
+            dispose();
+            Gdx.app.exit();
         }
     }
 
