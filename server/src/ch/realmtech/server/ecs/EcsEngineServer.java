@@ -38,7 +38,7 @@ public final class EcsEngineServer implements GetWorld {
     private final SerializerController serializerController;
     private final ExecuteOnContextServer executeOnContextServer;
 
-    public EcsEngineServer(ServerContext serverContext) throws IOException {
+    public EcsEngineServer(ServerContext serverContext) throws Exception {
         logger.trace("debut de l'initialisation du ecs");
         this.serverContext = serverContext;
         Box2D.init();
@@ -46,7 +46,7 @@ public final class EcsEngineServer implements GetWorld {
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
-        serializerController = new SerializerController(this);
+        serializerController = new SerializerController();
         executeOnContextServer = new ExecuteOnContextServer();
         systemsAdminServer = new SystemsAdminServer();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
@@ -67,6 +67,7 @@ public final class EcsEngineServer implements GetWorld {
 
         this.world = new World(worldConfiguration);
         executeOnContextServer.initialize(world);
+        serializerController.initialize(world);
 
         logger.trace("fin de l'initialisation du ecs");
     }

@@ -40,7 +40,7 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
     }
 
 
-    Map<Byte, Serializer<InputType, OutputType>> getSerializers() {
+    public Map<Byte, Serializer<InputType, OutputType>> getSerializers() {
         return Collections.unmodifiableMap(serializerMap);
     }
 

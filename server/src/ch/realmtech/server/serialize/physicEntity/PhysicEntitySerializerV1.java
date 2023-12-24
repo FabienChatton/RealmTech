@@ -18,14 +18,14 @@ import java.util.UUID;
 import static ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController.*;
 
 public class PhysicEntitySerializerV1 implements Serializer<Integer, PhysicEntityArgs> {
+
+    private ComponentMapper<PositionComponent> mPos;
+    private ComponentMapper<UuidComponent> mUuid;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
+    private ComponentMapper<ItemComponent> mItem;
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer physicEntityToSerialize) {
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, physicEntityToSerialize));
-
-        ComponentMapper<PositionComponent> mPos = world.getMapper(PositionComponent.class);
-        ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
-        ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = world.getMapper(PlayerConnexionComponent.class);
-        ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
         PositionComponent positionComponent = mPos.get(physicEntityToSerialize);
         UUID uuid = mUuid.get(physicEntityToSerialize).getUuid();

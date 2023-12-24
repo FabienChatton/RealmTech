@@ -256,7 +256,7 @@ public final class RealmTech extends Game implements ClientContext {
         }
     }
 
-    public void nouveauECS(RealmTechClientConnexionHandler clientConnexionHandler) throws IOException {
+    public void nouveauECS(RealmTechClientConnexionHandler clientConnexionHandler) throws Exception {
         if (ecsEngine != null) {
             supprimeECS();
         }

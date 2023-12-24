@@ -52,7 +52,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final RayHandler rayHandler;
     private final ExecuteOnContextClient executeOnContextClient;
 
-    public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) {
+    public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) throws Exception {
         this.context = context;
         this.connexionHandler = connexionHandler;
         TickEmulationInvocationStrategy tickEmulationInvocationStrategy = new TickEmulationInvocationStrategy();
@@ -63,7 +63,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
-        serializerController = new SerializerController(this);
+        serializerController = new SerializerController();
         systemAdminClient = new SystemsAdminClient();
         executeOnContextClient = new ExecuteOnContextClient();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
@@ -105,6 +105,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         world = new World(worldConfiguration);
 
         executeOnContextClient.initialize(world);
+        serializerController.initialize(world);
     }
 
     public void process(float delta) {
