@@ -84,8 +84,7 @@ public class PlayerManagerServer extends Manager {
         // inventory
         int chestId;
         try {
-            serverContext.getSystem(PlayerManagerServer.class).loadPlayerInventory(playerUuid);
-            chestId = systemsAdminServer.inventoryManager.getChestInventoryId(playerId);
+            chestId = serverContext.getSystem(PlayerManagerServer.class).loadPlayerInventory(playerUuid);
         } catch (Exception e) {
             chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         }
@@ -163,6 +162,9 @@ public class PlayerManagerServer extends Manager {
     }
 
     public void savePlayerInventory(int playerId) throws IOException {
+        // don't save inventory if login as anonymous
+        if (!serverContext.getOptionServer().verifyAccessToken.get()) return;
+
         File playerInventoryFile;
         try {
             UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid();
@@ -182,14 +184,13 @@ public class PlayerManagerServer extends Manager {
         }
     }
 
-    public void loadPlayerInventory(UUID playerUuid) throws IOException {
+    public int loadPlayerInventory(UUID playerUuid) throws IOException {
         int playerId = getPlayerByUuid(playerUuid);
-        Path playerDir = getPlayerDir(playerUuid);
-        if (!playerDir.toFile().exists()) return;
 
         try (FileInputStream fis = new FileInputStream(getPlayerInventoryFile(getPlayerDir(playerUuid)).toFile())) {
             byte[] rawInventoryBytes = fis.readAllBytes();
             ChestEditEntity chestEditEntityArg = serverContext.getSerializerController().getChestSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes));
+            return systemsAdminServer.inventoryManager.createChest(playerId, chestEditEntityArg.getInventory(), chestEditEntityArg.getUuid(), chestEditEntityArg.getNumberOfSlotParRow(), chestEditEntityArg.getNumberOfRow());
         }
     }
 
