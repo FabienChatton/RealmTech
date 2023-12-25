@@ -97,7 +97,7 @@ public class SaveInfManager extends Manager {
         metaDonneesFile.createNewFile();
 
         try (final DataOutputStream outputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(metaDonneesFile)))) {
-            SerializedApplicationBytes encodeSaveMetadata = serializerController.getSaveMetadataSerializerController().encode(saveMetadataComponent);
+            SerializedApplicationBytes encodeSaveMetadata = serializerController.getSaveMetadataSerializerController().encode(infMetaDonneesId);
             outputStream.write(encodeSaveMetadata.applicationBytes());
             outputStream.flush();
         }
