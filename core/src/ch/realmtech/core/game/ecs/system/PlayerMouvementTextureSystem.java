@@ -1,12 +1,14 @@
 package ch.realmtech.core.game.ecs.system;
 
 
+import ch.realmtech.core.game.ecs.plugin.SystemTickEmulation;
 import ch.realmtech.server.ecs.component.PlayerComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
+@SystemTickEmulation
 @All(PlayerComponent.class)
 public class PlayerMouvementTextureSystem extends IteratingSystem {
     private ComponentMapper<PlayerComponent> mPlayer;
@@ -20,6 +22,8 @@ public class PlayerMouvementTextureSystem extends IteratingSystem {
         playerComponent.moveUp = playerComponent.oldPos.y < positionComponent.y;
         playerComponent.moveRight = playerComponent.oldPos.x < positionComponent.x;
 
-        playerComponent.oldPos.set(positionComponent.x, positionComponent.y);
+        if (!(playerComponent.oldPos.x == positionComponent.x && playerComponent.oldPos.y == positionComponent.y)) {
+            playerComponent.oldPos.set(positionComponent.x, positionComponent.y);
+        }
     }
 }
