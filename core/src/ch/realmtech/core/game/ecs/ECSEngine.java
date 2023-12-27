@@ -10,8 +10,8 @@ import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.TickEmulationInvocationStrategy;
 import ch.realmtech.core.game.ecs.system.CellBeingMineRenderSystem;
 import ch.realmtech.core.game.ecs.system.CellBeingMineSystem;
-import ch.realmtech.core.game.ecs.system.CellHoverEtWailaSystem;
 import ch.realmtech.core.game.ecs.system.PlayerInputSystem;
+import ch.realmtech.core.game.ecs.system.WailaSystem;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.server.ecs.GetWorld;
@@ -79,7 +79,7 @@ public final class ECSEngine implements Disposable, GetWorld {
 //                        PhysiqueWorldStepSystem.class,
                         CellBeingMineSystem.class,
                         CellBeingMineRenderSystem.class,
-                        CellHoverEtWailaSystem.class
+                        WailaSystem.class
                 ))
         );
         worldConfiguration.register("physicWorld", physicWorld);

@@ -23,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class CellHoverEtWailaSystem extends BaseSystem {
+public class WailaSystem extends BaseSystem {
     @Wire(name = "context")
     private RealmTech context;
     @Wire
@@ -86,16 +86,7 @@ public class CellHoverEtWailaSystem extends BaseSystem {
         if (chunk == -1) return;
         int topCell = systemsAdminClient.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         if (topCell == -1) return;
-        InfChunkComponent infChunkComponent = mChunk.get(chunk);
         CellComponent cellComponent = mCell.get(topCell);
-        TextureAtlas.AtlasRegion region = context.getTextureAtlas().findRegion("cellOver-01");
-        context.getGameStage().getBatch().draw(
-                region,
-                worldPosX,
-                worldPosY,
-                RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
-                RealmTech.PPM * RealmTech.UNITE_SCALE / 2
-        );
 
         // waila
         wailaWindow.getTitleLabel().setText(cellComponent.cellRegisterEntry.toString());

@@ -19,7 +19,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final CameraFollowPlayerSystem cameraFollowPlayerSystem;
     private final MapRendererSystem mapRendererSystem;
     private final CellBeingMineRenderSystem cellBeingMineRenderSystem;
-    private final CellHoverEtWailaSystem cellHoverEtWailaSystem;
+    private final CellHoverSystem cellHoverSystem;
+    private final WailaSystem wailaSystem;
     private final TextureRenderer textureRenderer;
     private final PlayerInventorySystem playerInventorySystem;
     private final ItemBarManager itemBarManager;
@@ -38,12 +39,13 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         iaManagerClient = new IaManagerClient();
         updateBox2dWithPosition = new UpdateBox2dWithPosition();
         timeSystemSimulation = new TimeSystemSimulation();
+        cellHoverSystem = new CellHoverSystem();
         lightManager = new LightManager();
         // render
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
         cellBeingMineRenderSystem = new CellBeingMineRenderSystem();
-        cellHoverEtWailaSystem = new CellHoverEtWailaSystem();
+        wailaSystem = new WailaSystem();
         textureRenderer = new TextureRenderer();
 
         playerInventorySystem = new PlayerInventorySystem();
@@ -74,12 +76,13 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
                 mapRendererSystem,
+                cellHoverSystem,
                 textureRenderer,
                 lightCycleSystem,
 
                 // ui
                 cellBeingMineRenderSystem,
-                cellHoverEtWailaSystem,
+                wailaSystem,
                 playerInventorySystem,
                 itemBarManager,
                 cellBeingMineSystem
@@ -130,8 +133,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return cellBeingMineRenderSystem;
     }
 
-    public CellHoverEtWailaSystem getCellHoverEtWailaSystem() {
-        return cellHoverEtWailaSystem;
+    public WailaSystem getCellHoverEtWailaSystem() {
+        return wailaSystem;
     }
 
     public TextureRenderer getTextureRenderer() {
