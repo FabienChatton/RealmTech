@@ -101,7 +101,7 @@ class SerializerControllerTest {
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
         SaveMetadataComponent expectedMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(serverContext.getEcsEngineServer().getWorld());
 
-        SerializedApplicationBytes expectedSerializedSaveMetadata = serializerController.getSaveMetadataSerializerController().encode(expectedMetaDonnesComponent);
+        SerializedApplicationBytes expectedSerializedSaveMetadata = serializerController.getSaveMetadataSerializerController().encode(infMapComponent.infMetaDonnees);
 
         int actualSaveMetadataId = serializerController.getSaveMetadataSerializerController().decode(expectedSerializedSaveMetadata);
 

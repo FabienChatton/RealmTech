@@ -8,6 +8,7 @@ import ch.realmtech.server.serialize.furnace.FurnaceSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.life.LifeSerializerController;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController;
+import ch.realmtech.server.serialize.player.PlayerSerializerController;
 import ch.realmtech.server.serialize.savemetadata.SaveMetadataSerializerController;
 import ch.realmtech.server.serialize.uuid.UuidSerializerController;
 import com.artemis.World;
@@ -27,6 +28,7 @@ public final class SerializerController {
     private final FurnaceSerializerController furnaceSerializerController = new FurnaceSerializerController(this);
     private final PhysicEntitySerializerController physicEntitySerializerController = new PhysicEntitySerializerController(this);
     private final LifeSerializerController lifeSerializerController = new LifeSerializerController(this);
+    private final PlayerSerializerController playerSerializerController = new PlayerSerializerController(this);
 
     public void initialize(World world) throws Exception {
         if (this.world != null) throw new IllegalCallerException("Already initialize");
@@ -83,6 +85,10 @@ public final class SerializerController {
 
     public LifeSerializerController getLifeSerializerController() {
         return lifeSerializerController;
+    }
+
+    public PlayerSerializerController getPlayerSerializerController() {
+        return playerSerializerController;
     }
 
     World getGetWorld() {

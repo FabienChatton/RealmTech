@@ -5,7 +5,6 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
@@ -27,6 +26,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class PlayerManagerServer extends Manager {
     private final static Logger logger = LoggerFactory.getLogger(PlayerManagerServer.class);
@@ -56,7 +56,36 @@ public class PlayerManagerServer extends Manager {
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
         players.add(playerId);
-        float x = 0, y = 0;
+
+        // player connexion component
+        PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
+        playerConnexionComponent.set(channel);
+        systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
+
+        float posX;
+        float posY;
+
+        int chestId;
+
+        try {
+            loadPlayerSave(playerUuid, playerId);
+
+            posX = mPosition.get(playerId).x;
+            posY = mPosition.get(playerId).y;
+
+            chestId = systemsAdminServer.inventoryManager.getChestInventoryId(playerId);
+        } catch (IOException e) {
+            posX = 0;
+            posY = 0;
+
+            // position component
+            PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
+            positionComponent.set(posX, posY);
+
+            // default inventory
+            chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+
+        }
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
@@ -75,19 +104,9 @@ public class PlayerManagerServer extends Manager {
         // box2d component
         Box2dComponent box2dComponent = world.edit(playerId).create(Box2dComponent.class);
         box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
-
-        // player connexion component
-        PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
-        playerConnexionComponent.set(channel);
-        systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
+        box2dComponent.body.setTransform(posX, posY, box2dComponent.body.getAngle());
 
         // inventory
-        int chestId;
-        try {
-            chestId = serverContext.getSystem(PlayerManagerServer.class).loadPlayerInventory(playerUuid);
-        } catch (Exception e) {
-            chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
-        }
         InventoryComponent chestInventoryComponent = mInventory.get(chestId);
 
         // inventory cursor
@@ -97,9 +116,6 @@ public class PlayerManagerServer extends Manager {
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
         movementComponent.set(10, 10);
 
-        // position component
-        PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
-        positionComponent.set(box2dComponent, x, y);
 
         // default crafting table
         int[] craftingInventories = systemsAdminServer.inventoryManager.createCraftingTable(playerId, UUID.randomUUID(), 2,2, UUID.randomUUID());
@@ -108,7 +124,7 @@ public class PlayerManagerServer extends Manager {
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
 
-        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(x, y, playerUuid,
+        return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(posX, posY, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
                 mUuid.get(craftingInventories[0]).getUuid(),
@@ -154,48 +170,51 @@ public class PlayerManagerServer extends Manager {
         mPlayerConnexion.get(playerByUuid).setUsername(username);
     }
 
-    public void savePlayersInventory() throws IOException {
+    public void savePlayers() throws IOException {
         int[] playersData = players.getData();
         for (int i = 0; i < players.size(); i++) {
-            savePlayerInventory(playersData[i]);
+            savePlayer(playersData[i]);
         }
     }
 
-    public void savePlayerInventory(int playerId) throws IOException {
-        // don't save inventory if login as anonymous
+    public void savePlayer(int playerId) throws IOException {
+        // don't save player if login as anonymous
         if (!serverContext.getOptionServer().verifyAccessToken.get()) return;
 
-        File playerInventoryFile;
+        File playerFile;
         try {
             UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid();
             Path playerDir = getPlayerDir(playerUuid);
             if (!playerDir.toFile().exists()) Files.createDirectories(playerDir);
-            playerInventoryFile = getPlayerInventoryFile(playerDir).toFile();
+            playerFile = getPLayerFile(playerDir).toFile();
         } catch (Exception e) {
             logger.warn("can not save player inventory.", e);
             return;
         }
 
-        SerializedApplicationBytes chestInventoryBytes = serverContext.getSerializerController().getChestSerializerController().encode(playerId);
+        SerializedApplicationBytes playerBytes = serverContext.getSerializerController().getPlayerSerializerController().encode(playerId);
 
-        playerInventoryFile.createNewFile();
-        try (FileOutputStream fos = new FileOutputStream(playerInventoryFile)) {
-            fos.write(chestInventoryBytes.applicationBytes());
+        playerFile.createNewFile();
+        try (FileOutputStream fos = new FileOutputStream(playerFile)) {
+            fos.write(playerBytes.applicationBytes());
         }
     }
 
-    public int loadPlayerInventory(UUID playerUuid) throws IOException {
-        int playerId = getPlayerByUuid(playerUuid);
-
-        try (FileInputStream fis = new FileInputStream(getPlayerInventoryFile(getPlayerDir(playerUuid)).toFile())) {
+    public void loadPlayerSave(UUID playerUuid, int playerId) throws IOException {
+        try (FileInputStream fis = new FileInputStream(getPLayerFile(getPlayerDir(playerUuid)).toFile())) {
             byte[] rawInventoryBytes = fis.readAllBytes();
-            ChestEditEntity chestEditEntityArg = serverContext.getSerializerController().getChestSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes));
-            return systemsAdminServer.inventoryManager.createChest(playerId, chestEditEntityArg.getInventory(), chestEditEntityArg.getUuid(), chestEditEntityArg.getNumberOfSlotParRow(), chestEditEntityArg.getNumberOfRow());
+            Consumer<Integer> setPlayer = serverContext.getSerializerController().getPlayerSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes));
+            setPlayer.accept(playerId);
         }
     }
 
+    @Deprecated
     private static Path getPlayerInventoryFile(Path playerDir) {
         return Path.of(playerDir.toString(), "inventory.pis");
+    }
+
+    private static Path getPLayerFile(Path playerDir) {
+        return Path.of(playerDir.toString(), "player.ps");
     }
 
     private Path getPlayerDir(UUID playerUuid) {

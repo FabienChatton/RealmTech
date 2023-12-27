@@ -55,7 +55,7 @@ public class ServerExecuteContext implements ServerExecute {
         int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(channel);
         if (playerId == -1) return;
         try {
-            serverContext.getSystem(PlayerManagerServer.class).savePlayerInventory(playerId);
+            serverContext.getSystem(PlayerManagerServer.class).savePlayer(playerId);
         } catch (IOException e) {
             String username = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId).getUsername();
             logger.warn("Can not save player inventory of {}. : {} ", username, e.getMessage());

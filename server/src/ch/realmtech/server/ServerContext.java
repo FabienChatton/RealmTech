@@ -114,7 +114,7 @@ public class ServerContext {
             ecsEngineServer.saveMap();
         } catch (Exception ignored) {}
         try {
-            getSystem(PlayerManagerServer.class).savePlayersInventory();
+            getSystem(PlayerManagerServer.class).savePlayers();
         } catch (IOException ignored) {}
         tickThread.close();
         commandServerThread.close();
