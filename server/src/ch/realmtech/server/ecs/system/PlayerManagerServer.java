@@ -208,11 +208,6 @@ public class PlayerManagerServer extends Manager {
         }
     }
 
-    @Deprecated
-    private static Path getPlayerInventoryFile(Path playerDir) {
-        return Path.of(playerDir.toString(), "inventory.pis");
-    }
-
     private static Path getPLayerFile(Path playerDir) {
         return Path.of(playerDir.toString(), "player.ps");
     }
