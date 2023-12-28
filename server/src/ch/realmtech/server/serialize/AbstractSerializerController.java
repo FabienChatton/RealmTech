@@ -13,6 +13,7 @@ import java.util.Map;
 public abstract class AbstractSerializerController<InputType, OutputType> implements SerializerCoder<InputType, OutputType> {
     public final static int MAGIC_NUMBER_LENGTH = 1;
     public final static int VERSION_LENGTH = 1;
+    public final static int MAX_BUFFER_LENGTH = Short.MAX_VALUE;
     private final SerializerController serializerController;
     private final byte magicNumber;
     private final Map<Byte, Serializer<InputType, OutputType>> serializerMap;

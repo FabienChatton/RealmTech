@@ -1,8 +1,8 @@
 package ch.realmtech.server.divers;
 
 import ch.realmtech.server.serialize.AbstractSerializerController;
+import ch.realmtech.server.serialize.exception.TooLongBytes;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
-import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteBuffer;
@@ -103,13 +103,24 @@ public final class ByteBufferHelper {
         return byteBuffer;
     }
 
-    public static ByteBuf writeSerializedApplicationBytes(ByteBuf buffer, SerializedApplicationBytes serializedApplicationBytes) {
-        buffer.writeInt(serializedApplicationBytes.getLength());
+    public static ByteBuf writeSerializedApplicationBytes(ByteBuf buffer, SerializedApplicationBytes serializedApplicationBytes) throws TooLongBytes {
+        int length = serializedApplicationBytes.getLength();
+        if (length > AbstractSerializerController.MAX_BUFFER_LENGTH) throw new TooLongBytes("Serialized application length is: " + length + ". Max length is: " + AbstractSerializerController.MAX_BUFFER_LENGTH);
+        buffer.writeShort(length);
         buffer.writeBytes(serializedApplicationBytes.applicationBytes());
         return buffer;
     }
 
     public static SerializedApplicationBytes readSerializedApplicationBytes(ByteBuf buffer) {
+        short length = buffer.readShort();
+        if (length < 0) throw new NegativeArraySizeException("Size of bytes, can not be negative. Byte size: " + length);
+        SerializedApplicationBytes serializedApplicationBytes = new SerializedApplicationBytes(new byte[length]);
+        buffer.readBytes(serializedApplicationBytes.applicationBytes());
+        return serializedApplicationBytes;
+    }
+
+    @Deprecated(forRemoval = true)
+    public static SerializedApplicationBytes readSerializedApplicationBytesIntLegacy(ByteBuf buffer) {
         int length = buffer.readInt();
         SerializedApplicationBytes serializedApplicationBytes = new SerializedApplicationBytes(new byte[length]);
         buffer.readBytes(serializedApplicationBytes.applicationBytes());
@@ -122,7 +133,18 @@ public final class ByteBufferHelper {
     }
 
     public static <OutputType> OutputType decodeSerializedApplicationBytes(ByteBuf buffer, AbstractSerializerController<?, OutputType> serializerController) {
-        SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytes(buffer);
-        return serializerController.decode(serializedApplicationBytes);
+        // pour la compatibilité entre la longueur d'anciennement 4 bytes pour la taille du bytes application, il y a le try catch. A supprimer dans quelque temps.
+        OutputType ret;
+        buffer.markReaderIndex();
+        try {
+            SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytes(buffer);
+            ret = serializerController.decode(serializedApplicationBytes);
+        } catch (IndexOutOfBoundsException e) {
+            // tant ça change avec l'ancienne tail pour le byte de la longueur.
+            buffer.resetReaderIndex();
+            SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytesIntLegacy(buffer);
+            ret = serializerController.decode(serializedApplicationBytes);
+        }
+        return ret;
     }
 }
