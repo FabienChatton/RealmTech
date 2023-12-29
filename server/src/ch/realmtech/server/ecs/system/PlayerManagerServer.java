@@ -6,12 +6,12 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.serialize.player.PlayerSerializerConfig;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -46,6 +46,7 @@ public class PlayerManagerServer extends Manager {
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<InventoryComponent> mInventory;
+    private ComponentMapper<LifeComponent> mLife;
 
     public PlayerManagerServer() {
         players = new IntBag();
@@ -66,6 +67,7 @@ public class PlayerManagerServer extends Manager {
         float posY;
 
         int chestId;
+        int heart = -1;
 
         try {
             loadPlayerSave(playerUuid, playerId);
@@ -74,6 +76,11 @@ public class PlayerManagerServer extends Manager {
             posY = mPosition.get(playerId).y;
 
             chestId = systemsAdminServer.inventoryManager.getChestInventoryId(playerId);
+
+            // player serializer v2
+            if (mLife.has(playerId)) {
+                heart = mLife.get(playerId).getHeart();
+            }
         } catch (IOException e) {
             posX = 0;
             posY = 0;
@@ -124,6 +131,12 @@ public class PlayerManagerServer extends Manager {
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
         pickerGroundItemComponent.set(10);
 
+        // life component
+        if (heart == -1) {
+            heart = 20;
+        }
+        mLife.create(playerId).set(heart);
+
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(posX, posY, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
                 mUuid.get(chestId).getUuid(),
@@ -145,24 +158,6 @@ public class PlayerManagerServer extends Manager {
             ret.add(mPlayerConnexion.get(data[i]));
         }
         return ret;
-    }
-
-    public TousLesJoueursArg getTousLesJoueurs() {
-        int[] playersData = players.getData();
-        Vector2[] poss = new Vector2[players.size()];
-        UUID[] uuids = new UUID[players.size()];
-        ComponentMapper<PlayerConnexionComponent> mPlayer = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class);
-        ComponentMapper<PositionComponent> mPos = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class);
-        for (int i = 0; i < players.size(); i++) {
-            int playerId = playersData[i];
-            PositionComponent positionComponent = mPos.get(playerId);
-            if (positionComponent == null) return null;
-            PlayerConnexionComponent playerComponent = mPlayer.get(playerId);
-            poss[i] = new Vector2(positionComponent.x, positionComponent.y);
-            UuidComponent uuidComponent = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId);
-            uuids[i] = uuidComponent.getUuid();
-        }
-        return new TousLesJoueursArg(players.size(), poss, uuids);
     }
 
     public void setPlayerUsername(UUID uuid, String username) {
@@ -192,7 +187,7 @@ public class PlayerManagerServer extends Manager {
             return;
         }
 
-        SerializedApplicationBytes playerBytes = serverContext.getSerializerController().getPlayerSerializerController().encode(playerId);
+        SerializedApplicationBytes playerBytes = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(playerId));
 
         playerFile.createNewFile();
         try (FileOutputStream fos = new FileOutputStream(playerFile)) {
@@ -228,7 +223,6 @@ public class PlayerManagerServer extends Manager {
         return -1;
     }
 
-    public record TousLesJoueursArg(int nombreDeJoueur, Vector2[] pos, UUID[] uuids) { }
     public int getPlayerByChannel(Channel clientChannel) {
         int[] playersData = players.getData();
         for (int i = 0; i < players.size(); i++) {

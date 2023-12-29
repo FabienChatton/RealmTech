@@ -6,12 +6,13 @@ import ch.realmtech.server.serialize.SerializerController;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-public class PlayerSerializerController extends AbstractSerializerController<Integer, Consumer<Integer>> {
+public class PlayerSerializerController extends AbstractSerializerController<PlayerSerializerConfig, Consumer<Integer>> {
     public PlayerSerializerController(SerializerController serializerController) {
         super(serializerController, (byte) 21, new HashMap<>() {
             {
                 put((byte) 1, new PlayerSerializerV1());
+                put((byte) 2, new PlayerSerializerV2());
             }
-        }, (byte) 1);
+        }, (byte) 2);
     }
 }

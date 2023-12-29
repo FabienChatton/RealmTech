@@ -60,6 +60,7 @@ public class ServerContext {
                 .put(TimeGetRequestPacket.class, TimeGetRequestPacket::new)
                 .put(TimeSetPacket.class, TimeSetPacket::new)
                 .put(PhysicEntitySetPacket.class, PhysicEntitySetPacket::new)
+                .put(PlayerSyncPacket.class, PlayerSyncPacket::new)
         ;
     }
 

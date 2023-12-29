@@ -3,13 +3,18 @@ package ch.realmtech.server.packet.clientPacket;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface ClientExecute {
     ClientContext getContext();
+    default SerializerController getSerializerController() {
+        return getContext().getWorld().getRegistered(SerializerController.class);
+    }
     void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg);
 
     void chunkAMounter(SerializedApplicationBytes applicationChunkBytes);
@@ -43,4 +48,5 @@ public interface ClientExecute {
     void timeSet(float time);
     void physicEntity(PhysicEntityArgs physicEntityArgs);
 
+    void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid);
 }

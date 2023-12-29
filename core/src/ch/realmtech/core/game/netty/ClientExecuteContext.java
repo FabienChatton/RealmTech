@@ -10,6 +10,7 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ClientExecuteContext implements ClientExecute {
@@ -196,5 +198,15 @@ public class ClientExecuteContext implements ClientExecute {
                 context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
             });
         }
+    }
+
+    @Override
+    public void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid) {
+        context.nextFrame(() -> {
+            int playerId = context.getEcsEngine().getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(playerUuid);
+            setPlayerConsumer.accept(playerId);
+            PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(playerId);
+            context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(positionComponent.x, positionComponent.y, playerUuid);
+        });
     }
 }

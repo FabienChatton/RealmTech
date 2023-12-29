@@ -16,12 +16,13 @@ import io.netty.buffer.Unpooled;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class PlayerSerializerV1 implements Serializer<Integer, Consumer<Integer>> {
+public class PlayerSerializerV1 implements Serializer<PlayerSerializerConfig, Consumer<Integer>> {
 
     private ComponentMapper<PositionComponent> mPos;
     @Override
-    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer playerToSerialize) {
-        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, playerToSerialize));
+    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, PlayerSerializerConfig playerToSerializeConfig) {
+        int playerToSerialize = playerToSerializeConfig.getPlayerId();
+        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, playerToSerializeConfig));
 
         PositionComponent positionComponent = mPos.get(playerToSerialize);
 
@@ -50,7 +51,8 @@ public class PlayerSerializerV1 implements Serializer<Integer, Consumer<Integer>
     }
 
     @Override
-    public int getBytesSize(World world, SerializerController serializerController, Integer playerToSerialize) {
+    public int getBytesSize(World world, SerializerController serializerController, PlayerSerializerConfig playerToSerializeConfig) {
+        int playerToSerialize = playerToSerializeConfig.getPlayerId();
         UUID playerUuid = world.getSystem(UuidComponentManager.class).getRegisteredComponent(playerToSerialize).getUuid();
 
         int chestInventoryLength = serializerController.getApplicationBytesLength(serializerController.getChestSerializerController(), playerToSerialize);
