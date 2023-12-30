@@ -23,7 +23,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final WailaSystem wailaSystem;
     private final TextureRenderer textureRenderer;
     private final PlayerInventorySystem playerInventorySystem;
-    private final ItemBarManager itemBarManager;
+    private final ItemBarSystem itemBarSystem;
     private final CellBeingMineSystem cellBeingMineSystem;
     private final LightCycleSystem lightCycleSystem;
     private final TimeSystemSimulation timeSystemSimulation;
@@ -49,7 +49,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         textureRenderer = new TextureRenderer();
 
         playerInventorySystem = new PlayerInventorySystem();
-        itemBarManager = new ItemBarManager();
+        itemBarSystem = new ItemBarSystem();
 
         lightCycleSystem = new LightCycleSystem();
 
@@ -84,7 +84,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 cellBeingMineRenderSystem,
                 wailaSystem,
                 playerInventorySystem,
-                itemBarManager,
+                itemBarSystem,
                 cellBeingMineSystem
         );
     }
@@ -145,8 +145,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return playerInventorySystem;
     }
 
-    public ItemBarManager getItemBarManager() {
-        return itemBarManager;
+    public ItemBarSystem getItemBarManager() {
+        return itemBarSystem;
     }
 
     public CellBeingMineSystem getCellBeingMineSystem() {

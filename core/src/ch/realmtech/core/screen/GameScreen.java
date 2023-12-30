@@ -1,7 +1,7 @@
 package ch.realmtech.core.screen;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.core.game.ecs.system.ItemBarManager;
+import ch.realmtech.core.game.ecs.system.ItemBarSystem;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
@@ -105,25 +105,25 @@ public class GameScreen extends AbstractScreen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 0);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 0);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 1);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 1);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 2);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 2);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 3);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 3);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 4);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 4);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 5);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 5);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 6);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 6);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 7);
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 7);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9))
-            context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).setSlotSelected((byte) 8);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedUp();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarManager.class).slotSelectedDown();
+            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 8);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedUp();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedDown();
 
         PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(context.getSystem(PlayerManagerClient.class).getMainPlayer());
         int worldPosX = MapManager.getWorldPos(positionComponent.x);

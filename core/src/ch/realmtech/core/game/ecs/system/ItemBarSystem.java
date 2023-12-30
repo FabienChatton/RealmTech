@@ -4,6 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -13,10 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class ItemBarManager extends BaseSystem {
+public class ItemBarSystem extends BaseSystem {
     private Stage itemBarStage;
     private Table itemBarTable;
     private Table itemBar;
+    private Table heartBar;
     private byte slotSelected;
     @Wire(name = "context")
     private RealmTech context;
@@ -25,10 +27,14 @@ public class ItemBarManager extends BaseSystem {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
+    private ComponentMapper<LifeComponent> mLife;
+
+    private int lastHeartNumber = -1;
 
     @Override
     protected void processSystem() {
         displayPlayerItemBar();
+        displayReactiveHeart();
         itemBarStage.draw();
     }
 
@@ -39,7 +45,11 @@ public class ItemBarManager extends BaseSystem {
         itemBarTable.setFillParent(true);
         itemBarStage.addActor(itemBarTable);
         itemBar = new Table();
-        itemBarTable.add(itemBar).expandY().bottom();
+        heartBar = new Table();
+
+        itemBarTable.add().expandY().bottom().row();
+        itemBarTable.add(heartBar).left().row();
+        itemBarTable.add(itemBar).row();
         slotSelected = 0;
     }
 
@@ -59,6 +69,23 @@ public class ItemBarManager extends BaseSystem {
                 itemBar.add(stackImage).size(35);
             } else {
                 itemBar.add(stackImage);
+            }
+        }
+    }
+
+    public void displayReactiveHeart() {
+        int player = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
+        LifeComponent lifeComponent = mLife.get(player);
+        if (lifeComponent == null) return;
+        int heart = lifeComponent.getHeart();
+
+        if (heart != lastHeartNumber || lastHeartNumber == -1) {
+            lastHeartNumber = heart;
+            heartBar.clear();
+            if (heart > 0) {
+                for (int i = 0; i < heart; i++) {
+                    heartBar.add(new Image(context.getTextureAtlas().findRegion("heart-01"))).size(12f).padBottom(5f).fillX().left();
+                }
             }
         }
     }
