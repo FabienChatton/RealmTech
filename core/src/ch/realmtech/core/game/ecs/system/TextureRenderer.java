@@ -1,5 +1,6 @@
 package ch.realmtech.core.game.ecs.system;
 
+import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
@@ -25,17 +26,19 @@ public class TextureRenderer extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
+        if (entityId != 0) {
+            int a = 2;
+        }
         TextureComponent textureComponent = mTexture.create(entityId);
         if (textureComponent.texture != null) {
-            float realWidth = ((float) textureComponent.texture.getRegionWidth()) * textureComponent.scale;
-            float realHeight = ((float) textureComponent.texture.getRegionHeight()) * textureComponent.scale;
             PositionComponent positionComponent = mPosition.create(entityId);
+
             gameStage.getBatch().draw(
                     textureComponent.texture,
                     positionComponent.x,
                     positionComponent.y,
-                    realWidth,
-                    realHeight
+                    textureComponent.texture.getRegionWidth() * RealmTech.UNITE_SCALE * textureComponent.scale,
+                    textureComponent.texture.getRegionHeight() * RealmTech.UNITE_SCALE * textureComponent.scale
             );
         }
     }

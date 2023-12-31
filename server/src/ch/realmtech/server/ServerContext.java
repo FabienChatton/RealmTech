@@ -66,6 +66,7 @@ public class ServerContext {
 
     public ServerContext(ConnexionBuilder connexionBuilder) throws Exception {
         try {
+            reloadOption();
             ecsEngineServer = new EcsEngineServer(this);
             ecsEngineServer.prepareSaveToLoad(connexionBuilder.getSaveName());
             serverExecuteContext = new ServerExecuteContext(this);
@@ -77,7 +78,6 @@ public class ServerContext {
             commandServerThread.start();
             tickThread.start();
             authRequest = new AuthRequest(this);
-            reloadOption();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {

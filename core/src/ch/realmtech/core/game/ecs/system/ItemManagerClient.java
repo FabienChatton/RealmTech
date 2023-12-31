@@ -66,7 +66,6 @@ public class ItemManagerClient extends ItemManager {
         EntityEdit edit = world.edit(itemId);
         TextureComponent textureComponent = edit.create(TextureComponent.class);
         textureComponent.set(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()));
-        textureComponent.scale = RealmTech.UNITE_SCALE;
         return itemId;
     }
 

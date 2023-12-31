@@ -92,7 +92,7 @@ public class PlayerManagerClient extends Manager {
 
         // animation
         TextureComponent textureComponent = world.edit(playerId).create(TextureComponent.class);
-        textureComponent.scale = 0.05f;
+        textureComponent.scale = 1.6f;
         TextureAtlas.AtlasRegion textureFront0 = textureAtlas.findRegion("reimu-front-0");
         TextureAtlas.AtlasRegion textureFront1 = textureAtlas.findRegion("reimu-front-1");
         TextureAtlas.AtlasRegion textureFront2 = textureAtlas.findRegion("reimu-front-2");
