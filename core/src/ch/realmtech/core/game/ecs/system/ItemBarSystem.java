@@ -1,20 +1,23 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.component.MainPlayerComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
+import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
+import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class ItemBarSystem extends BaseSystem {
+@All(MainPlayerComponent.class)
+public class ItemBarSystem extends IteratingSystem {
     private Stage itemBarStage;
     private Table itemBarTable;
     private Table itemBar;
@@ -32,9 +35,9 @@ public class ItemBarSystem extends BaseSystem {
     private int lastHeartNumber = -1;
 
     @Override
-    protected void processSystem() {
-        displayPlayerItemBar();
-        displayReactiveHeart();
+    protected void process(int entityId) {
+        displayPlayerItemBar(entityId);
+        displayReactiveHeart(entityId);
         itemBarStage.draw();
     }
 
@@ -53,11 +56,10 @@ public class ItemBarSystem extends BaseSystem {
         slotSelected = 0;
     }
 
-    public void displayPlayerItemBar() {
+    public void displayPlayerItemBar(int playerId) {
         itemBar.clear();
-        int player = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         int inventorySize = InventoryComponent.DEFAULT_NUMBER_OF_ROW * InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW;
-        int chestInventoryId = systemsAdminClient.inventoryManager.getChestInventoryId(player);
+        int chestInventoryId = systemsAdminClient.inventoryManager.getChestInventoryId(playerId);
         InventoryComponent chestInventory = mInventory.get(chestInventoryId);
         for (byte j = 0, i = (byte) (inventorySize - InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW); i < inventorySize; i++, j++) {
             Table stackImage = systemsAdminClient.getPlayerInventorySystem().createItemSlotToDisplay(chestInventory.inventory[i], chestInventoryId);
@@ -73,10 +75,11 @@ public class ItemBarSystem extends BaseSystem {
         }
     }
 
-    public void displayReactiveHeart() {
-        int player = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
-        LifeComponent lifeComponent = mLife.get(player);
-        if (lifeComponent == null) return;
+    public void displayReactiveHeart(int playerId) {
+        LifeComponent lifeComponent = mLife.get(playerId);
+        if (lifeComponent == null) {
+            return;
+        }
         int heart = lifeComponent.getHeart();
 
         if (heart != lastHeartNumber || lastHeartNumber == -1) {

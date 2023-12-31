@@ -63,15 +63,23 @@ public class PlayerManagerServer extends Manager {
         playerConnexionComponent.set(channel);
         systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
 
+        boolean hasPlayerSaveSuccess = false;
         float posX;
         float posY;
 
         int chestId;
         int heart = -1;
 
-        try {
-            loadPlayerSave(playerUuid, playerId);
+        if (serverContext.getOptionServer().verifyAccessToken.get()) {
+            try {
+                loadPlayerSave(playerUuid, playerId);
+                hasPlayerSaveSuccess = true;
+            } catch (IOException e) {
+                logger.warn("Can not load player save. UUID: {}, {}", playerUuid, e.getMessage());
+            }
+        }
 
+        if (hasPlayerSaveSuccess) {
             posX = mPosition.get(playerId).x;
             posY = mPosition.get(playerId).y;
 
@@ -81,7 +89,7 @@ public class PlayerManagerServer extends Manager {
             if (mLife.has(playerId)) {
                 heart = mLife.get(playerId).getHeart();
             }
-        } catch (IOException e) {
+        } else {
             posX = 0;
             posY = 0;
 
@@ -91,7 +99,6 @@ public class PlayerManagerServer extends Manager {
 
             // default inventory
             chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
-
         }
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
@@ -133,7 +140,7 @@ public class PlayerManagerServer extends Manager {
 
         // life component
         if (heart == -1) {
-            heart = 20;
+            heart = 10;
         }
         mLife.create(playerId).set(heart);
 

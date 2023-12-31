@@ -1,5 +1,6 @@
 package ch.realmtech.core.game.ecs.system;
 
+import ch.realmtech.core.game.ecs.component.MainPlayerComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.component.*;
@@ -49,6 +50,7 @@ public class PlayerManagerClient extends Manager {
             InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
             infMapComponent.infChunks = new int[0];
             systemsAdminClient.tagManager.register("infMap", mapId);
+            world.edit(playerId).create(MainPlayerComponent.class);
         }
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
