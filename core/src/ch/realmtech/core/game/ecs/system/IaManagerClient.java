@@ -66,7 +66,6 @@ public class IaManagerClient extends Manager {
         world.edit(iaTestId).create(UuidComponent.class).set(uuid);
         TextureComponent textureComponent = world.edit(iaTestId).create(TextureComponent.class);
         textureComponent.set(textureAtlas.findRegion("sandales-01"));
-        textureComponent.scale = 0.05f;
         return iaTestId;
     }
 }

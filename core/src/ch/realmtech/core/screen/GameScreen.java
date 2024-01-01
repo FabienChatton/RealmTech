@@ -146,6 +146,7 @@ public class GameScreen extends AbstractScreen {
                 box2DDebugRenderer.render(context.getEcsEngine().physicWorld, gameCamera.combined);
             }
         } catch (Exception e) {
+            context.getEcsEngine().dispose();
             logger.error(e.getMessage(), e);
             context.setScreen(ScreenType.MENU);
             Popup.popupErreur(context, e.getMessage(), context.getUiStage());

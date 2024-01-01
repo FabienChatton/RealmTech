@@ -29,7 +29,6 @@ import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -189,14 +188,8 @@ public class ClientExecuteContext implements ClientExecute {
         UUID uuid = physicEntityArgs.uuid();
         float x = physicEntityArgs.x();
         float y = physicEntityArgs.y();
-        if (physicEntityArgs.flag() == PhysicEntitySerializerController.PLAYER_FLAG) {
-            context.nextFrame(() -> {
-                HashMap<UUID, Integer> players = context.getEcsEngine().getSystem(PlayerManagerClient.class).getPlayers();
-                if (!players.containsKey(uuid)) {
-                    context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(x, y, uuid);
-                }
-                context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(x, y, uuid);
-            });
+        if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
+            context.getSystemsAdminClient().getIaManagerClient().otherIa(uuid, x, y);
         }
     }
 

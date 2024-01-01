@@ -21,7 +21,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final PickerGroundItemContactSystem pickerGroundItemContactSystem;
     public final PlayerManagerServer playerManagerServer;
     public final TimeSystem timeSystem;
-    public final PhysicEntitySystem physicEntitySystem;
+    public final PhysicEntityIaTestSystem physicEntitySystem;
     public final PlayerSyncSystem playerSyncSystem;
 
     public SystemsAdminServer() {
@@ -30,7 +30,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         playerMouvementSystemServer = new PlayerMouvementSystemServer();
         mapSystemServer = new MapSystemServer();
         iaTestSystem = new IaTestSystem();
-        physicEntitySystem = new PhysicEntitySystem();
+        physicEntitySystem = new PhysicEntityIaTestSystem();
         playerSyncSystem = new PlayerSyncSystem();
 
         craftingPlayerSystem = new CraftingPlayerSystem();
