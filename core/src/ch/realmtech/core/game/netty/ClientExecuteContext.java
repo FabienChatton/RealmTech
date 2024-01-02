@@ -7,10 +7,7 @@ import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
-import ch.realmtech.server.ecs.component.InfMapComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
@@ -171,8 +168,8 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void disconnectMessage(String message) {
-        context.supprimeECS();
         Gdx.app.postRunnable(() -> {
+            context.supprimeECS();
             context.setScreen(ScreenType.MENU);
             Popup.popupErreur(context, message, context.getUiStage());
         });
@@ -196,10 +193,18 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid) {
         context.nextFrame(() -> {
-            int playerId = context.getEcsEngine().getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(playerUuid);
+            int playerId = context.getEcsEngine().getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(playerUuid, PlayerComponent.class);
+            if (playerId == -1) return;
             setPlayerConsumer.accept(playerId);
             PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(playerId);
             context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(positionComponent.x, positionComponent.y, playerUuid);
+        });
+    }
+
+    @Override
+    public void playerCreateConnexion(UUID playerUuid) {
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getPlayerManagerClient().createPlayerClient(0, 0, playerUuid);
         });
     }
 }

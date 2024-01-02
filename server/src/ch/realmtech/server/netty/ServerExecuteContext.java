@@ -9,6 +9,7 @@ import ch.realmtech.server.packet.serverPacket.ServerExecute;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
+import com.artemis.utils.IntBag;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +41,25 @@ public class ServerExecuteContext implements ServerExecute {
         } catch (Exception e) {
             serverContext.getServerHandler().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
             logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
-            clientChanel.close();
+            serverContext.getEcsEngineServer().nextTick(clientChanel::close);
             return;
         }
         ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
         serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
         serverContext.getSystem(PlayerManagerServer.class).setPlayerUsername(playerUuid, username);
 
-
+        // new player with new connexion get all players.
+        // players already on server get this player.
+        IntBag players = serverContext.getSystemsAdmin().playerManagerServer.getPlayers();
+        int[] playersData = players.getData();
+        int thisPlayerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChanel);
+        for (int i = 0; i < players.size(); i++) {
+            int playerId = playersData[i];
+            if (thisPlayerId == playerId) continue;
+            UUID uuid = serverContext.getSystemsAdmin().uuidComponentManager.getRegisteredComponent(playerId).getUuid();
+            serverContext.getServerHandler().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
+        }
+        serverContext.getServerHandler().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
     }
 
     @Override

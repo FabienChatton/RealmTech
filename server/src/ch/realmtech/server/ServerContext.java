@@ -61,6 +61,7 @@ public class ServerContext {
                 .put(TimeSetPacket.class, TimeSetPacket::new)
                 .put(PhysicEntitySetPacket.class, PhysicEntitySetPacket::new)
                 .put(PlayerSyncPacket.class, PlayerSyncPacket::new)
+                .put(PlayerCreateConnexion.class, PlayerCreateConnexion::new)
         ;
     }
 

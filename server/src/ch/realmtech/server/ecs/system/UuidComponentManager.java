@@ -5,6 +5,9 @@ import com.artemis.*;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class UuidComponentManager extends Manager {
@@ -39,11 +42,13 @@ public class UuidComponentManager extends Manager {
      */
     @SafeVarargs
     public final int getRegisteredComponent(UUID uuid, Class<? extends Component>... componentClass) {
-        Class<? extends Component>[] componentArray = new Class[componentClass.length + 1];
-        componentArray[0] = UuidComponent.class;
-        System.arraycopy(componentClass, 0, componentArray, 1, componentClass.length);
-        IntBag entities = world.getAspectSubscriptionManager().get(Aspect.all(componentArray)).getEntities();
-        return getRegisteredComponent(uuid, entities);
+        List<Class<? extends Component>> list = new ArrayList<>(componentClass.length + 1);
+        list.addAll(Arrays.asList(componentClass));
+        list.add(UuidComponent.class);
+        synchronized (this) {
+            IntBag entities = world.getAspectSubscriptionManager().get(Aspect.all(list)).getEntities();
+            return getRegisteredComponent(uuid, entities);
+        }
     }
 
     /**
@@ -54,18 +59,22 @@ public class UuidComponentManager extends Manager {
      * @return the entity id.
      */
     public UuidComponent createRegisteredComponent(UUID uuid, int entityId) throws IllegalStateException {
-        if (mUuid.get(entityId) != null) throw new IllegalStateException("This entity has already a uuid component");
-        return world.edit(entityId).create(UuidComponent.class).set(uuid);
+        synchronized (this) {
+            if (mUuid.get(entityId) != null) throw new IllegalStateException("This entity has already a uuid component");
+            return world.edit(entityId).create(UuidComponent.class).set(uuid);
+        }
     }
 
     private int getRegisteredComponent(UUID uuid, IntBag entities) {
-        int[] entitiesData = entities.getData();
-        for (int i = 0; i < entities.size(); i++) {
-            int entityId = entitiesData[i];
-            UuidComponent uuidComponent = mUuid.get(entityId);
-            if (uuidComponent != null) {
-                if (uuid.equals(uuidComponent.getUuid())) {
-                    return entityId;
+        synchronized (this) {
+            int[] entitiesData = entities.getData();
+            for (int i = 0; i < entities.size(); i++) {
+                int entityId = entitiesData[i];
+                UuidComponent uuidComponent = mUuid.get(entityId);
+                if (uuidComponent != null) {
+                    if (uuid.equals(uuidComponent.getUuid())) {
+                        return entityId;
+                    }
                 }
             }
         }

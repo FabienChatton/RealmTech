@@ -49,4 +49,6 @@ public interface ClientExecute {
     void physicEntity(PhysicEntityArgs physicEntityArgs);
 
     void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid);
+
+    void playerCreateConnexion(UUID playerUuid);
 }

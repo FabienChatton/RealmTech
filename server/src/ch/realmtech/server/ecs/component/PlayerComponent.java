@@ -20,9 +20,6 @@ public class PlayerComponent extends Component {
     public float laps = 0.3f;
     public float cooldown = laps;
     public int animationIndex = 0;
-    /**
-     * 0 front, 1 left, 2 back, 3 right
-     */
     public byte lastDirection = 0;
 
     /**

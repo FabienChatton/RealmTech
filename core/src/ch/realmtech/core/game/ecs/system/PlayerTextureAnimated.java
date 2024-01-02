@@ -2,6 +2,7 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.server.ecs.component.PlayerComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
+import ch.realmtech.server.ecs.system.PlayerMouvementSystemServer;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -16,6 +17,23 @@ public class PlayerTextureAnimated extends IteratingSystem {
     private Stage gameStage;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<PlayerComponent> mPlayer;
+
+    @Override
+    protected void process(int entityId) {
+        PlayerComponent playerComponent = mPlayer.get(entityId);
+        byte movementCode = PlayerMouvementSystemServer.getKeysInputPlayerMouvement(playerComponent.moveLeft, playerComponent.moveDown, playerComponent.moveUp, playerComponent.moveRight);
+        if (movementCode != playerComponent.lastDirection) {
+            playerComponent.cooldown = 0;
+            playerComponent.lastDirection = movementCode;
+        } else {
+            playerComponent.cooldown -= Gdx.graphics.getDeltaTime();
+        }
+        if (playerComponent.cooldown <= 0) {
+            TextureComponent textureComponent = mTexture.get(entityId);
+            updateAnimation(playerComponent, textureComponent);
+            playerComponent.cooldown = playerComponent.laps;
+        }
+    }
 
     private void updateAnimation(PlayerComponent playerComponent, TextureComponent textureComponent) {
         final TextureRegion textureRegion;
@@ -34,16 +52,5 @@ public class PlayerTextureAnimated extends IteratingSystem {
             textureRegion = playerComponent.animationFront[0];
         }
         textureComponent.texture = textureRegion;
-    }
-
-    @Override
-    protected void process(int entityId) {
-        PlayerComponent playerComponent = mPlayer.get(entityId);
-        playerComponent.cooldown -= Gdx.graphics.getDeltaTime();
-        if (playerComponent.cooldown <= 0) {
-            TextureComponent textureComponent = mTexture.get(entityId);
-            updateAnimation(playerComponent, textureComponent);
-            playerComponent.cooldown = playerComponent.laps;
-        }
     }
 }
