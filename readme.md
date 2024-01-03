@@ -45,16 +45,16 @@ Et importé la configuration dans le dossier .run
 ### infdev
 
 1. [x] carte infinie
-2. [ ] serveur interne
-3. [ ] console de debug
+2. [x] serveur interne
+3. [x] console de debug
 
 ### alpha
 
-1. [ ] reorganisation du code selon architecture
-2. [ ] raccourci clavier custom
-3. [ ] machine multi cellules
-4. [ ] infrastructure, convoyer/pipe
-5. [ ] simulation physique client
+1. [ ] cycle jour nuit
+2. [ ] monstre avec ia
+3. [ ] infrastructure, convoyer/pipe
+4. [ ] machine multi cellules
+5. [ ] raccourci clavier custom
 
 ### beta 
 
