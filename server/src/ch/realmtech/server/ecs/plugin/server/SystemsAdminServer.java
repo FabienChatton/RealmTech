@@ -6,7 +6,7 @@ import ch.realmtech.server.ia.IaTestSystem;
 import com.artemis.WorldConfigurationBuilder;
 
 public class SystemsAdminServer extends SystemsAdminCommun {
-    public final IaManagerServer iaManagerServer;
+    public final IaSystemServer iaSystemServer;
     public final ItemManagerServer itemManagerServer;
     public final PlayerMouvementSystemServer playerMouvementSystemServer;
     public final MapSystemServer mapSystemServer;
@@ -25,7 +25,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final PlayerSyncSystem playerSyncSystem;
 
     public SystemsAdminServer() {
-        iaManagerServer = new IaManagerServer();
+        iaSystemServer = new IaSystemServer();
         itemManagerServer = new ItemManagerServer();
         playerMouvementSystemServer = new PlayerMouvementSystemServer();
         mapSystemServer = new MapSystemServer();
@@ -50,7 +50,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public void setup(WorldConfigurationBuilder b) {
         super.setup(b);
         b.with(
-                iaManagerServer,
+                iaSystemServer,
                 itemManagerServer,
                 playerMouvementSystemServer,
                 mapSystemServer,

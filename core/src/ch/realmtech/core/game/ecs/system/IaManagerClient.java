@@ -6,9 +6,6 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
-import ch.realmtech.server.ia.IaComponent;
-import ch.realmtech.server.ia.IaTestSteerable;
-import ch.realmtech.server.ia.IaTestTelegraph;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -58,7 +55,6 @@ public class IaManagerClient extends Manager {
         bodyIaTest.setTransform(x, y, bodyIaTest.getAngle());
 
         playerShape.dispose();
-        world.edit(iaTestId).create(IaComponent.class).set(new IaTestTelegraph(), new IaTestSteerable(bodyIaTest, 4));
         Box2dComponent box2dComponent = world.edit(iaTestId).create(Box2dComponent.class);
         box2dComponent.set(1, 1, bodyIaTest);
         box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());

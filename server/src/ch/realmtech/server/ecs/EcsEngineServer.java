@@ -2,7 +2,6 @@ package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
-import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.SaveInfManager;
@@ -15,7 +14,6 @@ import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -71,20 +69,12 @@ public final class EcsEngineServer implements GetWorld {
         executeOnContextServer.initialize(world);
         serializerController.initialize(world);
 
+        systemsAdminServer.iaSystemServer.createIaTest();
         logger.trace("fin de l'initialisation du ecs");
     }
 
-    private boolean iaTest = false;
     public void process(float deltaTime) {
         long t1 = System.currentTimeMillis();
-        IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
-        if (!players.isEmpty() && !iaTest) {
-            Box2dComponent playerBox2d = world.getEntity(players.get(0)).getComponent(Box2dComponent.class);
-            if (playerBox2d != null) {
-                systemsAdminServer.iaManagerServer.createIaTest(playerBox2d);
-                iaTest = true;
-            }
-        }
 
         List<Runnable> copyPre;
         synchronized (nextTickServerPre) {

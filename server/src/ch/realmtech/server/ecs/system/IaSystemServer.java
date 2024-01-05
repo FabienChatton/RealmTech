@@ -5,18 +5,17 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
-import ch.realmtech.server.ia.Box2dLocation;
 import ch.realmtech.server.ia.IaComponent;
 import ch.realmtech.server.ia.IaTestSteerable;
 import ch.realmtech.server.ia.IaTestTelegraph;
-import com.artemis.Manager;
+import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
-import com.badlogic.gdx.ai.steer.behaviors.Seek;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.UUID;
 
-public class IaManagerServer extends Manager {
+public class IaSystemServer extends BaseSystem {
     @Wire(name = "serverContext")
     private ServerContext serverContext;
     @Wire(name = "physicWorld")
@@ -25,8 +24,14 @@ public class IaManagerServer extends Manager {
     private FixtureDef fixtureDef;
     @Wire
     private BodyDef bodyDef;
+    private final MessageManager messageManager = MessageManager.getInstance();
 
-    public int createIaTest(Box2dComponent box2dComponentPlayer) {
+    @Override
+    protected void processSystem() {
+        messageManager.update();
+    }
+
+    public int createIaTest() {
         float x = 5, y = 5;
         int iaTestId = world.create();
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
@@ -44,7 +49,7 @@ public class IaManagerServer extends Manager {
 
         playerShape.dispose();
         IaComponent iaComponent = world.edit(iaTestId).create(IaComponent.class).set(new IaTestTelegraph(), new IaTestSteerable(bodyIaTest, 4));
-        iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(box2dComponentPlayer.body)));
+        // iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(box2dComponentPlayer.body)));
         world.edit(iaTestId).create(Box2dComponent.class).set(1, 1, bodyIaTest);
         PositionComponent positionComponent = world.edit(iaTestId).create(PositionComponent.class);
         world.edit(iaTestId).create(UuidComponent.class).set(UUID.randomUUID());
