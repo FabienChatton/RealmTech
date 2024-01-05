@@ -48,7 +48,7 @@ public class IaSystemServer extends BaseSystem {
         bodyIaTest.setTransform(x, y, bodyIaTest.getAngle());
 
         playerShape.dispose();
-        IaComponent iaComponent = world.edit(iaTestId).create(IaComponent.class).set(new IaTestTelegraph(), new IaTestSteerable(bodyIaTest, 4));
+        IaComponent iaComponent = world.edit(iaTestId).create(IaComponent.class).set(new IaTestTelegraph(iaTestId, serverContext), new IaTestSteerable(bodyIaTest, 4));
         // iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(box2dComponentPlayer.body)));
         world.edit(iaTestId).create(Box2dComponent.class).set(1, 1, bodyIaTest);
         PositionComponent positionComponent = world.edit(iaTestId).create(PositionComponent.class);
