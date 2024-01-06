@@ -16,6 +16,7 @@ import static picocli.CommandLine.Command;
         TeleportPlayerCommand.class,
         GiveCommand.class,
         TimeCommand.class,
+        SummonCommand.class,
 })
 public class MasterServerCommand extends CommunMasterCommand implements Callable<Integer> {
     final ServerContext serverContext;

@@ -1,9 +1,6 @@
 package ch.realmtech.server.ia;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 
@@ -24,6 +21,10 @@ public class IaTestTelegraph implements Telegraph {
 
     public ServerContext getServerContext() {
         return serverContext;
+    }
+
+    public IaTestStateMachine getStateMachine() {
+        return stateMachine;
     }
 
     @Override

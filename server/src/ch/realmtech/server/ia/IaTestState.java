@@ -20,6 +20,7 @@ public enum IaTestState implements State<IaTestTelegraph> {
             IaComponent iaComponent = mIa.get(entity.getId());
             Box2dComponent playerBox2dComponent = mBox2d.get(playerId);
             iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(playerBox2dComponent.body)));
+            entity.getStateMachine().changeState(FOCUS_PLAYER);
             return true;
         }
     },
@@ -47,6 +48,7 @@ public enum IaTestState implements State<IaTestTelegraph> {
     @Override
     public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
         if (telegram.message == FOCUS_PLAYER_MESSAGE) {
+            if (entity.getStateMachine().getCurrentState() == FOCUS_PLAYER) return false;
             return FOCUS_PLAYER.onMessage(entity, telegram);
         }
 

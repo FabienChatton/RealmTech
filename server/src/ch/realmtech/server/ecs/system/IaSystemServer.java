@@ -31,8 +31,7 @@ public class IaSystemServer extends BaseSystem {
         messageManager.update();
     }
 
-    public int createIaTest() {
-        float x = 5, y = 5;
+    public int createIaTest(int x, int y) {
         int iaTestId = world.create();
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);

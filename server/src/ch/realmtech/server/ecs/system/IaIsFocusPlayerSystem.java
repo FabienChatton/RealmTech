@@ -12,7 +12,7 @@ import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Vector2;
 
 @All({IaComponent.class, PositionComponent.class})
-public class IsFocusPlayerSystem extends IteratingSystem {
+public class IaIsFocusPlayerSystem extends IteratingSystem {
     private final MessageManager messageManager = MessageManager.getInstance();
     @Wire
     private SystemsAdminServer systemsAdminServer;

@@ -23,6 +23,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final TimeSystem timeSystem;
     public final PhysicEntityIaTestSystem physicEntitySystem;
     public final PlayerSyncSystem playerSyncSystem;
+    public final IaIsFocusPlayerSystem iaIsFocusPlayerSystem;
 
     public SystemsAdminServer() {
         iaSystemServer = new IaSystemServer();
@@ -32,6 +33,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         iaTestSystem = new IaTestSystem();
         physicEntitySystem = new PhysicEntityIaTestSystem();
         playerSyncSystem = new PlayerSyncSystem();
+        iaIsFocusPlayerSystem = new IaIsFocusPlayerSystem();
 
         craftingPlayerSystem = new CraftingPlayerSystem();
         pickUpOnGroundItemSystem = new PickUpOnGroundItemSystem();
@@ -57,6 +59,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 iaTestSystem,
                 physicEntitySystem,
                 playerSyncSystem,
+                iaIsFocusPlayerSystem,
 
                 craftingPlayerSystem,
                 pickUpOnGroundItemSystem,

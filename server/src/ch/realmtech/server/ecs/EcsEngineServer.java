@@ -69,7 +69,6 @@ public final class EcsEngineServer implements GetWorld {
         executeOnContextServer.initialize(world);
         serializerController.initialize(world);
 
-        systemsAdminServer.iaSystemServer.createIaTest();
         logger.trace("fin de l'initialisation du ecs");
     }
 
