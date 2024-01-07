@@ -10,7 +10,15 @@ public enum IaTestState implements State<IaTestTelegraph> {
 
     FOCUS_PLAYER() {
         @Override
+        public void exit(IaTestTelegraph entity) {
+            ComponentMapper<IaComponent> mIa = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(IaComponent.class);
+            IaComponent iaComponent = mIa.get(entity.getId());
+            iaComponent.getIaTestSteerable().setSteeringBehavior(null);
+        }
+
+        @Override
         public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
+            if (entity.getStateMachine().getCurrentState() == FOCUS_PLAYER) return false;
             int playerId = (int) telegram.extraInfo;
             if (playerId == -1) return false;
 
@@ -25,9 +33,15 @@ public enum IaTestState implements State<IaTestTelegraph> {
         }
     },
     SLEEP() {
-
+        @Override
+        public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
+            if (entity.getStateMachine().getCurrentState() == SLEEP) return false;
+            entity.getStateMachine().changeState(SLEEP);
+            return true;
+        }
     },
     ;
+    public final static int SLEEP_MESSAGE = 0;
     public final static int FOCUS_PLAYER_MESSAGE = 1;
 
     @Override
@@ -47,11 +61,10 @@ public enum IaTestState implements State<IaTestTelegraph> {
 
     @Override
     public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
-        if (telegram.message == FOCUS_PLAYER_MESSAGE) {
-            if (entity.getStateMachine().getCurrentState() == FOCUS_PLAYER) return false;
-            return FOCUS_PLAYER.onMessage(entity, telegram);
-        }
-
-        return false;
+        return switch (telegram.message) {
+            case SLEEP_MESSAGE -> SLEEP.onMessage(entity, telegram);
+            case FOCUS_PLAYER_MESSAGE -> FOCUS_PLAYER.onMessage(entity, telegram);
+            default -> false;
+        };
     }
 }

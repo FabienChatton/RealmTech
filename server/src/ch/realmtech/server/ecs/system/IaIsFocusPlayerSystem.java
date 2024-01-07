@@ -26,9 +26,11 @@ public class IaIsFocusPlayerSystem extends IteratingSystem {
         for (int i = 0; i < players.size(); i++) {
             int playerId = playerData[i];
             PositionComponent playerPositionComponent = mPos.get(playerId);
-            if (Vector2.dst2(iaPositionComponent.x, iaPositionComponent.y, playerPositionComponent.x, playerPositionComponent.y) > 10) {
-                IaComponent iaComponent = mIa.get(entityId);
+            IaComponent iaComponent = mIa.get(entityId);
+            if (Vector2.dst2(iaPositionComponent.x, iaPositionComponent.y, playerPositionComponent.x, playerPositionComponent.y) < 1) {
                 messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), 1, playerId, false);
+            } else {
+                messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), 0);
             }
         }
     }
