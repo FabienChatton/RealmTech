@@ -39,7 +39,7 @@ public class IaSystemServer extends BaseSystem {
         Body bodyIaTest = physicWorld.createBody(bodyDef);
         bodyIaTest.setUserData(iaTestId);
         PolygonShape playerShape = new PolygonShape();
-        playerShape.setAsBox(iaTestId / 2f, iaTestId / 2f);
+        playerShape.setAsBox(0.9f, 0.9f);
         fixtureDef.shape = playerShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
         fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
