@@ -162,7 +162,7 @@ public class InventoryManager extends Manager {
      * Delete all items from in this stack from this world and set to 0 all slot.
      * @param stack The stack to remove.
      */
-    private void deleteStack(int[] stack) {
+    public void deleteStack(int[] stack) {
         final int tailleStack = InventoryManager.tailleStack(stack);
         for (int i = 0; i < tailleStack; i++) {
             world.delete(stack[i]);

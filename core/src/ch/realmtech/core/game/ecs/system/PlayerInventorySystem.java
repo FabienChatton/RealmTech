@@ -35,6 +35,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -50,6 +51,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private Window overWindow;
     private Label overLabel;
     private AddAndDisplayInventoryArgs currentInventoryArgs;
+    private UUID[] currentInventoriesToClearItemOnClose;
     private ArrayList<ClickAndDropActor> curentClickAndDropActors;
     @Wire(name = "context")
     private RealmTech context;
@@ -142,6 +144,18 @@ public class PlayerInventorySystem extends BaseSystem {
             context.getSoundManager().playOpenInventory();
             overWindow.remove();
             inGameSystemOnInventoryOpen.activeInGameSystemOnPause(world);
+
+            for (UUID inventoryToClearItem : currentInventoriesToClearItemOnClose) {
+                int inventoryId = systemsAdminClient.inventoryManager.getInventoryByUUID(inventoryToClearItem);
+                if (inventoryId != -1) {
+                    InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+                    for (int[] stack : inventoryComponent.inventory) {
+                        systemsAdminClient.inventoryManager.deleteStack(stack);
+                    }
+                }
+            }
+            currentInventoriesToClearItemOnClose = null;
+
             return true;
         } else {
             return false;
@@ -154,6 +168,7 @@ public class PlayerInventorySystem extends BaseSystem {
             InputMapper.reset();
             clearDisplayInventory();
             currentInventoryArgs = openPlayerInventoryFunction.get();
+            currentInventoriesToClearItemOnClose = currentInventoryArgs.inventoriesToDeleteItemsOnClose();
             refreshInventory(currentInventoryArgs);
             if (context.getOption().inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
@@ -194,7 +209,7 @@ public class PlayerInventorySystem extends BaseSystem {
                     DisplayInventoryArgs.builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory, craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
-            });
+            }, new UUID[0]); // pas d'inventaire à supprimé à la fermeture de l'inventaire, vu que les items du joueurs, on les garde
         };
     }
 
