@@ -26,7 +26,6 @@ public class CraftingPlayerSystem extends IteratingSystem {
     private ServerContext serverContext;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
-    private ComponentMapper<CraftingComponent> mCrafting;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private ComponentMapper<UuidComponent> mUuid;
 
@@ -46,7 +45,6 @@ public class CraftingPlayerSystem extends IteratingSystem {
     public CraftResult getCraft(int craftingTableEntity) {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(craftingTableEntity);
         InventoryComponent inventoryCraftComponent = systemsAdminServer.inventoryManager.getCraftingInventory(craftingTableEntity);
-        CraftingComponent craftingComponent = mCrafting.get(craftingTableComponent.craftingInventory);
         if (inventoryCraftComponent == null || inventoryCraftComponent.inventory == null) {
             return null;
         }
@@ -59,7 +57,7 @@ public class CraftingPlayerSystem extends IteratingSystem {
         }
 
         if (Arrays.stream(itemRegister).anyMatch(Objects::nonNull)) {
-            for (RegistryEntryAnonyme<CraftingRecipeEntry> craftingRecipeEntry : craftingComponent.getRegistry().getEnfants()) {
+            for (RegistryEntryAnonyme<CraftingRecipeEntry> craftingRecipeEntry : craftingTableComponent.getRegistry().getEnfants()) {
                 Optional<CraftResult> craftResultOption = craftingRecipeEntry.getEntry().craft(itemRegister, inventoryCraftComponent.numberOfSlotParRow, inventoryCraftComponent.numberOfRow);
                 if (craftResultOption.isPresent()) {
                     return craftResultOption.get();

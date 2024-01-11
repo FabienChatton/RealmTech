@@ -450,12 +450,11 @@ public class InventoryManager extends Manager {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable());
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable(), craftingRegistry);
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
         craftingInventoryEdit.create(InventoryUiComponent.class).set();
-        craftingInventoryEdit.create(CraftingComponent.class).set(craftingRegistry, craftingResultInventoryId);
 
         createInventoryUi(craftingResultInventoryId, craftingResultInventoryUuid, 1,1);
         return new int[]{craftingInventoryId, craftingResultInventoryId};

@@ -187,7 +187,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             final Table playerInventory = new Table(clientContext.getSkin());
                             final Table craftingInventory = new Table(clientContext.getSkin());
                             final Table craftingResultInventory = new Table(clientContext.getSkin());
-                            Consumer<Window> addTable = window -> {
+                            Consumer<Window> addTable = (window) -> {
                                 Table craftingTable = new Table(craftingInventory.getSkin());
                                 craftingTable.add(craftingInventory).padRight(32f);
                                 craftingTable.add(craftingResultInventory);

@@ -3,7 +3,6 @@ package ch.realmtech.server.serialize.craftingtable;
 import ch.realmtech.server.craft.CraftingStrategyItf;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
-import ch.realmtech.server.ecs.component.CraftingComponent;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
@@ -26,7 +25,6 @@ public class CraftingTableSerializerV1 implements Serializer<Integer, CraftingTa
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer craftingTableToSerializeId) {
         CraftingTableComponent craftingTableToSerialize = world.getMapper(CraftingTableComponent.class).get(craftingTableToSerializeId);
-        CraftingComponent craftingComponent = world.getMapper(CraftingComponent.class).get(craftingTableToSerialize.craftingInventory);
 
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, craftingTableToSerializeId));
         UUID craftingInventoryUuid = world.getSystem(UuidComponentManager.class).getRegisteredComponent(craftingTableToSerialize.craftingInventory).getUuid();
@@ -44,11 +42,6 @@ public class CraftingTableSerializerV1 implements Serializer<Integer, CraftingTa
         InventoryComponent craftingResultInventoryCopyEmpty = new InventoryComponent().set(craftingResultInventory.numberOfSlotParRow, craftingInventory.numberOfRow);
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingResultInventoryCopyEmpty);
 
-        if (craftingComponent.getRegistry() == RealmTechCoreMod.CRAFT) {
-            buffer.writeByte(1);
-        } else {
-            buffer.writeByte(2);
-        }
         return new SerializedRawBytes(buffer.array());
     }
 
@@ -64,12 +57,6 @@ public class CraftingTableSerializerV1 implements Serializer<Integer, CraftingTa
 
         byte craftingStrategyId = buffer.readByte();
 
-        InfRegistryAnonyme<CraftingRecipeEntry> craftingRegistry;
-        if (craftingStrategyId == 1) {
-            craftingRegistry = RealmTechCoreMod.CRAFT;
-        } else {
-            craftingRegistry = RealmTechCoreMod.FURNACE_RECIPE;
-        }
         return CraftingTableEditEntity.createSetCraftingTable(craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
     }
 
