@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @All(CraftingTableComponent.class)
-public class CraftingPlayerSystem extends IteratingSystem {
+public class CraftingSystem extends IteratingSystem {
     @Wire
     private SystemsAdminServer systemsAdminServer;
     @Wire(name = "serverContext")

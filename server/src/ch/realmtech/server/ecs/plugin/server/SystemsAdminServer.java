@@ -11,7 +11,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final PlayerMouvementSystemServer playerMouvementSystemServer;
     public final MapSystemServer mapSystemServer;
     public final IaTestSystem iaTestSystem;
-    public final CraftingPlayerSystem craftingPlayerSystem;
+    public final CraftingSystem craftingSystem;
     public final PickUpOnGroundItemSystem pickUpOnGroundItemSystem;
     public final Box2dFrotementSystem box2dFrotementSystem;
     public final ItemOnGroundPosSyncSystem itemOnGroundPosSyncSystem;
@@ -35,7 +35,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         playerSyncSystem = new PlayerSyncSystem();
         iaIsFocusPlayerSystem = new IaIsFocusPlayerSystem();
 
-        craftingPlayerSystem = new CraftingPlayerSystem();
+        craftingSystem = new CraftingSystem();
         pickUpOnGroundItemSystem = new PickUpOnGroundItemSystem();
 
         timeSystem = new TimeSystem();
@@ -61,7 +61,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 playerSyncSystem,
                 iaIsFocusPlayerSystem,
 
-                craftingPlayerSystem,
+                craftingSystem,
                 pickUpOnGroundItemSystem,
 
                 timeSystem,

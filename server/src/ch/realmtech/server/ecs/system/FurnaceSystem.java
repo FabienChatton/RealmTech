@@ -26,9 +26,9 @@ public class FurnaceSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         FurnaceComponent furnaceComponent = mFurnace.get(entityId);
-        InventoryComponent iconInventoryTimeToBurnComponent = mInventory.get(furnaceComponent.iconInventoryTimeToBurn);
-        InventoryComponent iconInventoryCurentBurnTimeComponent = mInventory.get(furnaceComponent.iconInventoryCurentBurnTime);
-        ItemComponent itemIconTimeToBurnComponent = mItem.get(iconInventoryTimeToBurnComponent.inventory[0][0]);
+//        InventoryComponent iconInventoryTimeToBurnComponent = mInventory.get(furnaceComponent.iconInventoryTimeToBurn);
+//        InventoryComponent iconInventoryCurentBurnTimeComponent = mInventory.get(furnaceComponent.iconInventoryCurentBurnTime);
+//        ItemComponent itemIconTimeToBurnComponent = mItem.get(iconInventoryTimeToBurnComponent.inventory[0][0]);
 
 
         if (furnaceComponent.curentBurnTime > 0) {
@@ -51,17 +51,17 @@ public class FurnaceSystem extends IteratingSystem {
             if (iconTimeToBurn == RealmTechCoreMod.NO_ITEM) {
                 System.out.println();
             }
-            if (itemIconTimeToBurnComponent == null || itemIconTimeToBurnComponent.itemRegisterEntry != iconTimeToBurn) {
-                world.getSystem(InventoryManager.class).removeInventory(iconInventoryCurentBurnTimeComponent.inventory);
-                int iconId = itemManager.newItemInventory(iconTimeToBurn, UUID.randomUUID());
-                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryCurentBurnTimeComponent.inventory[0], iconId);
-            }
+//            if (itemIconTimeToBurnComponent == null || itemIconTimeToBurnComponent.itemRegisterEntry != iconTimeToBurn) {
+//                world.getSystem(InventoryManager.class).removeInventory(iconInventoryCurentBurnTimeComponent.inventory);
+//                int iconId = itemManager.newItemInventory(iconTimeToBurn, UUID.randomUUID());
+//                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryCurentBurnTimeComponent.inventory[0], iconId);
+//            }
         } else {
-            if (!mItem.has(iconInventoryCurentBurnTimeComponent.inventory[0][0]) || mItem.get(iconInventoryCurentBurnTimeComponent.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
-                world.getSystem(InventoryManager.class).removeInventory(iconInventoryCurentBurnTimeComponent.inventory);
-                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01, UUID.randomUUID());
-                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryCurentBurnTimeComponent.inventory[0], iconId);
-            }
+//            if (!mItem.has(iconInventoryCurentBurnTimeComponent.inventory[0][0]) || mItem.get(iconInventoryCurentBurnTimeComponent.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
+//                world.getSystem(InventoryManager.class).removeInventory(iconInventoryCurentBurnTimeComponent.inventory);
+//                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01, UUID.randomUUID());
+//                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryCurentBurnTimeComponent.inventory[0], iconId);
+//            }
         }
 
         if (furnaceComponent.timeToBurn > 0) {
@@ -79,17 +79,17 @@ public class FurnaceSystem extends IteratingSystem {
                     .map(RegistryEntry::getEntry)
                     .findFirst()
                     .orElse(RealmTechCoreMod.NO_ITEM);
-            if (itemIconTimeToBurnComponent == null || itemIconTimeToBurnComponent.itemRegisterEntry != iconTimeToBurn) {
-                world.getSystem(InventoryManager.class).removeInventory(iconInventoryTimeToBurnComponent.inventory);
-                int iconId = itemManager.newItemInventory(iconTimeToBurn, UUID.randomUUID());
-                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryTimeToBurnComponent.inventory[0], iconId);
-            }
+//            if (itemIconTimeToBurnComponent == null || itemIconTimeToBurnComponent.itemRegisterEntry != iconTimeToBurn) {
+//                world.getSystem(InventoryManager.class).removeInventory(iconInventoryTimeToBurnComponent.inventory);
+//                int iconId = itemManager.newItemInventory(iconTimeToBurn, UUID.randomUUID());
+//                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryTimeToBurnComponent.inventory[0], iconId);
+//            }
         } else {
-            if (!mItem.has(iconInventoryTimeToBurnComponent.inventory[0][0]) || mItem.get(iconInventoryTimeToBurnComponent.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
-                world.getSystem(InventoryManager.class).removeInventory(iconInventoryTimeToBurnComponent.inventory);
-                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
-                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryTimeToBurnComponent.inventory[0], iconId);
-            }
+//            if (!mItem.has(iconInventoryTimeToBurnComponent.inventory[0][0]) || mItem.get(iconInventoryTimeToBurnComponent.inventory[0][0]).itemRegisterEntry != RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01) {
+//                world.getSystem(InventoryManager.class).removeInventory(iconInventoryTimeToBurnComponent.inventory);
+//                int iconId = itemManager.newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
+//                world.getSystem(InventoryManager.class).addItemToStack(iconInventoryTimeToBurnComponent.inventory[0], iconId);
+//            }
         }
     }
 

@@ -6,6 +6,7 @@ import com.artemis.Component;
 import com.artemis.annotations.EntityId;
 
 public class FurnaceComponent extends Component {
+    @EntityId
     public int craftingTableId;
     @EntityId
     public int inventoryCarburant;
