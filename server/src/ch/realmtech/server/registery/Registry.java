@@ -53,7 +53,7 @@ public class Registry<T extends Entry<T>> {
     }
 
     public List<RegistryEntry<T>> getEnfants() {
-        return enfants;
+        return List.copyOf(enfants);
     }
 
     public List<String> getEnfantsId() {

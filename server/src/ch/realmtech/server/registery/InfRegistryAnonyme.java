@@ -3,7 +3,7 @@ package ch.realmtech.server.registery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InfRegistryAnonyme<T extends Entry<T>> {
+public class InfRegistryAnonyme<T extends Entry<T>> implements InfRegistryAnonymeImmutable<T> {
     private final InfRegistryAnonyme<T> parent;
     private final List<RegistryEntryAnonyme<T>> enfants;
 
@@ -13,7 +13,7 @@ public class InfRegistryAnonyme<T extends Entry<T>> {
     }
 
     public List<RegistryEntryAnonyme<T>> getEnfants() {
-        return enfants;
+        return List.copyOf(enfants);
     }
 
     public void add(T entry) {

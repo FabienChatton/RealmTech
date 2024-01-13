@@ -2,9 +2,11 @@ package ch.realmtech.server.ecs.component;
 
 import ch.realmtech.server.craft.CraftingStrategyItf;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
-import ch.realmtech.server.registery.InfRegistryAnonyme;
+import ch.realmtech.server.registery.InfRegistryAnonymeImmutable;
 import com.artemis.Component;
 import com.artemis.annotations.EntityId;
+
+import java.util.function.Function;
 
 public class CraftingTableComponent extends Component {
     @EntityId
@@ -15,9 +17,11 @@ public class CraftingTableComponent extends Component {
 
     private CraftingStrategyItf craftStrategy;
 
-    private InfRegistryAnonyme<CraftingRecipeEntry> registry;
+    private Function<Boolean, Integer> canProcessCraft;
 
-    public void set(int craftingInventory, int craftingResultInventory, CraftingStrategyItf craftStrategy, InfRegistryAnonyme<CraftingRecipeEntry> registry) {
+    private InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry;
+
+    public void set(int craftingInventory, int craftingResultInventory, CraftingStrategyItf craftStrategy, InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.craftStrategy = craftStrategy;
@@ -28,7 +32,7 @@ public class CraftingTableComponent extends Component {
         return craftStrategy;
     }
 
-    public InfRegistryAnonyme<CraftingRecipeEntry> getRegistry() {
+    public InfRegistryAnonymeImmutable<CraftingRecipeEntry> getRegistry() {
         return registry;
     }
 }

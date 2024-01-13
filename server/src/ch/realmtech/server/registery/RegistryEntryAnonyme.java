@@ -1,10 +1,9 @@
 package ch.realmtech.server.registery;
 
-public class RegistryEntryAnonyme<T extends Entry<T>> extends InfRegistryAnonyme<T> implements AbstractRegistryEntry<T> {
+public class RegistryEntryAnonyme<T extends Entry<T>> implements AbstractRegistryEntry<T> {
     private final T entry;
 
     protected RegistryEntryAnonyme(InfRegistryAnonyme<T> parent, T entry) {
-        super(parent);
         this.entry = entry;
     }
 

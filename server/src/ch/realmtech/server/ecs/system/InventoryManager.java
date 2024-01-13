@@ -25,7 +25,7 @@ public class InventoryManager extends Manager {
     private SystemsAdminCommun systemsAdminCommun;
     @Wire
     private ItemManager itemManager;
-    private ComponentMapper<InventoryComponent> mInventory;
+    public ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<ChestComponent> mChest;
