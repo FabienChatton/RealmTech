@@ -3,7 +3,7 @@ package ch.realmtech.server.craft;
 
 import ch.realmtech.server.registery.ItemRegisterEntry;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,24 +26,24 @@ public class CraftPatternShapeless extends CraftPattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
-        return craftNonNull(Arrays.stream(itemRegisterEntry).filter(Objects::nonNull).toArray(ItemRegisterEntry[]::new));
+    public Optional<CraftResult> craft(List<ItemRegisterEntry> itemRegisterEntry) {
+        return craftNonNull(itemRegisterEntry.stream().filter(Objects::nonNull).toList());
     }
 
-    private Optional<CraftResult> craftNonNull(ItemRegisterEntry[] itemRegisterEntry) {
-        if (itemRegisterEntry.length != itemRequire.length) return Optional.empty();
+    private Optional<CraftResult> craftNonNull(List<ItemRegisterEntry> itemRegisterEntry) {
+        if (itemRegisterEntry.size() != itemRequire.length) return Optional.empty();
         boolean[] indexDejaPris = new boolean[itemRequire.length];
         loop:
-        for (int i = 0; i < itemRegisterEntry.length; i++) {
+        for (ItemRegisterEntry registerEntry : itemRegisterEntry) {
             for (int j = 0; j < itemRequire.length; j++) {
-                if (!indexDejaPris[j] && itemRegisterEntry[i] == itemRequire[j]) {
+                if (!indexDejaPris[j] && registerEntry == itemRequire[j]) {
                     indexDejaPris[j] = true;
                     continue loop;
                 }
             }
         }
-        for (int i = 0; i < indexDejaPris.length; i++) {
-            if (!indexDejaPris[i]) {
+        for (boolean dejaPris : indexDejaPris) {
+            if (!dejaPris) {
                 return Optional.empty();
             }
         }

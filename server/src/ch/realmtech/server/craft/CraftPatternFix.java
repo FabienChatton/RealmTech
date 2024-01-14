@@ -4,6 +4,7 @@ import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class CraftPatternFix extends CraftPattern {
@@ -42,8 +43,8 @@ public class CraftPatternFix extends CraftPattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
-        if (Arrays.equals(itemRegisterEntry, Arrays.stream(craftPattern).map(entry -> entry == RealmTechCoreMod.NO_ITEM ? null : entry).toArray())) {
+    public Optional<CraftResult> craft(List<ItemRegisterEntry> itemRegisterEntry) {
+        if (itemRegisterEntry.equals(Arrays.stream(craftPattern).map(entry -> entry == RealmTechCoreMod.NO_ITEM ? null : entry).toList())) {
             return Optional.of(new CraftResult(itemResult, nombre, 0));
         } else {
             return Optional.empty();

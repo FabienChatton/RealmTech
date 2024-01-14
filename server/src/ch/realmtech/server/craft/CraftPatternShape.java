@@ -4,6 +4,7 @@ import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -51,14 +52,14 @@ public class CraftPatternShape extends CraftPattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
-        int taille2d = (int) Math.sqrt(itemRegisterEntry.length);
-        ItemRegisterEntry[] pureItemRegisterEntry = new ItemRegisterEntry[itemRegisterEntry.length];
-        for (int i = 0; i < itemRegisterEntry.length; i++) {
-            if (itemRegisterEntry[i] == null) {
+    public Optional<CraftResult> craft(List<ItemRegisterEntry> itemRegisterEntry) {
+        int taille2d = (int) Math.sqrt(itemRegisterEntry.size());
+        ItemRegisterEntry[] pureItemRegisterEntry = new ItemRegisterEntry[itemRegisterEntry.size()];
+        for (int i = 0; i < itemRegisterEntry.size(); i++) {
+            if (itemRegisterEntry.get(i) == null) {
                 pureItemRegisterEntry[i] = RealmTechCoreMod.NO_ITEM;
             } else {
-                pureItemRegisterEntry[i] = itemRegisterEntry[i];
+                pureItemRegisterEntry[i] = itemRegisterEntry.get(i);
             }
         }
         ItemRegisterEntry[][] itemRegisterEntries2d = getItemRegisterEntries2d(taille2d, taille2d, pureItemRegisterEntry);

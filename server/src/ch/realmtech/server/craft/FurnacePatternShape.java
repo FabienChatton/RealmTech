@@ -2,6 +2,7 @@ package ch.realmtech.server.craft;
 
 import ch.realmtech.server.registery.ItemRegisterEntry;
 
+import java.util.List;
 import java.util.Optional;
 
 public class FurnacePatternShape extends FurnacePattern {
@@ -18,8 +19,8 @@ public class FurnacePatternShape extends FurnacePattern {
     }
 
     @Override
-    public Optional<CraftResult> craft(ItemRegisterEntry[] itemRegisterEntry, int width, int height) {
-        Optional<CraftResult> craftResult = craftPatternShape.craft(itemRegisterEntry, width, height);
+    public Optional<CraftResult> craft(List<ItemRegisterEntry> itemRegisterEntry) {
+        Optional<CraftResult> craftResult = craftPatternShape.craft(itemRegisterEntry);
         if (craftResult.isPresent()) {
             CraftResult result = craftResult.get();
             return Optional.of(new CraftResult(result.getItemRegisterEntry(), result.getNombreResult(), timeToProcess));

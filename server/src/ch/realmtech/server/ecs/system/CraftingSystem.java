@@ -2,7 +2,10 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
-import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.component.CraftingTableComponent;
+import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
@@ -13,10 +16,7 @@ import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @All(CraftingTableComponent.class)
 public class CraftingSystem extends IteratingSystem {
@@ -33,6 +33,7 @@ public class CraftingSystem extends IteratingSystem {
     protected void process(int entityId) {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
 
+        Optional<CraftResult> apply = craftingTableComponent.getCanProcessCraftCraftingTable().apply(entityId);
         CraftResult craftResult = getCraft(entityId);
         if (craftingTableComponent.getCraftResultStrategy() != null) {
             if (craftingTableComponent.getCraftResultStrategy().consumeCraftingStrategy(serverContext, world, craftResult, entityId)) {
@@ -49,16 +50,14 @@ public class CraftingSystem extends IteratingSystem {
             return null;
         }
         int[][] inventoryCraft = inventoryCraftComponent.inventory;
-        ItemRegisterEntry[] itemRegister = new ItemRegisterEntry[inventoryCraft.length];
-        for (int i = 0; i < inventoryCraft.length; i++) {
-            if (inventoryCraft[i][0] != 0) {
-                itemRegister[i] = mItem.get(inventoryCraft[i][0]).itemRegisterEntry;
-            }
-        }
+        List<ItemRegisterEntry> itemRegister = Arrays.stream(inventoryCraft)
+                .map((stack) -> mItem.get(stack[0]))
+                .map((itemComponent -> itemComponent != null ? itemComponent.itemRegisterEntry : null))
+                .toList();
 
-        if (Arrays.stream(itemRegister).anyMatch(Objects::nonNull)) {
+        if (itemRegister.stream().anyMatch(Objects::nonNull)) {
             for (RegistryEntryAnonyme<CraftingRecipeEntry> craftingRecipeEntry : craftingTableComponent.getRegistry().getEnfants()) {
-                Optional<CraftResult> craftResultOption = craftingRecipeEntry.getEntry().craft(itemRegister, inventoryCraftComponent.numberOfSlotParRow, inventoryCraftComponent.numberOfRow);
+                Optional<CraftResult> craftResultOption = craftingRecipeEntry.getEntry().craft(itemRegister);
                 if (craftResultOption.isPresent()) {
                     return craftResultOption.get();
                 }
