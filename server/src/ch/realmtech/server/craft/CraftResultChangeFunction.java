@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class CanProcessCraftCraftingTable {
-    public static Function<Integer, Optional<CraftResult>> canProcessCraftCraftingTable(World world) {
+public final class CraftResultChangeFunction {
+    public static Function<Integer, Optional<CraftResultChange>> CraftResultChangeCraftingTable(World world) {
         return (craftingTableId) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
@@ -43,12 +43,18 @@ public class CanProcessCraftCraftingTable {
             boolean canProcessCraft = false;
             ItemComponent itemDejaResultComponent = systemsAdminServer.inventoryManager.mItem.get(craftingResultInventoryComponent.inventory[0][0]);
             if (craftResult.isPresent()) {
+                // new craft available
                 if (itemDejaResultComponent == null) {
+                    canProcessCraft = true;
+                }
+            } else {
+                // craft to remove
+                if (itemDejaResultComponent != null) {
                     canProcessCraft = true;
                 }
             }
             if (canProcessCraft) {
-                return craftResult;
+                return Optional.of(new CraftResultChange(craftResult));
             } else {
                 return Optional.empty();
             }

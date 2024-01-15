@@ -1,6 +1,6 @@
 package ch.realmtech.server.ecs.system;
 
-import ch.realmtech.server.craft.CanProcessCraftCraftingTable;
+import ch.realmtech.server.craft.CraftResultChangeFunction;
 import ch.realmtech.server.craft.CraftingStrategyCraftingTable;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
@@ -451,7 +451,7 @@ public class InventoryManager extends Manager {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable(), craftingRegistry, CanProcessCraftCraftingTable.canProcessCraftCraftingTable(world));
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable(), craftingRegistry, CraftResultChangeFunction.CraftResultChangeCraftingTable(world));
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
