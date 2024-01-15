@@ -1,7 +1,7 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.craft.CraftResultChangeFunction;
-import ch.realmtech.server.craft.CraftingStrategyCraftingTable;
+import ch.realmtech.server.craft.OnNewCraftAvailable;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
@@ -206,7 +206,7 @@ public class InventoryManager extends Manager {
         return dst.length - tailleStack(dst) >= tailleStack(src) && itemComponentSrc.itemRegisterEntry == itemComponentDst.itemRegisterEntry;
     }
 
-    public static int getTopItem(int[] stack) {
+    public int getTopItem(int[] stack) {
         int tailleStack = tailleStack(stack);
         if (tailleStack > 0) {
             return stack[tailleStack - 1];
@@ -451,7 +451,7 @@ public class InventoryManager extends Manager {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, new CraftingStrategyCraftingTable(), craftingRegistry, CraftResultChangeFunction.CraftResultChangeCraftingTable(world));
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeCraftingTable(world), OnNewCraftAvailable.onNewCraftAvailableCraftingTable());
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
@@ -461,22 +461,19 @@ public class InventoryManager extends Manager {
         return new int[]{craftingInventoryId, craftingResultInventoryId};
     }
 
-    public void createFurnace(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventory, UUID iconInventoryTimeToBurnUuid, UUID iconInventoryCurentBurnTimeUuid, UUID craftingResultInventoryUuid) {
-        int craftingTableId = world.create();
-        int inventoryItemToSmelt;
-        int inventoryCarburant = world.create();
-        int inventoryResult;
-        int iconInventoryTimeToBurn = world.create();
-        int iconInventoryCurentBurnTime = world.create();
+    public int[] createFurnace(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventoryUuid, int[][] carburantInventory, UUID craftingResultInventoryUuid, int[][] craftingResultInventory, InfRegistryAnonyme<CraftingRecipeEntry> craftingRegistry) {
+        int craftingInventoryId = world.create();
+        int craftingResultInventoryId = world.create();
+        int carburantInventoryId = world.create();
 
-        int[] craftingTableArgs = createCraftingTable(craftingTableId, craftingInventoryUuid, craftingInventory, 1, 1, craftingResultInventoryUuid, RealmTechCoreMod.FURNACE_RECIPE);
-        inventoryItemToSmelt = craftingTableArgs[0];
-        inventoryResult = craftingTableArgs[1];
-        world.edit(motherEntity).create(FurnaceComponent.class).set(craftingTableId, inventoryCarburant, iconInventoryTimeToBurn, iconInventoryCurentBurnTime);
+        createInventoryUi(craftingInventoryId, craftingInventoryUuid, craftingInventory, 1, 1);
+        createInventoryUi(craftingResultInventoryId, craftingResultInventoryUuid,  craftingResultInventory, 1, 1);
+        createInventoryUi(carburantInventoryId, carburantInventoryUuid, carburantInventory, 1, 1);
 
-        createInventoryUi(inventoryCarburant, carburantInventory, 1, 1);
-        createInventoryUi(iconInventoryTimeToBurn, iconInventoryTimeToBurnUuid, 1, 1);
-        createInventoryUi(iconInventoryCurentBurnTime, iconInventoryCurentBurnTimeUuid, 1, 1);
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeFurnace(world), OnNewCraftAvailable.onNewCraftAvailableFurnace());
+        world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
+
+        return new int[]{craftingInventoryId, craftingResultInventoryId, carburantInventoryId};
     }
 
     private EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {

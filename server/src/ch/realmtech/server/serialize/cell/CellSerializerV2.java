@@ -70,6 +70,9 @@ public class CellSerializerV2 implements Serializer<Integer, CellArgs> {
         if (paddingId == 2) {
             editEntityArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCraftingTableController());
         }
+        if (paddingId == 3) {
+            editEntityArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getFurnaceSerializerController());
+        }
         return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, editEntityArgs);
     }
 

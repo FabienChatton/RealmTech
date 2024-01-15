@@ -1,6 +1,7 @@
 package ch.realmtech.server.craft;
 
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
+import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
@@ -22,23 +23,7 @@ public final class CraftResultChangeFunction {
             InventoryComponent craftingInventoryComponent = systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent craftingResultInventoryComponent = systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingResultInventory);
 
-            List<ItemRegisterEntry> itemRegisterEntries = Arrays.stream(craftingInventoryComponent.inventory)
-                    .map((stack) -> systemsAdminServer.inventoryManager.mItem.get(stack[0]))
-                    .map((itemComponent) -> itemComponent != null ? itemComponent.itemRegisterEntry : null)
-                    .toList();
-
-            List<CraftResult> craftResults = craftingTableComponent.getRegistry().getEnfants().stream()
-                    .map((craftingRecipe) -> craftingRecipe.getEntry().craft(itemRegisterEntries))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .toList();
-
-            Optional<CraftResult> craftResult;
-            if (!craftResults.isEmpty()) {
-                craftResult = Optional.of(craftResults.get(0));
-            } else {
-                craftResult = Optional.empty();
-            }
+            Optional<CraftResult> craftResult = getCraftResult(systemsAdminServer, craftingTableComponent, craftingInventoryComponent);
 
             boolean canProcessCraft = false;
             ItemComponent itemDejaResultComponent = systemsAdminServer.inventoryManager.mItem.get(craftingResultInventoryComponent.inventory[0][0]);
@@ -59,5 +44,59 @@ public final class CraftResultChangeFunction {
                 return Optional.empty();
             }
         };
+    }
+
+    public static Function<Integer, Optional<CraftResultChange>> CraftResultChangeFurnace(World world) {
+        return (craftingTableId) -> {
+            SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
+            ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
+            ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
+            ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+            ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
+
+            CraftingTableComponent craftingTableComponent = mCraftingTable.get(craftingTableId);
+            FurnaceComponent furnaceComponent = mFurnace.get(craftingTableId);
+            InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
+            InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
+
+            Optional<CraftResult> craftResultOpt = getCraftResult(systemsAdminServer, craftingTableComponent, craftingInventoryComponent);
+
+            if (craftResultOpt.isPresent()) {
+                CraftResult craftResult = craftResultOpt.get();
+                if (furnaceComponent.tickProcess >= craftResult.getTimeToProcess()) {
+                    furnaceComponent.tickProcess = 0;
+                    return Optional.of(new CraftResultChange(craftResultOpt));
+                } else {
+                    if (furnaceComponent.remainingTickToBurn > 0) {
+                        furnaceComponent.tickProcess++;
+                    }
+                }
+            } else {
+                furnaceComponent.tickProcess = 0;
+            }
+
+            return Optional.empty();
+        };
+    }
+
+    private static Optional<CraftResult> getCraftResult(SystemsAdminServer systemsAdminServer, CraftingTableComponent craftingTableComponent, InventoryComponent craftingInventoryComponent) {
+        List<ItemRegisterEntry> itemRegisterEntries = Arrays.stream(craftingInventoryComponent.inventory)
+                .map((stack) -> systemsAdminServer.inventoryManager.mItem.get(stack[0]))
+                .map((itemComponent) -> itemComponent != null ? itemComponent.itemRegisterEntry : null)
+                .toList();
+
+        List<CraftResult> craftResults = craftingTableComponent.getRegistry().getEnfants().stream()
+                .map((craftingRecipe) -> craftingRecipe.getEntry().craft(itemRegisterEntries))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        Optional<CraftResult> craftResult;
+        if (!craftResults.isEmpty()) {
+            craftResult = Optional.of(craftResults.get(0));
+        } else {
+            craftResult = Optional.empty();
+        }
+        return craftResult;
     }
 }

@@ -221,6 +221,70 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .build()
     ));
 
+    public final static CellItemRegisterEntry FURNACE = registerCellItem("furnace", new CellRegisterEntry(
+            "furnace-01",
+            CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.HAND, "realmtech.furnace")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .editEntityOnCreate(FurnaceEditEntity.createFurnace())
+                    .interagieClickDroit((clientContext, cellId) -> {
+                        ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
+                        ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
+                        ComponentMapper<FurnaceComponent> mFurnace = clientContext.getWorld().getMapper(FurnaceComponent.class);
+
+                        CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
+                        FurnaceComponent furnaceComponent = mFurnace.get(cellId);
+                        clientContext.openPlayerInventory(() -> {
+                            final Table playerInventory = new Table(clientContext.getSkin());
+                            final Table craftingInventory = new Table(clientContext.getSkin());
+                            final Table craftingResultInventory = new Table(clientContext.getSkin());
+                            Table carburantInventory = new Table(clientContext.getSkin());
+                            Consumer<Window> addTable = (window) -> {
+                                Table craftingTable = new Table(craftingInventory.getSkin());
+                                craftingTable.add(craftingInventory);
+                                craftingTable.row();
+
+                                craftingTable.row();
+
+                                craftingTable.add(craftingResultInventory).padLeft(100f);
+                                craftingTable.row();
+
+                                craftingTable.add(carburantInventory);
+                                craftingTable.row();
+
+                                craftingTable.padBottom(10f);
+                                window.add(craftingTable).row();
+                                window.add(playerInventory);
+                            };
+                            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+                            int inventoryCraftId = craftingTableComponent.craftingInventory;
+                            int inventoryResultId = craftingTableComponent.craftingResultInventory;
+                            int inventoryCarburantId = furnaceComponent.inventoryCarburant;
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
+                            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCraftId).getUuid();
+                            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryResultId).getUuid();
+                            UUID inventoryCarburantUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCarburantId).getUuid();
+
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryCarburantUuid));
+
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
+                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryResultId, craftingResultInventory).notClickAndDropDst().build(),
+                                    DisplayInventoryArgs.builder(inventoryCarburantId, carburantInventory).build()
+                            }, new UUID[] {inventoryCraftUuid, inventoryResultUuid, inventoryCarburantUuid});
+                        });
+                    })
+                    .build()
+    ), new ItemRegisterEntry(
+            "furnace-01",
+            ItemBehavior.builder()
+                    .placeCell("realmtech.furnace")
+                    .build()
+    ));
     public final static CellItemRegisterEntry CHEST = registerCellItem("chest", new CellRegisterEntry(
             "chest-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
@@ -318,55 +382,6 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "gold-ore-01",
             ItemBehavior.builder().build()
     ));
-//    public final static CellItemRegisterEntry FURNACE = registerCellItem("furnace", new CellRegisterEntry(
-//            "furnace-01",
-//            CellBehavior.builder(Cells.Layer.BUILD_DECO)
-////                    .editEntity((world, id) -> {
-////                        world.getSystem(InventoryManager.class).createFurnace(id, UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE], UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
-////                    })
-//                    .interagieClickDroit((clientContext, cellId) -> {
-//                        ComponentMapper<FurnaceComponent> mFurnace = clientContext.getWorld().getMapper(FurnaceComponent.class);
-//                        ComponentMapper<CraftingTableComponent> mCraftingTable = clientContext.getWorld().getMapper(CraftingTableComponent.class);
-//                        ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
-//                        FurnaceComponent furnaceComponent = mFurnace.get(cellId);
-//                        CraftingTableComponent craftingTableComponent = mCraftingTable.get(cellId);
-//
-//                        clientContext.openPlayerInventory(() -> {
-//                            Table playerInventoryTable = new Table(clientContext.getSkin());
-//                            Table itemToSmeltTable = new Table(clientContext.getSkin());
-//                            Table midleTable = new Table(clientContext.getSkin());
-//                            Table iconTimeToBurnTable = new Table(clientContext.getSkin());
-//                            Table iconCurentBurnTime = new Table(clientContext.getSkin());
-//                            Table carburantTable = new Table(clientContext.getSkin());
-//                            Table resultTable = new Table(clientContext.getSkin());
-//                            Consumer<Window> addTable = window -> {
-//                                window.add(itemToSmeltTable).padBottom(10f).row();
-//                                midleTable.add(iconTimeToBurnTable).padLeft(64 + 32).padRight(16);
-//                                midleTable.add(iconCurentBurnTime).padRight(16);
-//                                midleTable.add(resultTable).row();
-//                                window.add(midleTable).padBottom(10f).row();
-//                                window.add(carburantTable).padBottom(10f).row();
-//                                window.add(playerInventoryTable);
-//                            };
-//                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-//                                    DisplayInventoryArgs.builder(craftingTableComponent.craftingInventory, itemToSmeltTable).build(),
-//                                    DisplayInventoryArgs.builder(furnaceComponent.inventoryCarburant, carburantTable).build(),
-//                                    DisplayInventoryArgs.builder(craftingTableComponent.craftingResultInventory, resultTable).notClickAndDropDst().build(),
-//                                    DisplayInventoryArgs.builder(clientContext.getPlayerId(), playerInventoryTable).build(),
-//                                    DisplayInventoryArgs.builder(furnaceComponent.iconInventoryTimeToBurn, iconTimeToBurnTable).icon().build(),
-//                                    DisplayInventoryArgs.builder(furnaceComponent.iconInventoryCurentBurnTime, iconCurentBurnTime).icon().build()
-//                            });
-//                        });
-//                    })
-//                    .breakWith(ItemType.PICKAXE, "realmtech.furnace")
-//                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-//                    .build()
-//    ), new ItemRegisterEntry(
-//            "furnace-01",
-//            ItemBehavior.builder()
-//                    .placeCell("realmtech.furnace")
-//                    .build()
-//    ));
 
     public static CellItemRegisterEntry TORCH = registerCellItem("torch", new CellRegisterEntry("torch-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)

@@ -224,7 +224,7 @@ public class MapManager extends Manager {
         world.edit(cellId).create(CellComponent.class).set(innerX, innerY, cellRegisterEntry, chunkId);
         cellArgs.getEditEntityArgs()
                 .or(() -> cellRegisterEntry.getCellBehavior().getEditEntityOnCreate())
-                .ifPresent(editEntityArg -> editEntityArg.editEntity(world.getRegistered("executeOnContext"), cellId));
+                .ifPresent((editEntityArg) -> editEntityArg.editEntity(world.getRegistered("executeOnContext"), cellId));
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
             CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
                     .getCellBehavior()

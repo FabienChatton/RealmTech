@@ -33,8 +33,7 @@ public class CraftingSystem extends IteratingSystem {
         Optional<CraftResultChange> craftResultChangeOpt = craftingTableComponent.getIsCraftResultChange().apply(entityId);
         craftResultChangeOpt.ifPresent((craftResultChange) -> {
             craftingTableComponent.getOnCraftResultChange(world).accept(craftResultChange.craftResult());
-            UUID uuid = mUuid.get(craftingTableComponent.craftingResultInventory).getUuid();
-            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(uuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))));
         });
     }
+
 }

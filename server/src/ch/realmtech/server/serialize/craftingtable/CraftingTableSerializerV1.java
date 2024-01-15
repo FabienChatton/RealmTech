@@ -1,6 +1,5 @@
 package ch.realmtech.server.serialize.craftingtable;
 
-import ch.realmtech.server.craft.CraftingStrategyItf;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
@@ -8,9 +7,6 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
 import ch.realmtech.server.level.cell.CraftingTableEditEntity;
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.registery.CraftingRecipeEntry;
-import ch.realmtech.server.registery.InfRegistryAnonyme;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
@@ -74,8 +70,7 @@ public class CraftingTableSerializerV1 implements Serializer<Integer, CraftingTa
         int craftingResultInventoryUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), craftingResultInventoryUuid);
         int craftingResultInventoryLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), craftingResultInventory);
 
-        byte craftingStrategyIdLength = CraftingStrategyItf.ID_LENGTH;
-        return craftingInventoryUuidLength + craftingInventoryLength + craftingResultInventoryUuidLength + /* craftingResultInventoryLength + */ craftingStrategyIdLength;
+        return craftingInventoryUuidLength + craftingInventoryLength + craftingResultInventoryUuidLength /* + craftingResultInventoryLength + */ /*craftingStrategyIdLength*/;
     }
 
     @Override
