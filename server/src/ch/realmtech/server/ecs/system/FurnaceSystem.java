@@ -1,6 +1,8 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.craft.CraftResult;
+import ch.realmtech.server.craft.CraftResultChangeFunction;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.FurnaceComponent;
@@ -14,6 +16,7 @@ import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @All({FurnaceComponent.class, CraftingTableComponent.class})
@@ -32,6 +35,7 @@ public class FurnaceSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         FurnaceComponent furnaceComponent = mFurnace.get(entityId);
+        CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
         InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
 
         if (furnaceComponent.remainingTickToBurn > 0) {
@@ -44,7 +48,8 @@ public class FurnaceSystem extends IteratingSystem {
             int carburantItemId = systemsAdminServer.inventoryManager.getTopItem(carburantStack);
 
             ItemComponent carburantItemComponent = mItem.get(carburantItemId);
-            if (carburantItemComponent != null) {
+            Optional<CraftResult> craftResult = CraftResultChangeFunction.getCraftResult(systemsAdminServer, craftingTableComponent, mInventory.get(craftingTableComponent.craftingInventory));
+            if (carburantItemComponent != null && craftResult.isPresent()) {
                 if (carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn() > 0) {
                     furnaceComponent.remainingTickToBurn = carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();
                     systemsAdminServer.inventoryManager.deleteItemInStack(carburantStack, carburantItemId);

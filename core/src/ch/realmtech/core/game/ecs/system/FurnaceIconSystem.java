@@ -41,26 +41,32 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         FurnaceExtraInfoComponent furnaceExtraInfoComponent = mFurnaceExtraInfo.get(entityId);
 
         if (furnaceComponent.remainingTickToBurn > 0) {
-            int iconFireItemId = systemsAdminClient.inventoryManager.getTopItem(mInventory.get(furnaceIconsComponent.getIconFire()).inventory[0]);
-            ItemComponent iconFireItemComponent = mItem.get(iconFireItemId);
-            String iconFireTextureName = formatPourDix(furnaceComponent.remainingTickToBurn, furnaceExtraInfoComponent.lastRemainingTickToBurnFull, "furnace-time-to-burn");
+            setIcon(furnaceIconsComponent.getIconFire(), "furnace-time-to-burn", furnaceComponent.remainingTickToBurn, furnaceExtraInfoComponent.lastRemainingTickToBurnFull);
+        }
 
-            Optional<RegistryEntry<ItemRegisterEntry>> iconFireTo = RealmTechCoreMod.ITEMS.getEnfants().stream()
-                    .filter((itemRegisterEntry) -> itemRegisterEntry.getEntry().getTextureRegionName().equals(iconFireTextureName))
-                    .findFirst();
-            if (iconFireTo.isPresent()) {
-                iconFireItemComponent.itemRegisterEntry = iconFireTo.get().getEntry();
-            } else {
-                logger.warn("Can not find icon fire, calculated texture: {}", iconFireTextureName);
-            }
+        if (furnaceComponent.tickProcess > 0) {
+            setIcon(furnaceIconsComponent.getIconProcess(), "furnace-arrow", furnaceComponent.tickProcess, furnaceExtraInfoComponent.lastTickProcessFull);
+        }
+    }
+
+    private void setIcon(int furnaceIconsComponent, String prefixTextureName, int ref, int max) {
+        int iconProcessId = systemsAdminClient.inventoryManager.getTopItem(mInventory.get(furnaceIconsComponent).inventory[0]);
+        ItemComponent iconProcessItemComponent = mItem.get(iconProcessId);
+        String iconProcessTextureName = formatPourDix(ref, max, prefixTextureName);
+
+        Optional<RegistryEntry<ItemRegisterEntry>> iconProcessTo = RealmTechCoreMod.ITEMS.getEnfants().stream()
+                .filter((itemRegisterEntry) -> itemRegisterEntry.getEntry().getTextureRegionName().equals(iconProcessTextureName))
+                .findFirst();
+        if (iconProcessTo.isPresent()) {
+            iconProcessItemComponent.itemRegisterEntry = iconProcessTo.get().getEntry();
+        } else {
+            logger.warn("Can not find icon, calculated texture: {}", iconProcessTextureName);
         }
     }
 
     private String formatPourDix(int ref, int max, String prefixTextureName) {
         int pourDix = (int) Math.min(10, Math.max(1, 1 + Math.floor(10f * ((float) ref / (float) max))));
-
-        String format = String.format(prefixTextureName + (pourDix != 10 ? "-0%d" : "-%d"), pourDix);;
-        return format;
+        return String.format(prefixTextureName + (pourDix != 10 ? "-0%d" : "-%d"), pourDix);
     }
 
     @Override
@@ -97,7 +103,7 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         }
         if (lastTickProcessFull != -1) {
             furnaceExtraInfoComponent.lastTickProcessFull = lastTickProcessFull;
-            furnaceComponent.tickProcess = lastTickProcessFull;
+            furnaceComponent.tickProcess = 0;
         }
     }
 }

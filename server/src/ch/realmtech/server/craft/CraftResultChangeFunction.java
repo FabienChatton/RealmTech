@@ -91,7 +91,7 @@ public final class CraftResultChangeFunction {
         };
     }
 
-    private static Optional<CraftResult> getCraftResult(SystemsAdminServer systemsAdminServer, CraftingTableComponent craftingTableComponent, InventoryComponent craftingInventoryComponent) {
+    public static Optional<CraftResult> getCraftResult(SystemsAdminServer systemsAdminServer, CraftingTableComponent craftingTableComponent, InventoryComponent craftingInventoryComponent) {
         List<ItemRegisterEntry> itemRegisterEntries = Arrays.stream(craftingInventoryComponent.inventory)
                 .map((stack) -> systemsAdminServer.inventoryManager.mItem.get(stack[0]))
                 .map((itemComponent) -> itemComponent != null ? itemComponent.itemRegisterEntry : null)
