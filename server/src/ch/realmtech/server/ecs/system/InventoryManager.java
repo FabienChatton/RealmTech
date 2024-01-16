@@ -461,7 +461,7 @@ public class InventoryManager extends Manager {
         return new int[]{craftingInventoryId, craftingResultInventoryId};
     }
 
-    public int[] createFurnace(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventoryUuid, int[][] carburantInventory, UUID craftingResultInventoryUuid, int[][] craftingResultInventory, InfRegistryAnonyme<CraftingRecipeEntry> craftingRegistry) {
+    public int[] createFurnace(int motherEntity, UUID furnaceUuid, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventoryUuid, int[][] carburantInventory, UUID craftingResultInventoryUuid, int[][] craftingResultInventory, InfRegistryAnonyme<CraftingRecipeEntry> craftingRegistry) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
         int carburantInventoryId = world.create();
@@ -473,14 +473,24 @@ public class InventoryManager extends Manager {
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeFurnace(world), OnNewCraftAvailable.onNewCraftAvailableFurnace());
         world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
 
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(furnaceUuid, motherEntity);
+
         return new int[]{craftingInventoryId, craftingResultInventoryId, carburantInventoryId};
     }
 
-    private EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
+    public EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
         inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
         inventoryEdit.create(InventoryUiComponent.class).set();
+        return inventoryEdit;
+    }
+
+    public EntityEdit createInventoryUiIcon(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
+        EntityEdit inventoryEdit = world.edit(inventoryId);
+        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
+        inventoryEdit.create(InventoryUiComponent.class).setIcon();
         return inventoryEdit;
     }
 

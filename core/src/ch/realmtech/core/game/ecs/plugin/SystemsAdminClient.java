@@ -28,6 +28,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final LightCycleSystem lightCycleSystem;
     private final TimeSystemSimulation timeSystemSimulation;
     private final LightManager lightManager;
+    private final FurnaceIconSystem furnaceIconSystem;
+    private final FurnaceSimulationSystem furnaceSimulationSystem;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -41,6 +43,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         timeSystemSimulation = new TimeSystemSimulation();
         cellHoverSystem = new CellHoverSystem();
         lightManager = new LightManager();
+        furnaceIconSystem = new FurnaceIconSystem();
+        furnaceSimulationSystem = new FurnaceSimulationSystem();
         // render
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
@@ -69,6 +73,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 timeSystemSimulation,
                 iaManagerClient,
                 lightManager,
+                furnaceIconSystem,
+                furnaceSimulationSystem,
                 // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
@@ -164,5 +170,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     @Override
     public LightManager getLightManager() {
         return lightManager;
+    }
+
+    @Override
+    public FurnaceIconSystem getFurnaceIconSystem() {
+        return furnaceIconSystem;
     }
 }

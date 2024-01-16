@@ -227,26 +227,30 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .breakWith(ItemType.HAND, "realmtech.furnace")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntityOnCreate(FurnaceEditEntity.createFurnace())
+                    .editEntityOnDelete(FurnaceEditEntity.deleteIconFurnace())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
                         ComponentMapper<FurnaceComponent> mFurnace = clientContext.getWorld().getMapper(FurnaceComponent.class);
+                        ComponentMapper<FurnaceIconsComponent> mFurnaceIcons = clientContext.getWorld().getMapper(FurnaceIconsComponent.class);
 
                         CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
                         FurnaceComponent furnaceComponent = mFurnace.get(cellId);
+                        FurnaceIconsComponent furnaceIconsComponent = mFurnaceIcons.get(cellId);
                         clientContext.openPlayerInventory(() -> {
-                            final Table playerInventory = new Table(clientContext.getSkin());
-                            final Table craftingInventory = new Table(clientContext.getSkin());
-                            final Table craftingResultInventory = new Table(clientContext.getSkin());
+                            Table playerInventory = new Table(clientContext.getSkin());
+                            Table craftingInventory = new Table(clientContext.getSkin());
+                            Table craftingResultInventory = new Table(clientContext.getSkin());
                             Table carburantInventory = new Table(clientContext.getSkin());
+                            Table iconFire = new Table(clientContext.getSkin());
+
                             Consumer<Window> addTable = (window) -> {
                                 Table craftingTable = new Table(craftingInventory.getSkin());
                                 craftingTable.add(craftingInventory);
                                 craftingTable.row();
 
-                                craftingTable.row();
-
-                                craftingTable.add(craftingResultInventory).padLeft(100f);
+                                craftingTable.add(iconFire);
+                                craftingTable.add(craftingResultInventory).padLeft(32f);
                                 craftingTable.row();
 
                                 craftingTable.add(carburantInventory);
@@ -260,6 +264,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             int inventoryCraftId = craftingTableComponent.craftingInventory;
                             int inventoryResultId = craftingTableComponent.craftingResultInventory;
                             int inventoryCarburantId = furnaceComponent.inventoryCarburant;
+                            int iconFireId = furnaceIconsComponent.getIconFire();
                             UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
                             UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCraftId).getUuid();
                             UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryResultId).getUuid();
@@ -274,7 +279,8 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                                     DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
                                     DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).build(),
                                     DisplayInventoryArgs.builder(inventoryResultId, craftingResultInventory).notClickAndDropDst().build(),
-                                    DisplayInventoryArgs.builder(inventoryCarburantId, carburantInventory).build()
+                                    DisplayInventoryArgs.builder(inventoryCarburantId, carburantInventory).build(),
+                                    DisplayInventoryArgs.builder(iconFireId, iconFire).icon().build(),
                             }, new UUID[] {inventoryCraftUuid, inventoryResultUuid, inventoryCarburantUuid});
                         });
                     })

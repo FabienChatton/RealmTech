@@ -258,11 +258,11 @@ public class PlayerInventorySystem extends BaseSystem {
         InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
         for (int[] stack : inventory) {
-            final Table tableImage = new Table();
-            final TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
-            tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
-            final ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage);
+            Table tableImage = new Table();
+            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage);
             curentClickAndDropActors.add(clickAndDropActor);
+            TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
+            tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
             clickAndDropActor.setWidth(backGroundTextureRegion.getRegionWidth());
             clickAndDropActor.setHeight(backGroundTextureRegion.getRegionHeight());
             if (clickAndDropSrc) clickAndDrop2.addSource(clickAndDropActor);

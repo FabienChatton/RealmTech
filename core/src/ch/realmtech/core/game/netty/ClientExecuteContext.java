@@ -207,4 +207,11 @@ public class ClientExecuteContext implements ClientExecute {
             context.getSystemsAdminClient().getPlayerManagerClient().createPlayerClient(0, 0, playerUuid);
         });
     }
+
+    @Override
+    public void furnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull) {
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getFurnaceIconSystem().setFurnaceExtraInfo(furnaceUuid, lastRemainingTickToBurnFull, lastTickProcessFull);
+        });
+    }
 }

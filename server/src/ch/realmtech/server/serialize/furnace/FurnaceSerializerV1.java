@@ -30,6 +30,8 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(furnaceToSerialize);
         FurnaceComponent furnaceComponent = mFurnace.get(furnaceToSerialize);
 
+        UUID furnaceUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(furnaceToSerialize).getUuid();
+
         InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
         UUID craftingInventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableComponent.craftingInventory).getUuid();
 
@@ -39,6 +41,8 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
         UUID carburantInventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(furnaceComponent.inventoryCarburant).getUuid();
 
+
+        ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController(), furnaceUuid);
 
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingInventoryComponent);
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController(), craftingInventoryUuid);
@@ -56,6 +60,8 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
         ItemManager itemManager = world.getRegistered("itemManager");
 
+        UUID furnaceUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
+
         InventoryArgs craftingInventoryArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager()).apply(itemManager);
         UUID craftingInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
 
@@ -65,7 +71,7 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         InventoryArgs carburentInventoryArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager()).apply(itemManager);
         UUID carburantInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
 
-        return new FurnaceEditEntity(craftingInventoryUuid, craftingInventoryArgs.inventory(), carburantInventoryUuid, carburentInventoryArgs.inventory(), craftingResultInventoryUuid, craftingResultInventoryArgs.inventory());
+        return new FurnaceEditEntity(furnaceUuid, craftingInventoryUuid, craftingInventoryArgs.inventory(), carburantInventoryUuid, carburentInventoryArgs.inventory(), craftingResultInventoryUuid, craftingResultInventoryArgs.inventory());
     }
 
     @Override
@@ -73,6 +79,8 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(furnaceToSerialize);
         FurnaceComponent furnaceComponent = mFurnace.get(furnaceToSerialize);
+
+        UUID furnaceUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(furnaceToSerialize).getUuid();
 
         InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
         UUID craftingInventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableComponent.craftingInventory).getUuid();
@@ -83,6 +91,8 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
         UUID carburantInventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(furnaceComponent.inventoryCarburant).getUuid();
 
+        int furnaceUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), furnaceUuid);
+
         int craftingInventoryComponentLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), craftingInventoryComponent);
         int craftingInventoryUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), craftingInventoryUuid);
 
@@ -92,7 +102,7 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         int carburantInventoryLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), carburantInventoryComponent);
         int carburantInventoryUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), carburantInventoryUuid);
 
-        return craftingInventoryComponentLength + craftingInventoryUuidLength + craftingResultInventoryLength + craftingResultInventoryUuidLength + carburantInventoryLength + carburantInventoryUuidLength;
+        return furnaceUuidLength + craftingInventoryComponentLength + craftingInventoryUuidLength + craftingResultInventoryLength + craftingResultInventoryUuidLength + carburantInventoryLength + carburantInventoryUuidLength;
     }
 
     @Override

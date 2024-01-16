@@ -1,13 +1,13 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.core.game.ecs.plugin.SystemTickEmulation;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.server.ecs.component.CellBeingMineComponent;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
+import ch.realmtech.server.ecs.plugin.SystemTickEmulation;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.CellBreakRequestPacket;
 import com.artemis.ComponentMapper;

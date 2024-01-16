@@ -1,10 +1,12 @@
 package ch.realmtech.server.craft;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.packet.clientPacket.FurnaceExtraInfoPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -69,6 +71,16 @@ public final class CraftResultChangeFunction {
                 } else {
                     if (furnaceComponent.remainingTickToBurn > 0) {
                         furnaceComponent.tickProcess++;
+
+                        // sync to player for icon
+                        if (furnaceComponent.tickProcess == 1) {
+                            ServerContext serverContext = world.getRegistered("serverContext");
+                            serverContext.getServerHandler().broadCastPacket(new FurnaceExtraInfoPacket(
+                                    systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableId).getUuid(),
+                                    -1,
+                                    craftResult.getTimeToProcess())
+                            );
+                        }
                     }
                 }
             } else {
