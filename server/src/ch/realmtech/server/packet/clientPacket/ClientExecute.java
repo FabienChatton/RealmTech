@@ -31,7 +31,7 @@ public interface ClientExecute {
 
     void cellAdd(int worldX, int worldY, SerializedApplicationBytes cellApplicationBytes);
 
-    void tickBeat(float tickElapseTime);
+    void tickBeat(float tickElapseTime, float deltaTime);
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
 

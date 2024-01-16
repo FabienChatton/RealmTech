@@ -3,12 +3,12 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.server.ecs.component.PlayerComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.plugin.SystemTickEmulation;
+import ch.realmtech.server.ecs.plugin.SystemServerTickSlave;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
-@SystemTickEmulation
+@SystemServerTickSlave
 @All(PlayerComponent.class)
 public class PlayerMouvementTextureSystem extends IteratingSystem {
     private ComponentMapper<PlayerComponent> mPlayer;

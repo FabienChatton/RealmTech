@@ -2,12 +2,12 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.game.ecs.component.FurnaceExtraInfoComponent;
 import ch.realmtech.server.ecs.component.FurnaceComponent;
-import ch.realmtech.server.ecs.plugin.SystemTickEmulation;
+import ch.realmtech.server.ecs.plugin.SystemServerTickSlave;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
-@SystemTickEmulation
+@SystemServerTickSlave
 @All({FurnaceComponent.class, FurnaceExtraInfoComponent.class})
 public class FurnaceSimulationSystem extends IteratingSystem {
     private ComponentMapper<FurnaceComponent> mFurnace;

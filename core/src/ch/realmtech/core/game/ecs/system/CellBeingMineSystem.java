@@ -7,7 +7,7 @@ import ch.realmtech.server.ecs.component.CellBeingMineComponent;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
-import ch.realmtech.server.ecs.plugin.SystemTickEmulation;
+import ch.realmtech.server.ecs.plugin.SystemServerTickSlave;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.CellBreakRequestPacket;
 import com.artemis.ComponentMapper;
@@ -19,7 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
 
-@SystemTickEmulation
+@SystemServerTickSlave
 @All({CellBeingMineComponent.class})
 public class CellBeingMineSystem extends IteratingSystem {
     @Wire(name = "context")

@@ -51,11 +51,12 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final SerializerController serializerController;
     private final RayHandler rayHandler;
     private final ExecuteOnContextClient executeOnContextClient;
+    private final TickEmulationInvocationStrategy tickEmulationInvocationStrategy;
 
     public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) throws Exception {
         this.context = context;
         this.connexionHandler = connexionHandler;
-        TickEmulationInvocationStrategy tickEmulationInvocationStrategy = new TickEmulationInvocationStrategy();
+        tickEmulationInvocationStrategy = new TickEmulationInvocationStrategy();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         rayHandler = new RayHandler(physicWorld);
         bodyDef = new BodyDef();
@@ -200,5 +201,9 @@ public final class ECSEngine implements Disposable, GetWorld {
 
     public SystemsAdminClient getSystemsAdminClient() {
         return systemAdminClient;
+    }
+
+    public TickEmulationInvocationStrategy getTickEmulationInvocationStrategy() {
+        return tickEmulationInvocationStrategy;
     }
 }
