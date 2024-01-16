@@ -3,11 +3,9 @@ package ch.realmtech.core.game.ecs.system;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.component.FurnaceExtraInfoComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
-import ch.realmtech.server.ecs.component.FurnaceComponent;
-import ch.realmtech.server.ecs.component.FurnaceIconsComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.FurnaceIconSystemForClient;
+import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.registery.RegistryEntry;
@@ -15,6 +13,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +33,10 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
     private ComponentMapper<FurnaceComponent> mFurnace;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<LightComponent> mLight;
+    private ComponentMapper<CellComponent> mCell;
+    private ComponentMapper<InfChunkComponent> mChunk;
+
     @Override
     protected void process(int entityId) {
         FurnaceComponent furnaceComponent = mFurnace.get(entityId);
@@ -42,9 +45,20 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
 
         if (furnaceComponent.remainingTickToBurn > 0) {
             setIcon(furnaceIconsComponent.getIconFire(), "furnace-time-to-burn", furnaceComponent.remainingTickToBurn, furnaceExtraInfoComponent.lastRemainingTickToBurnFull);
+            if (!mLight.has(entityId)) {
+                CellComponent cellComponent = mCell.get(entityId);
+                InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
+                int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+                int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
+                systemsAdminClient.getLightManager().createLight(entityId, Color.ORANGE, 6, worldPosX, worldPosY);
+            }
+        } else {
+            if (mLight.has(entityId)) {
+                systemsAdminClient.getLightManager().disposeLight(entityId);
+            }
         }
 
-        if (furnaceComponent.tickProcess > 0) {
+        if (furnaceComponent.tickProcess >= 0) {
             setIcon(furnaceIconsComponent.getIconProcess(), "furnace-arrow", furnaceComponent.tickProcess, furnaceExtraInfoComponent.lastTickProcessFull);
         }
     }
@@ -91,6 +105,9 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         FurnaceIconsComponent furnaceIconsComponent = mFurnaceIcons.get(entityId);
         systemsAdminClient.inventoryManager.removeInventory(mInventory.get(furnaceIconsComponent.getIconFire()).inventory);
         systemsAdminClient.inventoryManager.removeInventory(mInventory.get(furnaceIconsComponent.getIconProcess()).inventory);
+        if (mLight.has(entityId)) {
+            systemsAdminClient.getLightManager().disposeLight(entityId);
+        }
     }
 
     public void setFurnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull) {

@@ -22,5 +22,6 @@ public class LightManager extends LightManagerForClient {
     public void disposeLight(int entityId) {
         LightComponent lightComponent = mLight.get(entityId);
         lightComponent.getLight().remove();
+        mLight.remove(entityId);
     }
 }
