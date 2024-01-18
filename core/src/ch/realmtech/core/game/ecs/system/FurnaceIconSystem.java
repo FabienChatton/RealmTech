@@ -58,7 +58,7 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
             }
         }
 
-        if (furnaceComponent.tickProcess >= 0) {
+        if (furnaceComponent.tickProcess >= 0 && furnaceExtraInfoComponent.lastTickProcessFull > 0) {
             setIcon(furnaceIconsComponent.getIconProcess(), "furnace-arrow", furnaceComponent.tickProcess, furnaceExtraInfoComponent.lastTickProcessFull);
         }
     }
