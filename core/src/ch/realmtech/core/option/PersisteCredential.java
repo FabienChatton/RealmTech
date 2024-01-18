@@ -67,11 +67,15 @@ public class PersisteCredential {
             SecretKey key;
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(realmTechCredentialsKey))) {
                 key = (SecretKey) ois.readObject();
+            } catch (IOException e) {
+                throw new Exception("Can not load key file: " + e.getMessage(), e);
             }
 
             String cipherText;
             try (FileInputStream fis = new FileInputStream(realmTechCredentialsFiles)) {
                 cipherText = new String(fis.readAllBytes());
+            } catch (IOException e) {
+                throw new Exception("Can not load cipher: " + e.getMessage(), e);
             }
 
             String plainText = decrypt(algorithm, cipherText, key, iv);
