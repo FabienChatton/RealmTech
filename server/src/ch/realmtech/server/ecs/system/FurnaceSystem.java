@@ -2,7 +2,6 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
-import ch.realmtech.server.craft.CraftResultChangeFunction;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.FurnaceComponent;
@@ -48,7 +47,7 @@ public class FurnaceSystem extends IteratingSystem {
             int carburantItemId = systemsAdminServer.inventoryManager.getTopItem(carburantStack);
 
             ItemComponent carburantItemComponent = mItem.get(carburantItemId);
-            Optional<CraftResult> craftResult = CraftResultChangeFunction.getCraftResult(systemsAdminServer, craftingTableComponent, mInventory.get(craftingTableComponent.craftingInventory));
+            Optional<CraftResult> craftResult = systemsAdminServer.craftingManager.getCraftResult(craftingTableComponent);
             if (carburantItemComponent != null && craftResult.isPresent()) {
                 if (carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn() > 0) {
                     furnaceComponent.remainingTickToBurn = carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();

@@ -10,6 +10,7 @@ import ch.realmtech.core.shader.BlurShader;
 import ch.realmtech.core.shader.GrayShader;
 import ch.realmtech.core.shader.Shaders;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
@@ -36,8 +37,11 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static ch.realmtech.server.inventory.DisplayInventoryArgs.builder;
 
 public class PlayerInventorySystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
@@ -203,10 +207,10 @@ public class PlayerInventorySystem extends BaseSystem {
 
             int playerId = context.getSystem(PlayerManagerClient.class).getMainPlayer();
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(systemsAdminClient.inventoryManager.getChestInventoryId(playerId), playerInventory).build(),
-                    DisplayInventoryArgs.builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory, craftingInventory)
+                    builder(systemsAdminClient.inventoryManager.getChestInventoryId(playerId), playerInventory).build(),
+                    builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory, craftingInventory)
                             .build(),
-                    DisplayInventoryArgs.builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory, craftingResultInventory)
+                    builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory, craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
             }, new UUID[0]); // pas d'inventaire à supprimé à la fermeture de l'inventaire, vu que les items du joueurs, on les garde
@@ -243,7 +247,7 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public void displayInventory(DisplayInventoryArgs displayInventoryArgs) {
         InventoryComponent inventoryComponent = mInventory.get(displayInventoryArgs.inventoryId());
-        Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryId(), inventoryStage, displayInventoryArgs.clickAndDropSrc(), displayInventoryArgs.clickAndDropDst());
+        Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryId(), inventoryStage, displayInventoryArgs.isClickAndDropSrc(), displayInventoryArgs.isClickAndDropDst(), displayInventoryArgs.getDstRequirePredicate());
         for (int i = 0; i < tableImages.size; i++) {
             if (i % inventoryComponent.numberOfSlotParRow == 0) {
                 displayInventoryArgs.inventoryTable().row();
@@ -252,14 +256,14 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(int inventoryId, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst) {
+    public Array<Table> createItemSlotsToDisplay(int inventoryId, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
         final Array<Table> tableImages = new Array<>();
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryId);
         int[][] inventory = inventoryComponent.inventory;
         for (int[] stack : inventory) {
             Table tableImage = new Table();
-            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage);
+            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage, dstRequirePredicate);
             curentClickAndDropActors.add(clickAndDropActor);
             TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
             tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));
@@ -293,6 +297,6 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void createClickAndDrop(int playerId) {
-        this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world, playerId);
+        this.clickAndDrop2 = new ClickAndDrop2(context, inventoryStage, world, playerId, systemsAdminClient);
     }
 }

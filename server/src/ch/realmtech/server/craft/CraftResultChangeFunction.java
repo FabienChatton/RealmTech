@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.ecs.system.CraftingManager;
 import ch.realmtech.server.packet.clientPacket.FurnaceExtraInfoPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -25,7 +26,7 @@ public final class CraftResultChangeFunction {
             InventoryComponent craftingInventoryComponent = systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent craftingResultInventoryComponent = systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingResultInventory);
 
-            Optional<CraftResult> craftResult = getCraftResult(systemsAdminServer, craftingTableComponent, craftingInventoryComponent);
+            Optional<CraftResult> craftResult = world.getSystem(CraftingManager.class).getCraftResult(craftingTableComponent);
 
             boolean canProcessCraft = false;
             ItemComponent itemDejaResultComponent = systemsAdminServer.inventoryManager.mItem.get(craftingResultInventoryComponent.inventory[0][0]);
@@ -61,7 +62,7 @@ public final class CraftResultChangeFunction {
             InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
 
-            Optional<CraftResult> craftResultOpt = getCraftResult(systemsAdminServer, craftingTableComponent, craftingInventoryComponent);
+            Optional<CraftResult> craftResultOpt = world.getSystem(CraftingManager.class).getCraftResult(craftingTableComponent);
 
             if (craftResultOpt.isPresent()) {
                 CraftResult craftResult = craftResultOpt.get();

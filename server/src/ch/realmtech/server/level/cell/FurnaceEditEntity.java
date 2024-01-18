@@ -2,10 +2,14 @@ package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 public class FurnaceEditEntity implements EditEntity {
     private final UUID furnaceUuid;
@@ -38,5 +42,9 @@ public class FurnaceEditEntity implements EditEntity {
     public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid, craftingInventoryUuid, craftingInventory, carburantInventoryUuid, carburantInventory, craftingResultInventoryUuid, craftingResultInventory, RealmTechCoreMod.FURNACE_RECIPE));
         executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
+    }
+
+    public static BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> testValideItemForCraft() {
+        return (systemsAdminClient, itemRegisterEntry) -> systemsAdminClient.getCraftingManager().getCraftResult(RealmTechCoreMod.FURNACE_RECIPE, List.of(itemRegisterEntry)).isPresent();
     }
 }

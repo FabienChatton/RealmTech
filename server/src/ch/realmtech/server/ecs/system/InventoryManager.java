@@ -8,6 +8,7 @@ import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.InfRegistryAnonyme;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.EntityEdit;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class InventoryManager extends Manager {
@@ -534,5 +536,13 @@ public class InventoryManager extends Manager {
 
     public InventoryComponent getCraftingResultInventory(CraftingTableComponent craftingTableComponent) {
         return mInventory.get(craftingTableComponent.craftingResultInventory);
+    }
+
+    public List<ItemRegisterEntry> mapInventoryToItemRegistry(int inventoryId) {
+        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+        return Arrays.stream(inventoryComponent.inventory)
+                .map((stack) -> mItem.get(stack[0]))
+                .map((itemComponent) -> itemComponent != null ? itemComponent.itemRegisterEntry : null)
+                .toList();
     }
 }

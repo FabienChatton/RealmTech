@@ -7,13 +7,12 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 
-import java.util.*;
+import java.util.Optional;
 
 @All(CraftingTableComponent.class)
 public class CraftingSystem extends IteratingSystem {

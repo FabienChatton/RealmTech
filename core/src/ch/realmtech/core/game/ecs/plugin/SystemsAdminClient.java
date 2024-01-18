@@ -3,6 +3,7 @@ package ch.realmtech.core.game.ecs.plugin;
 import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.ecs.system.CraftingManager;
 import ch.realmtech.server.ecs.system.UpdateBox2dWithPosition;
 import com.artemis.WorldConfigurationBuilder;
 
@@ -30,6 +31,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final LightManager lightManager;
     private final FurnaceIconSystem furnaceIconSystem;
     private final FurnaceSimulationSystem furnaceSimulationSystem;
+    private final CraftingManager craftingManager;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -45,6 +47,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         lightManager = new LightManager();
         furnaceIconSystem = new FurnaceIconSystem();
         furnaceSimulationSystem = new FurnaceSimulationSystem();
+        craftingManager = new CraftingManager();
         // render
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
@@ -75,6 +78,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 lightManager,
                 furnaceIconSystem,
                 furnaceSimulationSystem,
+                craftingManager,
                 // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
@@ -165,6 +169,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
     public TimeSystemSimulation getTimeSystemSimulation() {
         return timeSystemSimulation;
+    }
+
+    public CraftingManager getCraftingManager() {
+        return craftingManager;
     }
 
     @Override

@@ -12,6 +12,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final MapSystemServer mapSystemServer;
     public final IaTestSystem iaTestSystem;
     public final CraftingSystem craftingSystem;
+    public final CraftingManager craftingManager;
     public final PickUpOnGroundItemSystem pickUpOnGroundItemSystem;
     public final Box2dFrotementSystem box2dFrotementSystem;
     public final ItemOnGroundPosSyncSystem itemOnGroundPosSyncSystem;
@@ -38,6 +39,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         furnaceSystem = new FurnaceSystem();
 
         craftingSystem = new CraftingSystem();
+        craftingManager = new CraftingManager();
         pickUpOnGroundItemSystem = new PickUpOnGroundItemSystem();
 
         timeSystem = new TimeSystem();
@@ -65,6 +67,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 furnaceSystem,
 
                 craftingSystem,
+                craftingManager,
                 pickUpOnGroundItemSystem,
 
                 timeSystem,

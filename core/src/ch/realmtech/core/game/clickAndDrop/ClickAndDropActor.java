@@ -2,6 +2,7 @@ package ch.realmtech.core.game.clickAndDrop;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
+import java.util.function.BiPredicate;
+
 public class ClickAndDropActor extends Actor {
     private final int[] stack;
     private final BitmapFont bitmapFont;
@@ -19,13 +22,19 @@ public class ClickAndDropActor extends Actor {
     @Null
     private final Table tableImage;
     private final RealmTech context;
+    private final BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate;
 
-    public ClickAndDropActor(RealmTech context, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage) {
+    public ClickAndDropActor(RealmTech context, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
         this.stack = stack;
         this.mItem = mItem;
         bitmapFont = new BitmapFont();
         this.tableImage = tableImage;
         this.context = context;
+        this.dstRequirePredicate = dstRequirePredicate;
+    }
+
+    public BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> getDstRequirePredicate() {
+        return dstRequirePredicate;
     }
 
     @Override
