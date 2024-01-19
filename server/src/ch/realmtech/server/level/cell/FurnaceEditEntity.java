@@ -47,4 +47,8 @@ public class FurnaceEditEntity implements EditEntity {
     public static BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> testValideItemForCraft() {
         return (systemsAdminClient, itemRegisterEntry) -> systemsAdminClient.getCraftingManager().getCraftResult(RealmTechCoreMod.FURNACE_RECIPE, List.of(itemRegisterEntry)).isPresent();
     }
+
+    public static BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> testValideItemCarburant() {
+        return (systemsAdminClient, itemRegisterEntry) -> itemRegisterEntry.getItemBehavior().getTimeToBurn() > 0;
+    }
 }

@@ -282,7 +282,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                                     DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
                                     DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).dstRequire(FurnaceEditEntity.testValideItemForCraft()).build(),
                                     DisplayInventoryArgs.builder(inventoryResultId, craftingResultInventory).notClickAndDropDst().build(),
-                                    DisplayInventoryArgs.builder(inventoryCarburantId, carburantInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryCarburantId, carburantInventory).dstRequire(FurnaceEditEntity.testValideItemCarburant()).build(),
                                     // icons
                                     DisplayInventoryArgs.builder(iconFireId, iconFire).icon().build(),
                                     DisplayInventoryArgs.builder(iconProcessId, iconProcess).icon().build()
