@@ -69,11 +69,11 @@ public class RealmTechCoreCraftingRecipe {
                 {'s'}
         }, new CraftPatternArgs('c', RealmTechCoreMod.COAL), new CraftPatternArgs('s', RealmTechCoreMod.STICK_ITEM)));
 
-//        registry.add(new CraftPatternShape(RealmTechCoreMod.FURNACE.itemRegisterEntry(), new char[][]{
-//                new char[]{'a', 'a', 'a'},
-//                new char[]{'a', ' ', 'a'},
-//                new char[]{'a', 'a', 'a'}
-//        }, new CraftPatternArgs('a', RealmTechCoreMod.STONE.itemRegisterEntry())));
+        registry.add(new CraftPatternShape(RealmTechCoreMod.FURNACE.itemRegisterEntry(), new char[][]{
+                new char[]{'a', 'a', 'a'},
+                new char[]{'a', ' ', 'a'},
+                new char[]{'a', 'a', 'a'}
+        }, new CraftPatternArgs('a', RealmTechCoreMod.STONE.itemRegisterEntry())));
     }
 
     public static void initFurnaceRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
