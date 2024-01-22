@@ -50,8 +50,8 @@ Et importé la configuration dans le dossier .run
 
 ### alpha
 
-1. [ ] cycle jour nuit
-2. [ ] monstre avec ia
+1. [x] cycle jour nuit
+2. [ ] machine électrique
 3. [ ] infrastructure, convoyer/pipe
 4. [ ] machine multi cellules
 5. [ ] raccourci clavier custom
