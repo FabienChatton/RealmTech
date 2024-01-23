@@ -99,6 +99,19 @@ public class MapManager extends Manager {
         return -1;
     }
 
+    public int getChunkByWorldPos(int worldPosX, int worldPosY, int[] infChunks) {
+        int chunkPosX = getChunkPos(worldPosX);
+        int chunkPosY = getChunkPos(worldPosY);
+        for (int i = 0; i < infChunks.length; i++) {
+            int chunkId = infChunks[i];
+            InfChunkComponent infChunkComponent = mChunk.get(chunkId);
+            if (chunkPosX == worldPosX && chunkPosY == worldPosY) {
+                return chunkId;
+            }
+        }
+        return -1;
+    }
+
     public int getTopCell(int chunk, byte innerX, byte innerY) {
         int ret = -1;
         for (byte i = Cells.Layer.BUILD_DECO.layer; i >= 0; i--) {
