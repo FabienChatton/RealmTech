@@ -189,4 +189,24 @@ public class ServerExecuteContext implements ServerExecute {
             clientChannel.writeAndFlush(new TimeSetPacket(time));
         });
     }
+
+    @Override
+    public void rotateFaceCellRequest(Channel clientChannel, int worldPosX, int worldPosY, byte layer, byte faceToRotate) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
+            int chunkId = serverContext.getSystemsAdmin().mapManager.getChunkByWorldPos(worldPosX, worldPosY, infMapComponent.infChunks);
+            if (chunkId == -1) {
+                logger.warn("chunk not found for face rotate. worldPosX: {}, worldPosY: {}", worldPosX, worldPosY);
+                return;
+            }
+            int cellId = serverContext.getSystemsAdmin().mapManager.getCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY), layer);
+            if (cellId == -1) {
+                logger.warn("cell not found for face rotate. worldPosX: {}, worldPosY: {}, layer: {}", worldPosX, worldPosY, layer);
+            }
+            serverContext.getSystemsAdmin().mapManager.rotateCellFace(cellId, faceToRotate);
+
+            SerializedApplicationBytes cellApplicationByte = serverContext.getSerializerController().getCellSerializerController().encode(cellId);
+            serverContext.getServerHandler().broadCastPacket(new CellSetPacket(worldPosX, worldPosY, layer, cellApplicationByte));
+        });
+    }
 }

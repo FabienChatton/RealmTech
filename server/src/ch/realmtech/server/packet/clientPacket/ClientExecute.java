@@ -31,6 +31,8 @@ public interface ClientExecute {
 
     void cellAdd(int worldX, int worldY, SerializedApplicationBytes cellApplicationBytes);
 
+    void cellSet(int worldPosX, int worldPosY, byte layer, SerializedApplicationBytes cellApplicationBytes);
+
     void tickBeat(float tickElapseTime, float deltaTime);
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
@@ -44,8 +46,8 @@ public interface ClientExecute {
     void setInventory(UUID inventoryUUID, SerializedApplicationBytes applicationInventoryBytes);
 
     void disconnectMessage(String message);
-
     void timeSet(float time);
+
     void physicEntity(PhysicEntityArgs physicEntityArgs);
 
     void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid);

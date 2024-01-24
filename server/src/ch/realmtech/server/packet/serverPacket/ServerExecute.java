@@ -25,4 +25,6 @@ public interface ServerExecute {
     void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldX, int worldY);
 
     void getTime(Channel clientChannel);
+
+    void rotateFaceCellRequest(Channel clientChannel, int worldPosX, int worldPosY, byte layer, byte faceToRotate);
 }

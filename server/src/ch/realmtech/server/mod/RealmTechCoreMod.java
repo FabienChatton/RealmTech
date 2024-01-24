@@ -2,14 +2,15 @@ package ch.realmtech.server.mod;
 
 
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.system.EnergyManager;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.energy.EnergyBatteryEditEntity;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemBehavior;
 import ch.realmtech.server.item.ItemType;
+import ch.realmtech.server.level.WrenchRightClick;
 import ch.realmtech.server.level.cell.*;
 import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.registery.*;
@@ -104,6 +105,12 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static ItemRegisterEntry COPPER_INGOT = registerItem("copperIngot", new ItemRegisterEntry(
             "copper-ingot-01",
             ItemBehavior.builder().build()
+    ));
+    public final static ItemRegisterEntry WRENCH = registerItem("wrench", new ItemRegisterEntry(
+            "pelle-stone-01",
+            ItemBehavior.builder()
+                    .interagieClickDroit(WrenchRightClick.wrenchRightClick())
+                    .build()
     ));
 
     public final static ItemRegisterEntry ICON_FURNACE_TIME_TO_BURN_01 = registerItem("iconFurnaceBurn", new ItemRegisterEntry("furnace-time-to-burn-01", ItemBehavior.builder().icon().build()));
@@ -414,7 +421,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public static CellItemRegisterEntry ENERGY_BATTERY = registerCellItem("energyBattery", new CellRegisterEntry("furnace-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
-                    .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onServer((world) -> world.getSystem(EnergyManager.class).createEnergyBattery(entityId)))
+                    .editEntityOnCreate(new EnergyBatteryEditEntity(1_000, 10_000, FaceComponent.SOUTH))
                     .build()),
             new ItemRegisterEntry("furnace-01", ItemBehavior
                     .builder()

@@ -29,12 +29,6 @@ public class EnergyManager extends Manager {
         return energyBatteryComponent.getStored() < energyBatteryComponent.getCapacity();
     }
 
-    public int createEnergyBattery(int motherId) {
-        mEnergyBattery.create(motherId).set(1000, 10000);
-        mFace.create(motherId).builderSingleFace().setSouth();
-        return motherId;
-    }
-
     public EnergyTransportStatus findEnergyToFeed(int energyReceiverId) {
         CellComponent energyReceiverCellComponent = mCell.get(energyReceiverId);
         InfChunkComponent energyReceiverChunkComponent = mChunk.get(energyReceiverCellComponent.chunkId);
@@ -93,7 +87,7 @@ public class EnergyManager extends Manager {
             }
 
             if (isCellEnergyTransporter(cellId)) {
-                int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, mFace.get(cellId).getFace());
+                int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, mFace.get(cellId).getFlags());
                 if (cellFind != -1) {
                     return cellFind;
                 }

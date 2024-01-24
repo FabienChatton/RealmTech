@@ -2,10 +2,7 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
-import ch.realmtech.server.ecs.component.CellComponent;
-import ch.realmtech.server.ecs.component.InfChunkComponent;
-import ch.realmtech.server.ecs.component.InfMapComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.registery.CellRegisterEntry;
@@ -33,11 +30,13 @@ public class WailaSystem extends BaseSystem {
     private Window wailaWindow;
     private Stage wailaStage;
     private Label wailaCellInfoHash;
+    private Label wailaCellContextualInfo;
     private Label wailaCellInfoCanBreak;
     private Image wailaCellImage;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<FaceComponent> mFace;
 
     @Override
     protected void initialize() {
@@ -46,18 +45,22 @@ public class WailaSystem extends BaseSystem {
         wailaStageTable = new Table(context.getSkin());
         wailaStage.addActor(wailaStageTable);
         wailaStageTable.setFillParent(true);
-        wailaWindow = new Window("", context.getSkin());
-        wailaStageTable.add(wailaWindow).expandY().top();
+
         wailaCellImage = new Image();
-        wailaWindow.getTitleTable().add(wailaCellImage).right();
-        wailaWindow.getTitleTable().getChildren().reverse();
         wailaCellInfoHash = new Label(null, context.getSkin());
+        wailaCellContextualInfo = new Label(null, context.getSkin());
         wailaCellInfoCanBreak = new Label(null, context.getSkin());
         wailaCellInfoHash.setFontScale(0.5f);
         wailaCellInfoCanBreak.setFontScale(0.5f);
-        wailaWindow.add(wailaCellInfoHash).row();
-        wailaWindow.add(wailaCellInfoCanBreak);
 
+        wailaWindow = new Window("", context.getSkin());
+        wailaWindow.getTitleTable().add(wailaCellImage).right();
+        wailaWindow.getTitleTable().getChildren().reverse();
+        wailaWindow.add(wailaCellInfoHash).row();
+        wailaWindow.add(wailaCellInfoCanBreak).row();
+        wailaWindow.add(wailaCellContextualInfo).row();
+
+        wailaStageTable.add(wailaWindow).expandY().top();
     }
 
     @Override
@@ -113,6 +116,12 @@ public class WailaSystem extends BaseSystem {
         }
         if (itemTypeToMine != null) {
             wailaCellInfoCanBreak.setText("break with: " + itemTypeToMine.toString().toLowerCase());
+        }
+
+        if (mFace.has(topCell)) {
+            wailaCellContextualInfo.setText("face: " + mFace.get(topCell).getFace());
+        } else {
+            wailaCellContextualInfo.setText(null);
         }
     }
 }

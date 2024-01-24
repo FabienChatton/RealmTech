@@ -11,6 +11,7 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.GetPlayerInventorySessionPacket;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -26,6 +27,7 @@ public class GameScreen extends AbstractScreen {
     private final Table debugTable;
     private final Label fpsLabel;
     private final Label gameCoo;
+    private final Label pointerGameCoo;
     private final Label chunkPos;
     private final Label innerChunk;
     private final Label tps;
@@ -39,6 +41,7 @@ public class GameScreen extends AbstractScreen {
         debugTable = new Table(skin);
         fpsLabel = new Label("", skin);
         gameCoo = new Label("", skin);
+        pointerGameCoo = new Label("", skin);
         chunkPos = new Label("", skin);
         innerChunk = new Label("", skin);
         tps = new Label(null, skin);
@@ -48,6 +51,7 @@ public class GameScreen extends AbstractScreen {
 
         debugTable.add(fpsLabel).left().row();
         debugTable.add(gameCoo).left().row();
+        debugTable.add(pointerGameCoo).left().row();
         debugTable.add(chunkPos).left().row();
         debugTable.add(innerChunk).left().row();
         debugTable.add(tps).left().row();
@@ -126,10 +130,13 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedDown();
 
         PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(context.getSystem(PlayerManagerClient.class).getMainPlayer());
+        Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
         int worldPosX = MapManager.getWorldPos(positionComponent.x);
         int worldPosY = MapManager.getWorldPos(positionComponent.y);
         fpsLabel.setText(String.format("FPS : %d", Gdx.graphics.getFramesPerSecond()));
         gameCoo.setText(String.format("WorldPosX : %d\nWorldPosY : %d", worldPosX, worldPosY));
+        pointerGameCoo.setText(String.format("PointerGameX: %f\nPointerGameY: %f", pointerGameCoordinate.x, pointerGameCoordinate.y));
         chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY)));
         innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY)));
         tps.setText(String.format("TPS : %d ", context.getEcsEngine().serverTickBeatMonitoring.getTickBeatPerSeconde()));

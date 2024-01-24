@@ -47,6 +47,7 @@ public class MapManager extends Manager {
     private ComponentMapper<CellBeingMineComponent> mCellBeingMine;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
+    private ComponentMapper<FaceComponent> mFace;
 
     public static int getWorldPos(int chunkPos, int innerChunk) {
         return chunkPos * WorldMap.CHUNK_SIZE + innerChunk;
@@ -256,6 +257,32 @@ public class MapManager extends Manager {
         return cellId;
     }
 
+    public void setCell(int worldPosX, int worldPosY, byte layer, CellArgs cellArgs) {
+        int chunkId = getChunkByWorldPos(worldPosX, worldPosY, getInfMap().infChunks);
+        if (chunkId == -1) {
+            logger.info("Can not set cell, chunk id not found. worldPosX: {}, worldPosY: {}", worldPosX, worldPosY);
+            return;
+        }
+        int chunkPosX = getChunkPos(worldPosX);
+        int chunkPosY = getChunkPos(worldPosY);
+        InfChunkComponent chunkComponent = mChunk.get(chunkId);
+
+        byte innerChunkX = getInnerChunk(worldPosX);
+        byte innerChunkY = getInnerChunk(worldPosY);
+        int cellId = getCell(chunkId, innerChunkX, innerChunkY, layer);
+
+        if (cellId == -1) {
+            logger.info("Can not set cell, cell id not found. worldPosX: {}, worldPosY: {}, layer: {}", worldPosX, worldPosY, layer);
+            return;
+        }
+        int index = Arrays.stream(chunkComponent.infCellsId).boxed().toList().indexOf(cellId);
+
+        supprimeCell(cellId);
+        int newCellId = newCell(chunkId, chunkPosX, chunkPosY, cellArgs);
+
+        chunkComponent.infCellsId[index] = newCellId;
+    }
+
     public void supprimeCell(int cellId) {
         CellComponent cellComponent = mCell.get(cellId);
         if (cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
@@ -368,5 +395,14 @@ public class MapManager extends Manager {
                 return infChunkComponent.chunkPosX + "," + infChunkComponent.chunkPosY;
             }).collect(Collectors.toList()));
         }
+    }
+
+    public static float getTexture01coordinate(float gameCoordinate) {
+        int worldPos = MapManager.getWorldPos(gameCoordinate);
+        return gameCoordinate - (float) worldPos;
+    }
+
+    public void rotateCellFace(int cellId, byte faceToRotate) {
+        mFace.get(cellId).setFace(faceToRotate);
     }
 }

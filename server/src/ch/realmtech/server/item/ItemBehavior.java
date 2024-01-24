@@ -1,8 +1,11 @@
 package ch.realmtech.server.item;
 
+import ch.realmtech.server.level.RightClickInteractionItemClient;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import com.badlogic.gdx.utils.Null;
+
+import java.util.Optional;
 
 public class ItemBehavior {
     private int attackDommage;
@@ -14,6 +17,7 @@ public class ItemBehavior {
     private String placeCellName;
     private int timeToBurn = 0;
     private boolean icon;
+    private RightClickInteractionItemClient rightClickInteractionItemClient;
 
     private ItemBehavior() {
         attackDommage = 1;
@@ -42,6 +46,10 @@ public class ItemBehavior {
             placeCell = RealmTechCoreMod.CELLS.get(placeCellName).getEntry();
         }
         return placeCell;
+    }
+
+    public Optional<RightClickInteractionItemClient> getInteragieClickDroit() {
+        return Optional.ofNullable(rightClickInteractionItemClient);
     }
 
     public int getTimeToBurn() {
@@ -83,6 +91,11 @@ public class ItemBehavior {
 
         public ItemBehaviorBuilder icon() {
             itemBehavior.icon = true;
+            return this;
+        }
+
+        public ItemBehaviorBuilder interagieClickDroit(RightClickInteractionItemClient rightClickInteractionItemClient) {
+            itemBehavior.rightClickInteractionItemClient = rightClickInteractionItemClient;
             return this;
         }
 

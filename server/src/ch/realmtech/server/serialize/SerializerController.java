@@ -4,6 +4,8 @@ import ch.realmtech.server.serialize.cell.CellSerializerController;
 import ch.realmtech.server.serialize.chest.ChestSerializerController;
 import ch.realmtech.server.serialize.chunk.ChunkSerializerController;
 import ch.realmtech.server.serialize.craftingtable.CraftingTableController;
+import ch.realmtech.server.serialize.energyBattery.EnergyBatterySerializerController;
+import ch.realmtech.server.serialize.face.FaceSerializerController;
 import ch.realmtech.server.serialize.furnace.FurnaceSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.life.LifeSerializerController;
@@ -29,6 +31,8 @@ public final class SerializerController {
     private final PhysicEntitySerializerController physicEntitySerializerController = new PhysicEntitySerializerController(this);
     private final LifeSerializerController lifeSerializerController = new LifeSerializerController(this);
     private final PlayerSerializerController playerSerializerController = new PlayerSerializerController(this);
+    private final FaceSerializerController faceSerializerController = new FaceSerializerController(this);
+    private final EnergyBatterySerializerController energyBatterySerializerController = new EnergyBatterySerializerController(this);
 
     public void initialize(World world) throws Exception {
         if (this.world != null) throw new IllegalCallerException("Already initialize");
@@ -89,6 +93,14 @@ public final class SerializerController {
 
     public PlayerSerializerController getPlayerSerializerController() {
         return playerSerializerController;
+    }
+
+    public FaceSerializerController getFaceSerializerController() {
+        return faceSerializerController;
+    }
+
+    public EnergyBatterySerializerController getEnergyBatterySerializerController() {
+        return energyBatterySerializerController;
     }
 
     World getGetWorld() {

@@ -63,6 +63,8 @@ public class ServerContext {
                 .put(PlayerSyncPacket.class, PlayerSyncPacket::new)
                 .put(PlayerCreateConnexion.class, PlayerCreateConnexion::new)
                 .put(FurnaceExtraInfoPacket.class, FurnaceExtraInfoPacket::new)
+                .put(RotateFaceCellRequestPacket.class, RotateFaceCellRequestPacket::new)
+                .put(CellSetPacket.class, CellSetPacket::new)
         ;
     }
 

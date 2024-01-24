@@ -125,6 +125,14 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
+    public void cellSet(int worldPosX, int worldPosY, byte layer, SerializedApplicationBytes cellApplicationBytes) {
+        context.nextFrame(() -> {
+            CellArgs cellArgs = context.getSerializerController().getCellSerializerController().decode(cellApplicationBytes);
+            context.getSystemsAdminClient().mapManager.setCell(worldPosX, worldPosY, layer, cellArgs);
+        });
+    }
+
+    @Override
     public void tickBeat(float tickElapseTime, float deltaTime) {
         context.nextFrame(() -> {
             context.getEcsEngine().serverTickBeatMonitoring.addTickElapseTime(tickElapseTime);

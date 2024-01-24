@@ -6,6 +6,8 @@ import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.level.RightClickEventClient;
+import ch.realmtech.server.level.RightClickInteraction;
 import ch.realmtech.server.packet.serverPacket.ItemToCellPlaceRequestPacket;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class PlayerInputSystem extends BaseSystem {
@@ -40,18 +43,24 @@ public class PlayerInputSystem extends BaseSystem {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             systemsAdminClient.mapManager.addCellBeingMine(topCell);
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
+            Optional<RightClickInteraction> rightClickInteractionItemSelected = Optional.empty();
             CellComponent cellComponent = mCell.get(topCell);
-            // interagie avec clique droite
-            if (cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit() != null) {
-                cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit().accept(context, topCell);
-            } else {
-                // place un bloc
-                int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
-                if (selectItem != 0) {
-                    UUID itemUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
-                    context.getConnexionHandler().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
-                }
+            Optional<RightClickInteraction> rightClickInteractionCell = cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit();
+
+            if (mItem.has(selectItem)) {
+                rightClickInteractionItemSelected = mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getInteragieClickDroit()
+                        .map((rightClickInteractionItemClient) -> rightClickInteractionItemClient.toRightClickInteraction(new RightClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell));
             }
+
+            // item interaction first, and if not, cell interaction
+            rightClickInteractionItemSelected
+                    .or(() -> rightClickInteractionCell)
+                    .ifPresentOrElse(rightClickInteraction -> rightClickInteraction.accept(context, topCell), () -> {
+                        // place bloc if no interaction
+                        UUID itemUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
+                        context.getConnexionHandler().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
+                    });
         }
     }
 }

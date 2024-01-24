@@ -1,7 +1,7 @@
 package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.item.ItemType;
-import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.level.RightClickInteraction;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -23,7 +23,7 @@ public class CellBehavior {
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
     private EditEntity editEntityOnCreate;
     private EditEntity editEntityOnDelete;
-    private BiConsumer<ClientContext, Integer> interagieClickDroit;
+    private RightClickInteraction interagieClickDroit;
 
     public static CellBehaviorBuilder builder(byte layer) {
         return new CellBehaviorBuilder(layer);
@@ -78,8 +78,8 @@ public class CellBehavior {
         return deleteBody;
     }
 
-    public BiConsumer<ClientContext, Integer> getInteragieClickDroit() {
-        return interagieClickDroit;
+    public Optional<RightClickInteraction> getInteragieClickDroit() {
+        return Optional.ofNullable(interagieClickDroit);
     }
 
     public static class CellBehaviorBuilder {
@@ -148,7 +148,7 @@ public class CellBehavior {
             return this;
         }
 
-        public CellBehaviorBuilder interagieClickDroit(BiConsumer<ClientContext, Integer> interagieClickDroit) {
+        public CellBehaviorBuilder interagieClickDroit(RightClickInteraction interagieClickDroit) {
             cellBehavior.interagieClickDroit = interagieClickDroit;
             return this;
         }
