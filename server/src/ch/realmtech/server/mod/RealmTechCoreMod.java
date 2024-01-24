@@ -425,7 +425,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             .builder(Cells.Layer.BUILD_DECO)
             .breakWith(ItemType.HAND, "realmtech.energyCable")
             .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onServer((world) -> {
-                world.edit(entityId).create(FaceComponent.class).builder().addNorth().addEast().addSouth().addWest();
+                world.edit(entityId).create(FaceComponent.class).builderMultiFace().addNorth().addEast().addSouth().addWest();
                 world.edit(entityId).create(EnergyTransporterComponent.class).set();
             }))
             .build()),

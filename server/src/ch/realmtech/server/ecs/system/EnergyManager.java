@@ -19,7 +19,7 @@ public class EnergyManager extends Manager {
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
     private ComponentMapper<EnergyTransporterComponent> mEnergyTransporter;
     private ComponentMapper<FaceComponent> mFace;
-    private final static int[][] findEnergyProviderPoss = {{0, 1}, {-1,0}, {1,0}, {0,-1}};
+    private final static byte[][] findEnergyProviderPoss = {{0, 1}, {-1,0}, {1,0}, {0,-1}};
 
     public static boolean isEnergyBatteryEmitter(EnergyBatteryComponent energyBatteryComponent) {
         return energyBatteryComponent.getStored() > 0;
@@ -31,7 +31,7 @@ public class EnergyManager extends Manager {
 
     public int createEnergyBattery(int motherId) {
         mEnergyBattery.create(motherId).set(1000, 10000);
-        FaceComponent faceComponent = mFace.create(motherId).builder().addSouth().build();
+        mFace.create(motherId).builderSingleFace().setSouth();
         return motherId;
     }
 

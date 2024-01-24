@@ -9,13 +9,24 @@ public class FaceComponent extends Component {
     public final static byte WEST = 1 << 3;
 
     private byte face;
+    private boolean multiFace;
 
-    public FaceComponentBuilder builder() {
-        return new FaceComponentBuilder(this);
+    public FaceMultiComponentBuilder builderMultiFace() {
+        this.multiFace = true;
+        return new FaceMultiComponentBuilder(this);
+    }
+
+    public FaceSingleComponentBuilder builderSingleFace() {
+        this.multiFace = false;
+        return new FaceSingleComponentBuilder(this);
     }
 
     public byte getFace() {
         return face;
+    }
+
+    public boolean isMultiFace() {
+        return multiFace;
     }
 
     public byte getFaceInverted() {
@@ -30,62 +41,126 @@ public class FaceComponent extends Component {
         return (face >> 0 & 1) == 1;
     }
 
-    public void addNorth() {
-        face |= NORTH;
+    public boolean addNorth() {
+        if (face == 0 || multiFace) {
+            face |= NORTH;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setNorth() {
+        setFace(NORTH);
     }
 
     public boolean isEast() {
         return (face >> 1 & 1) == 1;
     }
 
-    public void addEast() {
-        face |= EAST;
+    public boolean addEast() {
+        if (face == 0 || multiFace) {
+            face |= EAST;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setEast() {
+        setFace(EAST);
     }
 
     public boolean isSouth() {
         return (face >> 2 & 1) == 1;
     }
 
-    public void addSouth() {
-        face |= SOUTH;
+    public boolean addSouth() {
+        if (face == 0 || multiFace) {
+            face |= SOUTH;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setSouth() {
+        setFace(SOUTH);
     }
 
     public boolean isWest() {
         return (face >> 3 & 1) == 1;
     }
 
-    public void addWest() {
-        face |= WEST;
+    public boolean addWest() {
+        if (face == 0 || multiFace) {
+            face |= WEST;
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public static class FaceComponentBuilder {
-        private FaceComponent faceComponent;
+    public void setWest() {
+        setFace(WEST);
+    }
 
-        public FaceComponentBuilder(FaceComponent faceComponent) {
+    public static class FaceMultiComponentBuilder {
+        private final FaceComponent faceComponent;
+
+        public FaceMultiComponentBuilder(FaceComponent faceComponent) {
             this.faceComponent = faceComponent;
         }
 
-        public FaceComponentBuilder addNorth() {
+        public FaceMultiComponentBuilder addNorth() {
             faceComponent.addNorth();
             return this;
         }
 
-        public FaceComponentBuilder addEast() {
+        public FaceMultiComponentBuilder addEast() {
             faceComponent.addEast();
             return this;
         }
 
-        public FaceComponentBuilder addSouth() {
+        public FaceMultiComponentBuilder addSouth() {
             faceComponent.addSouth();
             return this;
         }
 
-        public FaceComponentBuilder addWest() {
+        public FaceMultiComponentBuilder addWest() {
             faceComponent.addWest();
             return this;
         }
 
         public FaceComponent build() {
+            return faceComponent;
+        }
+    }
+
+    public static class FaceSingleComponentBuilder {
+        private final FaceComponent faceComponent;
+
+        public FaceSingleComponentBuilder(FaceComponent faceComponent) {
+            this.faceComponent = faceComponent;
+        }
+
+        public FaceComponent setNorth() {
+            faceComponent.addNorth();
+            return faceComponent;
+        }
+
+        public FaceComponent setEast() {
+            faceComponent.addEast();
+            return faceComponent;
+        }
+
+        public FaceComponent setSouth() {
+            faceComponent.addSouth();
+            return faceComponent;
+        }
+
+        public FaceComponent setWest() {
+            faceComponent.addWest();
             return faceComponent;
         }
     }
