@@ -3,11 +3,11 @@ package ch.realmtech.server.ecs.component;
 import ch.realmtech.server.ecs.system.EnergyManager;
 import com.artemis.Component;
 
-public class EnergyBattery extends Component {
+public class EnergyBatteryComponent extends Component {
     private long stored;
     private long capacity;
 
-    public EnergyBattery set(long stored, long capacity) {
+    public EnergyBatteryComponent set(long stored, long capacity) {
         this.stored = stored;
         this.capacity = capacity;
         return this;

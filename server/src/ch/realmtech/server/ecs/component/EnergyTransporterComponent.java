@@ -2,9 +2,9 @@ package ch.realmtech.server.ecs.component;
 
 import com.artemis.PooledComponent;
 
-public class EnergyTransporter extends PooledComponent {
+public class EnergyTransporterComponent extends PooledComponent {
 
-    public EnergyTransporter set() {
+    public EnergyTransporterComponent set() {
         return this;
     }
 

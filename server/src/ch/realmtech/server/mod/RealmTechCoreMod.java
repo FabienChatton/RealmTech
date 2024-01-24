@@ -2,6 +2,7 @@ package ch.realmtech.server.mod;
 
 
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.system.EnergyManager;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
@@ -410,6 +411,28 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .placeCell("realmtech.torch")
                     .build()));
 
+    public static CellItemRegisterEntry ENERGY_BATTERY = registerCellItem("energyBattery", new CellRegisterEntry("furnace-01", CellBehavior
+                    .builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.HAND, "realmtech.energyBattery")
+                    .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onServer((world) -> world.getSystem(EnergyManager.class).createEnergyBattery(entityId)))
+                    .build()),
+            new ItemRegisterEntry("furnace-01", ItemBehavior
+                    .builder()
+                    .placeCell("realmtech.energyBattery")
+                    .build()));
+
+    public static CellItemRegisterEntry ENERGY_CABLE = registerCellItem("energyCable", new CellRegisterEntry("table-craft-01", CellBehavior
+            .builder(Cells.Layer.BUILD_DECO)
+            .breakWith(ItemType.HAND, "realmtech.energyCable")
+            .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onServer((world) -> {
+                world.edit(entityId).create(FaceComponent.class).builder().addNorth().addEast().addSouth().addWest();
+                world.edit(entityId).create(EnergyTransporterComponent.class).set();
+            }))
+            .build()),
+        new ItemRegisterEntry("table-craft-01", ItemBehavior
+            .builder()
+            .placeCell("realmtech.energyCable")
+            .build()));
     //</editor-fold>
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
         return CELLS.add(name, cellRegisterEntry);

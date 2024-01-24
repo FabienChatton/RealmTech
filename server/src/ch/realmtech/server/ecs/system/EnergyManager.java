@@ -16,14 +16,23 @@ public class EnergyManager extends Manager {
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
-    private ComponentMapper<EnergyBattery> mEnergyBattery;
-    private ComponentMapper<EnergyTransporter> mEnergyTransporter;
-    public static boolean isEnergyBatteryEmitter(EnergyBattery energyBattery) {
-        return energyBattery.getCapacity() > 0;
+    private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
+    private ComponentMapper<EnergyTransporterComponent> mEnergyTransporter;
+    private ComponentMapper<FaceComponent> mFace;
+    private final static int[][] findEnergyProviderPoss = {{0, 1}, {-1,0}, {1,0}, {0,-1}};
+
+    public static boolean isEnergyBatteryEmitter(EnergyBatteryComponent energyBatteryComponent) {
+        return energyBatteryComponent.getStored() > 0;
     }
 
-    public static boolean isEnergyBatteryReceiver(EnergyBattery energyBattery) {
-        return energyBattery.getStored() < energyBattery.getCapacity();
+    public static boolean isEnergyBatteryReceiver(EnergyBatteryComponent energyBatteryComponent) {
+        return energyBatteryComponent.getStored() < energyBatteryComponent.getCapacity();
+    }
+
+    public int createEnergyBattery(int motherId) {
+        mEnergyBattery.create(motherId).set(1000, 10000);
+        FaceComponent faceComponent = mFace.create(motherId).builder().addSouth().build();
+        return motherId;
     }
 
     public EnergyTransportStatus findEnergyToFeed(int energyReceiverId) {
@@ -33,7 +42,14 @@ public class EnergyManager extends Manager {
         int worldPosX = MapManager.getWorldPos(energyReceiverChunkComponent.chunkPosX, energyReceiverCellComponent.getInnerPosX());
         int worldPosY = MapManager.getWorldPos(energyReceiverChunkComponent.chunkPosY, energyReceiverCellComponent.getInnerPosY());
 
-        int cellEnergyProvider = findCellEnergyProvider(worldPosX, worldPosY, energyReceiverCellComponent.cellRegisterEntry.getCellBehavior().getLayer());
+        int cellEnergyProvider = findCellEnergyProvider(
+                worldPosX,
+                worldPosY,
+                worldPosX,
+                worldPosY,
+                energyReceiverCellComponent.cellRegisterEntry.getCellBehavior().getLayer(),
+                mFace.get(energyReceiverId).getFaceInverted()
+        );
 
         if (cellEnergyProvider != -1) {
             return new EnergyTransportStatus(energyReceiverId, cellEnergyProvider);
@@ -42,43 +58,51 @@ public class EnergyManager extends Manager {
         }
     }
 
-    private int findCellEnergyProvider(int worldPosX, int worldPosY, byte layer) {
-        for (int x = -1; x < 1; x++) {
-            for (int y = -1; y < 1; y++) {
-                int worldPosXFind = worldPosX + x;
-                int worldPosYFind = worldPosY + y;
-                if (isCellEnergyProvider(worldPosXFind, worldPosYFind, layer)) {
-                    int[] infChunks = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class).infChunks;
-                    int chunkId = systemsAdminServer.mapManager.getChunkByWorldPos(worldPosX, worldPosY, infChunks);
-                    if (chunkId == -1) {
-                        continue;
-                    }
-                    return systemsAdminServer.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
-                }
+    private int findCellEnergyProvider(int worldPosX, int worldPosY, int preWorldPosX, int preWorldPosY, byte layer, byte allowFace) {
+        for (int i = 0; i < findEnergyProviderPoss.length; i++) {
+            int worldPosXFind = worldPosX + findEnergyProviderPoss[i][0];
+            int worldPosYFind = worldPosY + findEnergyProviderPoss[i][1];
 
-                if (isCellEnergyTransporter(worldPosXFind, worldPosYFind, layer)) {
-                    int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, layer);
-                    if (cellFind != -1) {
-                        return cellFind;
-                    }
+            if (worldPosXFind == preWorldPosX && worldPosYFind == preWorldPosY) {
+                continue;
+            }
+
+            byte face = FaceComponent.getFace(worldPosX, worldPosY, worldPosXFind, worldPosYFind);
+
+            if ((face & allowFace) == 0) {
+                continue;
+            }
+
+            int[] infChunks = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class).infChunks;
+            int chunkId = systemsAdminServer.mapManager.getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
+            if (chunkId == -1) {
+                continue;
+            }
+
+            int cellId = systemsAdminServer.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
+            if (cellId == -1) {
+                continue;
+            }
+
+            if (isCellEnergyEmitter(cellId)) {
+                EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(cellId);
+                FaceComponent faceEmitterComponent = mFace.get(cellId);
+                if ((face & faceEmitterComponent.getFaceInverted()) != 0) {
+                    return cellId;
+                }
+            }
+
+            if (isCellEnergyTransporter(cellId)) {
+                int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, mFace.get(cellId).getFace());
+                if (cellFind != -1) {
+                    return cellFind;
                 }
             }
         }
         return -1;
     }
 
-    private boolean isCellEnergyProvider(int worldPosX, int worldPosY, byte layer) {
-        int[] infChunks = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class).infChunks;
-        int chunkId = systemsAdminServer.mapManager.getChunkByWorldPos(worldPosX, worldPosY, infChunks);
-        if (chunkId == -1) {
-            return false;
-        }
-
-        int cellId = systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, layer);
-        if (cellId == -1) {
-            return false;
-        }
-
+    private boolean isCellEnergyEmitter(int cellId) {
         if (mEnergyBattery.has(cellId)) {
             return mEnergyBattery.get(cellId).isEnergyBatteryEmitter();
         }
@@ -86,18 +110,7 @@ public class EnergyManager extends Manager {
         return false;
     }
 
-    private boolean isCellEnergyTransporter(int worldPosX, int worldPosY, byte layer) {
-        int[] infChunks = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class).infChunks;
-        int chunkId = systemsAdminServer.mapManager.getChunkByWorldPos(worldPosX, worldPosY, infChunks);
-        if (chunkId == -1) {
-            return false;
-        }
-
-        int cellId = systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, layer);
-        if (cellId == -1) {
-            return false;
-        }
-
+    private boolean isCellEnergyTransporter(int cellId) {
         return mEnergyTransporter.has(cellId);
     }
 }

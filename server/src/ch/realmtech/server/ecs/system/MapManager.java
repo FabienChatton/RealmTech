@@ -105,7 +105,7 @@ public class MapManager extends Manager {
         for (int i = 0; i < infChunks.length; i++) {
             int chunkId = infChunks[i];
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-            if (chunkPosX == worldPosX && chunkPosY == worldPosY) {
+            if (chunkPosX == infChunkComponent.chunkPosX && chunkPosY == infChunkComponent.chunkPosY) {
                 return chunkId;
             }
         }
