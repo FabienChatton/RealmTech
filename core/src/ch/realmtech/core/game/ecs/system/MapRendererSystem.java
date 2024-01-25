@@ -10,13 +10,8 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -80,26 +75,6 @@ public class MapRendererSystem extends IteratingSystem {
             chunks.add(arrayLayerCell);
         }
         return chunks;
-    }
-
-    private Texture createFbo(int chunkId) {
-        int chunkSizePixel = (int) (16 * 32 * RealmTech.UNITE_SCALE);
-        FrameBuffer frameBuffer = new FrameBuffer(Pixmap.Format.RGB888, chunkSizePixel, chunkSizePixel, true);
-        frameBuffer.begin();
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-        for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            int cellId = infChunkComponent.infCellsId[i];
-            CellComponent cellComponent = mCell.get(cellId);
-
-            int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
-            int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
-            TextureRegion textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
-            gameStage.getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
-        }
-        frameBuffer.end();
-        return frameBuffer.getColorBufferTexture();
     }
 
     @Override

@@ -26,9 +26,6 @@ public class TextureRenderer extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        if (entityId != 0) {
-            int a = 2;
-        }
         TextureComponent textureComponent = mTexture.create(entityId);
         if (textureComponent.texture != null) {
             PositionComponent positionComponent = mPosition.create(entityId);
