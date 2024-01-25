@@ -422,6 +422,10 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
                     .editEntityOnCreate(new EnergyBatteryEditEntity(1_000, 10_000, FaceComponent.SOUTH))
+                    .interagieClickDroit((clientContext, cellId) -> {
+                        EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
+                        System.out.println(energyBatteryComponent.getStored());
+                    })
                     .build()),
             new ItemRegisterEntry("furnace-01", ItemBehavior
                     .builder()
@@ -431,7 +435,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public static CellItemRegisterEntry ENERGY_CABLE = registerCellItem("energyCable", new CellRegisterEntry("table-craft-01", CellBehavior
             .builder(Cells.Layer.BUILD_DECO)
             .breakWith(ItemType.HAND, "realmtech.energyCable")
-            .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onServer((world) -> {
+                    .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onCommun((world) -> {
                 world.edit(entityId).create(FaceComponent.class).builderMultiFace().addNorth().addEast().addSouth().addWest();
                 world.edit(entityId).create(EnergyTransporterComponent.class).set();
             }))

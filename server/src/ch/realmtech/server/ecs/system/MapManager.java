@@ -11,7 +11,6 @@ import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
-import com.artemis.Entity;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
@@ -302,7 +301,7 @@ public class MapManager extends Manager {
         supprimeChunk(chunkId);
     }
 
-    private InfMapComponent getInfMap() {
+    public InfMapComponent getInfMap() {
         return mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap"));
     }
 
@@ -366,8 +365,7 @@ public class MapManager extends Manager {
 
     public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
         int chunkId = serializerController.getChunkSerializerController().decode(applicationChunkBytes);
-        Entity infMapEntity = world.getSystem(TagManager.class).getEntity("infMap");
-        InfMapComponent infMapComponent = infMapEntity.getComponent(InfMapComponent.class);
+        InfMapComponent infMapComponent = getInfMap();
         infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, chunkId);
     }
 

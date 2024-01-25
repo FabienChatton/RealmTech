@@ -1,19 +1,15 @@
 package ch.realmtech.server.ecs.system;
 
-import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.energy.EnergyTransportStatus;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 
 public class EnergyManager extends Manager {
-
-    @Wire(name = "serverContext")
-    private ServerContext serverContext;
-    @Wire
-    private SystemsAdminServer systemsAdminServer;
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
@@ -67,13 +63,13 @@ public class EnergyManager extends Manager {
                 continue;
             }
 
-            int[] infChunks = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class).infChunks;
-            int chunkId = systemsAdminServer.mapManager.getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
+            int[] infChunks = systemsAdminCommun.mapManager.getInfMap().infChunks;
+            int chunkId = systemsAdminCommun.mapManager.getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
             if (chunkId == -1) {
                 continue;
             }
 
-            int cellId = systemsAdminServer.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
+            int cellId = systemsAdminCommun.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
             if (cellId == -1) {
                 continue;
             }

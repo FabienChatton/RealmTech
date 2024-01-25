@@ -1,9 +1,6 @@
 package ch.realmtech.server.ecs.plugin.commun;
 
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.ecs.system.SaveInfManager;
-import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.ecs.system.*;
 import com.artemis.ArtemisPlugin;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
@@ -14,6 +11,8 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
     public final InventoryManager inventoryManager;
     public final MapManager mapManager;
     public final SaveInfManager saveInfManager;
+    public final EnergyManager energyManager;
+    public final EnergyBatterySystem energyBatterySystem;
 
     public SystemsAdminCommun() {
         tagManager = new TagManager();
@@ -21,6 +20,8 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
         inventoryManager = new InventoryManager();
         mapManager = new MapManager();
         saveInfManager = new SaveInfManager();
+        energyManager = new EnergyManager();
+        energyBatterySystem = new EnergyBatterySystem();
     }
 
     @Override
@@ -30,7 +31,9 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
                 uuidComponentManager,
                 inventoryManager,
                 mapManager,
-                saveInfManager
+                saveInfManager,
+                energyManager,
+                energyBatterySystem
         );
     }
 }
