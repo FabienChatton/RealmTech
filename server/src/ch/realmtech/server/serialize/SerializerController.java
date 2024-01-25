@@ -16,34 +16,45 @@ import ch.realmtech.server.serialize.uuid.UuidSerializerController;
 import com.artemis.World;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public final class SerializerController {
+    @IgnoreField
     private World world;
-    private final InventorySerializerController inventorySerializerManager = new InventorySerializerController(this);
-    private final ChestSerializerController chestSerializerController = new ChestSerializerController(this);
-    private final UuidSerializerController uuidSerializerController = new UuidSerializerController(this);
-    private final CellSerializerController cellSerializerController = new CellSerializerController(this);
-    private final ChunkSerializerController chunkSerializerController = new ChunkSerializerController(this);
-    private final SaveMetadataSerializerController saveMetadataSerializerController = new SaveMetadataSerializerController(this);
-    private final CraftingTableController craftingTableController = new CraftingTableController(this);
-    private final FurnaceSerializerController furnaceSerializerController = new FurnaceSerializerController(this);
-    private final PhysicEntitySerializerController physicEntitySerializerController = new PhysicEntitySerializerController(this);
-    private final LifeSerializerController lifeSerializerController = new LifeSerializerController(this);
-    private final PlayerSerializerController playerSerializerController = new PlayerSerializerController(this);
-    private final FaceSerializerController faceSerializerController = new FaceSerializerController(this);
-    private final EnergyBatterySerializerController energyBatterySerializerController = new EnergyBatterySerializerController(this);
+    @IgnoreField
+    private final List<AbstractSerializerController<?, ?>> serializerControllers = new ArrayList<>();
+    private final InventorySerializerController inventorySerializerManager = registerSerializerController(new InventorySerializerController(this));
+    private final ChestSerializerController chestSerializerController = registerSerializerController(new ChestSerializerController(this));
+    private final UuidSerializerController uuidSerializerController = registerSerializerController(new UuidSerializerController(this));
+    private final CellSerializerController cellSerializerController = registerSerializerController(new CellSerializerController(this));
+    private final ChunkSerializerController chunkSerializerController = registerSerializerController(new ChunkSerializerController(this));
+    private final SaveMetadataSerializerController saveMetadataSerializerController = registerSerializerController(new SaveMetadataSerializerController(this));
+    private final CraftingTableController craftingTableController = registerSerializerController(new CraftingTableController(this));
+    private final FurnaceSerializerController furnaceSerializerController = registerSerializerController(new FurnaceSerializerController(this));
+    private final PhysicEntitySerializerController physicEntitySerializerController = registerSerializerController(new PhysicEntitySerializerController(this));
+    private final LifeSerializerController lifeSerializerController = registerSerializerController(new LifeSerializerController(this));
+    private final PlayerSerializerController playerSerializerController = registerSerializerController(new PlayerSerializerController(this));
+    private final FaceSerializerController faceSerializerController = registerSerializerController(new FaceSerializerController(this));
+    private final EnergyBatterySerializerController energyBatterySerializerController = registerSerializerController(new EnergyBatterySerializerController(this));
 
     public void initialize(World world) throws Exception {
         if (this.world != null) throw new IllegalCallerException("Already initialize");
         this.world = world;
 
         for (Field declaredField : getClass().getDeclaredFields()) {
-            if (!declaredField.getName().equals("world")) {
+            if (declaredField.getDeclaredAnnotation(IgnoreField.class) == null) {
                 Object serializerControllerObject = declaredField.get(this);
                 ((AbstractSerializerController<?, ?>) serializerControllerObject).getSerializers().values().forEach(world::inject);
             }
         }
+    }
+
+    private <T extends AbstractSerializerController<?, ?>> T registerSerializerController(T serializerController) {
+        serializerControllers.add(serializerController);
+        return serializerController;
     }
 
     public <InputType> int getApplicationBytesLength(AbstractSerializerController<InputType, ?> abstractSerializerController, InputType inputType) {
@@ -101,6 +112,15 @@ public final class SerializerController {
 
     public EnergyBatterySerializerController getEnergyBatterySerializerController() {
         return energyBatterySerializerController;
+    }
+
+    public <OutputType> AbstractSerializerController<?, OutputType> getSerializerControllerByMagic(byte magicNumber) {
+        for (AbstractSerializerController<?, ?> serializerController : serializerControllers) {
+            if (serializerController.getMagicNumber() == magicNumber) {
+                return (AbstractSerializerController<?, OutputType>) serializerController;
+            }
+        }
+        throw new NoSuchElementException("Can not find serializer controller by magic number. Magic number: " + magicNumber);
     }
 
     World getGetWorld() {

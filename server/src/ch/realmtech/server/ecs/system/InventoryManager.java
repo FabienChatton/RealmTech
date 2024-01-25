@@ -9,6 +9,7 @@ import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.InfRegistryAnonyme;
 import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.EntityEdit;
@@ -439,6 +440,7 @@ public class InventoryManager extends Manager {
     public int createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
         world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
+        world.edit(motherEntity).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getChestSerializerController());
 
         createInventoryUi(inventoryId, inventoryUuid, inventory, numberOfSlotParRow, numberOfRow);
         return inventoryId;
@@ -454,6 +456,7 @@ public class InventoryManager extends Manager {
         int craftingResultInventoryId = world.create();
 
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeCraftingTable(world), OnNewCraftAvailable.onNewCraftAvailableCraftingTable());
+        world.edit(motherEntity).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getCraftingTableController());
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
@@ -474,6 +477,7 @@ public class InventoryManager extends Manager {
 
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeFurnace(world), OnNewCraftAvailable.onNewCraftAvailableFurnace());
         world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
+        world.edit(motherEntity).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getFurnaceSerializerController());
 
         systemsAdminCommun.uuidComponentManager.createRegisteredComponent(furnaceUuid, motherEntity);
 

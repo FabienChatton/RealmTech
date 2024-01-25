@@ -60,11 +60,15 @@ public abstract class AbstractSerializerController<InputType, OutputType> implem
     }
 
     private OutputType decodeApplicationBytes(SerializedApplicationBytes applicationBytes) {
-        if (!testMagicNumbers(applicationBytes, this)) throw new IllegalMagicNumbers();
+        if (!testMagicNumbers(applicationBytes, this)) {
+            AbstractSerializerController<?, Object> expectedSerializer = serializerController.getSerializerControllerByMagic(getMagicNumber(applicationBytes));
+            throw new IllegalMagicNumbers("Bytes magic number: (" + expectedSerializer.getClass().getSimpleName() + "," + expectedSerializer.getMagicNumber() + ")"
+                    + " Actual: (" + getClass().getSimpleName() + "," + getMagicNumber() + ")");
+        }
         return decodeVersionAndBytes(shrinkMagicNumbers(applicationBytes));
     }
 
-    private byte getMagicNumber(SerializedApplicationBytes applicationBytes) {
+    public static byte getMagicNumber(SerializedApplicationBytes applicationBytes) {
         return applicationBytes.applicationBytes()[0];
     }
 

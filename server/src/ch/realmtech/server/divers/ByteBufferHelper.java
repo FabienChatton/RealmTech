@@ -1,6 +1,7 @@
 package ch.realmtech.server.divers;
 
 import ch.realmtech.server.serialize.AbstractSerializerController;
+import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.exception.TooLongBytes;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import io.netty.buffer.ByteBuf;
@@ -119,32 +120,19 @@ public final class ByteBufferHelper {
         return serializedApplicationBytes;
     }
 
-    @Deprecated(forRemoval = true)
-    public static SerializedApplicationBytes readSerializedApplicationBytesIntLegacy(ByteBuf buffer) {
-        int length = buffer.readInt();
-        SerializedApplicationBytes serializedApplicationBytes = new SerializedApplicationBytes(new byte[length]);
-        buffer.readBytes(serializedApplicationBytes.applicationBytes());
-        return serializedApplicationBytes;
-    }
-
     public static <InputType> ByteBuf encodeSerializedApplicationBytes(ByteBuf buffer, AbstractSerializerController<InputType, ?> serializerController, InputType toSerialize) {
         writeSerializedApplicationBytes(buffer, serializerController.encode(toSerialize));
         return buffer;
     }
 
     public static <OutputType> OutputType decodeSerializedApplicationBytes(ByteBuf buffer, AbstractSerializerController<?, OutputType> serializerController) {
-        // pour la compatibilité entre la longueur d'anciennement 4 bytes pour la taille du bytes application, il y a le try catch. A supprimer dans quelque temps.
-        OutputType ret;
-        buffer.markReaderIndex();
-        try {
-            SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytes(buffer);
-            ret = serializerController.decode(serializedApplicationBytes);
-        } catch (IndexOutOfBoundsException e) {
-            // tant ça change avec l'ancienne tail pour le byte de la longueur.
-            buffer.resetReaderIndex();
-            SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytesIntLegacy(buffer);
-            ret = serializerController.decode(serializedApplicationBytes);
-        }
-        return ret;
+        SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytes(buffer);
+        return serializerController.decode(serializedApplicationBytes);
+    }
+
+    public static <OutputType> OutputType decodeSerializedApplicationBytesByMagic(ByteBuf buffer, SerializerController serializerController) {
+        SerializedApplicationBytes serializedApplicationBytes = readSerializedApplicationBytes(buffer);
+        AbstractSerializerController<?, OutputType> serializerControllerByMagic = serializerController.getSerializerControllerByMagic(AbstractSerializerController.getMagicNumber(serializedApplicationBytes));
+        return serializerControllerByMagic.decode(serializedApplicationBytes);
     }
 }

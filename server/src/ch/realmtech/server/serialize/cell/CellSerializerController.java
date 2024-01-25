@@ -12,7 +12,8 @@ public class CellSerializerController extends AbstractSerializerController<Integ
                 put((byte) 1, new CellSerializerV1());
                 put((byte) 2, new CellSerializerV2());
                 put((byte) 3, new CellSerializerV3());
+                put((byte) 4, new CellSerializerV4());
             }
-        }, (byte) 3);
+        }, (byte) 4);
     }
 }
