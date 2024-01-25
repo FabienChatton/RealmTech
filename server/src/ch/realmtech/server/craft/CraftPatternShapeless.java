@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * The most permissive crafting pattern. If the item are in the
+ * crafting table, do the craft. The items can be anywhere.
+ * For a more restrictive craft pattern {@link CraftPatternShape}
+ */
 public class CraftPatternShapeless extends CraftPattern {
     private final ItemRegisterEntry itemResult;
     private final ItemRegisterEntry[] itemRequire;
@@ -18,8 +23,8 @@ public class CraftPatternShapeless extends CraftPattern {
 
     public CraftPatternShapeless(ItemRegisterEntry itemResult, int nombre, ItemRegisterEntry... itemRequire) {
         if (itemRequire == null || itemRequire.length == 0)
-            throw new IllegalArgumentException("Il manque les items requit pour le craft");
-        if (nombre <= 0) throw new IllegalArgumentException("Le nombre de résultat ne peut pas être nul ou négatif");
+            throw new IllegalArgumentException("Require items are require.");
+        if (nombre <= 0) throw new IllegalArgumentException("Number of result item must be bigger than 0.");
         this.itemResult = itemResult;
         this.itemRequire = itemRequire;
         this.nombre = nombre;

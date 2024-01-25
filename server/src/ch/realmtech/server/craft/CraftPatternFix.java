@@ -7,6 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Craft available only in the same size crafting table.
+ * For a less restrictive pattern {@link CraftPatternShape}
+ */
 public class CraftPatternFix extends CraftPattern {
     protected final ItemRegisterEntry[] craftPattern;
     protected final ItemRegisterEntry itemResult;

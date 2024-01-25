@@ -11,6 +11,12 @@ import java.util.Optional;
 import static ch.realmtech.server.craft.CraftPatternFix.CraftPatternArgs;
 import static ch.realmtech.server.craft.CraftPatternFix.getCraftPatternFromArgs;
 
+/**
+ * The most Flexible craft shape, the craft is valide if the shape match the
+ * recipe. The craft can be donne in a bigger craft table size.
+ * For a more restrictive shape {@link CraftPatternFix}.
+ * For a more permissive shape {@link CraftPatternShapeless}.
+ */
 public class CraftPatternShape extends CraftPattern {
     protected final ItemRegisterEntry itemResult;
     protected final int nombre;

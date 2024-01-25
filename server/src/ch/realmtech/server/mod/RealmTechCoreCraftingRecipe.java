@@ -21,46 +21,46 @@ public class RealmTechCoreCraftingRecipe {
         registry.add(new CraftPatternShapeless(RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry(), 4, RealmTechCoreMod.BUCHE_ITEM));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.STICK_ITEM, 4, new char[][]{
-                new char[]{'a'},
-                new char[]{'a'}
+                {'a'},
+                {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.CRAFTING_TABLE.itemRegisterEntry(), new char[][]{
-                new char[]{'a', 'a'},
-                new char[]{'a', 'a'}
+                {'a', 'a'},
+                {'a', 'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
 
-        registry.add(new CraftPatternFix(RealmTechCoreMod.CHEST.itemRegisterEntry(), new char[]{
-                'a', 'a', 'a',
-                'a', ' ', 'a',
-                'a', 'a', 'a'
+        registry.add(new CraftPatternShape(RealmTechCoreMod.CHEST.itemRegisterEntry(), new char[][]{
+                {'a', 'a', 'a'},
+                {'a', ' ', 'a'},
+                {'a', 'a', 'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry())));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.PIOCHE_BOIS_ITEM, new char[][]{
-                new char[]{'a', 'a', 'a'},
-                new char[]{' ', 'b', ' '},
-                new char[]{' ', 'b', ' '}
+                {'a', 'a', 'a'},
+                {' ', 'b', ' '},
+                {' ', 'b', ' '}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry()),
                 new CraftPatternArgs('b', RealmTechCoreMod.STICK_ITEM)));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.PELLE_BOIS_ITEM, new char[][]{
-                new char[]{' ', 'a', ' '},
-                new char[]{' ', 'b', ' '},
-                new char[]{' ', 'b', ' '}
+                {' ', 'a', ' '},
+                {' ', 'b', ' '},
+                {' ', 'b', ' '}
         }, new CraftPatternArgs('a', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry()),
                 new CraftPatternArgs('b', RealmTechCoreMod.STICK_ITEM)));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.PIOCHE_STONE_ITEM, new char[][]{
-                new char[]{'a', 'a', 'a'},
-                new char[]{' ', 'b', ' '},
-                new char[]{' ', 'b', ' '}
+                {'a', 'a', 'a'},
+                {' ', 'b', ' '},
+                {' ', 'b', ' '}
         }, new CraftPatternArgs('a', RealmTechCoreMod.STONE.itemRegisterEntry()),
                 new CraftPatternArgs('b', RealmTechCoreMod.STICK_ITEM)));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.PELLE_STONE_ITEM, new char[][]{
-                new char[]{' ', 'a', ' '},
-                new char[]{' ', 'b', ' '},
-                new char[]{' ', 'b', ' '}
+                {' ', 'a', ' '},
+                {' ', 'b', ' '},
+                {' ', 'b', ' '}
         }, new CraftPatternArgs('a', RealmTechCoreMod.STONE.itemRegisterEntry()),
                 new CraftPatternArgs('b', RealmTechCoreMod.STICK_ITEM)));
 
@@ -70,31 +70,42 @@ public class RealmTechCoreCraftingRecipe {
         }, new CraftPatternArgs('c', RealmTechCoreMod.COAL), new CraftPatternArgs('s', RealmTechCoreMod.STICK_ITEM)));
 
         registry.add(new CraftPatternShape(RealmTechCoreMod.FURNACE.itemRegisterEntry(), new char[][]{
-                new char[]{'a', 'a', 'a'},
-                new char[]{'a', ' ', 'a'},
-                new char[]{'a', 'a', 'a'}
+                {'a', 'a', 'a'},
+                {'a', ' ', 'a'},
+                {'a', 'a', 'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.STONE.itemRegisterEntry())));
+
+        registry.add(new CraftPatternShape(RealmTechCoreMod.ENERGY_BATTERY.itemRegisterEntry(), new char[][]{
+                {'p', 'c', 'p'},
+                {'p', 'c', 'p'},
+                {'p', 'c', 'p'},
+        }, new CraftPatternArgs('p', RealmTechCoreMod.PLANCHE_CELL_ITEM.itemRegisterEntry()),
+                new CraftPatternArgs('c', RealmTechCoreMod.COPPER_INGOT)));
+
+        registry.add(new CraftPatternShape(RealmTechCoreMod.ENERGY_CABLE.itemRegisterEntry(), 12, new char[][]{
+                {'c', 'c', 'c'}
+        }, new CraftPatternArgs('c', RealmTechCoreMod.COPPER_INGOT)));
     }
 
     public static void initFurnaceRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
         registry.add(new FurnacePatternShape(RealmTechCoreMod.SANDALES_ITEM, 100, new char[][]{
-                new char[]{'a'}
+                {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.BUCHE_ITEM)));
 
         registry.add(new FurnacePatternShape(RealmTechCoreMod.TIN_INGOT, 100, new char[][]{
-                new char[]{'a'}
+                {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.TIN_ORE.itemRegisterEntry())));
 
         registry.add(new FurnacePatternShape(RealmTechCoreMod.COPPER_INGOT, 100, new char[][]{
-                new char[]{'a'}
+                {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.COPPER_ORE.itemRegisterEntry())));
 
         registry.add(new FurnacePatternShape(RealmTechCoreMod.GOLD_INGOT, 100, new char[][]{
-                new char[]{'a'}
+                {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.GOLD_ORE.itemRegisterEntry())));
 
         registry.add(new FurnacePatternShape(RealmTechCoreMod.IRON_INGOT, 100, new char[][]{
-                new char[]{'a'}
+                {'a'}
         }, new CraftPatternArgs('a', RealmTechCoreMod.IRON_ORE.itemRegisterEntry())));
     }
 }
