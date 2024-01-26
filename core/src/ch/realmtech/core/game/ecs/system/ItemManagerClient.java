@@ -6,9 +6,10 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ctrl.ItemManagerCommun;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.registery.ItemRegisterEntry;
-import com.artemis.*;
+import com.artemis.Archetype;
+import com.artemis.ArchetypeBuilder;
+import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -48,24 +49,16 @@ public class ItemManagerClient extends ItemManager {
                 .add(Box2dComponent.class)
                 .build(world);
     }
-    
-    public int newItemOnGround(float worldPosX, float worldPosY, UUID itemUuid, ItemRegisterEntry itemRegisterEntry) {
-        final int itemId = newItemOnGround(worldPosX, worldPosY, itemRegisterEntry, itemUuid);
-        ItemComponent itemComponent = mItem.get(itemId);
-        TextureComponent textureComponent = mTexture.get(itemId);
-        itemComponent.set(itemRegisterEntry);
-        float widthWorld = textureComponent.texture.getRegionWidth() / RealmTech.PPM;
-        float heightWorld = textureComponent.texture.getRegionHeight() / RealmTech.PPM;
-        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, widthWorld, heightWorld);
-        return itemId;
-    }
 
     @Override
     public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
-        final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
-        EntityEdit edit = world.edit(itemId);
-        TextureComponent textureComponent = edit.create(TextureComponent.class);
+        int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
+        ItemComponent itemComponent = mItem.get(itemId);
+        TextureComponent textureComponent = mTexture.create(itemId);
         textureComponent.set(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()));
+        float widthWorld = textureComponent.texture.getRegionWidth() / RealmTech.PPM;
+        float heightWorld = textureComponent.texture.getRegionHeight() / RealmTech.PPM;
+        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, widthWorld, heightWorld);
         return itemId;
     }
 
@@ -80,20 +73,19 @@ public class ItemManagerClient extends ItemManager {
     }
 
     public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
-        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
-        int item = -1;
-        for (int i = 0; i < items.size(); i++) {
-            int itemId = items.get(i);
-            if (mUuid.get(itemId).getUuid().equals(uuid)) {
-                item = itemId;
-                break;
-            }
+        int itemId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(uuid, ItemComponent.class);
+        if (itemId == -1) {
+            itemId = systemsAdminClient.getItemManagerClient().newItemOnGround(worldPosX, worldPosY, itemRegisterEntry, uuid);
         }
-        if (item == -1) {
-            item = systemsAdminClient.getItemManagerClient().newItemOnGround(worldPosX, worldPosY, uuid, itemRegisterEntry);
+        if (!mBox2d.has(itemId)) {
+            inventoryItemToGroundItem(itemId, worldPosX, worldPosY);
         }
-        Box2dComponent box2dComponent = mBox2d.get(item);
+        Box2dComponent box2dComponent = mBox2d.get(itemId);
         box2dComponent.body.setTransform(worldPosX, worldPosY, box2dComponent.body.getAngle());
+    }
+
+    public void inventoryItemToGroundItem(int itemId, float worldPosX, float worldPosY) {
+        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
     }
 
     @Override

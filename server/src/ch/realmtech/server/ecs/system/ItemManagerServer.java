@@ -5,6 +5,7 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ctrl.ItemManagerCommun;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.packet.clientPacket.ItemOnGroundPacket;
 import ch.realmtech.server.packet.clientPacket.ItemOnGroundSupprimerPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
@@ -60,16 +61,18 @@ public class ItemManagerServer extends ItemManager {
     @Override
     public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
-        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
-        serverContext.getEcsEngineServer().nextTickSchedule(10, () -> {
-            world.edit(itemId).create(ItemPickableComponent.class);
-        });
+        inventoryItemToGroundItem(itemId, worldPosX, worldPosY);
         return itemId;
     }
 
     @Override
     public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
         return ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
+    }
+
+    public void inventoryItemToGroundItem(int itemId, float worldPosX, float worldPosY) {
+        ItemManagerCommun.setItemPositionAndPhysicBody(world, physicWorld, bodyDef, fixtureDef, itemId, worldPosX, worldPosY, 0.9f, 0.9f);
+        world.edit(itemId).create(ItemPickableComponent.class);
     }
 
     public void playerPickUpItem(int itemId, int playerId) {
@@ -79,4 +82,14 @@ public class ItemManagerServer extends ItemManager {
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
     }
+
+    public void dropItem(int itemId, float worldPosX, float worldPosY) {
+        UUID itemUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemId).getUuid();
+        ItemComponent itemComponent = mItem.get(itemId);
+        float dropWorldPosX = (float) (worldPosX + (Math.random() * 2f - 1f));
+        float dropWorldPosY = (float) (worldPosX + (Math.random() * 2f - 1f));
+        inventoryItemToGroundItem(itemId, dropWorldPosX, worldPosY);
+        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry, dropWorldPosX, dropWorldPosY));
+    }
+
 }

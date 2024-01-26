@@ -3,6 +3,7 @@ package ch.realmtech.server.level.cell;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.ecs.system.MapSystemServer;
 import com.badlogic.gdx.utils.Null;
 
 import java.util.UUID;
@@ -32,6 +33,10 @@ public class ChestEditEntity implements EditEntity {
     @Override
     public void editEntity(ExecuteOnContext executeOnContext, int motherEntityId) {
         executeOnContext.onCommun((world -> world.getSystem(InventoryManager.class).createChest(motherEntityId, inventory != null ? inventory : new int[numberOfSlotParRow * numberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], getUuid(), getNumberOfSlotParRow(), getNumberOfRow())));
+    }
+
+    public static EditEntity deleteChestDropItem() {
+        return (executeOnContext, entityId) -> executeOnContext.onServer((world) -> world.getSystem(MapSystemServer.class).deleteChestDropItemServer(entityId));
     }
 
     public UUID getUuid() {

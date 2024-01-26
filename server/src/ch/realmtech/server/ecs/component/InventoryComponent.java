@@ -2,6 +2,9 @@ package ch.realmtech.server.ecs.component;
 
 import com.artemis.Component;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class InventoryComponent extends Component {
     public final static int DEFAULT_STACK_LIMITE = 64;
     public final static int DEFAULT_NUMBER_OF_ROW = 4;
@@ -27,6 +30,6 @@ public class InventoryComponent extends Component {
 
     @Override
     public String toString() {
-        return String.format("row: %d, column: %d", numberOfRow, numberOfSlotParRow);
+        return String.format("row: %d, column: %d, items %s", numberOfRow, numberOfSlotParRow, Arrays.stream(inventory).map(Arrays::toString).collect(Collectors.joining()));
     }
 }

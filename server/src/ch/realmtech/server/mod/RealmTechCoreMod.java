@@ -309,6 +309,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.chest")
                     .editEntityOnCreate(ChestEditEntity.createNewInventory(9, 3))
+                    .editEntityOnDelete(ChestEditEntity.deleteChestDropItem())
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);

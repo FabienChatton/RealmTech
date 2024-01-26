@@ -3,7 +3,9 @@ package ch.realmtech.server.cli;
 
 import picocli.CommandLine;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import static picocli.CommandLine.*;
 
@@ -13,7 +15,8 @@ import static picocli.CommandLine.*;
                 DumpChunksCommand.class,
                 DumpItemsCommand.class,
                 DumpPlayersCommand.class,
-                DumpInventoryCommand.class
+                DumpInventoryCommand.class,
+                DumpEntities.class,
         }
 )
 public class DumpCommand implements Callable<Integer> {
@@ -29,6 +32,20 @@ public class DumpCommand implements Callable<Integer> {
     public void printlnVerbose(int verboseLevel, Object x) {
         if (this.verboseLevel >= verboseLevel) {
             masterCommand.output.println(x);
+        }
+    }
+
+    public void atVerboseLevel(int verboseLevel, Runnable runAt) {
+        if (this.verboseLevel >= verboseLevel) {
+            runAt.run();
+        }
+    }
+
+    public <T> Optional<T> atVerboseLevel(int verboseLevel, Supplier<T> runAt) {
+        if (this.verboseLevel >= verboseLevel) {
+            return Optional.of(runAt.get());
+        } else {
+            return Optional.empty();
         }
     }
 

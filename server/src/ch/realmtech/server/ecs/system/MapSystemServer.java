@@ -40,6 +40,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private InfMapComponent infMapComponent;
     private SaveMetadataComponent infMetaDonnesComponent;
@@ -270,12 +271,26 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         int chunkId = systemsAdminServer.mapManager.getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
 
         // can only place on item per layer
-        if (systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell().getCellBehavior().getLayer()) != -1) {
+        if (systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, placeCell.getCellBehavior().getLayer()) != -1) {
             return -1;
         }
 
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         return systemsAdminServer.mapManager.newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
+    }
+
+
+    public void deleteChestDropItemServer(int motherId) {
+        InventoryComponent chestInventory = systemsAdminServer.inventoryManager.getChestInventory(motherId);
+        CellComponent cellComponent = mCell.get(motherId);
+        InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
+        int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+        int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
+        for (int i = 0; i < chestInventory.inventory.length; i++) {
+            for (int j = 0; j < InventoryManager.tailleStack(chestInventory.inventory[i]); j++) {
+                systemsAdminServer.itemManagerServer.dropItem(chestInventory.inventory[i][j], worldPosX, worldPosY);
+            }
+        }
     }
 }

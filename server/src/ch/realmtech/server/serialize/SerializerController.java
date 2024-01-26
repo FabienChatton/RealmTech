@@ -114,6 +114,7 @@ public final class SerializerController {
         return energyBatterySerializerController;
     }
 
+    @SuppressWarnings("unchecked")
     public <OutputType> AbstractSerializerController<?, OutputType> getSerializerControllerByMagic(byte magicNumber) {
         for (AbstractSerializerController<?, ?> serializerController : serializerControllers) {
             if (serializerController.getMagicNumber() == magicNumber) {

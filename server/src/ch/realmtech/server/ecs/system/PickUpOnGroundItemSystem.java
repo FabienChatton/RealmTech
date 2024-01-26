@@ -25,7 +25,7 @@ public class PickUpOnGroundItemSystem extends IteratingSystem {
         PositionComponent positionPickerComponent = mPosition.get(pickerId);
         PickerGroundItemComponent pickerComponent = mPicker.get(pickerId);
 
-        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, Box2dComponent.class, PositionComponent.class)).getEntities();
+        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, Box2dComponent.class, PositionComponent.class, ItemPickableComponent.class)).getEntities();
         int[] itemsData = items.getData();
         for (int i = 0; i < items.size(); i++) {
             int itemId = itemsData[i];
