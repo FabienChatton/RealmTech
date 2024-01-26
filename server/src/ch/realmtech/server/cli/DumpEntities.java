@@ -44,16 +44,24 @@ public class DumpEntities implements Runnable {
                     Object[] componentsData = components.getData();
                     String componentString = Arrays.stream(componentsData)
                             .limit(components.size())
-                            .map(component -> "(" + component.getClass().getSimpleName() + ") " + component)
+                            .map(component -> String.format("(%s) %s", component.getClass().getSimpleName(), component))
                             .collect(Collectors.joining(","));
-                    return entityId + " [" + componentString + "] (" + components.size() + ")";
+                    return String.format("%d (%d) [%s]", entityId, components.size(), componentString);
                 }).orElse(Integer.toString(entityId));
                 sb.append(entityString).append("\n");
             }
         });
-        dumpCommand.masterCommand.output.println(sb);
         if (entities.isEmpty()) dumpCommand.printlnVerbose(0, "no entities");
-        else dumpCommand.printlnVerbose(0, "entities count: " + entities.size());
+        else {
+            dumpCommand.atVerboseLevel(1, () -> {
+                dumpCommand.masterCommand.output.println(
+                        dumpCommand.atVerboseLevel(2, () -> "Id | Component count | Components")
+                                .orElse("Id")
+                );
+                dumpCommand.masterCommand.output.println(sb);
+            });
+            dumpCommand.printlnVerbose(0, "entities count: " + entities.size());
+        }
     }
 
     @SuppressWarnings("unchecked")

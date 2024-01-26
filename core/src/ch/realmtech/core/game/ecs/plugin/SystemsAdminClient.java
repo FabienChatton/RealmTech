@@ -2,6 +2,7 @@ package ch.realmtech.core.game.ecs.plugin;
 
 import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.CraftingManager;
 import ch.realmtech.server.ecs.system.UpdateBox2dWithPosition;
@@ -183,5 +184,12 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     @Override
     public FurnaceIconSystem getFurnaceIconSystem() {
         return furnaceIconSystem;
+    }
+
+    @Override
+    public void onContextType(ContextType contextType, Runnable runnable) {
+        if (contextType == ContextType.CLIENT) {
+            runnable.run();
+        }
     }
 }

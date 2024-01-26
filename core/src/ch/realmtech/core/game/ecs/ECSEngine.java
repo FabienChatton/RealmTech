@@ -124,6 +124,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         physicWorld.dispose();
         try {
             connexionHandler.close();
+            serverTickBeatMonitoring.close();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }

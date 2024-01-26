@@ -36,4 +36,6 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
                 energyBatterySystem
         );
     }
+
+    public abstract void onContextType(ContextType contextType, Runnable runnable);
 }

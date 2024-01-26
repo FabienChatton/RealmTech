@@ -1,5 +1,6 @@
 package ch.realmtech.server.ecs.plugin.server;
 
+import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.ia.IaTestSystem;
@@ -79,5 +80,12 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 pickerGroundItemContactSystem,
                 playerManagerServer
         );
+    }
+
+    @Override
+    public void onContextType(ContextType contextType, Runnable runnable) {
+        if (contextType == ContextType.SERVER) {
+            runnable.run();
+        }
     }
 }

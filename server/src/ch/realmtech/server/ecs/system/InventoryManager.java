@@ -4,6 +4,7 @@ import ch.realmtech.server.craft.CraftResultChangeFunction;
 import ch.realmtech.server.craft.OnNewCraftAvailable;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
@@ -460,7 +461,7 @@ public class InventoryManager extends Manager {
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
-        craftingInventoryEdit.create(InventoryUiComponent.class).set();
+        systemsAdminCommun.onContextType(ContextType.CLIENT, () -> craftingInventoryEdit.create(InventoryUiComponent.class).set());
 
         createInventoryUi(craftingResultInventoryId, craftingResultInventoryUuid, 1,1);
         return new int[]{craftingInventoryId, craftingResultInventoryId};
@@ -488,7 +489,7 @@ public class InventoryManager extends Manager {
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
         inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
-        inventoryEdit.create(InventoryUiComponent.class).set();
+        systemsAdminCommun.onContextType(ContextType.CLIENT, () -> inventoryEdit.create(InventoryUiComponent.class).set());
         return inventoryEdit;
     }
 
@@ -496,7 +497,7 @@ public class InventoryManager extends Manager {
         EntityEdit inventoryEdit = world.edit(inventoryId);
         inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
         inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
-        inventoryEdit.create(InventoryUiComponent.class).setIcon();
+        systemsAdminCommun.onContextType(ContextType.CLIENT, () -> inventoryEdit.create(InventoryUiComponent.class).setIcon());
         return inventoryEdit;
     }
 
