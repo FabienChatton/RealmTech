@@ -93,7 +93,7 @@ public class WailaSystem extends BaseSystem {
 
         // waila
         wailaWindow.getTitleLabel().setText(cellComponent.cellRegisterEntry.toString());
-        wailaCellImage.setDrawable(new TextureRegionDrawable(cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas)));
+        wailaCellImage.setDrawable(new TextureRegionDrawable(cellComponent.cellRegisterEntry.getTextureRegion(context.getTextureAtlas())));
         wailaCellInfoHash.setText("Id: " + CellRegisterEntry.hashString(cellComponent.cellRegisterEntry.toString()));
 
         ItemType curentItemType;
@@ -109,7 +109,7 @@ public class WailaSystem extends BaseSystem {
         } else {
             itemTypeToMine = ItemType.UNBREAKABLE;
         }
-        if (curentItemType == itemTypeToMine || cellComponent.cellRegisterEntry.getCellBehavior().getBreakWith() == ItemType.HAND) {
+        if (curentItemType == itemTypeToMine) {
             wailaCellInfoCanBreak.setColor(Color.GREEN);
         } else {
             wailaCellInfoCanBreak.setColor(Color.RED);

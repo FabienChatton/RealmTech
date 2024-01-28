@@ -419,16 +419,17 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .placeCell("realmtech.torch")
                     .build()));
 
-    public static CellItemRegisterEntry ENERGY_BATTERY = registerCellItem("energyBattery", new CellRegisterEntry("furnace-01", CellBehavior
+    public static CellItemRegisterEntry ENERGY_BATTERY = registerCellItem("energyBattery", new CellRegisterEntry("energy-battery-01-south", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntityOnCreate(new EnergyBatteryEditEntity(1_000, 10_000, FaceComponent.SOUTH))
                     .interagieClickDroit((clientContext, cellId) -> {
                         EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
                         System.out.println(energyBatteryComponent.getStored());
                     })
                     .build()),
-            new ItemRegisterEntry("furnace-01", ItemBehavior
+            new ItemRegisterEntry("energy-battery-01-south", ItemBehavior
                     .builder()
                     .placeCell("realmtech.energyBattery")
                     .build()));
