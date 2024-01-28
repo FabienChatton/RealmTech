@@ -10,7 +10,7 @@ public class FaceComponent extends Component {
     public final static byte MULTI_FACE_FLAG = 1 << 4;
 
     private byte flags;
-    private String[] textures;
+    private String baseTexture;
 
     public FaceMultiComponentBuilder builderMultiFace() {
         flags |= MULTI_FACE_FLAG;
@@ -128,20 +128,19 @@ public class FaceComponent extends Component {
         setFace(WEST);
     }
 
-    public void setTextures(String north, String east, String south, String west) {
-        textures = new String[]{north, east, south, west};
+    public void setBaseTextures(String baseTexture) {
+        this.baseTexture = baseTexture;
     }
 
     public String getFaceTexture() {
-        if (isNorth()) {
-            return textures[0];
-        } else if (isEast()) {
-            return textures[1];
-        } else if (isSouth()) {
-            return textures[2];
+        String ret;
+        String binaryString = Integer.toBinaryString(getFace());
+        if (binaryString.length() < 4) {
+            ret = String.format("%4s", binaryString).replace(' ', '0');
         } else {
-            return textures[3];
+            ret = binaryString.substring(binaryString.length() -4);
         }
+        return baseTexture + "-" + ret;
     }
 
     public static class FaceMultiComponentBuilder {

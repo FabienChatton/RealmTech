@@ -5,6 +5,7 @@ import ch.realmtech.server.serialize.chest.ChestSerializerController;
 import ch.realmtech.server.serialize.chunk.ChunkSerializerController;
 import ch.realmtech.server.serialize.craftingtable.CraftingTableController;
 import ch.realmtech.server.serialize.energyBattery.EnergyBatterySerializerController;
+import ch.realmtech.server.serialize.energyCable.EnergyCableSerializerController;
 import ch.realmtech.server.serialize.face.FaceSerializerController;
 import ch.realmtech.server.serialize.furnace.FurnaceSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
@@ -39,6 +40,7 @@ public final class SerializerController {
     private final PlayerSerializerController playerSerializerController = registerSerializerController(new PlayerSerializerController(this));
     private final FaceSerializerController faceSerializerController = registerSerializerController(new FaceSerializerController(this));
     private final EnergyBatterySerializerController energyBatterySerializerController = registerSerializerController(new EnergyBatterySerializerController(this));
+    private final EnergyCableSerializerController energyCableSerializerController = registerSerializerController(new EnergyCableSerializerController(this));
 
     public void initialize(World world) throws Exception {
         if (this.world != null) throw new IllegalCallerException("Already initialize");
@@ -112,6 +114,10 @@ public final class SerializerController {
 
     public EnergyBatterySerializerController getEnergyBatterySerializerController() {
         return energyBatterySerializerController;
+    }
+
+    public EnergyCableSerializerController getEnergyCableSerializerController() {
+        return energyCableSerializerController;
     }
 
     @SuppressWarnings("unchecked")

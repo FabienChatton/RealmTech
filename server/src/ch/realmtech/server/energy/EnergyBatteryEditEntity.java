@@ -26,12 +26,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
             FaceComponent faceComponent = world.edit(entityId).create(FaceComponent.class);
             faceComponent.setMultiFace(false);
             faceComponent.setFace(face);
-            faceComponent.setTextures(
-                    "energy-battery-01-north",
-                    "energy-battery-01-east",
-                    "energy-battery-01-south",
-                    "energy-battery-01-west"
-            );
+            faceComponent.setBaseTextures("energy-battery-01");
         });
     }
 }

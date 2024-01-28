@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
 import ch.realmtech.server.energy.EnergyBatteryEditEntity;
+import ch.realmtech.server.energy.EnergyCableEditEntity;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemBehavior;
@@ -419,7 +420,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .placeCell("realmtech.torch")
                     .build()));
 
-    public static CellItemRegisterEntry ENERGY_BATTERY = registerCellItem("energyBattery", new CellRegisterEntry("energy-battery-01-south", CellBehavior
+    public static CellItemRegisterEntry ENERGY_BATTERY = registerCellItem("energyBattery", new CellRegisterEntry("energy-battery-01-0100", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
@@ -429,20 +430,17 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                         System.out.println(energyBatteryComponent.getStored());
                     })
                     .build()),
-            new ItemRegisterEntry("energy-battery-01-south", ItemBehavior
+            new ItemRegisterEntry("energy-battery-01-0100", ItemBehavior
                     .builder()
                     .placeCell("realmtech.energyBattery")
                     .build()));
 
-    public static CellItemRegisterEntry ENERGY_CABLE = registerCellItem("energyCable", new CellRegisterEntry("table-craft-01", CellBehavior
+    public static CellItemRegisterEntry ENERGY_CABLE = registerCellItem("energyCable", new CellRegisterEntry("energy-cable-01-item", CellBehavior
             .builder(Cells.Layer.BUILD_DECO)
             .breakWith(ItemType.HAND, "realmtech.energyCable")
-                    .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onCommun((world) -> {
-                world.edit(entityId).create(FaceComponent.class).builderMultiFace().addNorth().addEast().addSouth().addWest();
-                world.edit(entityId).create(EnergyTransporterComponent.class).set();
-            }))
+                    .editEntityOnCreate(new EnergyCableEditEntity((byte) 0))
             .build()),
-        new ItemRegisterEntry("table-craft-01", ItemBehavior
+        new ItemRegisterEntry("energy-cable-01-item", ItemBehavior
             .builder()
             .placeCell("realmtech.energyCable")
             .build()));

@@ -56,6 +56,9 @@ public class MapRendererSystem extends IteratingSystem {
                         } else {
                             textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
                         }
+                        if (textureRegion == null) {
+                            textureRegion = textureAtlas.findRegion("default-texture");
+                        }
                         gameStage.getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
                     }
                 }
