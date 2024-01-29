@@ -4,6 +4,7 @@ public final class ConnexionBuilder {
     private String host = "localhost";
     private int port = ServerNetty.PREFERRED_PORT;
     private String saveName = "default";
+    private boolean verifyAccessToken = true;
 
     /**
      * default "localhost"
@@ -39,5 +40,14 @@ public final class ConnexionBuilder {
     public ConnexionBuilder setSaveName(String saveName) {
         this.saveName = saveName;
         return this;
+    }
+
+    public ConnexionBuilder setVerifyAccessToken(boolean verifyAccessToken) {
+        this.verifyAccessToken = verifyAccessToken;
+        return this;
+    }
+
+    public boolean isVerifyAccessToken() {
+        return verifyAccessToken;
     }
 }

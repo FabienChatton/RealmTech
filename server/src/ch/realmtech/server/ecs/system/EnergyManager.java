@@ -64,9 +64,9 @@ public class EnergyManager extends Manager {
                 continue;
             }
 
-            byte face = FaceComponent.getFace(worldPosX, worldPosY, worldPosXFind, worldPosYFind);
+            byte faceNext = FaceComponent.getFace(worldPosX, worldPosY, worldPosXFind, worldPosYFind);
 
-            if ((face & allowFace) == 0) {
+            if ((faceNext & allowFace) == 0) {
                 continue;
             }
 
@@ -85,15 +85,19 @@ public class EnergyManager extends Manager {
                 EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(cellId);
                 FaceComponent faceEmitterComponent = mFace.get(cellId);
                 byte faceEmitterByte = faceEmitterComponent != null ? faceEmitterComponent.getFaceInverted() : FaceComponent.ALL_FACE;
-                if ((face & faceEmitterByte) != 0) {
+                if ((faceNext & faceEmitterByte) != 0) {
                     return cellId;
                 }
             }
 
             if (isCellEnergyTransporter(cellId)) {
-                int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, mFace.get(cellId).getFlags());
-                if (cellFind != -1) {
-                    return cellFind;
+                FaceComponent nextFaceComponent = mFace.get(cellId);
+                byte faceFrom = FaceComponent.getFace(worldPosXFind, worldPosYFind, worldPosX, worldPosY);
+                if ((faceFrom & nextFaceComponent.getFace()) != 0) {
+                    int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, nextFaceComponent.getFace());
+                    if (cellFind != -1) {
+                        return cellFind;
+                    }
                 }
             }
         }

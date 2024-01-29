@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
+import java.util.Objects;
 import java.util.function.BiPredicate;
 
 public class ClickAndDropActor extends Actor {
@@ -25,6 +26,7 @@ public class ClickAndDropActor extends Actor {
     private final BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate;
 
     public ClickAndDropActor(RealmTech context, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+        Objects.requireNonNull(stack);
         this.stack = stack;
         this.mItem = mItem;
         bitmapFont = new BitmapFont();

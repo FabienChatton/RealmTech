@@ -68,6 +68,7 @@ public final class RealmTech extends Game implements ClientContext {
     private GameScreen gameScreen;
     private AuthRequestClient authRequestClient;
     private AuthControllerClient authControllerClient;
+    private boolean verifyAccessToken;
 
     @Override
     public void create() {
@@ -285,7 +286,9 @@ public final class RealmTech extends Game implements ClientContext {
     public void rejoindreSoloServeur(String saveName) throws Exception {
         synchronized (this) {
             if (ecsEngine == null) {
-                ConnexionBuilder connexionBuilder = new ConnexionBuilder().setSaveName(saveName);
+                ConnexionBuilder connexionBuilder = new ConnexionBuilder()
+                        .setSaveName(saveName)
+                        .setVerifyAccessToken(verifyAccessToken);
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true, this);
                 nouveauECS(clientConnexionHandler);
                 authControllerClient.sendAuthAndJoinServer(clientConnexionHandler);
@@ -334,5 +337,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public void reloadOption() throws IOException {
         option = Option.getOptionFileAndLoadOrCreate();
+    }
+
+    public void setVerifyAccessToken(boolean verifyAccessToken) {
+        this.verifyAccessToken = verifyAccessToken;
     }
 }

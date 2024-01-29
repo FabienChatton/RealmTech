@@ -35,6 +35,7 @@ public class AuthenticateScreen extends AbstractScreen {
                 PersisteCredential.forget();
             }
             context.getAuthControllerClient().anonyme();
+            context.setVerifyAccessToken(false);
             context.setScreen(ScreenType.MENU);
         });
         loginButton = new ButtonsMenu.TextButtonMenu(context, "login", loginAction);
@@ -77,6 +78,7 @@ public class AuthenticateScreen extends AbstractScreen {
             if (saveCredentialCheckBox.isChecked()) {
                 PersisteCredential.persisteCredential(username, password);
             }
+            context.setVerifyAccessToken(true);
             context.setScreen(ScreenType.MENU);
         } catch (Exception e) {
             Popup.popupErreur(context, e.getMessage(), context.getUiStage());

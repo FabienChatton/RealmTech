@@ -71,6 +71,7 @@ public class ServerContext {
     public ServerContext(ConnexionBuilder connexionBuilder) throws Exception {
         try {
             reloadOption();
+            optionServer.verifyAccessToken.set(connexionBuilder.isVerifyAccessToken());
             ecsEngineServer = new EcsEngineServer(this);
             ecsEngineServer.prepareSaveToLoad(connexionBuilder.getSaveName());
             serverExecuteContext = new ServerExecuteContext(this);
