@@ -27,6 +27,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final PlayerSyncSystem playerSyncSystem;
     public final IaIsFocusPlayerSystem iaIsFocusPlayerSystem;
     public final FurnaceSystem furnaceSystem;
+    public final EnergyBatterySystem energyBatterySystem;
+    public final EnergyGeneratorSystem energyGeneratorSystem;
 
     public SystemsAdminServer() {
         iaSystemServer = new IaSystemServer();
@@ -38,6 +40,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         playerSyncSystem = new PlayerSyncSystem();
         iaIsFocusPlayerSystem = new IaIsFocusPlayerSystem();
         furnaceSystem = new FurnaceSystem();
+        energyBatterySystem = new EnergyBatterySystem();
+        energyGeneratorSystem = new EnergyGeneratorSystem();
 
         craftingSystem = new CraftingSystem();
         craftingManager = new CraftingManager();
@@ -66,6 +70,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 playerSyncSystem,
                 iaIsFocusPlayerSystem,
                 furnaceSystem,
+                energyBatterySystem,
+                energyGeneratorSystem,
 
                 craftingSystem,
                 craftingManager,

@@ -42,7 +42,7 @@ public class ItemBehavior {
 
     public CellRegisterEntry getPlaceCell() {
         if (placeCell == null) {
-            if (placeCellName.isBlank()) return null;
+            if (placeCellName == null || placeCellName.isBlank()) return null;
             placeCell = RealmTechCoreMod.CELLS.get(placeCellName).getEntry();
         }
         return placeCell;

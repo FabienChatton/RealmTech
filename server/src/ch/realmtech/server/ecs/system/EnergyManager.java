@@ -18,11 +18,17 @@ public class EnergyManager extends Manager {
     private final static byte[][] findEnergyProviderPoss = {{0, 1}, {-1,0}, {1,0}, {0,-1}};
 
     public static boolean isEnergyBatteryEmitter(EnergyBatteryComponent energyBatteryComponent) {
-        return energyBatteryComponent.getStored() > 0;
+        return (energyBatteryComponent.getEnergyBatteryRole() & EnergyBatteryComponent.EnergyBatteryRole.EMITTER_ONLY.getRoleByte()) > 0 &&
+                energyBatteryComponent.getStored() > 0;
     }
 
     public static boolean isEnergyBatteryReceiver(EnergyBatteryComponent energyBatteryComponent) {
-        return energyBatteryComponent.getStored() < energyBatteryComponent.getCapacity();
+        return (energyBatteryComponent.getEnergyBatteryRole() & EnergyBatteryComponent.EnergyBatteryRole.RECEIVER_ONLY.getRoleByte()) > 0 &&
+                !isFull(energyBatteryComponent);
+    }
+
+    public static boolean isFull(EnergyBatteryComponent energyBatteryComponent) {
+        return energyBatteryComponent.getStored() >= energyBatteryComponent.getCapacity();
     }
 
     public EnergyTransportStatus findEnergyToFeed(int energyReceiverId) {
@@ -32,13 +38,14 @@ public class EnergyManager extends Manager {
         int worldPosX = MapManager.getWorldPos(energyReceiverChunkComponent.chunkPosX, energyReceiverCellComponent.getInnerPosX());
         int worldPosY = MapManager.getWorldPos(energyReceiverChunkComponent.chunkPosY, energyReceiverCellComponent.getInnerPosY());
 
+        FaceComponent faceComponent = mFace.get(energyReceiverId);
         int cellEnergyProvider = findCellEnergyProvider(
                 worldPosX,
                 worldPosY,
                 worldPosX,
                 worldPosY,
                 energyReceiverCellComponent.cellRegisterEntry.getCellBehavior().getLayer(),
-                mFace.get(energyReceiverId).getFaceInverted()
+                faceComponent != null ? faceComponent.getFaceInverted() : FaceComponent.ALL_FACE // energy input face allow
         );
 
         if (cellEnergyProvider != -1) {
@@ -77,7 +84,8 @@ public class EnergyManager extends Manager {
             if (isCellEnergyEmitter(cellId)) {
                 EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(cellId);
                 FaceComponent faceEmitterComponent = mFace.get(cellId);
-                if ((face & faceEmitterComponent.getFaceInverted()) != 0) {
+                byte faceEmitterByte = faceEmitterComponent != null ? faceEmitterComponent.getFaceInverted() : FaceComponent.ALL_FACE;
+                if ((face & faceEmitterByte) != 0) {
                     return cellId;
                 }
             }

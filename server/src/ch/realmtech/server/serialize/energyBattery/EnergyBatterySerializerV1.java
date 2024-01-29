@@ -12,7 +12,7 @@ import com.artemis.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public class EnergyBatteryV1 implements Serializer<Integer, EnergyBatteryEditEntity> {
+public class EnergyBatterySerializerV1 implements Serializer<Integer, EnergyBatteryEditEntity> {
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
     private ComponentMapper<FaceComponent> mFace;
     @Override

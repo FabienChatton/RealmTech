@@ -21,7 +21,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
     @Override
     public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> {
-            world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity);
+            world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_RECEIVER);
             world.edit(entityId).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getEnergyBatterySerializerController());
             FaceComponent faceComponent = world.edit(entityId).create(FaceComponent.class);
             faceComponent.setMultiFace(false);

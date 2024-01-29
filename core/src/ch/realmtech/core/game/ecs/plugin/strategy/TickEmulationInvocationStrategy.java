@@ -48,7 +48,7 @@ public class TickEmulationInvocationStrategy extends InvocationStrategy {
             tickBeatsElapseTime.clear();
         }
 
-        if (t > 3) {
+        if (t > 60) {
             logger.info("Client is behind {} ticks from server", t);
         }
 

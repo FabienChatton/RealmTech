@@ -7,6 +7,7 @@ public class FaceComponent extends Component {
     public final static byte EAST = 1 << 1;
     public final static byte SOUTH = 1 << 2;
     public final static byte WEST = 1 << 3;
+    public final static byte ALL_FACE = NORTH | EAST | SOUTH | WEST;
     public final static byte MULTI_FACE_FLAG = 1 << 4;
 
     private byte flags;

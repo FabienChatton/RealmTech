@@ -33,6 +33,7 @@ public class GameScreen extends AbstractScreen {
     private final Label tps;
     private final Label reciveDataSize;
     private final Label sendDataSize;
+    private final Label topCellId;
     private ConsoleUi consoleUi;
 
     public GameScreen(RealmTech context) throws IOException {
@@ -47,6 +48,7 @@ public class GameScreen extends AbstractScreen {
         tps = new Label(null, skin);
         reciveDataSize = new Label(null, skin);
         sendDataSize = new Label(null, skin);
+        topCellId = new Label(null, skin);
         consoleUi = new ConsoleUi(skin, context);
 
         debugTable.add(fpsLabel).left().row();
@@ -55,6 +57,7 @@ public class GameScreen extends AbstractScreen {
         debugTable.add(chunkPos).left().row();
         debugTable.add(innerChunk).left().row();
         debugTable.add(tps).left().row();
+        debugTable.add(topCellId).left().row();
         debugTable.add(reciveDataSize).left().row();
         debugTable.add(sendDataSize).left().row();
     }
@@ -134,12 +137,16 @@ public class GameScreen extends AbstractScreen {
         Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
         int worldPosX = MapManager.getWorldPos(positionComponent.x);
         int worldPosY = MapManager.getWorldPos(positionComponent.y);
+        int worldPosXPointer = MapManager.getWorldPos(pointerGameCoordinate.x);
+        int worldPosYPointer = MapManager.getWorldPos(pointerGameCoordinate.y);
+        int chunkId = context.getSystemsAdminClient().mapManager.getChunkByWorldPos(worldPosX, worldPosY, context.getSystemsAdminClient().mapManager.getInfMap().infChunks);
         fpsLabel.setText(String.format("FPS : %d", Gdx.graphics.getFramesPerSecond()));
         gameCoo.setText(String.format("WorldPosX : %d\nWorldPosY : %d", worldPosX, worldPosY));
         pointerGameCoo.setText(String.format("PointerGameX: %f\nPointerGameY: %f", pointerGameCoordinate.x, pointerGameCoordinate.y));
         chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY)));
         innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY)));
         tps.setText(String.format("TPS : %d ", context.getEcsEngine().serverTickBeatMonitoring.getTickBeatPerSeconde()));
+        topCellId.setText(String.format("Cell Id: %d", chunkId != -1 ? context.getSystemsAdminClient().mapManager.getTopCell(chunkId, MapManager.getInnerChunk(worldPosXPointer), MapManager.getInnerChunk(worldPosYPointer)) : -1));
         reciveDataSize.setText(String.format("RDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataReciveSizePerSeconde()));
         sendDataSize.setText(String.format("SDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataSendPerSeconde()));
     }

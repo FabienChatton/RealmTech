@@ -52,6 +52,17 @@ public class MapManager extends Manager {
         return chunkPos * WorldMap.CHUNK_SIZE + innerChunk;
     }
 
+    public int getWorldPosX(CellComponent cellComponent) {
+        InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
+        return getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+    }
+
+    public int getWorldPosY(CellComponent cellComponent) {
+        InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
+        return getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
+    }
+
+
     /**
      * Récupère une position dans un chunk via la position du monde.
      *

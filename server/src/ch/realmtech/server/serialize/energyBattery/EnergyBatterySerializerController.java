@@ -10,7 +10,7 @@ public class EnergyBatterySerializerController extends AbstractSerializerControl
     public EnergyBatterySerializerController(SerializerController serializerController) {
         super(serializerController, (byte) 23, new HashMap<>() {
             {
-                put((byte) 1, new EnergyBatteryV1());
+                put((byte) 1, new EnergyBatterySerializerV1());
             }
         }, (byte) 1);
     }

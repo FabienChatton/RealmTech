@@ -7,6 +7,7 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
 import ch.realmtech.server.energy.EnergyBatteryEditEntity;
 import ch.realmtech.server.energy.EnergyCableEditEntity;
+import ch.realmtech.server.energy.EnergyGeneratorEditEntity;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemBehavior;
@@ -444,6 +445,45 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             .builder()
             .placeCell("realmtech.energyCable")
             .build()));
+
+    public static CellItemRegisterEntry ENERGY_GENERATOR = registerCellItem("energyGenerator", new CellRegisterEntry("furnace-01", CellBehavior
+                    .builder(Cells.Layer.BUILD_DECO)
+                    .breakWith(ItemType.HAND, "realmtech.energyGenerator")
+                    .editEntityOnCreate(new EnergyGeneratorEditEntity())
+                    .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .interagieClickDroit((clientContext, cellId) -> {
+                        ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
+                        InventoryComponent carburantInventory = mInventory.get(cellId);
+                        clientContext.openPlayerInventory(() -> {
+                            final Table playerInventory = new Table(clientContext.getSkin());
+                            final Table inventory = new Table(clientContext.getSkin());
+
+                            Consumer<Window> addTable = window -> {
+                                window.add(inventory).padBottom(10f).row();
+                                window.add(playerInventory);
+                            };
+
+                            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+                            int inventoryChestId = cellId;
+
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
+                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryChestId).getUuid();
+
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
+                            clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
+
+                            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
+                                    DisplayInventoryArgs.builder(inventoryChestId, inventory).build()
+                            }, new UUID[]{inventoryChestUuid});
+                        });
+                    })
+                    .build()),
+            new ItemRegisterEntry("furnace-01", ItemBehavior
+                    .builder()
+                    .placeCell("realmtech.energyGenerator")
+                    .build()));
+
     //</editor-fold>
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
         return CELLS.add(name, cellRegisterEntry);

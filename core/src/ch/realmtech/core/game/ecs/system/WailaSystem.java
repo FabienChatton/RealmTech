@@ -36,7 +36,7 @@ public class WailaSystem extends BaseSystem {
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<ItemComponent> mItem;
-    private ComponentMapper<FaceComponent> mFace;
+    private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
 
     @Override
     protected void initialize() {
@@ -118,8 +118,9 @@ public class WailaSystem extends BaseSystem {
             wailaCellInfoCanBreak.setText("break with: " + itemTypeToMine.toString().toLowerCase());
         }
 
-        if (mFace.has(topCell)) {
-            wailaCellContextualInfo.setText("face: " + mFace.get(topCell).getFace());
+        if (mEnergyBattery.has(topCell)) {
+            EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(topCell);
+            wailaCellContextualInfo.setText(String.format("energy: %s/%s", energyBatteryComponent.getStored(), energyBatteryComponent.getCapacity()));
         } else {
             wailaCellContextualInfo.setText(null);
         }
