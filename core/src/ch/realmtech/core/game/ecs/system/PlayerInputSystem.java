@@ -42,7 +42,7 @@ public class PlayerInputSystem extends BaseSystem {
         int topCell = systemsAdminClient.mapManager.getTopCell(chunk, innerChunkX, innerChunkY);
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             systemsAdminClient.mapManager.addCellBeingMine(topCell);
-        } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+        } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
             Optional<RightClickInteraction> rightClickInteractionItemSelected = Optional.empty();
             CellComponent cellComponent = mCell.get(topCell);
