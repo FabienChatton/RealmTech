@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ecs.component.UuidComponent;
 import com.artemis.*;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.Bag;
 import com.artemis.utils.IntBag;
 
 import java.util.ArrayList;
@@ -60,7 +61,16 @@ public class UuidComponentManager extends Manager {
      */
     public UuidComponent createRegisteredComponent(UUID uuid, int entityId) throws IllegalStateException {
         synchronized (this) {
-            if (mUuid.get(entityId) != null) throw new IllegalStateException("This entity has already a uuid component");
+            if (mUuid.get(entityId) != null) {
+                Bag<Component> components = new Bag<>();
+                world.getEntity(entityId).getComponents(components);
+                Object[] componentsData = components.getData();
+                String[] componentsClassName = new String[components.size()];
+                for (int i = 0; i < components.size(); i++) {
+                    componentsClassName[i] = componentsData[i].getClass().getSimpleName();
+                }
+                throw new IllegalStateException("This entity has already a uuid component. entity components: " + String.join(",", componentsClassName));
+            }
             return world.edit(entityId).create(UuidComponent.class).set(uuid);
         }
     }

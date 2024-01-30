@@ -204,8 +204,7 @@ public class ServerExecuteContext implements ServerExecute {
             }
             serverContext.getSystemsAdmin().mapManager.rotateCellFace(cellId, faceToRotate);
 
-            SerializedApplicationBytes cellApplicationByte = serverContext.getSerializerController().getCellSerializerController().encode(cellId);
-            serverContext.getServerHandler().broadCastPacket(new CellSetPacket(worldPosX, worldPosY, layer, cellApplicationByte));
+            serverContext.getSystemsAdmin().dirtyCellSystem.addDirtyCell(cellId);
         });
     }
 }

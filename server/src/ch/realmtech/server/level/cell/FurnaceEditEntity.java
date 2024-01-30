@@ -2,7 +2,7 @@ package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.ItemRegisterEntry;

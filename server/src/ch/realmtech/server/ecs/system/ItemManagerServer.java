@@ -41,7 +41,6 @@ public class ItemManagerServer extends ItemManager {
         super.initialize();
         defaultItemInventoryArchetype = new ArchetypeBuilder()
                 .add(ItemComponent.class)
-                .add(UuidComponent.class)
                 .build(world);
         defaultItemGroundArchetype = new ArchetypeBuilder(defaultItemInventoryArchetype)
                 .add(PositionComponent.class)

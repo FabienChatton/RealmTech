@@ -449,32 +449,41 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public static CellItemRegisterEntry ENERGY_GENERATOR = registerCellItem("energyGenerator", new CellRegisterEntry("furnace-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyGenerator")
-                    .editEntityOnCreate(new EnergyGeneratorEditEntity())
+                    .editEntityOnCreate(EnergyGeneratorEditEntity.createDefault(), ChestEditEntity.createNewInventory(1, 1))
+                    .editEntityOnDelete(EnergyGeneratorEditEntity.delete())
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
-                        InventoryComponent carburantInventory = mInventory.get(cellId);
+                        ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
+                        ComponentMapper<EnergyGeneratorIconComponent> mEnergyBatteryIcon = clientContext.getWorld().getMapper(EnergyGeneratorIconComponent.class);
+
+                        int carburantInventoryId = mChest.get(cellId).getInventoryId();
+                        InventoryComponent carburantInventory = mInventory.get(carburantInventoryId);
+                        EnergyGeneratorIconComponent energyGeneratorIconComponent = mEnergyBatteryIcon.get(cellId);
                         clientContext.openPlayerInventory(() -> {
-                            final Table playerInventory = new Table(clientContext.getSkin());
-                            final Table inventory = new Table(clientContext.getSkin());
+                            Table playerInventory = new Table(clientContext.getSkin());
+                            Table energyGeneratorInventory = new Table(clientContext.getSkin());
+                            Table iconFire = new Table(clientContext.getSkin());
 
                             Consumer<Window> addTable = window -> {
-                                window.add(inventory).padBottom(10f).row();
+                                window.add(iconFire).padBottom(2f).row();
+                                window.add(energyGeneratorInventory).padBottom(10f).row();
                                 window.add(playerInventory);
                             };
 
                             int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
-                            int inventoryChestId = cellId;
+                            int fireIconId = energyGeneratorIconComponent.getIconFireId();
 
                             UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
-                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryChestId).getUuid();
+                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(carburantInventoryId).getUuid();
 
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
                                     DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
-                                    DisplayInventoryArgs.builder(inventoryChestId, inventory).build()
+                                    DisplayInventoryArgs.builder(carburantInventoryId, energyGeneratorInventory).build(),
+                                    DisplayInventoryArgs.builder(fireIconId, iconFire).icon().build()
                             }, new UUID[]{inventoryChestUuid});
                         });
                     })

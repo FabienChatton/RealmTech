@@ -5,7 +5,6 @@ import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.EnergyBatteryComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.energy.EnergyTransportStatus;
-import ch.realmtech.server.packet.clientPacket.CellSetPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -31,10 +30,7 @@ public class EnergyBatterySystem extends IteratingSystem {
                 energyBatteryComponentEmitter.removeStored(1);
                 energyBatteryComponent.addStored(1);
 
-                CellComponent cellComponent = mCell.get(entityId);
-                int worldPosX = systemsAdminServer.mapManager.getWorldPosX(cellComponent);
-                int worldPosY = systemsAdminServer.mapManager.getWorldPosY(cellComponent);
-                serverContext.getServerHandler().broadCastPacket(new CellSetPacket(worldPosX, worldPosY, cellComponent.cellRegisterEntry.getCellBehavior().getLayer(), serverContext.getSerializerController().getCellSerializerController().encode(entityId)));
+                systemsAdminServer.dirtyCellSystem.addDirtyCell(entityId);
             }
         }
     }

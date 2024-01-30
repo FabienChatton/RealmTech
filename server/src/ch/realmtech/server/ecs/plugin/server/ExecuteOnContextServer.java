@@ -1,7 +1,7 @@
 package ch.realmtech.server.ecs.plugin.server;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
-import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import com.artemis.World;
 
 import java.util.function.BiConsumer;

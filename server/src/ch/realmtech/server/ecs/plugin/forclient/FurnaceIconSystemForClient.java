@@ -1,4 +1,4 @@
-package ch.realmtech.server.ecs.plugin;
+package ch.realmtech.server.ecs.plugin.forclient;
 
 public interface FurnaceIconSystemForClient {
     void createIconFurnace(int motherEntity);

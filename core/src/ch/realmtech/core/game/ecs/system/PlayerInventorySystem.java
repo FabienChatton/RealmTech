@@ -10,7 +10,7 @@ import ch.realmtech.core.shader.BlurShader;
 import ch.realmtech.core.shader.GrayShader;
 import ch.realmtech.core.shader.Shaders;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
@@ -263,7 +263,7 @@ public class PlayerInventorySystem extends BaseSystem {
         int[][] inventory = inventoryComponent.inventory;
         for (int[] stack : inventory) {
             Table tableImage = new Table();
-            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, stack, mItem, tableImage, dstRequirePredicate);
+            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, inventoryId, stack, mItem, tableImage, dstRequirePredicate);
             curentClickAndDropActors.add(clickAndDropActor);
             TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
             tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));

@@ -16,10 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class ClickAndDrop2 {
+    private final static Logger logger = LoggerFactory.getLogger(ClickAndDrop2.class);
     private final RealmTech context;
     private final Stage stage;
     private final World world;
@@ -33,7 +36,9 @@ public class ClickAndDrop2 {
         this.context = context;
         this.playerId = playerId;
         this.systemsAdminClient = systemsAdminClient;
-        clickAndDropActor = new ClickAndDropActor(context, world.getSystem(InventoryManager.class).getCursorInventory(playerId).inventory[0], world.getMapper(ItemComponent.class), null, null) {
+        int cursorInventoryId = world.getSystem(InventoryManager.class).getCursorInventoryId(playerId);
+        InventoryComponent inventoryCursorComponent = world.getMapper(InventoryComponent.class).get(cursorInventoryId);
+        clickAndDropActor = new ClickAndDropActor(context, cursorInventoryId, inventoryCursorComponent.inventory[0], world.getMapper(ItemComponent.class), null, null) {
             @Override
             public void act(float delta) {
                 super.act(delta);
@@ -66,7 +71,7 @@ public class ClickAndDrop2 {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (InventoryManager.tailleStack(clickAndDropActor.getStack()) == 0 || !destinations.contains(clickAndDropActorSrc, true)) {
                     if (button == Input.Buttons.LEFT) {
-                        moveLeftClickStackToStack(clickAndDropActorSrc, clickAndDropActor.getStack());
+                        moveLeftClickStackToStack(clickAndDropActorSrc, clickAndDropActor);
                     } else if (button == Input.Buttons.RIGHT) {
                         int nombreADeplacer;
                         if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) == 1) {
@@ -74,7 +79,7 @@ public class ClickAndDrop2 {
                         } else {
                             nombreADeplacer = InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) / 2;
                         }
-                        moveRightStackToStackNumber(clickAndDropActorSrc, clickAndDropActor.getStack(), nombreADeplacer);
+                        moveRightStackToStackNumber(clickAndDropActorSrc, clickAndDropActor, nombreADeplacer);
 
                     }
                     event.getStage().mouseMoved(Gdx.input.getX(), Gdx.input.getY());
@@ -88,14 +93,14 @@ public class ClickAndDrop2 {
         actors.add(clickAndDropActorSrc);
     }
 
-    private void moveLeftClickStackToStack(ClickAndDropActor clickAndDropActorSrc, int[] dstStack) {
-        if (InventoryManager.tailleStack(clickAndDropActorSrc.getStack()) > 0) {
-            ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActorSrc.getStack(), dstStack);
+    private void moveLeftClickStackToStack(ClickAndDropActor srcActor, ClickAndDropActor dstActor) {
+        if (InventoryManager.tailleStack(srcActor.getStack()) > 0) {
+            ClickAndDrop2.this.moveStackToStackSendRequest(srcActor, dstActor);
         }
     }
 
-    private void moveRightStackToStackNumber(ClickAndDropActor clickAndDropActorSrc, int[] dstStack, int number) {
-        ClickAndDrop2.this.moveStackToStackNumberSendRequest(clickAndDropActorSrc.getStack(), dstStack, number);
+    private void moveRightStackToStackNumber(ClickAndDropActor srcActor, ClickAndDropActor dstActor, int number) {
+        ClickAndDrop2.this.moveStackToStackNumberSendRequest(srcActor, dstActor, number);
     }
 
     // depose un item
@@ -115,10 +120,10 @@ public class ClickAndDrop2 {
                 }
                 boolean ret = false;
                 if (button == Input.Buttons.LEFT) {
-                    ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActor.getStack(), clickAndDropActorDst.getStack());
+                    ClickAndDrop2.this.moveStackToStackSendRequest(clickAndDropActor, clickAndDropActorDst);
                     ret = true;
                 } else if (button == Input.Buttons.RIGHT) {
-                    ClickAndDrop2.this.moveStackToStackNumberSendRequest(clickAndDropActor.getStack(), clickAndDropActorDst.getStack(), 1);
+                    ClickAndDrop2.this.moveStackToStackNumberSendRequest(clickAndDropActor, clickAndDropActorDst, 1);
                     ret = true;
                 }
                 return ret;
@@ -140,28 +145,37 @@ public class ClickAndDrop2 {
         return actors;
     }
 
-    public void moveStackToStackSendRequest(int[] srcStack, int[] dstStack) {
-        moveStackToStackNumberSendRequest(srcStack, dstStack, InventoryManager.tailleStack(srcStack));
+    public void moveStackToStackSendRequest(ClickAndDropActor srcActor, ClickAndDropActor dstActor) {
+        moveStackToStackNumberSendRequest(srcActor, dstActor, InventoryManager.tailleStack(srcActor.getStack()));
     }
 
-    public void moveStackToStackNumberSendRequest(int[] srcStack, int[] dstStack, int number) {
+    public void moveStackToStackNumberSendRequest(ClickAndDropActor srcActor, ClickAndDropActor dstActor, int number) {
         ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
         ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
-        int srcInventoryId = world.getSystem(InventoryManager.class).getInventoryByStack(srcStack);
-        int dstInventoryId = world.getSystem(InventoryManager.class).getInventoryByStack(dstStack);
+        int srcInventoryId = srcActor.getInventoryId();
+        int dstInventoryId = dstActor.getInventoryId();
         UUID[] srcItemsUuid = new UUID[number];
+
+        if (srcInventoryId == -1) {
+            logger.info("Inventory src not found by stack");
+            return;
+        }
+        if (dstInventoryId == -1) {
+            logger.info("Inventory dst not found by stack");
+            return;
+        }
 
         InventoryComponent srcInventoryComponent = mInventory.get(srcInventoryId);
         InventoryComponent dstInventoryComponent = mInventory.get(dstInventoryId);
 
         for (int i = 0; i < srcItemsUuid.length; i++) {
-            srcItemsUuid[i] = mUuid.get(srcStack[i]).getUuid();
+            srcItemsUuid[i] = mUuid.get(srcActor.getStack()[i]).getUuid();
         }
         int dstIndex = -1;
         for (int i = 0; i < dstInventoryComponent.inventory.length; i++) {
-            if (dstInventoryComponent.inventory[i] == dstStack) {
+            if (dstInventoryComponent.inventory[i] == dstActor.getStack()) {
                 dstIndex = i;
             }
         }

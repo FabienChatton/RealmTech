@@ -125,7 +125,15 @@ public class CellBehavior {
         }
 
         public CellBehaviorBuilder editEntityOnCreate(EditEntity editEntityOnCreate) {
-            cellBehavior.editEntityOnCreate = editEntityOnCreate;
+            return this.editEntityOnCreate(new EditEntity[]{editEntityOnCreate});
+        }
+
+        public CellBehaviorBuilder editEntityOnCreate(EditEntity... editEntityOnCreate) {
+            cellBehavior.editEntityOnCreate = (executeOnContext, entityId) -> {
+                for (int i = 0; i < editEntityOnCreate.length; i++) {
+                    editEntityOnCreate[i].editEntity(executeOnContext, entityId);
+                }
+            };
             return this;
         }
 

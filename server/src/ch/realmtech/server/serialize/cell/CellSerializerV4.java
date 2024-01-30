@@ -5,12 +5,14 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.serialize.AbstractSerializerController;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.utils.ImmutableBag;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -33,9 +35,13 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
         buffer.writeByte(innerChunkPos);
 
         if (mCellPadding.has(cellToSerialize)) {
+            ImmutableBag<AbstractSerializerController<Integer, ? extends EditEntity>> serializerControllers = mCellPadding.get(cellToSerialize).getSerializerControllers();
             buffer.writeByte(1);
-            SerializedApplicationBytes encode = mCellPadding.get(cellToSerialize).getSerializerController().encode(cellToSerialize);
-            ByteBufferHelper.writeSerializedApplicationBytes(buffer, encode);
+            buffer.writeByte(serializerControllers.size());
+            for (int i = 0; i < serializerControllers.size(); i++) {
+                SerializedApplicationBytes encode = serializerControllers.get(i).encode(cellToSerialize);
+                ByteBufferHelper.writeSerializedApplicationBytes(buffer, encode);
+            }
         } else {
             buffer.writeByte(0);
         }
@@ -49,11 +55,23 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
         int hashCellRegisterEntry = buffer.readInt();
         byte innerChunkPos = buffer.readByte();
         byte paddingId = buffer.readByte();
-        EditEntity editEntityArgs = null;
+        EditEntity[] editEntityArgs;
         if (paddingId == 1) {
-            editEntityArgs = ByteBufferHelper.decodeSerializedApplicationBytesByMagic(buffer, serializerController);
+            byte cellPaddingCount = buffer.readByte();
+            editEntityArgs = new EditEntity[cellPaddingCount];
+            for (byte i = 0; i < cellPaddingCount; i++) {
+                editEntityArgs[i] = ByteBufferHelper.decodeSerializedApplicationBytesByMagic(buffer, serializerController);
+            }
+        } else {
+            editEntityArgs = null;
         }
-        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, editEntityArgs);
+        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, (executeOnContext, entityId) -> {
+            if (editEntityArgs != null) {
+                for (int i = 0; i < editEntityArgs.length; i++) {
+                    editEntityArgs[i].editEntity(executeOnContext, entityId);
+                }
+            }
+        });
     }
 
     @Override
@@ -62,11 +80,12 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
         int pos = Byte.BYTES;
         byte paddingId = Byte.BYTES;
 
-        int paddingLength;
+        int paddingLength = 0;
         if (mCellPadding.has(cellToSerialize)) {
-            paddingLength = serializerController.getApplicationBytesLength(mCellPadding.get(cellToSerialize).getSerializerController(), cellToSerialize);
-        } else {
-            paddingLength = 0;
+            ImmutableBag<AbstractSerializerController<Integer, ? extends EditEntity>> serializerControllers = mCellPadding.get(cellToSerialize).getSerializerControllers();
+            for (int i = 0; i < serializerControllers.size(); i++) {
+                paddingLength += serializerController.getApplicationBytesLength(serializerControllers.get(i), cellToSerialize);
+            }
         }
 
         return hashCell + pos + paddingId + paddingLength;

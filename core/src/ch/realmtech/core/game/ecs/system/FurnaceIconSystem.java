@@ -4,7 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.component.FurnaceExtraInfoComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.plugin.FurnaceIconSystemForClient;
+import ch.realmtech.server.ecs.plugin.forclient.FurnaceIconSystemForClient;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.ItemRegisterEntry;
@@ -63,7 +63,7 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         }
     }
 
-    private void setIcon(int furnaceIconsComponent, String prefixTextureName, int ref, int max) {
+    public void setIcon(int furnaceIconsComponent, String prefixTextureName, int ref, int max) {
         int iconProcessId = systemsAdminClient.inventoryManager.getTopItem(mInventory.get(furnaceIconsComponent).inventory[0]);
         ItemComponent iconProcessItemComponent = mItem.get(iconProcessId);
         String iconProcessTextureName = formatPourDix(ref, max, prefixTextureName);

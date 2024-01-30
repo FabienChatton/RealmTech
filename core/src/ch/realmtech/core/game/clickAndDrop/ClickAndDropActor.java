@@ -2,7 +2,7 @@ package ch.realmtech.core.game.clickAndDrop;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.plugin.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.function.BiPredicate;
 
 public class ClickAndDropActor extends Actor {
+    private final int inventoryId;
     private final int[] stack;
     private final BitmapFont bitmapFont;
     private final ComponentMapper<ItemComponent> mItem;
@@ -25,7 +26,10 @@ public class ClickAndDropActor extends Actor {
     private final RealmTech context;
     private final BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate;
 
-    public ClickAndDropActor(RealmTech context, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+    public ClickAndDropActor(RealmTech context, int inventoryId, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+        if (inventoryId == -1) throw new IllegalArgumentException("Inventory id can not be -1");
+        this.inventoryId = inventoryId;
+
         Objects.requireNonNull(stack);
         this.stack = stack;
         this.mItem = mItem;
@@ -67,6 +71,10 @@ public class ClickAndDropActor extends Actor {
                 bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionHeight());
             }
         }
+    }
+
+    public int getInventoryId() {
+        return inventoryId;
     }
 
     public int[] getStack() {

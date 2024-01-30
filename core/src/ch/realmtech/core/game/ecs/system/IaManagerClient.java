@@ -5,7 +5,6 @@ import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -59,7 +58,7 @@ public class IaManagerClient extends Manager {
         box2dComponent.set(1, 1, bodyIaTest);
         box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
         world.edit(iaTestId).create(PositionComponent.class);
-        world.edit(iaTestId).create(UuidComponent.class).set(uuid);
+        systemsAdminClient.uuidComponentManager.createRegisteredComponent(uuid, iaTestId);
         TextureComponent textureComponent = world.edit(iaTestId).create(TextureComponent.class);
         textureComponent.set(textureAtlas.findRegion("sandales-01"));
         return iaTestId;

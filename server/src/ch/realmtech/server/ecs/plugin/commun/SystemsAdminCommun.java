@@ -12,6 +12,7 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
     public final MapManager mapManager;
     public final SaveInfManager saveInfManager;
     public final EnergyManager energyManager;
+    public final CellPaddingManager cellPaddingManager;
 
     public SystemsAdminCommun() {
         tagManager = new TagManager();
@@ -20,6 +21,7 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
         mapManager = new MapManager();
         saveInfManager = new SaveInfManager();
         energyManager = new EnergyManager();
+        cellPaddingManager = new CellPaddingManager();
     }
 
     @Override
@@ -30,7 +32,8 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
                 inventoryManager,
                 mapManager,
                 saveInfManager,
-                energyManager
+                energyManager,
+                cellPaddingManager
         );
     }
 

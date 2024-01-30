@@ -429,7 +429,7 @@ public class InventoryManager extends Manager {
         world.edit(motherEntity).create(InventoryCursorComponent.class).set(inventoryId);
 
         EntityEdit inventoryEdit = world.edit(inventoryId);
-        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(inventoryUuid, inventoryId);
         inventoryEdit.create(InventoryComponent.class).set(numberOfSlotParRow, numberOfRow);
         return inventoryId;
     }
@@ -441,7 +441,7 @@ public class InventoryManager extends Manager {
     public int createChest(int motherEntity, int[][] inventory, UUID inventoryUuid, int numberOfSlotParRow, int numberOfRow) {
         int inventoryId = world.create();
         world.edit(motherEntity).create(ChestComponent.class).set(inventoryId);
-        world.edit(motherEntity).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getChestSerializerController());
+        systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getChestSerializerController());
 
         createInventoryUi(inventoryId, inventoryUuid, inventory, numberOfSlotParRow, numberOfRow);
         return inventoryId;
@@ -457,9 +457,9 @@ public class InventoryManager extends Manager {
         int craftingResultInventoryId = world.create();
 
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeCraftingTable(world), OnNewCraftAvailable.onNewCraftAvailableCraftingTable());
-        world.edit(motherEntity).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getCraftingTableController());
+        systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getCraftingTableController());
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
-        craftingInventoryEdit.create(UuidComponent.class).set(craftingInventoryUuid);
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(craftingInventoryUuid, craftingInventoryId);
         craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
         systemsAdminCommun.onContextType(ContextType.CLIENT, () -> craftingInventoryEdit.create(InventoryUiComponent.class).set());
 
@@ -478,7 +478,7 @@ public class InventoryManager extends Manager {
 
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftingRegistry, CraftResultChangeFunction.CraftResultChangeFurnace(world), OnNewCraftAvailable.onNewCraftAvailableFurnace());
         world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
-        world.edit(motherEntity).create(CellPaddingSerializableEditEntity.class).set(world.getRegistered(SerializerController.class).getFurnaceSerializerController());
+        systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getFurnaceSerializerController());
 
         systemsAdminCommun.uuidComponentManager.createRegisteredComponent(furnaceUuid, motherEntity);
 
@@ -487,7 +487,7 @@ public class InventoryManager extends Manager {
 
     public EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
         EntityEdit inventoryEdit = world.edit(inventoryId);
-        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(inventoryUuid, inventoryId);
         inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
         systemsAdminCommun.onContextType(ContextType.CLIENT, () -> inventoryEdit.create(InventoryUiComponent.class).set());
         return inventoryEdit;
@@ -495,7 +495,7 @@ public class InventoryManager extends Manager {
 
     public EntityEdit createInventoryUiIcon(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
         EntityEdit inventoryEdit = world.edit(inventoryId);
-        inventoryEdit.create(UuidComponent.class).set(inventoryUuid);
+        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(inventoryUuid, inventoryId);
         inventoryEdit.create(InventoryComponent.class).set(inventory, numberOfSlotParRow, numberOfRow);
         systemsAdminCommun.onContextType(ContextType.CLIENT, () -> inventoryEdit.create(InventoryUiComponent.class).setIcon());
         return inventoryEdit;
@@ -511,6 +511,10 @@ public class InventoryManager extends Manager {
 
     public InventoryComponent getCursorInventory(int motherEntity) {
         return mInventory.get(mCursor.get(motherEntity).getInventoryId());
+    }
+
+    public int getCursorInventoryId(int motherEntity) {
+        return mCursor.get(motherEntity).getInventoryId();
     }
 
     public int getChestInventoryId(int motherEntity) {
