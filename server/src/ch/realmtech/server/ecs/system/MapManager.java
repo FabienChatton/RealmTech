@@ -1,6 +1,7 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.PhysiqueWorldHelper;
+import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
@@ -207,7 +208,7 @@ public class MapManager extends Manager {
         System.arraycopy(cellIds, 0, newCellIds, 0, indexCell);
         System.arraycopy(cellIds, indexCell + 1, newCellIds, indexCell, newCellIds.length - indexCell);
         infChunkComponent.infCellsId = newCellIds;
-        supprimeCell(cellId);
+        supprimeCell(cellId, true);
     }
     public int generateNewChunk(SaveMetadataComponent saveMetadataComponent, int chunkPosX, int chunkPosY) {
         int chunkId = world.create();
@@ -247,8 +248,8 @@ public class MapManager extends Manager {
         CellRegisterEntry cellRegisterEntry = cellArgs.getCellRegisterEntry();
         world.edit(cellId).create(CellComponent.class).set(innerX, innerY, cellRegisterEntry, chunkId);
         cellArgs.getEditEntityArgs()
-                .or(() -> cellRegisterEntry.getCellBehavior().getEditEntityOnCreate())
-                .ifPresent((editEntityArg) -> editEntityArg.editEntity(world.getRegistered("executeOnContext"), cellId));
+                .or(() -> cellRegisterEntry.getCellBehavior().getEditEntity())
+                .ifPresent((editEntityArg) -> editEntityArg.createEntity(world.getRegistered("executeOnContext"), cellId));
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
             CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
                     .getCellBehavior()
@@ -287,21 +288,28 @@ public class MapManager extends Manager {
         }
         int index = Arrays.stream(chunkComponent.infCellsId).boxed().toList().indexOf(cellId);
 
-        supprimeCell(cellId);
+        supprimeCell(cellId, false);
         int newCellId = newCell(chunkId, chunkPosX, chunkPosY, cellArgs);
 
         chunkComponent.infCellsId[index] = newCellId;
     }
 
-    public void supprimeCell(int cellId) {
+    public void supprimeCell(int cellId, boolean deleteEntityEdit) {
         CellComponent cellComponent = mCell.get(cellId);
         if (cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
             Box2dComponent box2dComponent = mBox2d.get(cellId);
             Body body = box2dComponent.body;
             cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
         }
-        cellComponent.cellRegisterEntry.getCellBehavior().getEditEntityOnDelete()
-                .ifPresent(editEntity -> editEntity.editEntity(world.getRegistered("executeOnContext"), cellId));
+        cellComponent.cellRegisterEntry.getCellBehavior().getEditEntity()
+                .ifPresent(editEntity -> {
+                    ExecuteOnContext executeOnContext = world.getRegistered("executeOnContext");
+                    if (deleteEntityEdit) {
+                        editEntity.deleteEntity(executeOnContext, cellId);
+                    } else {
+                        editEntity.replaceEntity(executeOnContext, cellId);
+                    }
+                });
         world.delete(cellId);
     }
 
@@ -320,7 +328,7 @@ public class MapManager extends Manager {
         world.delete(chunkId);
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            world.getSystem(MapManager.class).supprimeCell(infChunkComponent.infCellsId[i]);
+            world.getSystem(MapManager.class).supprimeCell(infChunkComponent.infCellsId[i], true);
         }
     }
 

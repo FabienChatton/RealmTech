@@ -19,7 +19,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
     }
 
     @Override
-    public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
+    public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> {
             world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_RECEIVER);
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
@@ -29,5 +29,15 @@ public class EnergyBatteryEditEntity implements EditEntity {
             faceComponent.setFace(face);
             faceComponent.setBaseTextures("energy-battery-01");
         });
+    }
+
+    @Override
+    public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+
+    }
+
+    @Override
+    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+
     }
 }

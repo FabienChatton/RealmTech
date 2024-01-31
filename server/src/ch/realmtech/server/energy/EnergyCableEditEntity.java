@@ -15,7 +15,7 @@ public class EnergyCableEditEntity implements EditEntity {
     }
 
     @Override
-    public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
+    public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun(world -> {
             FaceComponent faceComponent = world.edit(entityId).create(FaceComponent.class);
             faceComponent.set(face, true);
@@ -24,5 +24,15 @@ public class EnergyCableEditEntity implements EditEntity {
             world.edit(entityId).create(EnergyTransporterComponent.class).set();
             systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyCableSerializerController());
         });
+    }
+
+    @Override
+    public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+
+    }
+
+    @Override
+    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+
     }
 }

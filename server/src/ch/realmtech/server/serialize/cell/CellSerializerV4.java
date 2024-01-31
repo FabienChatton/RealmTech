@@ -68,7 +68,7 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
         return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, (executeOnContext, entityId) -> {
             if (editEntityArgs != null) {
                 for (int i = 0; i < editEntityArgs.length; i++) {
-                    editEntityArgs[i].editEntity(executeOnContext, entityId);
+                    editEntityArgs[i].createEntity(executeOnContext, entityId);
                 }
             }
         });

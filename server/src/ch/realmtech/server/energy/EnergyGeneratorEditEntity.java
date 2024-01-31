@@ -30,14 +30,8 @@ public class EnergyGeneratorEditEntity implements EditEntity {
         this.capacity = capacity;
     }
 
-    public static EditEntity delete() {
-        return (executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClientForClient, world) -> {
-            systemsAdminClientForClient.getEnergyBatteryIconSystem().deleteGeneratorBatteryIcons(entityId);
-        });
-    }
-
     @Override
-    public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
+    public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> {
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
 
@@ -49,5 +43,17 @@ public class EnergyGeneratorEditEntity implements EditEntity {
         executeOnContext.onClient((systemsAdminClientForClient, world) -> {
             systemsAdminClientForClient.getEnergyBatteryIconSystem().createEnergyGeneratorIcon(entityId);
         });
+    }
+
+    @Override
+    public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onClient((systemsAdminClientForClient, world) -> {
+            systemsAdminClientForClient.getEnergyBatteryIconSystem().deleteGeneratorBatteryIcons(entityId);
+        });
+    }
+
+    @Override
+    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+        deleteEntity(executeOnContext, entityId);
     }
 }

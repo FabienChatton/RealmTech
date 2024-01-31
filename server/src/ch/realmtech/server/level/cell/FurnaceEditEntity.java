@@ -34,14 +34,20 @@ public class FurnaceEditEntity implements EditEntity {
         return new FurnaceEditEntity(UUID.randomUUID(), UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE], UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE], UUID.randomUUID(), new int[1][InventoryComponent.DEFAULT_STACK_LIMITE]);
     }
 
-    public static EditEntity deleteIconFurnace() {
-        return (executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
+    @Override
+    public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid, craftingInventoryUuid, craftingInventory, carburantInventoryUuid, carburantInventory, craftingResultInventoryUuid, craftingResultInventory, RealmTechCoreMod.FURNACE_RECIPE));
+        executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
     }
 
     @Override
-    public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid, craftingInventoryUuid, craftingInventory, carburantInventoryUuid, carburantInventory, craftingResultInventoryUuid, craftingResultInventory, RealmTechCoreMod.FURNACE_RECIPE));
-        executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
+    public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
+    }
+
+    @Override
+    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+        deleteEntity(executeOnContext, entityId);
     }
 
     public static BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> testValideItemForCraft() {

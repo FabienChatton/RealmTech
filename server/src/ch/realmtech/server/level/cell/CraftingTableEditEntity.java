@@ -33,7 +33,20 @@ public class CraftingTableEditEntity implements EditEntity {
     }
 
     @Override
-    public void editEntity(ExecuteOnContext executeOnContext, int entityId) {
+    public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid, inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, RealmTechCoreMod.CRAFT));
+    }
+
+    @Override
+    public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onCommun((world) -> {
+            InventoryComponent chestInventory = world.getSystem(InventoryManager.class).getChestInventory(entityId);
+            world.getSystem(InventoryManager.class).removeInventory(chestInventory.inventory);
+        });
+    }
+
+    @Override
+    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+        deleteEntity(executeOnContext, entityId);
     }
 }

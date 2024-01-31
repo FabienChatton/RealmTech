@@ -62,7 +62,7 @@ public class PlayerSerializerV2 implements Serializer<PlayerSerializerConfig, Co
 
         return (playerId) -> {
             if (playerChestEditEntity != null) {
-                playerChestEditEntity.editEntity(world.getRegistered("executeOnContext"), playerId);
+                playerChestEditEntity.createEntity(world.getRegistered("executeOnContext"), playerId);
             }
 
             mPos.create(playerId).set(posX, posY);

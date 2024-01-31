@@ -44,7 +44,7 @@ public class PlayerSerializerV1 implements Serializer<PlayerSerializerConfig, Co
         float posY = buffer.readFloat();
 
         return playerId -> {
-            playerChestEditEntity.editEntity(world.getRegistered("executeOnContext"), playerId);
+            playerChestEditEntity.createEntity(world.getRegistered("executeOnContext"), playerId);
 
             world.edit(playerId).create(PositionComponent.class).set(posX, posY);
         };

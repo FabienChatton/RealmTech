@@ -1,6 +1,7 @@
 package ch.realmtech.server.mod;
 
 
+import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -188,7 +189,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.craftingTable")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntityOnCreate(CraftingTableEditEntity.createCraftingTable(3, 3))
+                    .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
@@ -236,8 +237,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.furnace")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntityOnCreate(FurnaceEditEntity.createFurnace())
-                    .editEntityOnDelete(FurnaceEditEntity.deleteIconFurnace())
+                    .editEntity(FurnaceEditEntity.createFurnace())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
@@ -310,8 +310,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "chest-01",
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.chest")
-                    .editEntityOnCreate(ChestEditEntity.createNewInventory(9, 3))
-                    .editEntityOnDelete(ChestEditEntity.deleteChestDropItem())
+                    .editEntity(ChestEditEntity.createNewInventory(9, 3))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
@@ -407,14 +406,28 @@ public class RealmTechCoreMod implements ArtemisPlugin {
 
     public static CellItemRegisterEntry TORCH = registerCellItem("torch", new CellRegisterEntry("torch-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
-                    .editEntityOnCreate((executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClient, world) -> {
-                        CellComponent cellComponent = world.getMapper(CellComponent.class).get(entityId);
-                        InfChunkComponent chunkComponent = world.getMapper(InfChunkComponent.class).get(cellComponent.chunkId);
-                        int worldX = MapManager.getWorldPos(chunkComponent.chunkPosX, cellComponent.getInnerPosX());
-                        int worldY = MapManager.getWorldPos(chunkComponent.chunkPosY, cellComponent.getInnerPosY());
-                        systemsAdminClient.getLightManager().createLight(entityId, Color.valueOf("ef540b"), 15, worldX, worldY);
-                    }))
-                    .editEntityOnDelete(((executeOnContext, entityId) -> executeOnContext.onClient((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId))))
+                    .editEntity(new EditEntity() {
+                        @Override
+                        public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
+                            executeOnContext.onClient((systemsAdminClient, world) -> {
+                                CellComponent cellComponent = world.getMapper(CellComponent.class).get(entityId);
+                                InfChunkComponent chunkComponent = world.getMapper(InfChunkComponent.class).get(cellComponent.chunkId);
+                                int worldX = MapManager.getWorldPos(chunkComponent.chunkPosX, cellComponent.getInnerPosX());
+                                int worldY = MapManager.getWorldPos(chunkComponent.chunkPosY, cellComponent.getInnerPosY());
+                                systemsAdminClient.getLightManager().createLight(entityId, Color.valueOf("ef540b"), 15, worldX, worldY);
+                            });
+                        }
+
+                        @Override
+                        public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+                            executeOnContext.onClient((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId));
+                        }
+
+                        @Override
+                        public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+                            deleteEntity(executeOnContext, entityId);
+                        }
+                    })
                     .breakWith(ItemType.HAND, "realmtech.torch")
                     .build()),
             new ItemRegisterEntry("torch-01", ItemBehavior.builder()
@@ -425,7 +438,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntityOnCreate(new EnergyBatteryEditEntity(1_000, 10_000, FaceComponent.SOUTH))
+                    .editEntity(new EnergyBatteryEditEntity(1_000, 10_000, FaceComponent.SOUTH))
                     .interagieClickDroit((clientContext, cellId) -> {
                         EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
                         System.out.println(energyBatteryComponent.getStored());
@@ -439,7 +452,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public static CellItemRegisterEntry ENERGY_CABLE = registerCellItem("energyCable", new CellRegisterEntry("energy-cable-01-item", CellBehavior
             .builder(Cells.Layer.BUILD_DECO)
             .breakWith(ItemType.HAND, "realmtech.energyCable")
-                    .editEntityOnCreate(new EnergyCableEditEntity((byte) 0))
+                    .editEntity(new EnergyCableEditEntity((byte) 0))
             .build()),
         new ItemRegisterEntry("energy-cable-01-item", ItemBehavior
             .builder()
@@ -449,8 +462,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public static CellItemRegisterEntry ENERGY_GENERATOR = registerCellItem("energyGenerator", new CellRegisterEntry("furnace-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyGenerator")
-                    .editEntityOnCreate(EnergyGeneratorEditEntity.createDefault(), ChestEditEntity.createNewInventory(1, 1))
-                    .editEntityOnDelete(EnergyGeneratorEditEntity.delete())
+                    .editEntity(EnergyGeneratorEditEntity.createDefault(), ChestEditEntity.createNewInventory(1, 1))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);

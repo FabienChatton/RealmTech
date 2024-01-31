@@ -1,5 +1,6 @@
 package ch.realmtech.server.level.cell;
 
+import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.RightClickInteraction;
 import ch.realmtech.server.mod.PlayerFootStepSound;
@@ -22,7 +23,6 @@ public class CellBehavior {
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
     private EditEntity editEntityOnCreate;
-    private EditEntity editEntityOnDelete;
     private RightClickInteraction interagieClickDroit;
 
     public static CellBehaviorBuilder builder(byte layer) {
@@ -62,12 +62,8 @@ public class CellBehavior {
         return breakStepNeed;
     }
 
-    public Optional<EditEntity> getEditEntityOnCreate() {
+    public Optional<EditEntity> getEditEntity() {
         return Optional.ofNullable(editEntityOnCreate);
-    }
-
-    public Optional<EditEntity> getEditEntityOnDelete() {
-        return Optional.ofNullable(editEntityOnDelete);
     }
 
     public CreatePhysiqueBody getCreateBody() {
@@ -124,21 +120,29 @@ public class CellBehavior {
             return this;
         }
 
-        public CellBehaviorBuilder editEntityOnCreate(EditEntity editEntityOnCreate) {
-            return this.editEntityOnCreate(new EditEntity[]{editEntityOnCreate});
-        }
+        public CellBehaviorBuilder editEntity(EditEntity... editEntity) {
+            cellBehavior.editEntityOnCreate = new EditEntity() {
+                @Override
+                public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
+                    for (EditEntity entity : editEntity) {
+                        entity.createEntity(executeOnContext, entityId);
+                    }
+                }
 
-        public CellBehaviorBuilder editEntityOnCreate(EditEntity... editEntityOnCreate) {
-            cellBehavior.editEntityOnCreate = (executeOnContext, entityId) -> {
-                for (int i = 0; i < editEntityOnCreate.length; i++) {
-                    editEntityOnCreate[i].editEntity(executeOnContext, entityId);
+                @Override
+                public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+                    for (EditEntity entity : editEntity) {
+                        entity.deleteEntity(executeOnContext, entityId);
+                    }
+                }
+
+                @Override
+                public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+                    for (EditEntity entity : editEntity) {
+                        entity.replaceEntity(executeOnContext, entityId);
+                    }
                 }
             };
-            return this;
-        }
-
-        public CellBehaviorBuilder editEntityOnDelete(EditEntity editEntityOnDelete) {
-            cellBehavior.editEntityOnDelete = editEntityOnDelete;
             return this;
         }
 

@@ -31,12 +31,21 @@ public class ChestEditEntity implements EditEntity {
     }
 
     @Override
-    public void editEntity(ExecuteOnContext executeOnContext, int motherEntityId) {
+    public void createEntity(ExecuteOnContext executeOnContext, int motherEntityId) {
         executeOnContext.onCommun((world -> world.getSystem(InventoryManager.class).createChest(motherEntityId, inventory != null ? inventory : new int[numberOfSlotParRow * numberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], getUuid(), getNumberOfSlotParRow(), getNumberOfRow())));
     }
 
-    public static EditEntity deleteChestDropItem() {
-        return (executeOnContext, entityId) -> executeOnContext.onServer((world) -> world.getSystem(MapSystemServer.class).deleteChestDropItemServer(entityId));
+    @Override
+    public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onServer((world) -> world.getSystem(MapSystemServer.class).deleteChestDropItemServer(entityId));
+    }
+
+    @Override
+    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onCommun((world) -> {
+            InventoryComponent chestInventory = world.getSystem(InventoryManager.class).getChestInventory(entityId);
+            world.getSystem(InventoryManager.class).removeInventory(chestInventory.inventory);
+        });
     }
 
     public UUID getUuid() {
