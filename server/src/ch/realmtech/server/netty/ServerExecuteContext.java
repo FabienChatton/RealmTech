@@ -165,7 +165,7 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void itemToCellPlace(Channel clientChannel, UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            int cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToBloc(itemToPlaceUuid, worldPosX, worldPosY);
+            int cellPlaced = serverContext.getSystem(MapSystemServer.class).placeItemToCell(itemToPlaceUuid, worldPosX, worldPosY);
             if (cellPlaced != -1) {
                 int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
                 int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);

@@ -257,7 +257,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
     }
 
-    public int placeItemToBloc(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
+    public int placeItemToCell(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         int itemId = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
         if (itemId == -1) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
@@ -277,6 +277,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
+        mItem.remove(itemId);
         return systemsAdminServer.mapManager.newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
     }
 
