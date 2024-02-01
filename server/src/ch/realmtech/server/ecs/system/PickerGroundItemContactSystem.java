@@ -1,9 +1,6 @@
 package ch.realmtech.server.ecs.system;
 
-import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.ItemPickableComponent;
-import ch.realmtech.server.ecs.component.PickerGroundItemComponent;
+import ch.realmtech.server.ecs.component.*;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -17,6 +14,8 @@ import com.badlogic.gdx.math.Vector2;
 public class PickerGroundItemContactSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<ItemPickableComponent> mItemPickable;
+    private ComponentMapper<ItemBeingPickComponent> mItemBeingPick;
     @Wire
     private ItemManagerServer itemManagerServer;
     @Override
@@ -39,6 +38,8 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
             Rectangle itemRectangle = new Rectangle(itemX, itemY, itemBox2dComponent.widthWorld, itemBox2dComponent.heightWorld);
             if (itemRectangle.overlaps(playerRectangle)) {
                 itemManagerServer.playerPickUpItem(itemId, entityId);
+                mItemPickable.remove(itemId);
+                mItemBeingPick.remove(itemId);
             }
         }
     }
