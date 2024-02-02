@@ -31,7 +31,7 @@ public class DumpEntities implements Runnable {
             entities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager()
                     .get(Aspect.one(findComponentsClassByName(componentFind)).exclude(findComponentsClassByName(componentExclude))).getEntities();
         } catch (ClassNotFoundException e) {
-            dumpCommand.masterCommand.output.println("Component does not existe: " + e.getMessage());
+            dumpCommand.masterCommand.output.println(e.getMessage());
             return;
         }
         int[] entitiesData = entities.getData();
@@ -78,7 +78,7 @@ public class DumpEntities implements Runnable {
                 if (classComponent.isAssignableFrom(Component.class)) {
                     componentClassName.add((Class<? extends Component>) classComponent);
                 } else {
-                    throw e;
+                    throw new ClassNotFoundException("The component " + componentClassFind + " doesn't existe");
                 }
             }
         }

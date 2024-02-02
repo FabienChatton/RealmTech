@@ -12,20 +12,22 @@ import java.util.UUID;
 public class EnergyGeneratorEditEntity implements EditEntity {
     private final UUID energyGeneratorUuid;
     private final int remainingTickToBurn;
+    private final int lastRemainingTickToBurn;
     private final long stored;
     private final long capacity;
 
     private EnergyGeneratorEditEntity() {
-        this(UUID.randomUUID(), 0, 0, 10_000);
+        this(UUID.randomUUID(), 0, 0, 0, 10_000);
     }
 
     public static EnergyGeneratorEditEntity createDefault() {
         return new EnergyGeneratorEditEntity();
     }
 
-    public EnergyGeneratorEditEntity(UUID energyGeneratorUuid, int remainingTickToBurn, long stored, long capacity) {
+    public EnergyGeneratorEditEntity(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn, long stored, long capacity) {
         this.energyGeneratorUuid = energyGeneratorUuid;
         this.remainingTickToBurn = remainingTickToBurn;
+        this.lastRemainingTickToBurn = lastRemainingTickToBurn;
         this.stored = stored;
         this.capacity = capacity;
     }
@@ -36,7 +38,7 @@ public class EnergyGeneratorEditEntity implements EditEntity {
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
 
             systemsAdminCommun.uuidComponentManager.createRegisteredComponent(energyGeneratorUuid, entityId);
-            world.edit(entityId).create(EnergyGeneratorComponent.class).setRemainingTickToBurn(remainingTickToBurn);
+            world.edit(entityId).create(EnergyGeneratorComponent.class).set(remainingTickToBurn, lastRemainingTickToBurn);
             world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_ONLY);
             systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyGeneratorSerializerController());
         });

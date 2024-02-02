@@ -63,8 +63,8 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         }
     }
 
-    public void setIcon(int furnaceIconsComponent, String prefixTextureName, int ref, int max) {
-        int iconProcessId = systemsAdminClient.inventoryManager.getTopItem(mInventory.get(furnaceIconsComponent).inventory[0]);
+    public void setIcon(int iconInventoryId, String prefixTextureName, int ref, int max) {
+        int iconProcessId = systemsAdminClient.inventoryManager.getTopItem(mInventory.get(iconInventoryId).inventory[0]);
         ItemComponent iconProcessItemComponent = mItem.get(iconProcessId);
         String iconProcessTextureName = formatPourDix(ref, max, prefixTextureName);
 

@@ -33,7 +33,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final FurnaceIconSystem furnaceIconSystem;
     private final FurnaceSimulationSystem furnaceSimulationSystem;
     private final CraftingManager craftingManager;
-    private final EnergyGeneratorIconSystem energyBatteryIconSystem;
+    private final EnergyGeneratorClientManager energyBatteryIconSystem;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -50,7 +50,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         furnaceIconSystem = new FurnaceIconSystem();
         furnaceSimulationSystem = new FurnaceSimulationSystem();
         craftingManager = new CraftingManager();
-        energyBatteryIconSystem = new EnergyGeneratorIconSystem();
+        energyBatteryIconSystem = new EnergyGeneratorClientManager();
         // render
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
@@ -190,7 +190,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     @Override
-    public EnergyGeneratorIconSystem getEnergyBatteryIconSystem() {
+    public EnergyGeneratorClientManager getEnergyBatteryIconSystem() {
         return energyBatteryIconSystem;
     }
 

@@ -110,10 +110,12 @@ public final class ECSEngine implements Disposable, GetWorld {
     }
 
     public void process(float delta) {
+        List<Runnable> copyNextFrameRunnable;
         synchronized (nextFrameRunnable) {
-            nextFrameRunnable.forEach(Runnable::run);
+            copyNextFrameRunnable = List.copyOf(nextFrameRunnable);
             nextFrameRunnable.clear();
         }
+        copyNextFrameRunnable.forEach(Runnable::run);
         world.setDelta(delta);
         world.process();
     }
