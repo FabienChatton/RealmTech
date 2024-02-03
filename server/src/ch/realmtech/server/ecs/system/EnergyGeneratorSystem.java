@@ -56,10 +56,7 @@ public class EnergyGeneratorSystem extends IteratingSystem {
                 energyGeneratorComponent.setRemainingTickToBurn(energyGeneratorComponent.getRemainingTickToBurn() - 1);
                 energyBatteryComponent.addStored(1);
 
-                if (i++ == 60) {
-                    systemsAdminServer.dirtyCellSystem.addDirtyCell(entityId);
-                    i = 0;
-                }
+                systemsAdminServer.dirtyCellSystem.addDirtyCell(entityId);
             }
         }
     }

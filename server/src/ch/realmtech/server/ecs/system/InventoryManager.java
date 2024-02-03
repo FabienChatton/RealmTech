@@ -38,6 +38,7 @@ public class InventoryManager extends Manager {
     private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private ComponentMapper<ItemResultCraftComponent> mItemResult;
+    private ComponentMapper<InventoryUiComponent> mInventoryUi;
 
     public boolean addItemToInventory(int inventoryId, int itemId) {
         return addItemToInventory(mInventory.get(inventoryId), itemId);
@@ -161,6 +162,12 @@ public class InventoryManager extends Manager {
         for (int[] stack : inventory) {
             deleteStack(stack);
         }
+    }
+
+    public void removeInventoryUi(int inventoryId) {
+        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+        removeInventory(inventoryComponent.inventory);
+        systemsAdminCommun.uuidComponentManager.deleteRegisteredComponent(inventoryId);
     }
 
     /**

@@ -38,7 +38,8 @@ public class ClickAndDrop2 {
         this.systemsAdminClient = systemsAdminClient;
         int cursorInventoryId = world.getSystem(InventoryManager.class).getCursorInventoryId(playerId);
         InventoryComponent inventoryCursorComponent = world.getMapper(InventoryComponent.class).get(cursorInventoryId);
-        clickAndDropActor = new ClickAndDropActor(context, cursorInventoryId, inventoryCursorComponent.inventory[0], world.getMapper(ItemComponent.class), null, null) {
+        UUID cursorInventoryUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(cursorInventoryId).getUuid();
+        clickAndDropActor = new ClickAndDropActor(context, cursorInventoryUuid, () -> inventoryCursorComponent.inventory[0], null, null) {
             @Override
             public void act(float delta) {
                 super.act(delta);
@@ -154,8 +155,8 @@ public class ClickAndDrop2 {
         ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
-        int srcInventoryId = srcActor.getInventoryId();
-        int dstInventoryId = dstActor.getInventoryId();
+        int srcInventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(srcActor.getInventoryUuid(), InventoryComponent.class);
+        int dstInventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(dstActor.getInventoryUuid(), InventoryComponent.class);
         UUID[] srcItemsUuid = new UUID[number];
 
         if (srcInventoryId == -1) {

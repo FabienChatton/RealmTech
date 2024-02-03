@@ -75,6 +75,10 @@ public class UuidComponentManager extends Manager {
         }
     }
 
+    public void deleteRegisteredComponent(int entityId) {
+        mUuid.remove(entityId);
+    }
+
     private int getRegisteredComponent(UUID uuid, IntBag entities) {
         synchronized (this) {
             int[] entitiesData = entities.getData();

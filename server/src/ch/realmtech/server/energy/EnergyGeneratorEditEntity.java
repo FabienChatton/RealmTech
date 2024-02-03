@@ -7,9 +7,12 @@ import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.serialize.SerializerController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class EnergyGeneratorEditEntity implements EditEntity {
+    private final static Map<UUID, PersisteEnergyGeneratorInfo> PERSISTE_ENERGY_GENERATOR_INFO_MAP = new HashMap<>();
     private final UUID energyGeneratorUuid;
     private final int remainingTickToBurn;
     private final int lastRemainingTickToBurn;
@@ -43,7 +46,11 @@ public class EnergyGeneratorEditEntity implements EditEntity {
             systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyGeneratorSerializerController());
         });
         executeOnContext.onClient((systemsAdminClientForClient, world) -> {
-            systemsAdminClientForClient.getEnergyBatteryIconSystem().createEnergyGeneratorIcon(entityId);
+            if (!PERSISTE_ENERGY_GENERATOR_INFO_MAP.containsKey(energyGeneratorUuid)) {
+                PERSISTE_ENERGY_GENERATOR_INFO_MAP.put(energyGeneratorUuid, new PersisteEnergyGeneratorInfo(UUID.randomUUID()));
+            }
+            PersisteEnergyGeneratorInfo persisteEnergyGeneratorInfo = PERSISTE_ENERGY_GENERATOR_INFO_MAP.get(energyGeneratorUuid);
+            systemsAdminClientForClient.getEnergyBatteryIconSystem().createEnergyGeneratorIcon(entityId, persisteEnergyGeneratorInfo.uuidInventoryIcon());
         });
     }
 
@@ -58,4 +65,6 @@ public class EnergyGeneratorEditEntity implements EditEntity {
     public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
         deleteEntity(executeOnContext, entityId);
     }
+
+    private record PersisteEnergyGeneratorInfo(UUID uuidInventoryIcon) { }
 }

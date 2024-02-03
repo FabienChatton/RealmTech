@@ -23,11 +23,11 @@ public class EnergyGeneratorClientManager extends Manager implements EnergyIconS
     private ComponentMapper<EnergyGeneratorComponent> mEnergyGenerator;
     private ComponentMapper<EnergyGeneratorIconComponent> mEnergyGeneratorIcon;
 
-    public void createEnergyGeneratorIcon(int motherId) {
+    public void createEnergyGeneratorIcon(int motherId, UUID iconInventoryUuid) {
         int iconFireId = world.create();
         EnergyGeneratorComponent energyGeneratorComponent = mEnergyGenerator.get(motherId);
 
-        systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, UUID.randomUUID(), new int[1][1], 1, 1);
+        systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, iconInventoryUuid, new int[1][1], 1, 1);
 
         int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
         systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
@@ -41,7 +41,8 @@ public class EnergyGeneratorClientManager extends Manager implements EnergyIconS
     public void deleteGeneratorBatteryIcons(int entityId) {
         EnergyGeneratorIconComponent energyGeneratorIconComponent = mEnergyBatteryIcon.get(entityId);
         InventoryComponent inventoryIconFireComponent = mInventory.get(energyGeneratorIconComponent.getIconFireId());
-        systemsAdminClient.inventoryManager.removeInventory(inventoryIconFireComponent.inventory);
+
+        systemsAdminClient.inventoryManager.removeInventoryUi(energyGeneratorIconComponent.getIconFireId());
         world.delete(energyGeneratorIconComponent.getIconFireId());
     }
 }

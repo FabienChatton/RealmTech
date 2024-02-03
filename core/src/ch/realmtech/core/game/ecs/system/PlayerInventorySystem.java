@@ -206,11 +206,13 @@ public class PlayerInventorySystem extends BaseSystem {
             };
 
             int playerId = context.getSystem(PlayerManagerClient.class).getMainPlayer();
+
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    builder(systemsAdminClient.inventoryManager.getChestInventoryId(playerId), playerInventory).build(),
-                    builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory, craftingInventory)
+                    builder(systemsAdminClient.uuidComponentManager.getRegisteredComponent(systemsAdminClient.inventoryManager.getChestInventoryId(playerId)).getUuid(), playerInventory).build(),
+
+                    builder(systemsAdminClient.uuidComponentManager.getRegisteredComponent(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory).getUuid(), craftingInventory)
                             .build(),
-                    builder(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory, craftingResultInventory)
+                    builder(systemsAdminClient.uuidComponentManager.getRegisteredComponent(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory).getUuid(), craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
             }, new UUID[0]); // pas d'inventaire à supprimé à la fermeture de l'inventaire, vu que les items du joueurs, on les garde
@@ -246,8 +248,9 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void displayInventory(DisplayInventoryArgs displayInventoryArgs) {
-        InventoryComponent inventoryComponent = mInventory.get(displayInventoryArgs.inventoryId());
-        Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryId(), inventoryStage, displayInventoryArgs.isClickAndDropSrc(), displayInventoryArgs.isClickAndDropDst(), displayInventoryArgs.getDstRequirePredicate());
+        int inventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(displayInventoryArgs.inventoryUuid(), InventoryComponent.class);
+        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+        Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryUuid(), inventoryStage, displayInventoryArgs.isClickAndDropSrc(), displayInventoryArgs.isClickAndDropDst(), displayInventoryArgs.getDstRequirePredicate());
         for (int i = 0; i < tableImages.size; i++) {
             if (i % inventoryComponent.numberOfSlotParRow == 0) {
                 displayInventoryArgs.inventoryTable().row();
@@ -256,14 +259,25 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(int inventoryId, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+    public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
         final Array<Table> tableImages = new Array<>();
-        InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-        InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryId);
+        int inventoryOriginalId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(inventoryUuid, InventoryComponent.class, InventoryUiComponent.class);
+        InventoryComponent inventoryComponent = mInventory.get(inventoryOriginalId);
+        InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryOriginalId);
         int[][] inventory = inventoryComponent.inventory;
-        for (int[] stack : inventory) {
+        for (int i = 0; i < inventory.length; i++) {
+            int finalI = i;
+            Supplier<int[]> getStack = () -> {
+                int inventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(inventoryUuid);
+                if (inventoryId == -1) {
+                    System.out.println(inventoryUuid);
+                    return new int[1];
+                }
+                return mInventory.get(inventoryId).inventory[finalI];
+            };
+
             Table tableImage = new Table();
-            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, inventoryId, stack, mItem, tableImage, dstRequirePredicate);
+            ClickAndDropActor clickAndDropActor = new ClickAndDropActor(context, inventoryUuid, getStack, tableImage, dstRequirePredicate);
             curentClickAndDropActors.add(clickAndDropActor);
             TextureRegion backGroundTextureRegion = context.getTextureAtlas().findRegion(inventoryUiComponent.backgroundTexture);
             tableImage.setBackground(new TextureRegionDrawable(backGroundTextureRegion));

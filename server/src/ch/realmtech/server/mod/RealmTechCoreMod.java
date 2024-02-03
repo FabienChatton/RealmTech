@@ -3,6 +3,7 @@ package ch.realmtech.server.mod;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.ecs.system.UuidComponentManager;
@@ -216,11 +217,12 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
+                            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
-                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
-                                    DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).build(),
-                                    DisplayInventoryArgs.builder(inventoryResultId, craftingResultInventory).notClickAndDropDst().build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryCraftId).getUuid(), craftingInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryResultId).getUuid(), craftingResultInventory).notClickAndDropDst().build()
                             }, new UUID[] {inventoryCraftUuid, inventoryResultUuid});
                         });
                     })
@@ -287,15 +289,16 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryCarburantUuid));
+                            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
-                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
-                                    DisplayInventoryArgs.builder(inventoryCraftId, craftingInventory).dstRequire(FurnaceEditEntity.testValideItemForCraft()).build(),
-                                    DisplayInventoryArgs.builder(inventoryResultId, craftingResultInventory).notClickAndDropDst().build(),
-                                    DisplayInventoryArgs.builder(inventoryCarburantId, carburantInventory).dstRequire(FurnaceEditEntity.testValideItemCarburant()).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryCraftId).getUuid(), craftingInventory).dstRequire(FurnaceEditEntity.testValideItemForCraft()).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryResultId).getUuid(), craftingResultInventory).notClickAndDropDst().build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryCarburantId).getUuid(), carburantInventory).dstRequire(FurnaceEditEntity.testValideItemCarburant()).build(),
                                     // icons
-                                    DisplayInventoryArgs.builder(iconFireId, iconFire).icon().build(),
-                                    DisplayInventoryArgs.builder(iconProcessId, iconProcess).icon().build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(iconFireId).getUuid(), iconFire).icon().build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(iconProcessId).getUuid(), iconProcess).icon().build()
                             }, new UUID[] {inventoryCraftUuid, inventoryResultUuid, inventoryCarburantUuid});
                         });
                     })
@@ -333,9 +336,11 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
 
+                            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
+
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
-                                    DisplayInventoryArgs.builder(inventoryChestId, inventory).build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryChestId).getUuid(), inventory).build()
                             }, new UUID[] {inventoryChestUuid});
                         });
                     })
@@ -491,11 +496,12 @@ public class RealmTechCoreMod implements ArtemisPlugin {
 
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
+                            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                    DisplayInventoryArgs.builder(inventoryPlayerId, playerInventory).build(),
-                                    DisplayInventoryArgs.builder(carburantInventoryId, energyGeneratorInventory).build(),
-                                    DisplayInventoryArgs.builder(fireIconId, iconFire).icon().build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(carburantInventoryId).getUuid(), energyGeneratorInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(fireIconId).getUuid(), iconFire).icon().build()
                             }, new UUID[]{inventoryChestUuid});
                         });
                     })

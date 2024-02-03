@@ -5,30 +5,31 @@ import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
+import java.util.UUID;
 import java.util.function.BiPredicate;
 
 public final class DisplayInventoryArgs {
-    private final int inventoryId;
+    private final UUID inventoryUuid;
     private final Table inventoryTable;
     private final boolean clickAndDropSrc;
     private final boolean clickAndDropDst;
     @Null
     private final BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate;
 
-    private DisplayInventoryArgs(int inventoryId, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
-        this.inventoryId = inventoryId;
+    private DisplayInventoryArgs(UUID inventoryUuid, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+        this.inventoryUuid = inventoryUuid;
         this.inventoryTable = inventoryTable;
         this.clickAndDropSrc = clickAndDropSrc;
         this.clickAndDropDst = clickAndDropDst;
         this.dstRequirePredicate = dstRequirePredicate;
     }
 
-    public static DisplayInventoryArgsBuilder builder(int inventoryId, Table inventoryTable) {
-        return new DisplayInventoryArgsBuilder(inventoryId, inventoryTable);
+    public static DisplayInventoryArgsBuilder builder(UUID inventoryUuid, Table inventoryTable) {
+        return new DisplayInventoryArgsBuilder(inventoryUuid, inventoryTable);
     }
 
-    public int inventoryId() {
-        return inventoryId;
+    public UUID inventoryUuid() {
+        return inventoryUuid;
     }
 
     public Table inventoryTable() {
@@ -48,14 +49,14 @@ public final class DisplayInventoryArgs {
     }
 
     public static class DisplayInventoryArgsBuilder {
-        private final int inventoryId;
+        private final UUID inventoryUuid;
         private final Table inventoryTable;
         private boolean clickAndDropSrc = true;
         private boolean clickAndDropDst = true;
         private BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate = null;
 
-        private DisplayInventoryArgsBuilder(int inventoryId, Table inventoryTable) {
-            this.inventoryId = inventoryId;
+        private DisplayInventoryArgsBuilder(UUID inventoryUuid, Table inventoryTable) {
+            this.inventoryUuid = inventoryUuid;
             this.inventoryTable = inventoryTable;
         }
 
@@ -81,7 +82,7 @@ public final class DisplayInventoryArgs {
         }
 
         public DisplayInventoryArgs build() {
-            return new DisplayInventoryArgs(inventoryId, inventoryTable, clickAndDropSrc, clickAndDropDst, dstRequirePredicate);
+            return new DisplayInventoryArgs(inventoryUuid, inventoryTable, clickAndDropSrc, clickAndDropDst, dstRequirePredicate);
         }
     }
 }

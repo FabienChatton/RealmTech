@@ -43,8 +43,10 @@ public class ChestEditEntity implements EditEntity {
     @Override
     public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> {
+            int chestInventoryId = world.getSystem(InventoryManager.class).getChestInventoryId(entityId);
             InventoryComponent chestInventory = world.getSystem(InventoryManager.class).getChestInventory(entityId);
             world.getSystem(InventoryManager.class).removeInventory(chestInventory.inventory);
+            world.delete(chestInventoryId);
         });
     }
 

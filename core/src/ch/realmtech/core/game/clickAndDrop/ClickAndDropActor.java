@@ -13,12 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
-import java.util.Objects;
+import java.util.UUID;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 public class ClickAndDropActor extends Actor {
-    private final int inventoryId;
-    private final int[] stack;
+    private final UUID inventoryUuid;
+    private final Supplier<int[]> getStack;
     private final BitmapFont bitmapFont;
     private final ComponentMapper<ItemComponent> mItem;
     @Null
@@ -26,13 +27,10 @@ public class ClickAndDropActor extends Actor {
     private final RealmTech context;
     private final BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate;
 
-    public ClickAndDropActor(RealmTech context, int inventoryId, int[] stack, ComponentMapper<ItemComponent> mItem, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
-        if (inventoryId == -1) throw new IllegalArgumentException("Inventory id can not be -1");
-        this.inventoryId = inventoryId;
-
-        Objects.requireNonNull(stack);
-        this.stack = stack;
-        this.mItem = mItem;
+    public ClickAndDropActor(RealmTech context, UUID inventoryUuid, Supplier<int[]> getStack, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+        this.inventoryUuid = inventoryUuid;
+        this.getStack = getStack;
+        this.mItem = context.getWorld().getMapper(ItemComponent.class);
         bitmapFont = new BitmapFont();
         this.tableImage = tableImage;
         this.context = context;
@@ -46,7 +44,8 @@ public class ClickAndDropActor extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        if (stack[0] != 0) {
+        int[] stack = getStack();
+        if (mItem.has(stack[0])) {
             if (getWidth() == 0) {
                 final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
                 setWidth(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionWidth());
@@ -64,7 +63,8 @@ public class ClickAndDropActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if (stack[0] != 0) {
+        int[] stack = getStack();
+        if (mItem.has(stack[0])) {
             final ItemRegisterEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
             batch.draw(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()), getX(), getY());
             if (!itemRegisterEntry.getItemBehavior().isIcon()) {
@@ -73,11 +73,11 @@ public class ClickAndDropActor extends Actor {
         }
     }
 
-    public int getInventoryId() {
-        return inventoryId;
+    public UUID getInventoryUuid() {
+        return inventoryUuid;
     }
 
     public int[] getStack() {
-        return stack;
+        return getStack.get();
     }
 }
