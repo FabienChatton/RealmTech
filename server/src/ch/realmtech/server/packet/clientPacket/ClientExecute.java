@@ -55,4 +55,6 @@ public interface ClientExecute {
     void playerCreateConnexion(UUID playerUuid);
 
     void furnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull);
+
+    void energyBatterySetEnergy(UUID energyBatteryUuid, long stored);
 }

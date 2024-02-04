@@ -45,4 +45,8 @@ public class EnergyGeneratorClientManager extends Manager implements EnergyIconS
         systemsAdminClient.inventoryManager.removeInventoryUi(energyGeneratorIconComponent.getIconFireId());
         world.delete(energyGeneratorIconComponent.getIconFireId());
     }
+
+    public void setEnergy(int energyBatteryId, long stored) {
+        mEnergyBattery.get(energyBatteryId).setStored(stored);
+    }
 }

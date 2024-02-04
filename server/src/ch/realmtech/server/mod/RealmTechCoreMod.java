@@ -443,7 +443,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntity(new EnergyBatteryEditEntity(1_000, 10_000, FaceComponent.SOUTH))
+                    .editEntity(EnergyBatteryEditEntity.createDefault())
                     .interagieClickDroit((clientContext, cellId) -> {
                         EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
                         System.out.println(energyBatteryComponent.getStored());

@@ -24,7 +24,6 @@ public class EnergyGeneratorSystem extends IteratingSystem {
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<InventoryComponent> mInventory;
-    private int i = 0;
 
     @Override
     protected void process(int entityId) {
