@@ -60,6 +60,7 @@ public class AuthenticateScreen extends AbstractScreen {
             String password = credential[1];
             try {
                 context.getAuthControllerClient().verifyLogin(username, password);
+                context.setVerifyAccessToken(true);
                 Gdx.app.postRunnable(() -> context.setScreen(ScreenType.MENU));
             } catch (Exception e) {
                 logger.error("Saved credential are not valide");
