@@ -44,8 +44,8 @@ public class EnergyGeneratorClientSystem extends IteratingSystem implements Ener
         systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
 
         mEnergyGeneratorIcon.create(motherId).set(iconFireId);
-        EnergyGeneratorExtraInfoComponent energyGeneratorExtraInfoComponent = mEnergyGeneratorExtraInfo.create(motherId).set(energyGeneratorComponent.getRemainingTickToBurn());
-        systemsAdminClient.getFurnaceIconSystem().setIcon(iconFireId, "furnace-time-to-burn", energyGeneratorComponent.getRemainingTickToBurn(), energyGeneratorExtraInfoComponent.getLastRemainingTickToBurn());
+        EnergyGeneratorExtraInfoComponent energyGeneratorExtraInfoComponent = mEnergyGeneratorExtraInfo.create(motherId).set(0);
+//        systemsAdminClient.getFurnaceIconSystem().setIcon(iconFireId, "furnace-time-to-burn", energyGeneratorComponent.getRemainingTickToBurn(), energyGeneratorExtraInfoComponent.getLastRemainingTickToBurn());
     }
 
     @Override

@@ -79,8 +79,12 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
     }
 
     private String formatPourDix(int ref, int max, String prefixTextureName) {
-        int pourDix = (int) Math.min(10, Math.max(1, 1 + Math.floor(10f * ((float) ref / (float) max))));
-        return String.format(prefixTextureName + (pourDix != 10 ? "-0%d" : "-%d"), pourDix);
+        if (max == 0) {
+            return String.format(prefixTextureName + "-01");
+        } else {
+            int pourDix = (int) Math.min(10, Math.max(1, 1 + Math.floor(10f * ((float) ref / (float) max))));
+            return String.format(prefixTextureName + (pourDix != 10 ? "-0%d" : "-%d"), pourDix);
+        }
     }
 
     @Override
