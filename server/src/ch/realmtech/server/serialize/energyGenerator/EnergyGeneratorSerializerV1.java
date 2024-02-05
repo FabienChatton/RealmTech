@@ -29,7 +29,6 @@ public class EnergyGeneratorSerializerV1 implements Serializer<Integer, EnergyGe
 
         ByteBufferHelper.writeUUID(buffer, energyGeneratorUuid);
         buffer.writeInt(energyGeneratorComponent.getRemainingTickToBurn());
-        buffer.writeInt(energyGeneratorComponent.getLastRemainingTickToBurn());
 
         buffer.writeLong(energyBatteryComponent.getStored());
         buffer.writeLong(energyBatteryComponent.getCapacity());
@@ -42,19 +41,17 @@ public class EnergyGeneratorSerializerV1 implements Serializer<Integer, EnergyGe
 
         UUID energyGeneratorUuid = ByteBufferHelper.readUUID(buffer);
         int remainingTickToBurn = buffer.readInt();
-        int lastRemainingTickToBurn = buffer.readInt();
         long stored = buffer.readLong();
         long capacity = buffer.readLong();
-        return new EnergyGeneratorEditEntity(energyGeneratorUuid, remainingTickToBurn, lastRemainingTickToBurn, stored, capacity);
+        return new EnergyGeneratorEditEntity(energyGeneratorUuid, remainingTickToBurn, stored, capacity);
     }
 
     @Override
     public int getBytesSize(World world, SerializerController serializerController, Integer energyGeneratorToSerialize) {
         int uuidLength = Long.BYTES * 2;
         int remainingTickToBurnLength = Integer.BYTES;
-        int lastRemainingTickToBurnLength = Integer.BYTES;
         int energyBatteryStoreLength = Long.BYTES * 2;
-        return uuidLength + remainingTickToBurnLength + lastRemainingTickToBurnLength + energyBatteryStoreLength;
+        return uuidLength + remainingTickToBurnLength + energyBatteryStoreLength;
     }
 
     @Override

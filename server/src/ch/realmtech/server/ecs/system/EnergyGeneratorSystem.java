@@ -3,6 +3,8 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.packet.clientPacket.EnergyBatterySetEnergyPacket;
+import ch.realmtech.server.packet.clientPacket.EnergyGeneratorInfoPacket;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -28,6 +30,7 @@ public class EnergyGeneratorSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         EnergyGeneratorComponent energyGeneratorComponent = mEnergyGenerator.get(entityId);
+        boolean newFuel = false;
         if (energyGeneratorComponent.getRemainingTickToBurn() <= 0) {
             int chestInventoryId = systemsAdminServer.inventoryManager.getChestInventoryId(entityId);
             InventoryComponent carburantInventory = mInventory.get(chestInventoryId);
@@ -40,8 +43,9 @@ public class EnergyGeneratorSystem extends IteratingSystem {
                 int timeToBurn = itemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();
                 if (timeToBurn > 0) {
                     // burn item to fill this time to burn
-                    energyGeneratorComponent.newRemainingTickToBurn(timeToBurn);
+                    energyGeneratorComponent.set(timeToBurn);
                     systemsAdminServer.inventoryManager.deleteOneItem(carburantStack);
+                    newFuel = true;
 
 
                     serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(carburantInventory)));
@@ -55,7 +59,10 @@ public class EnergyGeneratorSystem extends IteratingSystem {
                 energyGeneratorComponent.setRemainingTickToBurn(energyGeneratorComponent.getRemainingTickToBurn() - 1);
                 energyBatteryComponent.addStored(1);
 
-                systemsAdminServer.dirtyCellSystem.addDirtyCell(entityId);
+                UUID energyGeneratorUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(entityId).getUuid();
+
+                serverContext.getServerHandler().broadCastPacket(new EnergyBatterySetEnergyPacket(energyGeneratorUuid, energyBatteryComponent.getStored()));
+                serverContext.getServerHandler().broadCastPacket(new EnergyGeneratorInfoPacket(energyGeneratorUuid, energyGeneratorComponent.getRemainingTickToBurn(), newFuel ? energyGeneratorComponent.getRemainingTickToBurn() : -1));
             }
         }
     }

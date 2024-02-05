@@ -66,6 +66,7 @@ public class ServerContext {
                 .put(RotateFaceCellRequestPacket.class, RotateFaceCellRequestPacket::new)
                 .put(CellSetPacket.class, CellSetPacket::new)
                 .put(EnergyBatterySetEnergyPacket.class, EnergyBatterySetEnergyPacket::new)
+                .put(EnergyGeneratorInfoPacket.class, EnergyGeneratorInfoPacket::new)
         ;
     }
 

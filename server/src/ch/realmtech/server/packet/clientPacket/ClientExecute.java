@@ -57,4 +57,6 @@ public interface ClientExecute {
     void furnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull);
 
     void energyBatterySetEnergy(UUID energyBatteryUuid, long stored);
+
+    void energyGeneratorSetInfo(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn);
 }

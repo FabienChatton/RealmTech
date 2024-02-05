@@ -23,7 +23,7 @@ public class EnergyBatterySystem extends IteratingSystem {
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
     private ComponentMapper<CellComponent> mCell;
 
-    private final IntSet dirtyEnergyBattery = new IntSet();
+    public final IntSet dirtyEnergyBattery = new IntSet();
 
     @Override
     protected void process(int entityId) {

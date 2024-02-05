@@ -233,4 +233,12 @@ public class ClientExecuteContext implements ClientExecute {
             context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergy(energyBatteryId, stored);
         });
     }
+
+    @Override
+    public void energyGeneratorSetInfo(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn) {
+        context.nextFrame(() -> {
+            int energyGeneratorId = context.getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(energyGeneratorUuid, EnergyGeneratorComponent.class);
+            context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergyGeneratorInfo(energyGeneratorId, remainingTickToBurn, lastRemainingTickToBurn);
+        });
+    }
 }
