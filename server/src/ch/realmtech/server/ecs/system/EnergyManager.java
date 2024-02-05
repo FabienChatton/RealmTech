@@ -7,6 +7,9 @@ import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EnergyManager extends Manager {
     @Wire(name = "systemsAdmin")
     private SystemsAdminCommun systemsAdminCommun;
@@ -45,9 +48,9 @@ public class EnergyManager extends Manager {
                 worldPosX,
                 worldPosY,
                 energyReceiverCellComponent.cellRegisterEntry.getCellBehavior().getLayer(),
-                faceComponent != null ? faceComponent.getFaceInverted() : FaceComponent.ALL_FACE // energy input face allow
+                faceComponent != null ? faceComponent.getFaceInverted() : FaceComponent.ALL_FACE, // energy input face allow
+                new ArrayList<>()
         );
-
         if (cellEnergyProvider != -1) {
             return new EnergyTransportStatus(energyReceiverId, cellEnergyProvider);
         } else {
@@ -55,12 +58,16 @@ public class EnergyManager extends Manager {
         }
     }
 
-    private int findCellEnergyProvider(int worldPosX, int worldPosY, int preWorldPosX, int preWorldPosY, byte layer, byte allowFace) {
+    private int findCellEnergyProvider(int worldPosX, int worldPosY, int preWorldPosX, int preWorldPosY, byte layer, byte allowFace, List<int[]> visitedCells) {
         for (int i = 0; i < findEnergyProviderPoss.length; i++) {
             int worldPosXFind = worldPosX + findEnergyProviderPoss[i][0];
             int worldPosYFind = worldPosY + findEnergyProviderPoss[i][1];
 
             if (worldPosXFind == preWorldPosX && worldPosYFind == preWorldPosY) {
+                continue;
+            }
+
+            if (visitedCells.stream().anyMatch((visitedCell) -> visitedCell[0] == worldPosXFind && visitedCell[1] == worldPosYFind)) {
                 continue;
             }
 
@@ -94,7 +101,8 @@ public class EnergyManager extends Manager {
                 FaceComponent nextFaceComponent = mFace.get(cellId);
                 byte faceFrom = FaceComponent.getFace(worldPosXFind, worldPosYFind, worldPosX, worldPosY);
                 if ((faceFrom & nextFaceComponent.getFace()) != 0) {
-                    int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, nextFaceComponent.getFace());
+                    visitedCells.add(new int[]{worldPosX, worldPosY});
+                    int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, nextFaceComponent.getFace(), visitedCells);
                     if (cellFind != -1) {
                         return cellFind;
                     }
