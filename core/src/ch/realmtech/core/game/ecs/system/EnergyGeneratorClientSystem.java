@@ -58,7 +58,9 @@ public class EnergyGeneratorClientSystem extends IteratingSystem implements Ener
     }
 
     public void setEnergy(int energyBatteryId, long stored) {
-        mEnergyBattery.get(energyBatteryId).setStored(stored);
+        if (energyBatteryId != -1) {
+            mEnergyBattery.get(energyBatteryId).setStored(stored);
+        }
     }
 
     public void setEnergyGeneratorInfo(int energyGeneratorId, int remainingTickToBurn, int lastRemainingTickToBurn) {

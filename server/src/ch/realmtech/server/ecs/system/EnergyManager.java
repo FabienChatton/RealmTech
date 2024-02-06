@@ -19,7 +19,7 @@ public class EnergyManager extends Manager {
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
     private ComponentMapper<EnergyTransporterComponent> mEnergyTransporter;
     private ComponentMapper<FaceComponent> mFace;
-    private final static byte[][] findEnergyProviderPoss = {{0, 1}, {-1,0}, {1,0}, {0,-1}};
+    private final static byte[][] FIND_ENERGY_PROVIDER_POSS = {{0, 1}, {-1, 0}, {1, 0}, {0, -1}};
 
     public static boolean isEnergyBatteryEmitter(EnergyBatteryComponent energyBatteryComponent) {
         return (energyBatteryComponent.getEnergyBatteryRole() & EnergyBatteryComponent.EnergyBatteryRole.EMITTER_ONLY.getRoleByte()) > 0 &&
@@ -64,13 +64,17 @@ public class EnergyManager extends Manager {
 
         while (!cellQueue.isEmpty()) {
             FindCellProviderArg findCellProviderArg = cellQueue.poll();
-            int[] preWorldPos = findCellProviderArg.visitedCell.pop();
+            int[] preWorldPos = findCellProviderArg.visitedCell.peek();
             int preWorldPosX = preWorldPos[0];
             int preWorldPosY = preWorldPos[1];
 
-            for (int i = 0; i < findEnergyProviderPoss.length; i++) {
-                int worldPosXFind = findCellProviderArg.worldPosX + findEnergyProviderPoss[i][0];
-                int worldPosYFind = findCellProviderArg.worldPosY + findEnergyProviderPoss[i][1];
+            for (int i = 0; i < FIND_ENERGY_PROVIDER_POSS.length; i++) {
+                int worldPosXFind = findCellProviderArg.worldPosX + FIND_ENERGY_PROVIDER_POSS[i][0];
+                int worldPosYFind = findCellProviderArg.worldPosY + FIND_ENERGY_PROVIDER_POSS[i][1];
+
+                if (worldPosX == worldPosXFind && worldPosY == worldPosYFind) {
+                    continue;
+                }
 
                 if (findCellProviderArg.visitedCell.stream().anyMatch((visitedCell) -> visitedCell[0] == worldPosXFind && visitedCell[1] == worldPosYFind)) {
                     continue;
@@ -96,7 +100,7 @@ public class EnergyManager extends Manager {
 
                 if (isCellEnergyEmitter(nextCellId)) {
                     FaceComponent faceEmitterComponent = mFace.get(nextCellId);
-                    byte faceEmitterByte = faceEmitterComponent != null ? faceEmitterComponent.getFaceInverted() : FaceComponent.ALL_FACE;
+                    byte faceEmitterByte = faceEmitterComponent != null ? faceEmitterComponent.getFace() : FaceComponent.ALL_FACE;
                     if ((faceFrom & faceEmitterByte) != 0) {
                         return nextCellId;
                     }
