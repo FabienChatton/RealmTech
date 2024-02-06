@@ -33,6 +33,8 @@ public class ServerExecuteContext implements ServerExecute {
         logger.info("Player {} try to login. {}", username, clientChanel);
         UUID playerUuid;
         try {
+            if (serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(username) != -1)
+                throw new IllegalArgumentException("A Player with this username already existe on the server");
             playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
             logger.info("Player {} has successfully been authenticated. {}", username, clientChanel);
             if (serverContext.getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid) != -1) {

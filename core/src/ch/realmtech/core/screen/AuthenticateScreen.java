@@ -31,15 +31,21 @@ public class AuthenticateScreen extends AbstractScreen {
         loginAction = new OnClick((event, x, y)  -> verifyCredential());
         saveCredentialCheckBox = new CheckBox("save credential", skin);
         anonymousAction = new OnClick((event, x, y) -> {
+            if (usernameTextField.getText().isBlank()) {
+                Popup.popupErreur(context, "The username can not be blank", uiStage);
+                return;
+            }
             if (!saveCredentialCheckBox.isChecked()) {
                 PersisteCredential.forget();
             }
-            context.getAuthControllerClient().anonyme();
-            context.setVerifyAccessToken(false);
-            context.setScreen(ScreenType.MENU);
+            Popup.popupConfirmation(context, "Without password the user will not be authenticated. In game, the player will not be saved, including his inventory. The save our inventory, you must be login", uiStage, () -> {
+                context.getAuthControllerClient().setUsername(usernameTextField.getText());
+                context.setVerifyAccessToken(false);
+                context.setScreen(ScreenType.MENU);
+            });
         });
         loginButton = new ButtonsMenu.TextButtonMenu(context, "login", loginAction);
-        anonymousButton = new ButtonsMenu.TextButtonMenu(context, "continue as anonymous", anonymousAction);
+        anonymousButton = new ButtonsMenu.TextButtonMenu(context, "continue without password", anonymousAction);
 
 
         uiTable.add(new Label("Login", skin)).pad(50f);

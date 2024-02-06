@@ -94,9 +94,11 @@ public class ClientExecuteContext implements ClientExecute {
                 Gdx.app.postRunnable(() -> {
                     context.setScreen(ScreenType.MENU);
                     Popup.popupErreur(context, "Le serveur est fermé", context.getUiStage());
-                    context.supprimeECS();
                 });
+            } else if (context.getScreenType() == ScreenType.REJOINDRE_MULTI) {
+                Popup.popupErreur(context, "Le serveur est fermé", context.getUiStage());
             }
+            context.supprimeECS();
         });
     }
 

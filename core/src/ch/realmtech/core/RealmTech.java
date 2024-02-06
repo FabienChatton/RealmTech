@@ -277,7 +277,7 @@ public final class RealmTech extends Game implements ClientContext {
             if (ecsEngine == null) {
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false, this);
                 nouveauECS(clientConnexionHandler);
-                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler);
+                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler, verifyAccessToken);
 
             }
         }
@@ -291,7 +291,7 @@ public final class RealmTech extends Game implements ClientContext {
                         .setVerifyAccessToken(verifyAccessToken);
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true, this);
                 nouveauECS(clientConnexionHandler);
-                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler);
+                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler, verifyAccessToken);
             }
         }
     }

@@ -4,14 +4,12 @@ import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.server.packet.serverPacket.DemandeDeConnexionJoueurPacket;
 
 public class AuthControllerClient {
-    private final String UN_REGISTERED_USERNAME = "anonymous";
     private final AuthRequestClient authRequestClient;
     private String username;
     private String password;
 
     public AuthControllerClient(AuthRequestClient authRequestClient) {
         this.authRequestClient = authRequestClient;
-        username = UN_REGISTERED_USERNAME;
     }
 
     public void verifyLogin(String username, String password) throws Exception {
@@ -20,13 +18,12 @@ public class AuthControllerClient {
         this.password = password;
     }
 
-    public void anonyme() {
-        this.username = UN_REGISTERED_USERNAME;
-        this.password = null;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void sendAuthAndJoinServer(RealmTechClientConnexionHandler clientConnexionHandler) throws Exception {
-        if (!username.equals(UN_REGISTERED_USERNAME)) {
+    public void sendAuthAndJoinServer(RealmTechClientConnexionHandler clientConnexionHandler, boolean createAccessToken) throws Exception {
+        if (createAccessToken) {
             authRequestClient.createAccessToken(username, password);
         }
         clientConnexionHandler.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket(username));
