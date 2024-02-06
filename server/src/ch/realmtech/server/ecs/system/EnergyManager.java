@@ -7,8 +7,9 @@ import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.Stack;
 
 public class EnergyManager extends Manager {
     @Wire(name = "systemsAdmin")
@@ -45,11 +46,8 @@ public class EnergyManager extends Manager {
         int cellEnergyProvider = findCellEnergyProvider(
                 worldPosX,
                 worldPosY,
-                worldPosX,
-                worldPosY,
                 energyReceiverCellComponent.cellRegisterEntry.getCellBehavior().getLayer(),
-                faceComponent != null ? faceComponent.getFaceInverted() : FaceComponent.ALL_FACE, // energy input face allow
-                new ArrayList<>()
+                faceComponent != null ? faceComponent.getFaceInverted() : FaceComponent.ALL_FACE // energy input face allow
         );
         if (cellEnergyProvider != -1) {
             return new EnergyTransportStatus(energyReceiverId, cellEnergyProvider);
@@ -58,58 +56,67 @@ public class EnergyManager extends Manager {
         }
     }
 
-    private int findCellEnergyProvider(int worldPosX, int worldPosY, int preWorldPosX, int preWorldPosY, byte layer, byte allowFace, List<int[]> visitedCells) {
-        for (int i = 0; i < findEnergyProviderPoss.length; i++) {
-            int worldPosXFind = worldPosX + findEnergyProviderPoss[i][0];
-            int worldPosYFind = worldPosY + findEnergyProviderPoss[i][1];
+    private int findCellEnergyProvider(int worldPosX, int worldPosY, byte layer, byte allowFace) {
+        Queue<FindCellProviderArg> cellQueue = new ArrayDeque<>();
+        Stack<int[]> initialVisitedCell = new Stack<>();
+        initialVisitedCell.add(new int[]{worldPosX, worldPosY});
+        cellQueue.add(new FindCellProviderArg(worldPosX, worldPosY, allowFace, initialVisitedCell));
 
-            if (worldPosXFind == preWorldPosX && worldPosYFind == preWorldPosY) {
-                continue;
-            }
+        while (!cellQueue.isEmpty()) {
+            FindCellProviderArg findCellProviderArg = cellQueue.poll();
+            int[] preWorldPos = findCellProviderArg.visitedCell.pop();
+            int preWorldPosX = preWorldPos[0];
+            int preWorldPosY = preWorldPos[1];
 
-            if (visitedCells.stream().anyMatch((visitedCell) -> visitedCell[0] == worldPosXFind && visitedCell[1] == worldPosYFind)) {
-                continue;
-            }
+            for (int i = 0; i < findEnergyProviderPoss.length; i++) {
+                int worldPosXFind = findCellProviderArg.worldPosX + findEnergyProviderPoss[i][0];
+                int worldPosYFind = findCellProviderArg.worldPosY + findEnergyProviderPoss[i][1];
 
-            byte faceNext = FaceComponent.getFace(worldPosX, worldPosY, worldPosXFind, worldPosYFind);
-
-            if ((faceNext & allowFace) == 0) {
-                continue;
-            }
-
-            int[] infChunks = systemsAdminCommun.mapManager.getInfMap().infChunks;
-            int chunkId = systemsAdminCommun.mapManager.getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
-            if (chunkId == -1) {
-                continue;
-            }
-
-            int cellId = systemsAdminCommun.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
-            if (cellId == -1) {
-                continue;
-            }
-
-            if (isCellEnergyEmitter(cellId)) {
-                EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(cellId);
-                FaceComponent faceEmitterComponent = mFace.get(cellId);
-                byte faceEmitterByte = faceEmitterComponent != null ? faceEmitterComponent.getFaceInverted() : FaceComponent.ALL_FACE;
-                if ((faceNext & faceEmitterByte) != 0) {
-                    return cellId;
+                if (findCellProviderArg.visitedCell.stream().anyMatch((visitedCell) -> visitedCell[0] == worldPosXFind && visitedCell[1] == worldPosYFind)) {
+                    continue;
                 }
-            }
 
-            if (isCellEnergyTransporter(cellId)) {
-                FaceComponent nextFaceComponent = mFace.get(cellId);
-                byte faceFrom = FaceComponent.getFace(worldPosXFind, worldPosYFind, worldPosX, worldPosY);
-                if ((faceFrom & nextFaceComponent.getFace()) != 0) {
-                    visitedCells.add(new int[]{worldPosX, worldPosY});
-                    int cellFind = findCellEnergyProvider(worldPosXFind, worldPosYFind, worldPosX, worldPosY, layer, nextFaceComponent.getFace(), visitedCells);
-                    if (cellFind != -1) {
-                        return cellFind;
+                byte faceNext = FaceComponent.getFace(preWorldPosX, preWorldPosY, worldPosXFind, worldPosYFind);
+                byte faceFrom = FaceComponent.getFace(worldPosXFind, worldPosYFind, preWorldPosX, preWorldPosY);
+
+                if ((faceNext & findCellProviderArg.allowFace) == 0) {
+                    continue;
+                }
+
+                int[] infChunks = systemsAdminCommun.mapManager.getInfMap().infChunks;
+                int chunkId = systemsAdminCommun.mapManager.getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
+                if (chunkId == -1) {
+                    continue;
+                }
+
+                int nextCellId = systemsAdminCommun.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
+                if (nextCellId == -1) {
+                    continue;
+                }
+
+                if (isCellEnergyEmitter(nextCellId)) {
+                    FaceComponent faceEmitterComponent = mFace.get(nextCellId);
+                    byte faceEmitterByte = faceEmitterComponent != null ? faceEmitterComponent.getFaceInverted() : FaceComponent.ALL_FACE;
+                    if ((faceFrom & faceEmitterByte) != 0) {
+                        return nextCellId;
+                    }
+                }
+
+                if (isCellEnergyTransporter(nextCellId)) {
+                    FaceComponent nextFaceComponent = mFace.get(nextCellId);
+                    if ((faceFrom & nextFaceComponent.getFace()) != 0) {
+                        Stack<int[]> visitedCell = new Stack<>();
+                        visitedCell.addAll(findCellProviderArg.visitedCell);
+                        visitedCell.add(new int[]{worldPosXFind, worldPosYFind});
+                        cellQueue.add(new FindCellProviderArg(worldPosXFind, worldPosYFind, nextFaceComponent.getFace(), visitedCell));
                     }
                 }
             }
         }
         return -1;
+    }
+
+    private record FindCellProviderArg(int worldPosX, int worldPosY, byte allowFace, Stack<int[]> visitedCell) {
     }
 
     private boolean isCellEnergyEmitter(int cellId) {
