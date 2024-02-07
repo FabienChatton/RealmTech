@@ -1,6 +1,6 @@
 package ch.realmtech.core.game.netty;
 
-import ch.realmtech.server.netty.ConnexionBuilder;
+import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.netty.PacketDecoder;
 import ch.realmtech.server.netty.PacketEncoder;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
@@ -22,12 +22,12 @@ public class RealmTechClient {
     /**
      * Initie directement une connexion
      */
-    public RealmTechClient(ConnexionBuilder connexionBuilder, ClientExecute clientExecute) throws Exception {
+    public RealmTechClient(ConnexionConfig connexionConfig, ClientExecute clientExecute) throws Exception {
         this.clientExecute = clientExecute;
-        run(connexionBuilder);
+        run(connexionConfig);
     }
 
-    private void run(ConnexionBuilder connexionBuilder) throws InterruptedException {
+    private void run(ConnexionConfig connexionConfig) throws InterruptedException {
         this.group = new NioEventLoopGroup();
         Bootstrap b = new Bootstrap();
         b.group(group)
@@ -43,7 +43,7 @@ public class RealmTechClient {
                     }
                 });
         try {
-            channel = b.connect(connexionBuilder.getHost(), connexionBuilder.getPort()).sync().channel();
+            channel = b.connect(connexionConfig.getHost(), connexionConfig.getPort()).sync().channel();
         } catch (Exception e) {
             close();
             throw e;

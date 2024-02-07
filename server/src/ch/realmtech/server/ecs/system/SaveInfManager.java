@@ -3,6 +3,8 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.level.worldGeneration.SeedGenerator;
+import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -10,7 +12,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.managers.TagManager;
-import com.badlogic.gdx.math.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,34 +58,29 @@ public class SaveInfManager extends Manager {
     /**
      * Prépare la sauvegarde.
      * Créer une sauvegarde si le nom de la sauvegarde n'existe pas ou charge la sauvegarde si elle existe.
-     * @param saveName Le nom de la sauvegarde
+     * @param connexionConfig La config de la connexion
      * @return l'id de la infMap
      * @throws IOException
      */
-    public int generateOrLoadSave(String saveName) throws IOException {
+    public int generateOrLoadSave(ConnexionConfig connexionConfig) throws IOException {
         int mapId;
         List<File> listSauvegarde = listSauvegardeInfinie();
         // la sauvegarde existe déjà
-        if (listSauvegarde.stream().map(File::getName).anyMatch(s -> s.equals(saveName))) {
-            mapId = readInfMap(saveName);
+        if (listSauvegarde.stream().map(File::getName).anyMatch(s -> s.equals(connexionConfig.getSaveName()))) {
+            mapId = readInfMap(connexionConfig.getSaveName());
         } else {
-            mapId = generateNewSave(saveName);
+            mapId = generateNewSave(connexionConfig);
         }
         return mapId;
     }
 
-    /**
-     *
-     * @param saveName nom de la nouvelle sauvegarde
-     * @return l'id un infMap
-     * @throws IOException
-     */
-    public int generateNewSave(String saveName) throws IOException{
+    public int generateNewSave(ConnexionConfig connexionConfig) throws IOException {
+        String saveName = connexionConfig.getSaveName();
         if (saveName == null || saveName.isBlank()) throw new IllegalArgumentException("le nom de la sauvegarde ne peut pas être null ou vide");
         if (saveName.contains("/")) throw new IllegalArgumentException("le nom du la sauvegarde ne peut pas contenir de \"/\"");
         creerHiearchieDUneSave(saveName);
         int mapId = world.create();
-        int metaDonneesId = createSaveMetadata(saveName);;
+        int metaDonneesId = createSaveMetadata(saveName, connexionConfig.getSeed());
         InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
         infMapComponent.set(new int[0], metaDonneesId);
         return mapId;
@@ -137,14 +133,14 @@ public class SaveInfManager extends Manager {
             return serializerController.getSaveMetadataSerializerController().decode(new SerializedApplicationBytes(inputStream.readAllBytes()));
         } catch (IllegalMagicNumbers e) {
             logger.error("The saveMetadata file was not correctly read. Recreating a new one");
-            return createSaveMetadata(saveName);
+            return createSaveMetadata(saveName, SeedGenerator.randomSeed());
         }
     }
 
-    private int createSaveMetadata(String saveName) {
+    private int createSaveMetadata(String saveName, long seed) {
         int saveMetadataId = world.create();
         SaveMetadataComponent saveMetadataComponent = world.edit(saveMetadataId).create(SaveMetadataComponent.class);
-        saveMetadataComponent.set(MathUtils.random(Long.MIN_VALUE, Long.MAX_VALUE - 1), saveName, world);
+        saveMetadataComponent.set(seed, saveName, world);
         return saveMetadataId;
     }
 

@@ -2,39 +2,31 @@ package ch.realmtech.core.game.netty;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.netty.ConnexionBuilder;
-import ch.realmtech.server.netty.ServerNetty;
+import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Random;
 
 public class RealmTechClientConnexionHandler implements Closeable {
     private final RealmTech context;
     private ServerContext server;
     private RealmTechClient client;
 
-    public RealmTechClientConnexionHandler(ConnexionBuilder connexionBuilder, ClientExecute clientExecute, boolean ouvrirServeur, RealmTech context) throws Exception {
+    public RealmTechClientConnexionHandler(ConnexionConfig connexionConfig, ClientExecute clientExecute, boolean ouvrirServeur, RealmTech context) throws Exception {
         this.context = context;
         if (!ouvrirServeur) {
             try {
-                client = new RealmTechClient(connexionBuilder, clientExecute);
+                client = new RealmTechClient(connexionConfig, clientExecute);
             } catch (Exception e) {
                 close();
                 throw e;
             }
         } else {
             try {
-                if (!ServerNetty.isPortAvailable(connexionBuilder.getPort())) {
-                    byte limite = 0;
-                    do {
-                        connexionBuilder.setPort(new Random().nextInt(1024, 65565));
-                    } while (!ServerNetty.isPortAvailable(connexionBuilder.getPort()) || ++limite < 10);
-                }
-                server = new ServerContext(connexionBuilder);
-                client = new RealmTechClient(connexionBuilder, clientExecute);
+                server = new ServerContext(connexionConfig);
+                client = new RealmTechClient(connexionConfig, clientExecute);
             } catch (Exception e) {
                 close();
                 throw e;

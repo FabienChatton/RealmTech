@@ -6,7 +6,7 @@ import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Option;
 
 @Command(name = "connexionConfiguration", description = "La configuration pour la connection.", version = "0.1", mixinStandardHelpOptions = true)
-public class ConnexionCommand implements Callable<ConnexionBuilder> {
+public class ConnexionCommand implements Callable<ConnexionConfig> {
     @Option(names = {"-p", "--port"}, description = "Le port", defaultValue = "25533")
     private int port;
 
@@ -14,9 +14,10 @@ public class ConnexionCommand implements Callable<ConnexionBuilder> {
     private String saveName;
 
     @Override
-    public ConnexionBuilder call() throws Exception {
-        return new ConnexionBuilder()
+    public ConnexionConfig call() throws Exception {
+        return ConnexionConfig.builder()
                 .setSaveName(saveName)
-                .setPort(port);
+                .setPort(port)
+                .build();
     }
 }

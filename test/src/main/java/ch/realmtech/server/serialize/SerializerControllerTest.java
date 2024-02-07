@@ -6,7 +6,7 @@ import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.netty.ConnexionBuilder;
+import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -23,7 +23,7 @@ class SerializerControllerTest {
 
     @BeforeAll
     static void startEmulator() throws Exception {
-        serverContext = new ServerContext(new ConnexionBuilder().setSaveName("unitTest"));
+        serverContext = new ServerContext(ConnexionConfig.builder().setSaveName("unitTest").build());
         serializerController = serverContext.getSerializerController();
     }
 

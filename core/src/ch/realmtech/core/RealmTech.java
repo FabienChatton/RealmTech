@@ -19,7 +19,7 @@ import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
-import ch.realmtech.server.netty.ConnexionBuilder;
+import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.serialize.SerializerController;
@@ -37,6 +37,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -275,7 +276,11 @@ public final class RealmTech extends Game implements ClientContext {
     public void rejoindreMulti(String host, int port) throws Exception {
         synchronized (this) {
             if (ecsEngine == null) {
-                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(new ConnexionBuilder().setHost(host).setPort(port), clientExecute, false, this);
+                ConnexionConfig connexionConfig = ConnexionConfig.builder()
+                        .setHost(host)
+                        .setPort(port)
+                        .build();
+                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionConfig, clientExecute, false, this);
                 nouveauECS(clientConnexionHandler);
                 authControllerClient.sendAuthAndJoinServer(clientConnexionHandler, verifyAccessToken);
 
@@ -283,13 +288,24 @@ public final class RealmTech extends Game implements ClientContext {
         }
     }
 
-    public void rejoindreSoloServeur(String saveName) throws Exception {
+    /**
+     * Load and join a world, if a world with this save name didn't existe, create a new one. Seed must be spesified if it is a new world
+     *
+     * @param saveName The save name of the world.
+     * @param seed     The seed of the new world. of null if don't create a new world
+     */
+    public void rejoindreSoloServeur(String saveName, @Null Long seed) throws Exception {
         synchronized (this) {
             if (ecsEngine == null) {
-                ConnexionBuilder connexionBuilder = new ConnexionBuilder()
+                ConnexionConfig.ConnexionConfigBuilder connexionConfigBuilder = ConnexionConfig.builder();
+                if (seed != null) {
+                    connexionConfigBuilder.setSeed(seed);
+                }
+                ConnexionConfig connexionConfig = connexionConfigBuilder
                         .setSaveName(saveName)
-                        .setVerifyAccessToken(verifyAccessToken);
-                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionBuilder, clientExecute, true, this);
+                        .setVerifyAccessToken(verifyAccessToken)
+                        .build();
+                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionConfig, clientExecute, true, this);
                 nouveauECS(clientConnexionHandler);
                 authControllerClient.sendAuthAndJoinServer(clientConnexionHandler, verifyAccessToken);
             }

@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.io.File;
@@ -37,8 +36,10 @@ public class SelectionDeSauvegarde extends AbstractScreen {
     @Override
     public void show() {
         super.show();
+        TextButtonMenu createNewSave = new TextButtonMenu(context, "create new save", new OnClick((event, x, y) -> context.setScreen(ScreenType.CREATE_NEW_WORLD)));
+        TextButtonMenu backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
+
         uiTable.setFillParent(true);
-        uiTable.clear();
         uiTable.add(new Label("Sélectionner une sauvegarde", skin)).top();
         uiTable.row();
         listeDesSauvegarde = new Table(context.getSkin());
@@ -73,25 +74,12 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         uiTable.add(listeDesSauvegardeScrollPane).expand().fillX().top().row();
         listeDesSauvegardeScrollPane.focus();
 
-        Table nouvelleCarteTable = new Table(skin);
-        TextField nouvelleCarteTextField = new TextField("", skin);
-        nouvelleCarteTable.add(nouvelleCarteTextField).width(200f).padRight(10f);
-        TextButton nouvelleCarteButton = new TextButtonMenu(context, "générer nouvelle carte", new OnClick((event, x, y) -> {
-            if (listSauvegarde.stream().map(File::getName).anyMatch(sauvegardeName -> sauvegardeName.equalsIgnoreCase(nouvelleCarteTextField.getText()))) {
-                Popup.popupErreur(context, "Une sauvegarde au même nom existe déjà. Veilliez choisir un autre nom", uiStage);
-                return;
-            }
-            try {
-                context.rejoindreSoloServeur(nouvelleCarteTextField.getText());
-            } catch (Exception e) {
-                Popup.popupErreur(context, e.getMessage(), uiStage);
-            }
-        }));
-        nouvelleCarteTable.add(nouvelleCarteButton);
-        uiTable.add(nouvelleCarteTable).row();
+        uiTable.row();
+        Table buttonsDuBas = new Table(skin);
+        buttonsDuBas.add(createNewSave).padRight(10f);
+        buttonsDuBas.add(backButton);
+        uiTable.add(buttonsDuBas).padBottom(10f);
 
-        TextButtonMenu backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
-        uiTable.add(backButton);
         InputEvent defaultClick = new InputEvent();
         defaultClick.setStage(listeDesSauvegardeScrollPane.getStage());
         defaultClick.setStageX(listeDesSauvegardeScrollPane.getMaxX());
@@ -104,7 +92,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
     private ClickListener loadSaveButton(final File file) {
         return new OnClick((event, x, y) -> {
             try {
-                context.rejoindreSoloServeur(file.getName());
+                context.rejoindreSoloServeur(file.getName(), null);
             } catch (Exception e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
                 context.supprimeECS();

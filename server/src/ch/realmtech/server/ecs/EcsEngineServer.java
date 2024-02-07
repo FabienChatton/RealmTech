@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
+import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.netty.ServerHandler;
 import ch.realmtech.server.packet.clientPacket.TickBeatPacket;
 import ch.realmtech.server.serialize.SerializerController;
@@ -106,12 +107,12 @@ public final class EcsEngineServer implements GetWorld {
         serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f, deltaTime));
     }
 
-    public void prepareSaveToLoad(String saveName) throws IOException {
-        logger.info("Loading map \"{}\"", saveName);
-        int mapId = world.getSystem(SaveInfManager.class).generateOrLoadSave(saveName);
+    public void prepareSaveToLoad(ConnexionConfig connexionConfig) throws IOException {
+        logger.info("Loading map \"{}\"", connexionConfig.getSaveName());
+        int mapId = world.getSystem(SaveInfManager.class).generateOrLoadSave(connexionConfig);
         world.getSystem(TagManager.class).register("infMap", mapId);
         systemsAdminServer.mapSystemServer.initMap();
-        logger.info("Map \"{}\" has successfully load", saveName);
+        logger.info("Map \"{}\" has successfully load", connexionConfig.getSaveName());
     }
 
     public void saveMap() throws IOException {

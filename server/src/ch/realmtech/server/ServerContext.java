@@ -70,14 +70,14 @@ public class ServerContext {
         ;
     }
 
-    public ServerContext(ConnexionBuilder connexionBuilder) throws Exception {
+    public ServerContext(ConnexionConfig connexionConfig) throws Exception {
         try {
             reloadOption();
-            optionServer.verifyAccessToken.set(connexionBuilder.isVerifyAccessToken());
+            optionServer.verifyAccessToken.set(connexionConfig.isVerifyAccessToken());
             ecsEngineServer = new EcsEngineServer(this);
-            ecsEngineServer.prepareSaveToLoad(connexionBuilder.getSaveName());
+            ecsEngineServer.prepareSaveToLoad(connexionConfig);
             serverExecuteContext = new ServerExecuteContext(this);
-            serverNetty = new ServerNetty(connexionBuilder, serverExecuteContext);
+            serverNetty = new ServerNetty(connexionConfig, serverExecuteContext);
             serverResponseHandler = new ServerResponse(this);
             commandeServerExecute = new CommandeServerExecute(this);
             commandServerThread = new CommandServerThread(this, commandeServerExecute);
@@ -98,7 +98,7 @@ public class ServerContext {
         ConnexionCommand connexionCommand = new ConnexionCommand();
         CommandLine commandLine = new CommandLine(connexionCommand);
         commandLine.parseArgs(args);
-        ConnexionBuilder connexionBuilder = connexionCommand.call();
+        ConnexionConfig connexionConfig = connexionCommand.call();
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
@@ -107,7 +107,7 @@ public class ServerContext {
             commandLine.printVersionHelp(System.out);
             return;
         }
-        new ServerContext(connexionBuilder);
+        new ServerContext(connexionConfig);
     }
 
 
@@ -127,11 +127,6 @@ public class ServerContext {
         tickThread.close();
         commandServerThread.close();
         return serverNetty.close();
-    }
-
-
-    public static ConnexionBuilder builder() {
-        return new ConnexionBuilder();
     }
 
     public ServerNetty getServerNetty() {
