@@ -5,13 +5,11 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.console.CommandClientExecute;
 import ch.realmtech.core.game.ecs.plugin.ExecuteOnContextClient;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
-import ch.realmtech.core.game.ecs.plugin.strategy.DefaultInGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
+import ch.realmtech.core.game.ecs.plugin.strategy.SystemDisableOnInventoryOpen;
+import ch.realmtech.core.game.ecs.plugin.strategy.SystemEnableOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.TickEmulationInvocationStrategy;
-import ch.realmtech.core.game.ecs.system.CellBeingMineRenderSystem;
-import ch.realmtech.core.game.ecs.system.CellBeingMineSystem;
-import ch.realmtech.core.game.ecs.system.PlayerInputSystem;
-import ch.realmtech.core.game.ecs.system.WailaSystem;
+import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.server.ecs.GetWorld;
@@ -42,7 +40,8 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final FixtureDef fixtureDef;
     private final World world;
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
-    private final InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
+    private final InGameSystemOnInventoryOpen systemDisableOnPlayerInventoryOpen;
+    private final SystemEnableOnInventoryOpen systemEnableOnPlayerInventoryOpen;
     private final RealmTechClientConnexionHandler connexionHandler;
     private final List<Runnable> nextFrameRunnable;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
@@ -74,20 +73,26 @@ public final class ECSEngine implements Disposable, GetWorld {
                 // server
                 //.withTick(new FurnaceSystem())
                 .build();
-        inGameSystemOnInventoryOpen = new DefaultInGameSystemOnInventoryOpen(
-                new ArrayList<>(List.of(
+        systemDisableOnPlayerInventoryOpen = new SystemDisableOnInventoryOpen(
+                List.of(
                         PlayerInputSystem.class,
-//                        PhysiqueWorldStepSystem.class,
                         CellBeingMineSystem.class,
                         CellBeingMineRenderSystem.class,
-                        WailaSystem.class
-                ))
+                        WailaSystem.class,
+                        CellHoverSystem.class
+                )
+        );
+        systemEnableOnPlayerInventoryOpen = new SystemEnableOnInventoryOpen(
+                List.of(
+                        InventoryNeiSystem.class
+                )
         );
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register("gameStage", context.getGameStage());
         worldConfiguration.register("context", context);
         worldConfiguration.register("gameCamera", context.getGameStage().getCamera());
-        worldConfiguration.register("inGameSystemOnInventoryOpen", inGameSystemOnInventoryOpen);
+        worldConfiguration.register("inGameSystemOnInventoryOpen", systemDisableOnPlayerInventoryOpen);
+        worldConfiguration.register("inGameSystemOnInventoryOpenEnable", systemEnableOnPlayerInventoryOpen);
         worldConfiguration.register("uiStage", context.getUiStage());
         worldConfiguration.register(context.getTextureAtlas());
         worldConfiguration.register(context.getSkin());
@@ -107,6 +112,7 @@ public final class ECSEngine implements Disposable, GetWorld {
 
         executeOnContextClient.initialize(world);
         serializerController.initialize(world);
+        systemEnableOnPlayerInventoryOpen.initialize(world);
     }
 
     public void process(float delta) {
@@ -168,8 +174,8 @@ public final class ECSEngine implements Disposable, GetWorld {
         return world.getSystem(type);
     }
 
-    public InGameSystemOnInventoryOpen getInGameSystemOnInventoryOpen() {
-        return inGameSystemOnInventoryOpen;
+    public InGameSystemOnInventoryOpen getSystemDisableOnPlayerInventoryOpen() {
+        return systemDisableOnPlayerInventoryOpen;
     }
 
     public BodyDef getBodyDef() {

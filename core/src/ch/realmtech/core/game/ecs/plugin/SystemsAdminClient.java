@@ -34,6 +34,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final FurnaceSimulationSystem furnaceSimulationSystem;
     private final CraftingManager craftingManager;
     private final EnergyGeneratorClientSystem energyBatteryIconSystem;
+    private final InventoryNeiSystem inventoryNeiSystem;
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -57,6 +58,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         cellBeingMineRenderSystem = new CellBeingMineRenderSystem();
         wailaSystem = new WailaSystem();
         textureRenderer = new TextureRenderer();
+        inventoryNeiSystem = new InventoryNeiSystem();
 
         playerInventorySystem = new PlayerInventorySystem();
         itemBarSystem = new ItemBarSystem();
@@ -93,6 +95,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 cellHoverSystem,
                 textureRenderer,
                 lightCycleSystem,
+                inventoryNeiSystem,
 
                 // ui
                 cellBeingMineRenderSystem,

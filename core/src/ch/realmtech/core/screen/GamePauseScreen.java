@@ -45,13 +45,14 @@ public class GamePauseScreen extends AbstractScreen {
     public void show() {
         super.show();
         InputMapper.reset();
-        context.getEcsEngine().getInGameSystemOnInventoryOpen().disableInGameSystemOnPause(context.getEcsEngine().getWorld());
+        context.getEcsEngine().getSystemDisableOnPlayerInventoryOpen().onInventoryOpen(context.getEcsEngine().getWorld());
     }
 
     @Override
     public void hide() {
         super.hide();
-        if (context.getEcsEngine() != null) context.getEcsEngine().getInGameSystemOnInventoryOpen().activeInGameSystemOnPause(context.getEcsEngine().getWorld());
+        if (context.getEcsEngine() != null)
+            context.getEcsEngine().getSystemDisableOnPlayerInventoryOpen().onInventoryClose(context.getEcsEngine().getWorld());
     }
 
     private ClickListener quiteAndSave() {

@@ -5,30 +5,26 @@ import com.artemis.World;
 
 import java.util.List;
 
-public class DefaultInGameSystemOnInventoryOpen implements InGameSystemOnInventoryOpen {
+public class SystemDisableOnInventoryOpen implements InGameSystemOnInventoryOpen {
     private final List<Class<? extends BaseSystem>> inGameSystem;
 
-    public DefaultInGameSystemOnInventoryOpen(List<Class<? extends BaseSystem>> inGameSystem) {
+    public SystemDisableOnInventoryOpen(List<Class<? extends BaseSystem>> inGameSystem) {
         this.inGameSystem = inGameSystem;
     }
 
     @Override
-    public void disableInGameSystemOnPause(World world) {
+    public void onInventoryOpen(World world) {
         for (Class<? extends BaseSystem> inGameSystem : inGameSystem) {
             BaseSystem system = world.getSystem(inGameSystem);
-            if (system.isEnabled()) {
-                system.setEnabled(false);
-            }
+            system.setEnabled(false);
         }
     }
 
     @Override
-    public void activeInGameSystemOnPause(World world) {
+    public void onInventoryClose(World world) {
         for (Class<? extends BaseSystem> inGameSystem : inGameSystem) {
             BaseSystem system = world.getSystem(inGameSystem);
-            if (!system.isEnabled()) {
-                system.setEnabled(true);
-            }
+            system.setEnabled(true);
         }
     }
 }

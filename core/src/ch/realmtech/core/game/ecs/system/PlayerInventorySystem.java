@@ -5,6 +5,7 @@ import ch.realmtech.core.game.clickAndDrop.ClickAndDrop2;
 import ch.realmtech.core.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
+import ch.realmtech.core.game.ecs.plugin.strategy.SystemEnableOnInventoryOpen;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.shader.BlurShader;
 import ch.realmtech.core.shader.GrayShader;
@@ -21,6 +22,8 @@ import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -36,6 +39,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -65,6 +69,8 @@ public class PlayerInventorySystem extends BaseSystem {
     private Stage uiStage;
     @Wire(name = "inGameSystemOnInventoryOpen")
     private InGameSystemOnInventoryOpen inGameSystemOnInventoryOpen;
+    @Wire(name = "inGameSystemOnInventoryOpenEnable")
+    private SystemEnableOnInventoryOpen inGameSystemOnInventoryOpenEnable;
     private ClickAndDrop2 clickAndDrop2;
     private Shaders blurShader;
     private Shaders grayShader;
@@ -147,7 +153,8 @@ public class PlayerInventorySystem extends BaseSystem {
             context.getGameStage().getBatch().setShader(null);
             context.getSoundManager().playOpenInventory();
             overWindow.remove();
-            inGameSystemOnInventoryOpen.activeInGameSystemOnPause(world);
+            inGameSystemOnInventoryOpen.onInventoryClose(world);
+            inGameSystemOnInventoryOpenEnable.onInventoryClose(world);
 
             for (UUID inventoryToClearItem : currentInventoriesToClearItemOnClose) {
                 int inventoryId = systemsAdminClient.inventoryManager.getInventoryByUUID(inventoryToClearItem);
@@ -178,7 +185,13 @@ public class PlayerInventorySystem extends BaseSystem {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
             }
             context.getSoundManager().playOpenInventory();
-            inGameSystemOnInventoryOpen.disableInGameSystemOnPause(world);
+            inGameSystemOnInventoryOpen.onInventoryOpen(world);
+            List<InputProcessor> inputProcessors = inGameSystemOnInventoryOpenEnable.onInventoryOpen(world);
+            InputMultiplexer inputMultiplexer = new InputMultiplexer(inventoryStage);
+            for (InputProcessor inputProcessor : inputProcessors) {
+                inputMultiplexer.addProcessor(inputProcessor);
+            }
+            Gdx.input.setInputProcessor(inputMultiplexer);
             return true;
         } else {
             return false;
@@ -223,7 +236,6 @@ public class PlayerInventorySystem extends BaseSystem {
         clearDisplayInventory();
         displayAddTable(displayInventoryArgs.addTable());
         displayInventory(displayInventoryArgs.args());
-        Gdx.input.setInputProcessor(inventoryStage);
     }
 
     private void clearDisplayInventory() {
