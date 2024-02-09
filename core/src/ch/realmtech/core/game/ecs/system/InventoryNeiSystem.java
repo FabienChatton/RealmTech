@@ -9,13 +9,17 @@ import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.registery.RegistryEntry;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +33,8 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
 
     private int neiItemPageIndex;
     private int neiItemPageMaxIndex;
+
+    private Window neiItemHoverWindow;
 
     @Override
     protected void initialize() {
@@ -68,10 +74,14 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
         neiFooterTable.add(neiFooterButton).expandX().fillX();
         neiRootTable.add(neiFooterTable).fillX().bottom();
         neiRootTable.row();
+
+        neiItemHoverWindow = new Window("", context.getSkin());
+        neiItemHoverWindow.setWidth(400);
+        neiItemHoverWindow.setHeight(0);
     }
 
     private ArrayList<Table> addActorItemToNeiTable() {
-        List<RegistryEntry<ItemRegisterEntry>> items = RealmTechCoreMod.ITEMS.getEnfants();
+        List<RegistryEntry<ItemRegisterEntry>> items = RealmTechCoreMod.ITEMS.getEnfants().stream().filter((item) -> !item.getEntry().getItemBehavior().isIcon()).toList();
         int itemPerRow = 4;
         int itemPerColum = 16;
         int maxWidth = 32 * itemPerRow;
@@ -85,7 +95,7 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
             pages.add(page);
             for (int height = 0; itemIndex < items.size() && height < maxHeight; itemIndex++) {
                 RegistryEntry<ItemRegisterEntry> item = items.get(itemIndex);
-                Image actorImage = new Image(item.getEntry().getTextureRegion(context.getTextureAtlas()));
+                Actor actorImage = new NeiTableActor(context, item.getEntry());
                 actorImage.setSize(32, 32);
                 if (width < maxWidth) {
                     width += 32;
@@ -103,6 +113,18 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
     @Override
     protected void processSystem() {
         inventoryNeiStage.draw();
+        int screenX = Gdx.input.getX();
+        int screenY = Gdx.input.getY();
+        Vector3 stageCoo = inventoryNeiStage.getCamera().unproject(new Vector3(screenX, screenY, 0));
+        Actor actorHit = inventoryNeiStage.hit(stageCoo.x, stageCoo.y, true);
+
+        if (actorHit instanceof NeiTableActor neiTableActor) {
+            neiItemHoverWindow.setPosition(stageCoo.x - neiItemHoverWindow.getWidth(), stageCoo.y - neiItemHoverWindow.getHeight());
+            neiItemHoverWindow.getTitleLabel().setText(neiTableActor.getItemRegisterEntry().toString());
+            inventoryNeiBatch.begin();
+            neiItemHoverWindow.draw(inventoryNeiBatch, 1);
+            inventoryNeiBatch.end();
+        }
     }
 
     @Override
@@ -115,5 +137,25 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
     @Override
     public List<InputProcessor> getInputProcessors() {
         return List.of(inventoryNeiStage);
+    }
+}
+
+class NeiTableActor extends Actor {
+    private final ItemRegisterEntry itemRegisterEntry;
+    private final TextureRegion textureRegion;
+
+    public NeiTableActor(RealmTech context, ItemRegisterEntry itemRegisterEntry) {
+        this.itemRegisterEntry = itemRegisterEntry;
+        this.textureRegion = this.itemRegisterEntry.getTextureRegion(context.getTextureAtlas());
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+        batch.draw(textureRegion, getX(), getY());
+    }
+
+    public ItemRegisterEntry getItemRegisterEntry() {
+        return itemRegisterEntry;
     }
 }
