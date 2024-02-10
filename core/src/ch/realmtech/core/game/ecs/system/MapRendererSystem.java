@@ -1,12 +1,14 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.FaceComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.map.WorldMap;
+import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -24,10 +26,30 @@ public class MapRendererSystem extends IteratingSystem {
     private Stage gameStage;
     @Wire
     private TextureAtlas textureAtlas;
+    private SystemsAdminClient systemsAdminClient;
     private ComponentMapper<InfMapComponent> mMap;
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<FaceComponent> mFace;
+
+    private final static byte[][] ROTATION_MATRIX = {
+            {0, 2, 1, 3, 2, 2, 1, 3, 0, 1, 2, 3, 1, 0, 1, 2},
+            {2, 1, 0, 2, 1, 3, 0, 2, 1, 3, 0, 1, 2, 1, 2, 3},
+            {1, 3, 1, 3, 0, 0, 2, 1, 3, 2, 3, 1, 0, 2, 0, 1},
+            {3, 0, 2, 1, 2, 1, 3, 0, 1, 1, 2, 3, 1, 3, 1, 0},
+            {2, 1, 3, 0, 1, 0, 2, 3, 2, 0, 3, 2, 0, 2, 3, 2},
+            {1, 3, 0, 2, 3, 2, 0, 1, 0, 1, 2, 3, 1, 0, 1, 2},
+            {0, 3, 3, 1, 2, 0, 1, 2, 2, 3, 1, 2, 1, 3, 3, 3},
+            {3, 0, 3, 0, 3, 3, 0, 3, 0, 0, 1, 0, 2, 2, 3, 3},
+            {3, 1, 0, 1, 3, 2, 2, 1, 3, 1, 3, 2, 1, 0, 2, 1},
+            {3, 1, 1, 1, 2, 1, 2, 0, 3, 0, 2, 1, 2, 0, 3, 1},
+            {3, 1, 0, 3, 2, 1, 0, 3, 0, 3, 0, 2, 0, 2, 2, 0},
+            {3, 0, 2, 2, 3, 2, 1, 1, 2, 3, 1, 0, 3, 1, 3, 1},
+            {2, 0, 1, 3, 1, 1, 2, 2, 3, 3, 0, 2, 1, 3, 2, 3},
+            {1, 2, 3, 3, 0, 0, 3, 0, 2, 3, 1, 0, 2, 2, 0, 2},
+            {3, 0, 2, 2, 3, 2, 1, 1, 2, 3, 1, 0, 3, 1, 3, 1},
+            {2, 2, 3, 0, 0, 0, 1, 1, 3, 0, 0, 2, 3, 1, 1, 2},
+    };
 
     @Override
     protected void begin() {
@@ -59,7 +81,35 @@ public class MapRendererSystem extends IteratingSystem {
                         if (textureRegion == null) {
                             textureRegion = textureAtlas.findRegion("default-texture");
                         }
-                        gameStage.getBatch().draw(textureRegion, worldX, worldY, textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE, textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE);
+                        if (cellComponent.cellRegisterEntry == RealmTechCoreMod.GRASS_CELL) {
+                            int chunkPosX = MapManager.getChunkPos(worldX);
+                            int chunkPosY = MapManager.getChunkPos(worldY);
+
+                            byte innerChunkX = MapManager.getInnerChunk(worldX);
+                            byte innerChunkY = MapManager.getInnerChunk(worldY);
+
+                            int rotation = ROTATION_MATRIX[innerChunkX][innerChunkY];
+                            gameStage.getBatch().draw(
+                                    textureRegion,
+                                    worldX,
+                                    worldY,
+                                    0.5f,
+                                    0.5f,
+                                    textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
+                                    textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE,
+                                    1,
+                                    1,
+                                    90 * rotation
+                            );
+                        } else {
+                            gameStage.getBatch().draw(
+                                    textureRegion,
+                                    worldX,
+                                    worldY,
+                                    textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
+                                    textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE
+                            );
+                        }
                     }
                 }
             }
