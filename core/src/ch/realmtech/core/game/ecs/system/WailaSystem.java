@@ -30,7 +30,6 @@ public class WailaSystem extends BaseSystem {
     private Window wailaWindow;
     private Stage wailaStage;
     private Label wailaCellInfoHash;
-    private Label wailaCellContextualInfo;
     private Label wailaCellInfoCanBreak;
     private Image wailaCellImage;
     private ComponentMapper<CellComponent> mCell;
@@ -48,7 +47,6 @@ public class WailaSystem extends BaseSystem {
 
         wailaCellImage = new Image();
         wailaCellInfoHash = new Label(null, context.getSkin());
-        wailaCellContextualInfo = new Label(null, context.getSkin());
         wailaCellInfoCanBreak = new Label(null, context.getSkin());
         wailaCellInfoHash.setFontScale(0.5f);
         wailaCellInfoCanBreak.setFontScale(0.5f);
@@ -58,7 +56,6 @@ public class WailaSystem extends BaseSystem {
         wailaWindow.getTitleTable().getChildren().reverse();
         wailaWindow.add(wailaCellInfoHash).row();
         wailaWindow.add(wailaCellInfoCanBreak).row();
-        wailaWindow.add(wailaCellContextualInfo).row();
 
         wailaStageTable.add(wailaWindow).expandY().top();
     }
@@ -116,13 +113,6 @@ public class WailaSystem extends BaseSystem {
         }
         if (itemTypeToMine != null) {
             wailaCellInfoCanBreak.setText("break with: " + itemTypeToMine.toString().toLowerCase());
-        }
-
-        if (mEnergyBattery.has(topCell)) {
-            EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(topCell);
-            wailaCellContextualInfo.setText(String.format("energy: %s/%s", energyBatteryComponent.getStored(), energyBatteryComponent.getCapacity()));
-        } else {
-            wailaCellContextualInfo.setText(null);
         }
     }
 }
