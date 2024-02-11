@@ -24,6 +24,8 @@ public class CellBehavior {
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
     private EditEntity editEntityOnCreate;
     private RightClickInteraction interagieClickDroit;
+    private int tiledTextureX;
+    private int tiledTextureY;
 
     public static CellBehaviorBuilder builder(byte layer) {
         return new CellBehaviorBuilder(layer);
@@ -76,6 +78,14 @@ public class CellBehavior {
 
     public Optional<RightClickInteraction> getInteragieClickDroit() {
         return Optional.ofNullable(interagieClickDroit);
+    }
+
+    public int getTiledTextureX() {
+        return tiledTextureX;
+    }
+
+    public int getTiledTextureY() {
+        return tiledTextureY;
     }
 
     public static class CellBehaviorBuilder {
@@ -162,6 +172,12 @@ public class CellBehavior {
 
         public CellBehaviorBuilder interagieClickDroit(RightClickInteraction interagieClickDroit) {
             cellBehavior.interagieClickDroit = interagieClickDroit;
+            return this;
+        }
+
+        public CellBehaviorBuilder tiledTexture(int maxX, int maxY) {
+            cellBehavior.tiledTextureX = maxX;
+            cellBehavior.tiledTextureY = maxY;
             return this;
         }
 

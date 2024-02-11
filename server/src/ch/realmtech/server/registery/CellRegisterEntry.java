@@ -48,6 +48,10 @@ public class CellRegisterEntry implements Entry<CellRegisterEntry> {
         return textureRegion;
     }
 
+    public String getTextureRegionName() {
+        return textureRegionName;
+    }
+
     public CellBehavior getCellBehavior() {
         return cellBehavior;
     }

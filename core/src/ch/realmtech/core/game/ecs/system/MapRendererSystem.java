@@ -7,6 +7,7 @@ import ch.realmtech.server.ecs.component.FaceComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.map.WorldMap;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.artemis.ComponentMapper;
@@ -82,13 +83,16 @@ public class MapRendererSystem extends IteratingSystem {
                             textureRegion = textureAtlas.findRegion("default-texture");
                         }
                         if (cellComponent.cellRegisterEntry == RealmTechCoreMod.GRASS_CELL) {
-                            int chunkPosX = MapManager.getChunkPos(worldX);
-                            int chunkPosY = MapManager.getChunkPos(worldY);
-
                             byte innerChunkX = MapManager.getInnerChunk(worldX);
                             byte innerChunkY = MapManager.getInnerChunk(worldY);
-
                             int rotation = ROTATION_MATRIX[innerChunkX][innerChunkY];
+                            CellBehavior grassCellBehavior = RealmTechCoreMod.GRASS_CELL.getCellBehavior();
+                            String tiledTextureRegionName = RealmTechCoreMod.GRASS_CELL.getTextureRegionName()
+                                    + "-"
+                                    + (Math.abs(worldX) % (grassCellBehavior.getTiledTextureX() + 1))
+                                    + "-"
+                                    + (Math.abs(worldY) % (grassCellBehavior.getTiledTextureY() + 1));
+                            textureRegion = textureAtlas.findRegion(tiledTextureRegionName);
                             gameStage.getBatch().draw(
                                     textureRegion,
                                     worldX,
