@@ -43,6 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class RealmTech extends Game implements ClientContext {
@@ -70,9 +73,11 @@ public final class RealmTech extends Game implements ClientContext {
     private AuthRequestClient authRequestClient;
     private AuthControllerClient authControllerClient;
     private boolean verifyAccessToken;
+    private List<Consumer<ECSEngine>> onEcsEngineInitializes;
 
     @Override
     public void create() {
+        onEcsEngineInitializes = new ArrayList<>();
         try {
             DataCtrl.creerHiearchieRealmTechData();
         } catch (IOException e) {
@@ -263,6 +268,8 @@ public final class RealmTech extends Game implements ClientContext {
             supprimeECS();
         }
         ecsEngine = new ECSEngine(this, clientConnexionHandler);
+        onEcsEngineInitializes.forEach((ecsEngineConsumer) -> ecsEngineConsumer.accept(ecsEngine));
+        onEcsEngineInitializes.clear();
     }
 
     public void supprimeECS() {
@@ -352,7 +359,19 @@ public final class RealmTech extends Game implements ClientContext {
     }
 
     public void reloadOption() throws IOException {
-        option = Option.getOptionFileAndLoadOrCreate();
+        option = Option.getOptionFileAndLoadOrCreate(this);
+    }
+
+    /**
+     * Safely execute on game running. If the ecs engine is not initialized, execute when the ecs engine is initialized,
+     * or execute directly.
+     */
+    public void getEcsEngineOr(Consumer<ECSEngine> ecsEngineConsumer) {
+        if (getEcsEngine() != null) {
+            ecsEngineConsumer.accept(getEcsEngine());
+        } else {
+            onEcsEngineInitializes.add(ecsEngineConsumer);
+        }
     }
 
     public void setVerifyAccessToken(boolean verifyAccessToken) {

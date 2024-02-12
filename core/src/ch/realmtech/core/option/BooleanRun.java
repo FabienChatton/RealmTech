@@ -1,12 +1,12 @@
 package ch.realmtech.core.option;
 
-import java.util.function.Consumer;
+import ch.realmtech.core.RealmTech;
 
 public class BooleanRun {
     private boolean value;
-    private final Consumer<Boolean> valueConsumer;
+    private final OnBooleanRun valueConsumer;
 
-    public BooleanRun(final Consumer<Boolean> valueConsumer) {
+    public BooleanRun(final OnBooleanRun valueConsumer) {
         value = false;
         this.valueConsumer = valueConsumer;
     }
@@ -20,8 +20,13 @@ public class BooleanRun {
         return value;
     }
 
-    public void set(Boolean value) {
+    public void set(Boolean value, RealmTech context) {
         this.value = value;
-        valueConsumer.accept(value);
+        valueConsumer.onBooleanRun(value, context);
     }
+}
+
+@FunctionalInterface
+interface OnBooleanRun {
+    void onBooleanRun(boolean value, RealmTech context);
 }

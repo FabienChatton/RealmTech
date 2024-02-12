@@ -1,13 +1,13 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.component.TiledTextureComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.FaceComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.map.WorldMap;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -31,6 +31,7 @@ public class MapRendererSystem extends IteratingSystem {
     private ComponentMapper<InfChunkComponent> mChunk;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<FaceComponent> mFace;
+    private ComponentMapper<TiledTextureComponent> mTiledTexture;
 
     private final static byte[][] ROTATION_MATRIX = {
             {0, 2, 1, 3, 2, 2, 1, 3, 0, 1, 2, 3, 1, 0, 1, 2},
@@ -70,14 +71,8 @@ public class MapRendererSystem extends IteratingSystem {
                         TextureRegion textureRegion;
                         if (mFace.has(cellId)) {
                             textureRegion = textureAtlas.findRegion(mFace.get(cellId).getFaceTexture());
-                        } else if (cellComponent.cellRegisterEntry.getCellBehavior().getTiledTextureX() > 0 || cellComponent.cellRegisterEntry.getCellBehavior().getTiledTextureY() > 0) {
-                            CellBehavior cellBehavior = cellComponent.cellRegisterEntry.getCellBehavior();
-                            String tiledTextureRegionName = cellComponent.cellRegisterEntry.getTextureRegionName()
-                                    + "-"
-                                    + (Math.abs(worldX) % (cellBehavior.getTiledTextureX() + 1))
-                                    + "-"
-                                    + (Math.abs(worldY) % (cellBehavior.getTiledTextureY() + 1));
-                            textureRegion = textureAtlas.findRegion(tiledTextureRegionName);
+                        } else if (mTiledTexture.has(cellId)) {
+                            textureRegion = mTiledTexture.get(cellId).getTiledTextureRegion();
                         } else {
                             TextureRegion textureRegionFind = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
                             if (textureRegionFind == null) {

@@ -1,11 +1,10 @@
 package ch.realmtech.core.option;
 
+import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.datactrl.OptionCtrl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
@@ -16,44 +15,51 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Option extends OptionCtrl {
-    private final static Logger logger = LoggerFactory.getLogger(Option.class);
+    private final RealmTech context;
     public final AtomicInteger keyMoveUp = new AtomicInteger();
     public final AtomicInteger keyMoveLeft = new AtomicInteger();
     public final AtomicInteger keyMoveRight = new AtomicInteger();
     public final AtomicInteger keyMoveDown = new AtomicInteger();
     public final AtomicInteger openInventory = new AtomicInteger();
     public final AtomicInteger keyDropItem = new AtomicInteger();
-    public final BooleanRun fullScreen = new BooleanRun(bool -> {
+    public final BooleanRun fullScreen = new BooleanRun((bool, context) -> {
         if (bool) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         else Gdx.graphics.setWindowedMode(DataCtrl.SCREEN_WIDTH, DataCtrl.SCREEN_HEIGHT);
     });
     public final IntegerRun fps = new IntegerRun(fps -> Gdx.graphics.setForegroundFPS(fps));
-    public final BooleanRun vsync = new BooleanRun(bool -> Gdx.graphics.setVSync(bool));
+    public final BooleanRun vsync = new BooleanRun((bool, context) -> Gdx.graphics.setVSync(bool));
     public final AtomicBoolean inventoryBlur = new AtomicBoolean();
     public final AtomicInteger sound = new AtomicInteger();
     private String authServerBaseUrl;
     private String createAccessTokenUrn;
     private String verifyLoginUrn;
+    public final BooleanRun tiledTexture = new BooleanRun((bool, context) -> context.getEcsEngineOr(ecsEngine -> {
+        if (!bool) {
+            ecsEngine.getSystemsAdminClient().getTiledTextureSystem().removeAllTiledTextureComponent();
+        }
+        ecsEngine.getSystemsAdminClient().getTiledTextureSystem().setEnabled(bool);
+    }));
     private final Properties properties;
 
-    private Option(Properties propertiesFile) {
+    private Option(Properties propertiesFile, RealmTech context) {
         this.properties = propertiesFile;
+        this.context = context;
     }
 
-    public static Option getOptionFileAndLoadOrCreate() throws IOException {
+    public static Option getOptionFileAndLoadOrCreate(RealmTech context) throws IOException {
         try (InputStream inputStream = new FileInputStream(DataCtrl.getOptionFile())) {
             Properties propertiesFile = new Properties();
             try {
                 propertiesFile.load(inputStream);
-                return Option.loadOptionFromFile(propertiesFile);
+                return Option.loadOptionFromFile(propertiesFile, context);
             } catch (IllegalArgumentException e) {
-                return Option.createDefaultOption(propertiesFile);
+                return Option.createDefaultOption(propertiesFile, context);
             }
         }
     }
 
-    private static Option createDefaultOption(Properties propertiesFile) {
-        Option option = new Option(propertiesFile);
+    private static Option createDefaultOption(Properties propertiesFile, RealmTech context) {
+        Option option = new Option(propertiesFile, context);
         option.setDefaultOption();
         return option;
     }
@@ -65,21 +71,22 @@ public final class Option extends OptionCtrl {
         keyMoveDown.set(Input.Keys.S);
         openInventory.set(Input.Keys.E);
         keyDropItem.set(Input.Keys.Q);
-        fullScreen.set(false);
+        fullScreen.set(false, context);
         fps.set(60);
-        vsync.set(true);
+        vsync.set(true, context);
         inventoryBlur.set(true);
         sound.set(100);
         authServerBaseUrl = "https://chattonf01.emf-informatique.ch/RealmTech/auth";
         createAccessTokenUrn = "createAccessToken.php";
         verifyLoginUrn = "verifyPassword.php";
+        tiledTexture.set(false, context);
     }
 
-    private static Option loadOptionFromFile(Properties propertiesFile) throws IllegalArgumentException {
+    private static Option loadOptionFromFile(Properties propertiesFile, RealmTech context) throws IllegalArgumentException {
         if (propertiesFile.isEmpty()) {
             throw new IllegalArgumentException("Configuration file missing");
         }
-        return loadFromPropertiesFile(propertiesFile);
+        return loadFromPropertiesFile(propertiesFile, context);
     }
 
     public void save() throws IOException {
@@ -97,28 +104,30 @@ public final class Option extends OptionCtrl {
         properties.put("authServerBaseUrl", authServerBaseUrl);
         properties.put("createAccessTokenUrn", createAccessTokenUrn);
         properties.put("verifyLoginUrn", verifyLoginUrn);
+        properties.put("tiledTexture", tiledTexture);
         try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionFile())) {
             properties.store(outputStream, "RealmTech option file");
             outputStream.flush();
         }
     }
 
-    private static Option loadFromPropertiesFile(Properties propertiesFile) {
-        Option option = new Option(propertiesFile);
+    private static Option loadFromPropertiesFile(Properties propertiesFile, RealmTech context) {
+        Option option = new Option(propertiesFile, context);
         option.keyMoveUp.set(Integer.parseInt(propertiesFile.getProperty("keyMoveForward")));
         option.keyMoveLeft.set(Integer.parseInt(propertiesFile.getProperty("keyMoveLeft")));
         option.keyMoveRight.set(Integer.parseInt(propertiesFile.getProperty("keyMoveRight")));
         option.keyMoveDown.set(Integer.parseInt(propertiesFile.getProperty("keyMoveBack")));
         option.openInventory.set(Integer.parseInt(propertiesFile.getProperty("openInventory")));
         option.keyDropItem.set(Integer.parseInt(propertiesFile.getProperty("keyDropItem")));
-        option.fullScreen.set(Boolean.parseBoolean(propertiesFile.getProperty("fullScreen")));
+        option.fullScreen.set(Boolean.parseBoolean(propertiesFile.getProperty("fullScreen")), context);
         option.fps.set(Integer.parseInt(propertiesFile.getProperty("fps")));
         option.sound.set(Integer.parseInt(propertiesFile.getProperty("sound")));
-        option.vsync.set(Boolean.parseBoolean(propertiesFile.getProperty("vsync")));
+        option.vsync.set(Boolean.parseBoolean(propertiesFile.getProperty("vsync")), context);
         option.inventoryBlur.set(Boolean.parseBoolean(propertiesFile.getProperty("inventoryBlur")));
         option.authServerBaseUrl = propertiesFile.getProperty("authServerBaseUrl");
         option.createAccessTokenUrn = propertiesFile.getProperty("createAccessTokenUrn");
         option.verifyLoginUrn = propertiesFile.getProperty("verifyLoginUrn");
+        option.tiledTexture.set(Boolean.parseBoolean(propertiesFile.getProperty("tiledTexture")), context);
         return option;
     }
 
@@ -151,6 +160,7 @@ public final class Option extends OptionCtrl {
             case "authServerBaseUrl" -> Optional.of(authServerBaseUrl);
             case "createAccessTokenUrn" -> Optional.of(createAccessTokenUrn);
             case "verifyLoginUrn" -> Optional.of(verifyLoginUrn);
+            case "tiledTexture" -> Optional.of(tiledTexture.toString());
             default -> Optional.empty();
         };
     }
@@ -164,14 +174,15 @@ public final class Option extends OptionCtrl {
             case "keyMoveDown" -> keyMoveDown.set(Input.Keys.valueOf(optionValue));
             case "openInventory" -> openInventory.set(Input.Keys.valueOf(optionValue));
             case "keyDropItem" -> keyDropItem.set(Input.Keys.valueOf(optionValue));
-            case "fullScreen" -> fullScreen.set(Boolean.valueOf(optionValue));
+            case "fullScreen" -> fullScreen.set(Boolean.valueOf(optionValue), context);
             case "fps" -> fps.set(Integer.parseInt(optionValue));
             case "sound" -> sound.set(Integer.parseInt(optionValue));
-            case "vsync" -> vsync.set(Boolean.parseBoolean(optionValue));
+            case "vsync" -> vsync.set(Boolean.parseBoolean(optionValue), context);
             case "inventoryBlur" -> inventoryBlur.set(Boolean.parseBoolean(optionValue));
             case "authServerBaseUrl" -> authServerBaseUrl = optionValue;
             case "createAccessTokenUrn" -> createAccessTokenUrn = optionValue;
             case "verifyLoginUrn" -> verifyLoginUrn = optionValue;
+            case "tiledTexture" -> tiledTexture.set(Boolean.parseBoolean(optionValue), context);
         }
     }
 

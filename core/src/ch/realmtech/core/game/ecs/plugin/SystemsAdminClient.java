@@ -37,6 +37,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final InventoryNeiSystem inventoryNeiSystem;
     private final GameStageBatchBeginSystem gameStageBatchBeginSystem;
     private final GameStageBatchEndSystem gameStageBatchEndSystem;
+    private final TiledTextureSystem tiledTextureSystem;
 
 
     public SystemsAdminClient() {
@@ -55,6 +56,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         furnaceSimulationSystem = new FurnaceSimulationSystem();
         craftingManager = new CraftingManager();
         energyBatteryIconSystem = new EnergyGeneratorClientSystem();
+        tiledTextureSystem = new TiledTextureSystem();
         // render
         gameStageBatchBeginSystem = new GameStageBatchBeginSystem();
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
@@ -96,6 +98,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
                 lightCycleSystem,
+                tiledTextureSystem,
 
                 // render
                 gameStageBatchBeginSystem,
@@ -203,6 +206,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     @Override
     public EnergyGeneratorClientSystem getEnergyBatteryIconSystem() {
         return energyBatteryIconSystem;
+    }
+
+    public TiledTextureSystem getTiledTextureSystem() {
+        return tiledTextureSystem;
     }
 
     @Override

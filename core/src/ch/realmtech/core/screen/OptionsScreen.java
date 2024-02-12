@@ -79,6 +79,9 @@ public class OptionsScreen extends AbstractScreen {
         newSlider(optionTable, 0, 300, 5, false, skin, context.getOption().fps);
         optionTable.add(new Label("inventoryBlur", skin)).left();
         newBoolean(optionTable, context.getOption().inventoryBlur);
+        // tiled texture
+        optionTable.add(new Label("Tiled Texture", skin)).left();
+        newBooleanRun(optionTable, context.getOption().tiledTexture);
         // sound
         optionTable.add(new Label("volume sonore", skin)).left();
         newSlider(optionTable, 0, 100, 5, false, skin, context.getOption().sound);
@@ -173,7 +176,7 @@ public class OptionsScreen extends AbstractScreen {
         checkBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                booleanRun.set(checkBox.isChecked());
+                booleanRun.set(checkBox.isChecked(), context);
             }
         });
         table.add(checkBox).padLeft(10f).padBottom(10f).row();
