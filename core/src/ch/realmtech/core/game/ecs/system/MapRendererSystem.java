@@ -9,7 +9,6 @@ import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.map.WorldMap;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -74,46 +73,40 @@ public class MapRendererSystem extends IteratingSystem {
                         int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
                         int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
                         TextureRegion textureRegion;
+                        int rotation = 0;
                         if (mFace.has(cellId)) {
                             textureRegion = textureAtlas.findRegion(mFace.get(cellId).getFaceTexture());
-                        } else {
-                            textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
-                        }
-                        if (textureRegion == null) {
-                            textureRegion = textureAtlas.findRegion("default-texture");
-                        }
-                        if (cellComponent.cellRegisterEntry == RealmTechCoreMod.GRASS_CELL) {
+                        } else if (cellComponent.cellRegisterEntry.getCellBehavior().getTiledTextureX() > 0 || cellComponent.cellRegisterEntry.getCellBehavior().getTiledTextureY() > 0) {
                             byte innerChunkX = MapManager.getInnerChunk(worldX);
                             byte innerChunkY = MapManager.getInnerChunk(worldY);
-                            int rotation = ROTATION_MATRIX[innerChunkX][innerChunkY];
-                            CellBehavior grassCellBehavior = RealmTechCoreMod.GRASS_CELL.getCellBehavior();
-                            String tiledTextureRegionName = RealmTechCoreMod.GRASS_CELL.getTextureRegionName()
+                            rotation = ROTATION_MATRIX[innerChunkX][innerChunkY];
+                            CellBehavior cellBehavior = cellComponent.cellRegisterEntry.getCellBehavior();
+                            String tiledTextureRegionName = cellComponent.cellRegisterEntry.getTextureRegionName()
                                     + "-"
-                                    + (Math.abs(worldX) % (grassCellBehavior.getTiledTextureX() + 1))
+                                    + (Math.abs(worldX) % (cellBehavior.getTiledTextureX() + 1))
                                     + "-"
-                                    + (Math.abs(worldY) % (grassCellBehavior.getTiledTextureY() + 1));
+                                    + (Math.abs(worldY) % (cellBehavior.getTiledTextureY() + 1));
                             textureRegion = textureAtlas.findRegion(tiledTextureRegionName);
-                            gameStage.getBatch().draw(
-                                    textureRegion,
-                                    worldX,
-                                    worldY,
-                                    0.5f,
-                                    0.5f,
-                                    textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
-                                    textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE,
-                                    1,
-                                    1,
-                                    90 * rotation
-                            );
                         } else {
-                            gameStage.getBatch().draw(
-                                    textureRegion,
-                                    worldX,
-                                    worldY,
-                                    textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
-                                    textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE
-                            );
+                            TextureRegion textureRegionFind = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
+                            if (textureRegionFind == null) {
+                                textureRegion = textureAtlas.findRegion("default-texture");
+                            } else {
+                                textureRegion = textureRegionFind;
+                            }
                         }
+                        gameStage.getBatch().draw(
+                            textureRegion,
+                            worldX,
+                            worldY,
+                            0.5f,
+                            0.5f,
+                            textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
+                            textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE,
+                            1,
+                            1,
+                            0
+                        );
                     }
                 }
             }

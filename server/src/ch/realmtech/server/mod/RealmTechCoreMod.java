@@ -153,6 +153,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.GROUND)
                     .playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
+                    .tiledTexture(2, 2)
                     .build()
     ));
     public final static CellRegisterEntry WATER_CELL = registerCell("water", new CellRegisterEntry(
