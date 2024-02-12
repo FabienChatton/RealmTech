@@ -17,16 +17,6 @@ public class CellHoverSystem extends BaseSystem {
     private SystemsAdminClient systemsAdminClient;
 
     @Override
-    protected void begin() {
-        context.getGameStage().getBatch().begin();
-    }
-
-    @Override
-    protected void end() {
-        context.getGameStage().getBatch().end();
-    }
-
-    @Override
     protected void processSystem() {
         int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
         Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());

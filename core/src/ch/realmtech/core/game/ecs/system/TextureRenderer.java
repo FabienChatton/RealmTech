@@ -18,13 +18,6 @@ public class TextureRenderer extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPosition;
 
     @Override
-    protected void begin() {
-        gameStage.getBatch().setProjectionMatrix(gameStage.getCamera().combined);
-        gameStage.getCamera().update();
-        gameStage.getBatch().begin();
-    }
-
-    @Override
     protected void process(int entityId) {
         TextureComponent textureComponent = mTexture.create(entityId);
         if (textureComponent.texture != null) {
@@ -38,10 +31,5 @@ public class TextureRenderer extends IteratingSystem {
                     textureComponent.texture.getRegionHeight() * RealmTech.UNITE_SCALE * textureComponent.scale
             );
         }
-    }
-
-    @Override
-    protected void end() {
-        gameStage.getBatch().end();
     }
 }

@@ -35,6 +35,9 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final CraftingManager craftingManager;
     private final EnergyGeneratorClientSystem energyBatteryIconSystem;
     private final InventoryNeiSystem inventoryNeiSystem;
+    private final GameStageBatchBeginSystem gameStageBatchBeginSystem;
+    private final GameStageBatchEndSystem gameStageBatchEndSystem;
+
 
     public SystemsAdminClient() {
         playerManagerClient = new PlayerManagerClient();
@@ -53,12 +56,14 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         craftingManager = new CraftingManager();
         energyBatteryIconSystem = new EnergyGeneratorClientSystem();
         // render
+        gameStageBatchBeginSystem = new GameStageBatchBeginSystem();
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
         mapRendererSystem = new MapRendererSystem();
         cellBeingMineRenderSystem = new CellBeingMineRenderSystem();
         wailaSystem = new WailaSystem();
         textureRenderer = new TextureRenderer();
         inventoryNeiSystem = new InventoryNeiSystem();
+        gameStageBatchEndSystem = new GameStageBatchEndSystem();
 
         playerInventorySystem = new PlayerInventorySystem();
         itemBarSystem = new ItemBarSystem();
@@ -85,17 +90,20 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 furnaceSimulationSystem,
                 craftingManager,
                 energyBatteryIconSystem,
-                // render
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
                 playerTextureAnimated,
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
+                lightCycleSystem,
+
+                // render
+                gameStageBatchBeginSystem,
                 mapRendererSystem,
                 cellHoverSystem,
                 textureRenderer,
-                lightCycleSystem,
                 inventoryNeiSystem,
+                gameStageBatchEndSystem,
 
                 // ui
                 cellBeingMineRenderSystem,

@@ -60,16 +60,10 @@ public class WailaSystem extends BaseSystem {
         wailaStageTable.add(wailaWindow).expandY().top();
     }
 
-    @Override
-    protected void begin() {
-        super.begin();
-        context.getGameStage().getBatch().begin();
-    }
 
     @Override
     protected void end() {
         super.end();
-        context.getGameStage().getBatch().end();
         wailaStage.draw();
     }
 

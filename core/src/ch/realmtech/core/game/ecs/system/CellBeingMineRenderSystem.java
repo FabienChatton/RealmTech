@@ -25,12 +25,6 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
     private ComponentMapper<InfChunkComponent> mChunk;
 
     @Override
-    protected void begin() {
-        super.begin();
-        context.getGameStage().getBatch().begin();
-    }
-
-    @Override
     protected void process(int entityId) {
         CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
         CellComponent cellComponent = mCell.get(entityId);
@@ -48,12 +42,6 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
                 RealmTech.PPM * RealmTech.UNITE_SCALE / 2,
                 RealmTech.PPM * RealmTech.UNITE_SCALE / 2
         );
-    }
-
-    @Override
-    protected void end() {
-        super.end();
-        context.getGameStage().getBatch().end();
     }
 
     private TextureRegion getTextureViaPourCent(CellBeingMineComponent cellBeingMineComponent) {

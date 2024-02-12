@@ -52,11 +52,6 @@ public class MapRendererSystem extends IteratingSystem {
     };
 
     @Override
-    protected void begin() {
-        gameStage.getBatch().begin();
-    }
-
-    @Override
     protected void process(int mapId) {
         InfMapComponent infMapComponent = mMap.get(mapId);
         List<List<List<Integer>>> chunks = getInOrder(infMapComponent);
@@ -73,13 +68,9 @@ public class MapRendererSystem extends IteratingSystem {
                         int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
                         int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
                         TextureRegion textureRegion;
-                        int rotation = 0;
                         if (mFace.has(cellId)) {
                             textureRegion = textureAtlas.findRegion(mFace.get(cellId).getFaceTexture());
                         } else if (cellComponent.cellRegisterEntry.getCellBehavior().getTiledTextureX() > 0 || cellComponent.cellRegisterEntry.getCellBehavior().getTiledTextureY() > 0) {
-                            byte innerChunkX = MapManager.getInnerChunk(worldX);
-                            byte innerChunkY = MapManager.getInnerChunk(worldY);
-                            rotation = ROTATION_MATRIX[innerChunkX][innerChunkY];
                             CellBehavior cellBehavior = cellComponent.cellRegisterEntry.getCellBehavior();
                             String tiledTextureRegionName = cellComponent.cellRegisterEntry.getTextureRegionName()
                                     + "-"
@@ -131,10 +122,5 @@ public class MapRendererSystem extends IteratingSystem {
             chunks.add(arrayLayerCell);
         }
         return chunks;
-    }
-
-    @Override
-    protected void end() {
-        gameStage.getBatch().end();
     }
 }
