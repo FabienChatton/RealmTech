@@ -104,7 +104,7 @@ public final class Option extends OptionCtrl {
         properties.put("authServerBaseUrl", authServerBaseUrl);
         properties.put("createAccessTokenUrn", createAccessTokenUrn);
         properties.put("verifyLoginUrn", verifyLoginUrn);
-        properties.put("tiledTexture", tiledTexture);
+        properties.put("tiledTexture", tiledTexture.toString());
         try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionFile())) {
             properties.store(outputStream, "RealmTech option file");
             outputStream.flush();
