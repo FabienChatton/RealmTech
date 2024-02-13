@@ -76,7 +76,7 @@ public class ItemManagerServer extends ItemManager {
 
     public void playerPickUpItem(int itemId, int playerId) {
         UuidComponent uuidComponent = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemId);
-        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(uuidComponent.getUuid()));
+        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(uuidComponent.getUuid())));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
