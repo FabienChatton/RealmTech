@@ -1,6 +1,7 @@
 package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
+import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
@@ -40,8 +41,11 @@ public class CraftingTableEditEntity implements EditEntity {
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> {
-            InventoryComponent chestInventory = world.getSystem(InventoryManager.class).getChestInventory(entityId);
-            world.getSystem(InventoryManager.class).removeInventory(chestInventory.inventory);
+            CraftingTableComponent craftingTableComponent = world.getMapper(CraftingTableComponent.class).get(entityId);
+            InventoryComponent craftingInventory = world.getSystem(InventoryManager.class).mInventory.get(craftingTableComponent.craftingInventory);
+            InventoryComponent resultInventory = world.getSystem(InventoryManager.class).mInventory.get(craftingTableComponent.craftingInventory);
+            world.getSystem(InventoryManager.class).removeInventory(craftingInventory.inventory);
+            world.getSystem(InventoryManager.class).removeInventory(resultInventory.inventory);
         });
     }
 
