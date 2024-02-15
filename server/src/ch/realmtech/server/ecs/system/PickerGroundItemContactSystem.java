@@ -1,6 +1,9 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.packet.clientPacket.PlayerPickUpItem;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -10,14 +13,21 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.UUID;
+
 @All(PickerGroundItemComponent.class)
 public class PickerGroundItemContactSystem extends IteratingSystem {
+    @Wire(name = "serverContext")
+    private ServerContext serverContext;
+    @Wire
+    private ItemManagerServer itemManagerServer;
+    @Wire
+    private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<ItemPickableComponent> mItemPickable;
     private ComponentMapper<ItemBeingPickComponent> mItemBeingPick;
-    @Wire
-    private ItemManagerServer itemManagerServer;
+    private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     @Override
     protected void process(int entityId) {
         Box2dComponent pickerBox2dComponent = mBox2d.get(entityId);
@@ -40,6 +50,10 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
                 itemManagerServer.playerPickUpItem(itemId, entityId);
                 mItemPickable.remove(itemId);
                 mItemBeingPick.remove(itemId);
+                if (mPlayerConnexion.has(entityId)) {
+                    UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(entityId).getUuid();
+                    serverContext.getServerHandler().broadCastPacket(new PlayerPickUpItem(playerUuid));
+                }
             }
         }
     }

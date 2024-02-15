@@ -59,4 +59,6 @@ public interface ClientExecute {
     void energyBatterySetEnergy(UUID energyBatteryUuid, long stored);
 
     void energyGeneratorSetInfo(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn);
+
+    void playerPickUpItem(UUID playerUuid);
 }

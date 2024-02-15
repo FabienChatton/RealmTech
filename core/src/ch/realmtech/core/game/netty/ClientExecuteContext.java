@@ -243,4 +243,11 @@ public class ClientExecuteContext implements ClientExecute {
             context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergyGeneratorInfo(energyGeneratorId, remainingTickToBurn, lastRemainingTickToBurn);
         });
     }
+
+    @Override
+    public void playerPickUpItem(UUID playerUuid) {
+        context.nextFrame(() -> {
+            context.getSoundManager().playItemPickUp();
+        });
+    }
 }

@@ -67,6 +67,7 @@ public class ServerContext {
                 .put(CellSetPacket.class, CellSetPacket::new)
                 .put(EnergyBatterySetEnergyPacket.class, EnergyBatterySetEnergyPacket::new)
                 .put(EnergyGeneratorInfoPacket.class, EnergyGeneratorInfoPacket::new)
+                .put(PlayerPickUpItem.class, PlayerPickUpItem::new)
         ;
     }
 
