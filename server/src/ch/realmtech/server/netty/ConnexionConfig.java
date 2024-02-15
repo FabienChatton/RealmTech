@@ -55,13 +55,13 @@ public final class ConnexionConfig {
             return this;
         }
 
-        public ConnexionConfigBuilder setPort(int port) throws IllegalArgumentException {
+        public ConnexionConfigBuilder setPort(int port, boolean needPortAvailable) throws IllegalArgumentException {
             if (!(port > 1024 && port < 65565))
                 throw new IllegalArgumentException("The port number must be > 1024 and < 65565. It was : " + port);
 
             int availablePort = port;
             byte limite = 0;
-            while (!ServerNetty.isPortAvailable(availablePort) || ++limite < 10) {
+            while (needPortAvailable && !ServerNetty.isPortAvailable(availablePort) && ++limite < 10) {
                 availablePort = new Random().nextInt(1024, 65565);
             }
 

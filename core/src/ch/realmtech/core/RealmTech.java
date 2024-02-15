@@ -285,7 +285,7 @@ public final class RealmTech extends Game implements ClientContext {
             if (ecsEngine == null) {
                 ConnexionConfig connexionConfig = ConnexionConfig.builder()
                         .setHost(host)
-                        .setPort(port)
+                        .setPort(port, false)
                         .build();
                 RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionConfig, clientExecute, false, this);
                 nouveauECS(clientConnexionHandler);

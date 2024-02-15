@@ -22,7 +22,7 @@ public class ConnexionCommand implements Callable<ConnexionConfig> {
     public ConnexionConfig call() throws Exception {
         return ConnexionConfig.builder()
                 .setSaveName(saveName)
-                .setPort(port)
+                .setPort(port, true)
                 .setSeed(seed != 0 ? seed : SeedGenerator.randomSeed())
                 .build();
     }

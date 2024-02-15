@@ -174,7 +174,7 @@ public class ServerExecuteContext implements ServerExecute {
                 int itemId = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
                 serverContext.getSystem(InventoryManager.class).removeItemInInventory(chestInventoryId, itemId);
                 SerializedApplicationBytes cellApplicationBytes = serverContext.getSerializerController().getCellSerializerController().encode(cellPlaced);
-                clientChannel.writeAndFlush(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes));
+                serverContext.getServerHandler().broadCastPacket(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes));
 
                 UUID inventoryUuid = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId).getUuid();
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
