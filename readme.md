@@ -60,7 +60,7 @@ Il faut ensuite importer la configuration dans le dossier .run
 3. [ ] Trains
 4. [ ] Dimensions
 
-## Doc Architecture
+## Documentation Architecture
 RealmTech est la globalité du projet. La partie cliente est en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu. Pour que le jeu fonctionne, il est nécessaire d'avoir une partie cliente et une partie serveur. Cependant, pas d'inquiétude : le client inclut également le serveur. De plus, le serveur peut être utilisé de manière "Standalone", c'est-à-dire sans le client. Ainsi, des clients peuvent se connecter à un serveur hébergé sur une machine dédiée.
 
 ```mermaid
@@ -140,7 +140,7 @@ L'ECS contient :
 - Joueur
 - Sauvegarde
 
-### organisation des projets
+### Organisation des projets
 RealmTech est composé de 3 sous projets
 - core
 - server
@@ -189,7 +189,7 @@ desktop --> LibGdxLwjgl
 ```
 
 
-### cellules
+### Cellules
 Les cellules composent le monde. Elles sont divisées en plusieurs catégories, en fonction de leur layer. Le layer représente le niveau où la cellule se trouve.
 
 0. ground
@@ -312,7 +312,7 @@ Le dossier contient les fichiers de configurations et les sauvegardes des mondes
 ```
 
 ## Protocole de sauvegarde de RealmTech
-### version 9
+### Version 9
 
 Le layer d'une cellule représente sa position dans la hauteur. C'est la
 cellule avec le plus grand layer qui sera affiché. Le layer ne peut
