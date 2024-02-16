@@ -61,7 +61,7 @@ Il faut ensuite importer la configuration dans le dossier .run
 4. [ ] Dimensions
 
 ## Documentation Architecture
-RealmTech est la globalité du projet. La partie cliente est en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu. Pour que le jeu fonctionne, il est nécessaire d'avoir une partie cliente et une partie serveur. Cependant, pas d'inquiétude : le client inclut également le serveur. De plus, le serveur peut être utilisé de manière "Standalone", c'est-à-dire sans le client. Ainsi, des clients peuvent se connecter à un serveur hébergé sur une machine dédiée.
+RealmTech est la globalité du projet. La partie client est en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu. Pour que le jeu fonctionne, il est nécessaire d'avoir une partie client et une partie serveur. Cependant, pas d'inquiétude : le client inclut également le serveur. De plus, le serveur peut être utilisé de manière "Standalone", c'est-à-dire sans le client. Ainsi, des clients peuvent se connecter à un serveur hébergé sur une machine dédiée.
 
 ```mermaid
 graph LR
@@ -146,7 +146,7 @@ RealmTech est composé de 3 sous projets
 - server
 - desktop
 
-Le core est la partie comprenant le code pour la partie cliente, c'est ici
+Le core est la partie comprenant le code pour la partie client, c'est ici
 qu'on trouve tout ce qui est texture ou interface graphique.
 
 Le server est la partie... serveur, il contient tout le code qui permet l'interaction entre le client et le serveur.
