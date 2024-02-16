@@ -38,6 +38,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final GameStageBatchBeginSystem gameStageBatchBeginSystem;
     private final GameStageBatchEndSystem gameStageBatchEndSystem;
     private final TiledTextureSystem tiledTextureSystem;
+    private final PlayerFootStepSystem playerFootStepSystem;
 
 
     public SystemsAdminClient() {
@@ -57,6 +58,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         craftingManager = new CraftingManager();
         energyBatteryIconSystem = new EnergyGeneratorClientSystem();
         tiledTextureSystem = new TiledTextureSystem();
+        playerFootStepSystem = new PlayerFootStepSystem();
         // render
         gameStageBatchBeginSystem = new GameStageBatchBeginSystem();
         cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
@@ -99,6 +101,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 cameraFollowPlayerSystem,
                 lightCycleSystem,
                 tiledTextureSystem,
+                playerFootStepSystem,
 
                 // render
                 gameStageBatchBeginSystem,

@@ -143,7 +143,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellRegisterEntry GRASS_CELL = registerCell("grass", new CellRegisterEntry(
             "grass-01",
             CellBehavior.builder(Cells.Layer.GROUND)
-                    .playerWalkSound(SoundManager.FOOT_STEP_GRASS_2, 1f)
+                    .playerWalkSound(1f, SoundManager.FOOT_STEP_GRASS_1, SoundManager.FOOT_STEP_GRASS_2, SoundManager.FOOT_STEP_GRASS_3, SoundManager.FOOT_STEP_GRASS_4, SoundManager.FOOT_STEP_GRASS_5, SoundManager.FOOT_STEP_GRASS_6, SoundManager.FOOT_STEP_GRASS_7, SoundManager.FOOT_STEP_GRASS_8, SoundManager.FOOT_STEP_GRASS_9)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .tiledTexture(1,1)
                     .build()
@@ -151,7 +151,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static CellRegisterEntry SAND_CELL = registerCell("sand", new CellRegisterEntry(
             "sand-01",
             CellBehavior.builder(Cells.Layer.GROUND)
-                    .playerWalkSound(SoundManager.FOOT_STEP_SAND_1, 0.25f)
+                    .playerWalkSound(0.25f, SoundManager.FOOT_STEP_SAND_1, SoundManager.FOOT_STEP_SAND_2, SoundManager.FOOT_STEP_SAND_3, SoundManager.FOOT_STEP_SAND_4, SoundManager.FOOT_STEP_SAND_5, SoundManager.FOOT_STEP_SAND_6, SoundManager.FOOT_STEP_SAND_7, SoundManager.FOOT_STEP_SAND_8, SoundManager.FOOT_STEP_SAND_9, SoundManager.FOOT_STEP_SAND_10)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .tiledTexture(2, 2)
                     .build()
@@ -160,7 +160,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "water-01",
             CellBehavior.builder(Cells.Layer.GROUND)
                     .speedEffect(0.5f)
-                    .playerWalkSound(SoundManager.FOOT_STEP_WATER_1, 0.25f)
+                    .playerWalkSound(0.25f, SoundManager.FOOT_STEP_WATER_1, SoundManager.FOOT_STEP_WATER_2, SoundManager.FOOT_STEP_WATER_3, SoundManager.FOOT_STEP_WATER_4)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                     .build()
     ));
@@ -179,6 +179,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "plank-cell-01",
             CellBehavior.builder(Cells.Layer.BUILD)
                     .breakWith(ItemType.HAND)
+                    .playerWalkSound(1f, SoundManager.FOOT_STEP_WOOD_1, SoundManager.FOOT_STEP_WOOD_2, SoundManager.FOOT_STEP_WOOD_3, SoundManager.FOOT_STEP_WOOD_4, SoundManager.FOOT_STEP_WOOD_5, SoundManager.FOOT_STEP_WOOD_6, SoundManager.FOOT_STEP_WOOD_7, SoundManager.FOOT_STEP_WOOD_8, SoundManager.FOOT_STEP_WOOD_9)
                     .dropOnBreak("realmtech.planche")
                     .build()
     ), new ItemRegisterEntry(

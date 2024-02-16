@@ -1,4 +1,4 @@
 package ch.realmtech.server.mod;
 
-public record PlayerFootStepSound(String playerFootStepSound, float volume) {
+public record PlayerFootStepSound(float volume, String[] playerFootStepSound) {
 }

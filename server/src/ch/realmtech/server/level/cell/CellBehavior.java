@@ -125,8 +125,8 @@ public class CellBehavior {
             return this;
         }
 
-        public CellBehaviorBuilder playerWalkSound(String soundEffectName, float volume) {
-            cellBehavior.playerFootStepSound = new PlayerFootStepSound(soundEffectName, volume);
+        public CellBehaviorBuilder playerWalkSound(float volume, String... soundEffectName) {
+            cellBehavior.playerFootStepSound = new PlayerFootStepSound(volume, soundEffectName);
             return this;
         }
 
