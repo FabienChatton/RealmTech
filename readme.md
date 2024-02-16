@@ -3,13 +3,13 @@
 ## Introduction
 
 Un petit jeu qui s'inspire de Factorio (dans la partie 2d de la carte)
-et de Gregtech (pour la mécanique de progression des tier). L'un
+et de Gregtech (pour la mécanique de progression des tiers). L'un
 des buts premiers RealmTech est de changer la mécanique de progression
-de Factorio pour qu'elle soit moins dans la production massive
-de fiole, mais dans l'évolution progressive des matériaux pour accéder
-à de meilleures machines. L'un des buts est aussi de pouvoir avoir
+de Factorio pour qu'elle soit moins dans la production massive, 
+mais dans l'évolution progressive des matériaux pour accéder
+à de meilleures machines.L'un des buts est aussi de pouvoir avoir
 une plus grande liberté de construction avec des blocs décoratifs
-qu'on peut posse n'importe où pour créer ses propres bâtiments.
+pour créer ses propres bâtiments.
 
 ## Jouer au jeu
 ### cmd
@@ -18,57 +18,50 @@ git clone https://github.com/FabienChatton/RealmTech
 cd RealmTech
 .\gradlew desktop:run
 ```
-Cette méthode stock le fichier RealmTechData dans le dossier assets ce
-qui n'est pas le comportement attendu. Pour la meilleure configuration,
-jeu vous recommande la méthode d'importation de la configuration
-dans le dossier.run avec Intellij
+Attention, cette méthode stock le fichier RealmTechData dans le dossier assets, ce qui n'est pas le comportement attendu. Pour un lancement optimal, il est recommandé d'utiliser la méthode avec IntelliJ.
 ### IntelliJ
 ```shell
 git clone https://github.com/FabienChatton/RealmTech
 ```
-Et importé la configuration dans le dossier .run
+Il faut ensuite importer la configuration dans le dossier .run
 
 ## Road Map
 
 ### indev
 
-1. [x] sauvegarder carte générée
-2. [x] carte générée procéduralement
-3. [x] texture joueur animé
-4. [x] inventaire joueur
-5. [x] outils
-6. [x] récupérer resources avec outils
-7. [x] system de craft
-8. [x] generation des minerais
-9. [x] machine basique
+1. [x] Sauvegarde de la carte générée
+2. [x] Génération de cartes procédurale
+3. [x] Animation du joueur
+4. [x] Inventaire du joueur
+5. [x] Outils
+6. [x] Récupération de ressource avec outils
+7. [x] Système de craft
+8. [x] Génération de minerais
+9. [x] Machine basique
 
 ### infdev
 
-1. [x] carte infinie
-2. [x] serveur interne
-3. [x] console de debug
+1. [x] Carte infinie
+2. [x] Serveur interne
+3. [x] Console de debug
 
 ### alpha
 
-1. [x] cycle jour nuit
-2. [ ] machine électrique
-3. [ ] infrastructure, convoyer/pipe
-4. [ ] machine multi cellules
-5. [ ] raccourci clavier custom
+1. [x] Cycle jour/nuit
+2. [ ] Machine électrique
+3. [ ] Infrastructure, convoyeur/pipe
+4. [ ] Machine multi-cellules
+5. [ ] Raccourci clavier
 
 ### beta 
 
-1. [ ] pétrole
-2. [ ] véhicule
-3. [ ] trains
-4. [ ] plusieurs dimensions
+1. [ ] Pétrole
+2. [ ] Véhicule
+3. [ ] Trains
+4. [ ] Dimensions
 
-## Doc Architecture
-RealmTech est la globalité du projet. La partie client est
-en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu.
-Pour que le jeu fonctionne, il faut la partie client et la partie serveur, mais pas d'inquiétude,
-le client inclut le serveur. Le serveur peut etre utilisé de manière "Standalone", c'est-à-dire
-sans le client, anssi, des clients peuvent se connecter sur une machine dédier.
+## Documentation Architecture
+RealmTech est la globalité du projet. La partie client est en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu. Pour que le jeu fonctionne, il est nécessaire d'avoir une partie client et une partie serveur. Cependant, pas d'inquiétude : le client inclut également le serveur. De plus, le serveur peut être utilisé de manière "Standalone", c'est-à-dire sans le client. Ainsi, des clients peuvent se connecter à un serveur hébergé sur une machine dédiée.
 
 ```mermaid
 graph LR
@@ -139,31 +132,29 @@ graph LR
         ecsServer --- CommandExecuteServer
     end
 ```
-Le ECS est la partie centrale du jeu. C'est lui qui contient tout
-le nécessaire pour le jeu. Il est créé quand le jeu commence, quand
-l'écran va sur le jeu et se termine quand le jeu est fini lorsque le
-joueur à quitter la partie. L'ECS contient :
-- le système entités composant
-- le monde physique
-- le joueur
-- la sauvegarde
+L'ECS est la partie centrale du jeu. C'est lui qui contient tout
+le nécessaire au bon fonctionnement. Il est créé lors du lancement et s'éteint lors de la fermeture lorsque le joueur quitte la partie.
+L'ECS contient :
+- Système entités composant
+- Monde physique
+- Joueur
+- Sauvegarde
 
-### organisation des projets
+### Organisation des projets
 RealmTech est composé de 3 sous projets
 - core
 - server
 - desktop
 
-Le core est la partie comprenant la code pour la partie client, c'est ici
+Le core est la partie comprenant le code pour la partie client, c'est ici
 qu'on trouve tout ce qui est texture ou interface graphique.
 
-Le server est la partie... serveur, il y a le code source du serveur et tout la partie
-en commun entre le client et le serveur. C'est ce sous projet qui est le plus gros de
-code source.
+Le server est la partie... serveur, il contient tout le code qui permet l'interaction entre le client et le serveur.
+C'est ce sous-projet qui est le plus gros du code.
 
 Le desktop ne comporte que la class main pour lancer le jeu sur pc.
 
-Il y a le sous projet test, mais qui est utilisé que pour faire des test unitaires.
+Il y a le sous-projet test, mais il n'est utilisé que pour faire des tests unitaires.
 
 ```mermaid
 flowchart
@@ -198,10 +189,8 @@ desktop --> LibGdxLwjgl
 ```
 
 
-### cellules
-Les cellules composent le monde. Elles sont divisées en plusieurs catégories
-en fonction de leur layer. Le layer représente le niveau où la cellule
-se trouve.
+### Cellules
+Les cellules composent le monde. Elles sont divisées en plusieurs catégories, en fonction de leur layer. Le layer représente le niveau où la cellule se trouve.
 
 0. ground
 1. ground deco
@@ -209,13 +198,13 @@ se trouve.
 3. build déco
 
 Ce système de layer, peut varier dans les futures versions du protocole
-de sauvegarde du monde, mais pour le moment, ça marche comme ça.
+de sauvegarde du monde, mais pour le moment, il fonctionne comme sa.
 Le layer est sauvegardé dans le CelleBehavior.
 Le layer est utilisé pour poser la cellule sur le plateau
 
 
 ### Registre
-Les registres permettent de stocker tout le contenu que jeux va utiliser.
+Les registres permettent de stocker tout le contenu que le jeu va utiliser.
 Ainsi, il est plus facile d'ajouter du contenu.
 ```mermaid
 classDiagram
@@ -277,8 +266,7 @@ que les slot par row sont les colonnes, c'est-à-dire de haut en bas
  /\ 
  || slot par row
 ```
-un composent d'inventaire seul, nest pas utile, il doit être utilisé avec un autre
-composent, comme une composent de coffre, ou un composent de table de craft
+Un composant d'inventaire seul, n'est pas utile, il doit être utilisé avec un autre composant, comme un composant de coffre, ou un composant de table de craft
 
 ```mermaid
 classDiagram
@@ -306,12 +294,11 @@ classDiagram
 
 
 ## RealmTechData
-Le dossier RealmTechData contient les informations nécessaires pour
+Le dossier RealmTechData contient les informations nécessaires à
 l'exécution du jeu. Le dossier est créé lors de la première execution
-du jeu. Le dossier est sauvegardé, dans le cas du jeu distribué,
-au même niveau que le jar, sinon à la racine du repo.
-Comme données que contient le dossier, il y a le
-fichier de configuration ou les sauvegarde des mondes.
+du jeu. Le dossier est sauvegardé au meme emplacement que le jar ou a la racine du repo.
+Le dossier contient les fichiers de configurations et les sauvegardes des mondes.
+
 ### Hiérarchie du dossier
 ```text
 |-- RealmTechData
@@ -325,7 +312,7 @@ fichier de configuration ou les sauvegarde des mondes.
 ```
 
 ## Protocole de sauvegarde de RealmTech
-### version 9
+### Version 9
 
 Le layer d'une cellule représente sa position dans la hauteur. C'est la
 cellule avec le plus grand layer qui sera affiché. Le layer ne peut
@@ -373,5 +360,5 @@ Une cellule fait <code>5 bytes</code>.
 #### Fichier .psi
 
 Le fichier de sauvegarde de l’inventaire d'un joueur.
-Il utiliser le serializer du coffre pour sauvegarder l'inventaire
+Il utilise le serializer du coffre pour sauvegarder l'inventaire
 du joueur.
