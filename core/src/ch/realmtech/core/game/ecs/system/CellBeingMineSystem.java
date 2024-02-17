@@ -57,6 +57,7 @@ public class CellBeingMineSystem extends IteratingSystem {
                     itemUsedUuid = null;
                 }
                 context.getConnexionHandler().sendAndFlushPacketToServer(new CellBreakRequestPacket(worldPosX, worldPosY, itemUsedUuid));
+                context.getSoundManager().playCellBreak();
                 mCellBeingMine.remove(topCell);
             }
         } else {
