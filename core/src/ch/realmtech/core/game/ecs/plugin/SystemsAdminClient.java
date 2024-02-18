@@ -108,13 +108,13 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 mapRendererSystem,
                 cellHoverSystem,
                 textureRenderer,
-                inventoryNeiSystem,
                 cellBeingMineRenderSystem,
                 gameStageBatchEndSystem,
 
                 // ui
                 wailaSystem,
                 playerInventorySystem,
+                inventoryNeiSystem,
                 itemBarSystem,
                 cellBeingMineSystem
         );
