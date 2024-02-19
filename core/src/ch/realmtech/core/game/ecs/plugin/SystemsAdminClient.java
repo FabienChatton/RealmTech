@@ -39,6 +39,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final GameStageBatchEndSystem gameStageBatchEndSystem;
     private final TiledTextureSystem tiledTextureSystem;
     private final PlayerFootStepSystem playerFootStepSystem;
+    private final QuestSystem questSystem;
 
 
     public SystemsAdminClient() {
@@ -71,6 +72,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
         playerInventorySystem = new PlayerInventorySystem();
         itemBarSystem = new ItemBarSystem();
+        questSystem = new QuestSystem();
 
         lightCycleSystem = new LightCycleSystem();
 
@@ -113,6 +115,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
                 // ui
                 wailaSystem,
+                questSystem,
                 playerInventorySystem,
                 inventoryNeiSystem,
                 itemBarSystem,
@@ -213,6 +216,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
     public TiledTextureSystem getTiledTextureSystem() {
         return tiledTextureSystem;
+    }
+
+    public QuestSystem getQuestManager() {
+        return questSystem;
     }
 
     @Override

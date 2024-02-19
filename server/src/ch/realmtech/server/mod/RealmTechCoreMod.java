@@ -35,6 +35,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     public final static String MOD_ID = "realmtech";
     public final static Registry<CellRegisterEntry> CELLS = Registry.create(MOD_ID);
     public final static Registry<ItemRegisterEntry> ITEMS = Registry.create(MOD_ID);
+    public final static Registry<QuestEntry> QUESTS = Registry.create(MOD_ID);
     public final static InfRegistryAnonyme<CraftingRecipeEntry> CRAFT = InfRegistryAnonyme.create();
     public final static InfRegistryAnonyme<CraftingRecipeEntry> FURNACE_RECIPE = InfRegistryAnonyme.create();
 
@@ -515,6 +516,11 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .build()));
 
     //</editor-fold>
+
+    //<editor-fold desc="quests">
+    public static QuestEntry TEST_QUEST = QUESTS.add("testQuest", new QuestEntry("Quest test title", "Quest test content"));
+    //</editor-fold>
+
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
         return CELLS.add(name, cellRegisterEntry);
     }

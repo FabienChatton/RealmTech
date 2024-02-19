@@ -22,6 +22,7 @@ public final class Option extends OptionCtrl {
     public final AtomicInteger keyMoveDown = new AtomicInteger();
     public final AtomicInteger openInventory = new AtomicInteger();
     public final AtomicInteger keyDropItem = new AtomicInteger();
+    public final AtomicInteger keyOpenQuest = new AtomicInteger();
     public final BooleanRun fullScreen = new BooleanRun((bool, context) -> {
         if (bool) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         else Gdx.graphics.setWindowedMode(DataCtrl.SCREEN_WIDTH, DataCtrl.SCREEN_HEIGHT);
@@ -80,6 +81,7 @@ public final class Option extends OptionCtrl {
         createAccessTokenUrn = "createAccessToken.php";
         verifyLoginUrn = "verifyPassword.php";
         tiledTexture.set(false, context);
+        keyOpenQuest.set(Input.Keys.C);
     }
 
     private static Option loadOptionFromFile(Properties propertiesFile, RealmTech context) throws IllegalArgumentException {
@@ -105,6 +107,7 @@ public final class Option extends OptionCtrl {
         properties.put("createAccessTokenUrn", createAccessTokenUrn);
         properties.put("verifyLoginUrn", verifyLoginUrn);
         properties.put("tiledTexture", tiledTexture.toString());
+        properties.put("keyOpenQuest", keyOpenQuest.toString());
         try (OutputStream outputStream = new FileOutputStream(DataCtrl.getOptionFile())) {
             properties.store(outputStream, "RealmTech option file");
             outputStream.flush();
@@ -128,6 +131,7 @@ public final class Option extends OptionCtrl {
         option.createAccessTokenUrn = propertiesFile.getProperty("createAccessTokenUrn");
         option.verifyLoginUrn = propertiesFile.getProperty("verifyLoginUrn");
         option.tiledTexture.set(Boolean.parseBoolean(propertiesFile.getProperty("tiledTexture")), context);
+        option.keyOpenQuest.set(Integer.parseInt(propertiesFile.getProperty("keyOpenQuest")));
         return option;
     }
 
@@ -161,6 +165,7 @@ public final class Option extends OptionCtrl {
             case "createAccessTokenUrn" -> Optional.of(createAccessTokenUrn);
             case "verifyLoginUrn" -> Optional.of(verifyLoginUrn);
             case "tiledTexture" -> Optional.of(tiledTexture.toString());
+            case "keyOpenQuest" -> Optional.of(keyOpenQuest.toString());
             default -> Optional.empty();
         };
     }
@@ -183,6 +188,7 @@ public final class Option extends OptionCtrl {
             case "createAccessTokenUrn" -> createAccessTokenUrn = optionValue;
             case "verifyLoginUrn" -> verifyLoginUrn = optionValue;
             case "tiledTexture" -> tiledTexture.set(Boolean.parseBoolean(optionValue), context);
+            case "keyOpenQuest" -> keyOpenQuest.set(Input.Keys.valueOf(optionValue));
         }
     }
 
@@ -204,6 +210,8 @@ public final class Option extends OptionCtrl {
                 putListOptions(this,"authServerBaseUrl");
                 putListOptions(this,"createAccessTokenUrn");
                 putListOptions(this,"verifyLoginUrn");
+                putListOptions(this, "tiledTexture");
+                putListOptions(this, "keyOpenQuest");
             }
         };
     }

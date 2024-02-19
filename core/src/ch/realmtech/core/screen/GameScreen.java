@@ -4,6 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.system.ItemBarSystem;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
+import ch.realmtech.core.game.ecs.system.QuestSystem;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
 import ch.realmtech.server.ecs.component.PositionComponent;
@@ -94,6 +95,15 @@ public class GameScreen extends AbstractScreen {
             } else {
                 context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
             }
+        }
+
+        if (Gdx.input.isKeyJustPressed(context.getOption().keyOpenQuest.get()) && consoleUi.getConsoleWindow().getParent() == null) {
+            if (!context.getSystem(QuestSystem.class).isEnabled()) {
+                context.getSystemsAdminClient().getQuestManager().openQuest();
+            } else {
+                context.getSystemsAdminClient().getQuestManager().closeQuest();
+            }
+
         }
 
 
