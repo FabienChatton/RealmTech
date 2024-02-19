@@ -27,6 +27,10 @@ public class PlayerFootStepSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         PlayerComponent playerComponent = mPlayer.get(entityId);
+        if (playerComponent.oldPoss.isEmpty()) {
+            return;
+        }
+
         PositionComponent positionComponent = mPos.get(entityId);
 
         int mainPlayer = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
