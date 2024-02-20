@@ -518,7 +518,12 @@ public class RealmTechCoreMod implements ArtemisPlugin {
     //</editor-fold>
 
     //<editor-fold desc="quests">
-    public static QuestEntry TEST_QUEST = QUESTS.add("testQuest", new QuestEntry("Quest test title", "Quest test content"));
+    public static QuestEntry THE_BEGINNING = QUESTS.add("testQuest", new QuestEntry("The beginning", """
+            Welcome to {WAIT} {COLOR=RED}{SHAKE}RealmTech{ENDSHAKE}{ENDCOLOR}.
+            Like you, RealmTech is at the beginning of a {RAINBOW}long journey{ENDRAINBOW}.
+            Your goal in this version is to {COLOR=RED}{SLOW}fill a battery with energy{ENDCOLOR}.
+            This requires many small steps. This quest book will help you get there.
+            """));
     //</editor-fold>
 
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
