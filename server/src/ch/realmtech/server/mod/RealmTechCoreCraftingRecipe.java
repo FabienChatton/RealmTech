@@ -85,6 +85,12 @@ public class RealmTechCoreCraftingRecipe {
         registry.add(new CraftPatternShape(RealmTechCoreMod.ENERGY_CABLE.itemRegisterEntry(), 12, new char[][]{
                 {'c', 'c', 'c'}
         }, new CraftPatternArgs('c', RealmTechCoreMod.COPPER_INGOT)));
+
+        registry.add(new CraftPatternShape(RealmTechCoreMod.WRENCH, new char[][]{
+                {'a', ' ', 'a'},
+                {' ', 'a', ' '},
+                {' ', 'a', ' '},
+        }, new CraftPatternArgs('a', RealmTechCoreMod.IRON_INGOT)));
     }
 
     public static void initFurnaceRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
