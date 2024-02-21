@@ -524,6 +524,99 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             Your goal in this version is to {COLOR=RED}{SLOW}fill a battery with energy{ENDCOLOR}.
             This requires many small steps. This quest book will help you get there.
             """));
+
+    public static QuestEntry KNOW_YOUR_WORLD = QUESTS.add("knowYourWorld", new QuestEntry("Know Your World", """
+            RealmTech is a game that procedurally generates the Terran. You can explore endlessly.
+            If you can't find a certain resource near your location, explore further.
+            RealmTech is also a multiplayer game, so a friend can join your world using the multiplayer menu.
+            There's a day/night cycle in the game, so you can use torches to light your way.
+            These are crafted with a stick and a coal on top.
+            For the moment, there are no monsters, so your life is not in danger.
+            """));
+
+    public static QuestEntry FIRST_RESOURCE = QUESTS.add("firstResources", new QuestEntry("First resources", """
+            As in {COLOR=YELLOW}GregTech{ENDCOLOR}, your first goal is to {COLOR=RED}harvest wood{ENDCOLOR}.
+            Hold down the left mouse button to break a tree cell to get some wood.
+            To find out if you can harvest a resource, check if the text break with is green.
+            """));
+
+    public static QuestEntry FIRST_CRAFT = QUESTS.add("firstCraft", new QuestEntry("First craft", """
+            Now that you've got your first resources, it's time to use them to make new items.
+            Open your inventory with e. You'll find our inventory with a crafting table.
+            Left-click on your logs and put them in the crafting table to make planks.
+            Planks can be placed on the floor.
+            """));
+
+    public static QuestEntry CRAFTING_EXPANSION = QUESTS.add("firstCraft", new QuestEntry("First craft", """
+            The first utility item you'll craft is a crafting table.
+            The crafting table extends the size of the crafting table in the player's inventory.
+            With the crafting table, the size of the crafting inventory is 3x3.
+            With this enlarged size, more complex items and machines are available to craft.
+            To make a crafting table, open the inventory and put 2x2 planks of wood in the crafting table in the player's inventory.
+            After crafting the table, close the inventory and right-click to place it on the floor.
+            Finally, interact with the craft table by right-clicking on the cell.
+            """));
+
+    public static QuestEntry FIRST_TOOL = QUESTS.add("firstTool", new QuestEntry("First Tool", """
+            With your new crafting table, you can use it to craft your first tools. Let's build a pickaxe.
+            You'll need 2 wooden sticks and 3 wooden planks.
+            To obtain the sticks, you'll need to align 2 wooden planks vertically in a crafting table.
+            Now, the recipe for the pickaxe is to align 3 planks of wood horizontally at the top of the craft inventory.
+            Put one stick in the middle of the inventory, and another stick down the middle.
+            Now you can mine stones with your pickaxe.
+            """));
+
+    public static QuestEntry THERMAL_EXPANSION = QUESTS.add("thermalExpansion", new QuestEntry("Thermal Expansion", """
+            Now it's time to process your ores. To do this, you need a furnace.
+            To get your first furnace, you need 8 stones, and craft the furnace in a crafting table by placing
+            the 8 stones in the edges of the crafting inventory to make an "O" shape.
+            To use the furnace, right-click on the furnace cell. You'll see a slot at the top for the item to be melted.
+            At the bottom is the fuel slot and the slot on the right is the recipe result.
+            Try putting a copper ore in the top slot and a coal in the bottom slot.
+            You'll see the arrow filling up, indicating that the firing process has gone smoothly.
+            Once the arrow is full, the result will be a copper ingot.
+            The best fuel at this stage of the game is coal, but you can also use wood logs.
+            """));
+
+    public static QuestEntry GET_READY_FOR_ELECTRICITY = QUESTS.add("getReadyForElectricity", new QuestEntry("Get ready for electricity", """
+            Introducing electricity into your world will introduce a lot of complexity.
+            The first complexity will be the orientation of the cells.
+            To manipulate this orientation, use a wrench.
+            To chisel the wrench, place a wrench in the top corner and a wrench in the middle and bottom corners to make a Y shape.
+            The notary cells that can be turned are the cables and batteries.
+            To turn the cell, the location of your click is important: click on the right-hand part of the cell to turn it to the right.
+            Click on the left-hand side of the cell to turn it to the left. And the same for top and bottom.
+            """));
+
+    public static QuestEntry FIRST_ENERGY_CABLE = QUESTS.add("firstEnergyCable", new QuestEntry("First Energy Cable", """
+            Now that you have the ability to smelt ores, you can use the ingots to create
+            the components needed for electrical installations.
+            First, make copper electric cables with 3 copper ingots aligned horizontally.
+            You can lay these cables on the floor,
+            where they will be useful for connecting your electrical machines to your energy production.
+            To connect the cables to each other and to the machines,
+            right-click with a wrench on the side to which you wish to connect the cable.
+            """));
+
+    public static QuestEntry FIRST_ENERGY_BATTERY = QUESTS.add("firstEnergyBattery", new QuestEntry("First Energy Battery", """
+            To create our first energy generator, we must first create a battery.
+            The energy battery allows energy to be stored.
+            The direction of the battery is important. To change the direction, use a wrench.
+            The energy output is the direction you selected. All other directions are energy inputs.
+            To recharge the battery, connect a cable connected to a power input port connected to a power source.
+            As energy sources, there is an energy generator or a battery with its output side connected.
+            """));
+
+    public static QuestEntry FIRST_ENERGY_GENERATOR = QUESTS.add("firstEnergyGenerator", new QuestEntry("First Energy Generator", """
+            Just having energy cables doesn't help. They take their usefulness to transport energy.
+            But to transport energy, you have to have energy in the first place.
+            That's what this quest is all about. Your first source of energy will be an energy generator.
+            To craft the energy generator, there are two possibilities: either place the furnace form in
+            the crafting inventory and place an energy battery in the center, or place a furnace with an
+            energy battery in the crafting inventory (regardless of item location).
+            To create your first energy units, place coal in the furnace and the furnace's internal battery will fill up.
+            """));
+
     //</editor-fold>
 
     private static CellRegisterEntry registerCell(final String name, final CellRegisterEntry cellRegisterEntry) {
