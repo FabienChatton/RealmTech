@@ -91,6 +91,18 @@ public class RealmTechCoreCraftingRecipe {
                 {' ', 'a', ' '},
                 {' ', 'a', ' '},
         }, new CraftPatternArgs('a', RealmTechCoreMod.IRON_INGOT)));
+
+        registry.add(new CraftPatternShape(RealmTechCoreMod.ENERGY_GENERATOR.itemRegisterEntry(), new char[][]{
+                {'s', 's', 's'},
+                {'s', 'b', 's'},
+                {'s', 's', 's'},
+        }, new CraftPatternArgs('s', RealmTechCoreMod.STONE.itemRegisterEntry()),
+                new CraftPatternArgs('b', RealmTechCoreMod.ENERGY_BATTERY.itemRegisterEntry())));
+
+        registry.add(new CraftPatternShapeless(RealmTechCoreMod.ENERGY_GENERATOR.itemRegisterEntry(),
+                RealmTechCoreMod.FURNACE.itemRegisterEntry(),
+                RealmTechCoreMod.ENERGY_BATTERY.itemRegisterEntry()
+        ));
     }
 
     public static void initFurnaceRecipe(InfRegistryAnonyme<CraftingRecipeEntry> registry) {
