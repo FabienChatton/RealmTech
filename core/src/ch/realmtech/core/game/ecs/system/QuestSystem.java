@@ -1,7 +1,6 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.core.game.quest.QuestTitleTable;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.registery.QuestEntry;
 import ch.realmtech.server.registery.RegistryEntry;
@@ -9,10 +8,7 @@ import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.rafaskoberg.gdx.typinglabel.TypingLabel;
 
@@ -34,15 +30,15 @@ public class QuestSystem extends BaseSystem {
 
         Table questTitleScrollTable = new Table(context.getSkin());
         for (RegistryEntry<QuestEntry> questEntry : RealmTechCoreMod.QUESTS.getEnfants()) {
-            QuestTitleTable questTitleTable = new QuestTitleTable(context, questEntry);
-            questTitleTable.addListener(new ClickListener() {
+            TextButton questTitleButton = new TextButton(questEntry.getEntry().getTitle(), context.getSkin());
+            questTitleButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     setSelectedQuest(questEntry.getEntry());
                     return true;
                 }
             });
-            questTitleScrollTable.add(questTitleTable).padBottom(10f).top();
+            questTitleScrollTable.add(questTitleButton).padBottom(10f).left().top();
             questTitleScrollTable.row();
         }
 
@@ -68,9 +64,9 @@ public class QuestSystem extends BaseSystem {
 
             TypingLabel contentLabel = new TypingLabel(selectedQuest.getContent(), context.getSkin());
             contentLabel.setWrap(true);
-            contentLabel.setFillParent(true);
 
-            questContentTable.add(contentLabel).expand().fill().left().top();
+            ScrollPane contentScrollPane = new ScrollPane(contentLabel);
+            questContentTable.add(contentScrollPane).expand().fillX().left().top();
             questContent.add(questContentTable).expand().fill().left().top();
             selectedQuestOld = selectedQuest;
         } else {
