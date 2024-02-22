@@ -5,7 +5,7 @@ public enum ScreenType {
     AUTHENTICATE(AuthenticateScreen.class),
     MENU(MenuScreen.class),
     GAME_SCREEN(GameScreen.class),
-    SELECTION_DE_SAUVEGARDE(SelectionDeSauvegarde.class),
+    SELECTION_DE_SAUVEGARDE(SelectASaveScreen.class),
     GAME_PAUSE(GamePauseScreen.class),
     OPTION(OptionsScreen.class),
     REJOINDRE_MULTI(RejoindreMulti.class),
