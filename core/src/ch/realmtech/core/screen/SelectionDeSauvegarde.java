@@ -39,6 +39,7 @@ public class SelectionDeSauvegarde extends AbstractScreen {
         TextButtonMenu createNewSave = new TextButtonMenu(context, "create new save", new OnClick((event, x, y) -> context.setScreen(ScreenType.CREATE_NEW_WORLD)));
         TextButtonMenu backButton = new TextButtonMenu(context, "back", new OnClick((event, x, y) -> context.setScreen(ScreenType.MENU)));
 
+        uiTable.clear();
         uiTable.setFillParent(true);
         uiTable.add(new Label("Sélectionner une sauvegarde", skin)).top();
         uiTable.row();
