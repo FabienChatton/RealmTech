@@ -3,6 +3,7 @@ package ch.realmtech.server;
 import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
+import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.datactrl.OptionServer;
 import ch.realmtech.server.ecs.EcsEngineServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
@@ -73,6 +74,12 @@ public class ServerContext {
 
     public ServerContext(ConnexionConfig connexionConfig) throws Exception {
         try {
+            try {
+                DataCtrl.creerHiearchieRealmTechData();
+            } catch (IOException e) {
+                logger.error("Can not create file structure", e);
+                System.exit(1);
+            }
             reloadOption();
             optionServer.verifyAccessToken.set(connexionConfig.isVerifyAccessToken());
             ecsEngineServer = new EcsEngineServer(this);
