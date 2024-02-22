@@ -84,25 +84,19 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
         List<RegistryEntry<ItemRegisterEntry>> items = RealmTechCoreMod.ITEMS.getEnfants().stream().filter((item) -> !item.getEntry().getItemBehavior().isIcon()).toList();
         int itemPerRow = 4;
         int itemPerColum = 16;
-        int maxWidth = 32 * itemPerRow;
-        int maxHeight = 32 * itemPerColum;
+        int itemPerPageMax = itemPerRow * itemPerColum;
         int pagesLength = Math.max(1, items.size() / (itemPerRow * itemPerColum));
-        int width = 0;
         int itemIndex = 0;
         ArrayList<Table> pages = new ArrayList<>(pagesLength);
         for (int i = 0; i < pagesLength; i++) {
             Table page = new Table(context.getSkin());
             pages.add(page);
-            for (int height = 0; itemIndex < items.size() && height < maxHeight; itemIndex++) {
+            for (int itemPerPage = 0; itemIndex < items.size() && itemPerPage < itemPerPageMax; itemIndex++, itemPerPage++) {
                 RegistryEntry<ItemRegisterEntry> item = items.get(itemIndex);
                 Actor actorImage = new NeiTableActor(context, item.getEntry());
                 actorImage.setSize(32, 32);
-                if (width < maxWidth) {
-                    width += 32;
-                } else {
+                if (itemIndex % itemPerRow == 0) {
                     page.row();
-                    width = 0;
-                    height += 32;
                 }
                 page.add(actorImage);
             }
