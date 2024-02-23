@@ -3,7 +3,7 @@ package ch.realmtech.server.serialize.energyGenerator;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.EnergyBatteryComponent;
 import ch.realmtech.server.ecs.component.EnergyGeneratorComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.energy.EnergyGeneratorEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -18,14 +18,14 @@ import java.util.UUID;
 public class EnergyGeneratorSerializerV1 implements Serializer<Integer, EnergyGeneratorEditEntity> {
     private ComponentMapper<EnergyGeneratorComponent> mEnergyGenerator;
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
-    private ComponentMapper<UuidComponent> mUuid;
 
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer energyGeneratorToSerialize) {
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, energyGeneratorToSerialize));
         EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyGeneratorToSerialize);
         EnergyGeneratorComponent energyGeneratorComponent = mEnergyGenerator.get(energyGeneratorToSerialize);
-        UUID energyGeneratorUuid = mUuid.get(energyGeneratorToSerialize).getUuid();
+        SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
+        UUID energyGeneratorUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(energyGeneratorToSerialize);
 
         ByteBufferHelper.writeUUID(buffer, energyGeneratorUuid);
         buffer.writeInt(energyGeneratorComponent.getRemainingTickToBurn());

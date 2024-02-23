@@ -4,12 +4,13 @@ import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -20,15 +21,16 @@ import static ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerC
 public class PhysicEntitySerializerV1 implements Serializer<Integer, PhysicEntityArgs> {
 
     private ComponentMapper<PositionComponent> mPos;
-    private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private ComponentMapper<ItemComponent> mItem;
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer physicEntityToSerialize) {
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, physicEntityToSerialize));
 
         PositionComponent positionComponent = mPos.get(physicEntityToSerialize);
-        UUID uuid = mUuid.get(physicEntityToSerialize).getUuid();
+        UUID uuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(physicEntityToSerialize);
         byte flag;
         if (mPlayerConnexion.has(physicEntityToSerialize)) {
             flag = PLAYER_FLAG;

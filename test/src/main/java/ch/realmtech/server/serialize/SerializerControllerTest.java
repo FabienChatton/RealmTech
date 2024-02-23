@@ -66,15 +66,15 @@ class SerializerControllerTest {
                     ItemComponent actualItemComponent = mItem.get(actualItemId);
                     assertSame(expectedItemComponent.itemRegisterEntry, actualItemComponent.itemRegisterEntry);
 
-                    UuidComponent expectedUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(expectedItemId);
-                    UuidComponent actualUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(actualItemId);
+                    UUID expectedUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(expectedItemId);
+                    UUID actualUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(actualItemId);
                     assertEquals(expectedUuidComponent, actualUuidComponent);
                 }
             }
         }
 
-        UuidComponent expectedUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(expectedInventoryId);
-        UuidComponent actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidComponentManager.getRegisteredComponent(chestInventoryId);
+        UUID expectedUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(expectedInventoryId);
+        UUID actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(chestInventoryId);
 
         assertEquals(expectedUuid, actualUuid);
     }

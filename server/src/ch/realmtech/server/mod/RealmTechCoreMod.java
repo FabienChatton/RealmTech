@@ -6,7 +6,7 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.ecs.system.UuidEntityManager;
 import ch.realmtech.server.energy.EnergyBatteryEditEntity;
 import ch.realmtech.server.energy.EnergyCableEditEntity;
 import ch.realmtech.server.energy.EnergyGeneratorEditEntity;
@@ -214,9 +214,9 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
                             int inventoryCraftId = craftingTableComponent.craftingInventory;
                             int inventoryResultId = craftingTableComponent.craftingResultInventory;
-                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
-                            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCraftId).getUuid();
-                            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryResultId).getUuid();
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
+                            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryCraftId);
+                            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryResultId);
 
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
@@ -224,9 +224,9 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryCraftId).getUuid(), craftingInventory).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryResultId).getUuid(), craftingResultInventory).notClickAndDropDst().build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId), craftingInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build()
                             }, new UUID[] {inventoryCraftUuid, inventoryResultUuid});
                         });
                     })
@@ -284,10 +284,10 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             int inventoryCarburantId = furnaceComponent.inventoryCarburant;
                             int iconFireId = furnaceIconsComponent.getIconFire();
                             int iconProcessId = furnaceIconsComponent.getIconProcess();
-                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
-                            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCraftId).getUuid();
-                            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryResultId).getUuid();
-                            UUID inventoryCarburantUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryCarburantId).getUuid();
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
+                            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryCraftId);
+                            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryResultId);
+                            UUID inventoryCarburantUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryCarburantId);
 
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
@@ -296,13 +296,13 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryCraftId).getUuid(), craftingInventory).dstRequire(FurnaceEditEntity.testValideItemForCraft()).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryResultId).getUuid(), craftingResultInventory).notClickAndDropDst().build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryCarburantId).getUuid(), carburantInventory).dstRequire(FurnaceEditEntity.testValideItemCarburant()).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId), craftingInventory).dstRequire(FurnaceEditEntity.testValideItemForCraft()).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCarburantId), carburantInventory).dstRequire(FurnaceEditEntity.testValideItemCarburant()).build(),
                                     // icons
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(iconFireId).getUuid(), iconFire).icon().build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(iconProcessId).getUuid(), iconProcess).icon().build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(iconFireId), iconFire).icon().build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(iconProcessId), iconProcess).icon().build()
                             }, new UUID[] {inventoryCraftUuid, inventoryResultUuid, inventoryCarburantUuid});
                         });
                     })
@@ -334,8 +334,8 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
                             int inventoryChestId = chestComponent.getInventoryId();
 
-                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
-                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryChestId).getUuid();
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
+                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryChestId);
 
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
@@ -343,8 +343,8 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryChestId).getUuid(), inventory).build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryChestId), inventory).build()
                             }, new UUID[] {inventoryChestUuid});
                         });
                     })
@@ -495,17 +495,17 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
                             int fireIconId = energyGeneratorIconComponent.getIconFireId();
 
-                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(inventoryPlayerId).getUuid();
-                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidComponentManager.class).getRegisteredComponent(carburantInventoryId).getUuid();
+                            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
+                            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(carburantInventoryId);
 
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
                             SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(inventoryPlayerId).getUuid(), playerInventory).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(carburantInventoryId).getUuid(), energyGeneratorInventory).build(),
-                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidComponentManager.getRegisteredComponent(fireIconId).getUuid(), iconFire).icon().build()
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(carburantInventoryId), energyGeneratorInventory).build(),
+                                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(fireIconId), iconFire).icon().build()
                             }, new UUID[]{inventoryChestUuid});
                         });
                     })

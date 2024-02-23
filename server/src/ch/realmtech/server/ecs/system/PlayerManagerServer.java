@@ -44,7 +44,6 @@ public class PlayerManagerServer extends Manager {
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
-    private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<LifeComponent> mLife;
 
@@ -61,7 +60,7 @@ public class PlayerManagerServer extends Manager {
         // player connexion component
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
         playerConnexionComponent.set(channel);
-        systemsAdminServer.uuidComponentManager.createRegisteredComponent(playerUuid, playerId);
+        systemsAdminServer.uuidEntityManager.registerEntityIdWithUuid(playerUuid, playerId);
 
         boolean hasPlayerSaveSuccess = false;
         float posX;
@@ -146,10 +145,10 @@ public class PlayerManagerServer extends Manager {
 
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(posX, posY, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
-                mUuid.get(chestId).getUuid(),
-                mUuid.get(craftingInventories[0]).getUuid(),
-                mUuid.get(craftingInventories[1]).getUuid(),
-                mUuid.get(inventoryCursorId).getUuid()
+                systemsAdminServer.uuidEntityManager.getEntityUuid(chestId),
+                systemsAdminServer.uuidEntityManager.getEntityUuid(craftingInventories[0]),
+                systemsAdminServer.uuidEntityManager.getEntityUuid(craftingInventories[1]),
+                systemsAdminServer.uuidEntityManager.getEntityUuid(inventoryCursorId)
         );
     }
 
@@ -185,7 +184,7 @@ public class PlayerManagerServer extends Manager {
 
         File playerFile;
         try {
-            UUID playerUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid();
+            UUID playerUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(playerId);
             Path playerDir = getPlayerDir(playerUuid);
             if (!playerDir.toFile().exists()) Files.createDirectories(playerDir);
             playerFile = getPLayerFile(playerDir).toFile();
@@ -244,7 +243,7 @@ public class PlayerManagerServer extends Manager {
         int[] playersData = players.getData();
         for (int i = 0; i < players.size(); i++) {
             int playerId = playersData[i];
-            if (systemsAdminServer.uuidComponentManager.getRegisteredComponent(playerId).getUuid().equals(uuid)) {
+            if (systemsAdminServer.uuidEntityManager.getEntityUuid(playerId).equals(uuid)) {
                 return playerId;
             }
         }

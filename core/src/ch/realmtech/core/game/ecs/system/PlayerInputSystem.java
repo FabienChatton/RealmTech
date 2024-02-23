@@ -58,7 +58,7 @@ public class PlayerInputSystem extends BaseSystem {
                     .or(() -> rightClickInteractionCell)
                     .ifPresentOrElse(rightClickInteraction -> rightClickInteraction.accept(context, topCell), () -> {
                         // place bloc if no interaction
-                        UUID itemUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
+                        UUID itemUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(selectItem);
                         context.getConnexionHandler().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
                     });
         }

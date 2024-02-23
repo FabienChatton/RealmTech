@@ -20,7 +20,7 @@ public class PlayerSyncSystem extends IteratingSystem {
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     @Override
     protected void process(int entityId) {
-        UUID playerUuid = serverContext.getSystemsAdmin().uuidComponentManager.getRegisteredComponent(entityId).getUuid();
+        UUID playerUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(entityId);
         SerializedApplicationBytes playerEncode = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(entityId).writeInventory(false));
         serverContext.getServerHandler().broadCastPacket(new PlayerSyncPacket(playerEncode, playerUuid));
     }

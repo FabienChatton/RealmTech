@@ -258,7 +258,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     }
 
     public int placeItemToCell(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
-        int itemId = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
+        int itemId = systemsAdminServer.uuidEntityManager.getEntityId(itemToPlaceUuid);
         if (itemId == -1) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
         CellRegisterEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell();

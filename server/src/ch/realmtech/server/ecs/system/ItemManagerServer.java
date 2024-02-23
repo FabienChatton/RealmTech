@@ -33,7 +33,6 @@ public class ItemManagerServer extends ItemManager {
     private Archetype defaultItemInventoryArchetype;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<ItemComponent> mItem;
-    private ComponentMapper<UuidComponent> mUuid;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     @Override
@@ -75,15 +74,15 @@ public class ItemManagerServer extends ItemManager {
     }
 
     public void playerPickUpItem(int itemId, int playerId) {
-        UuidComponent uuidComponent = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemId);
-        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(uuidComponent.getUuid())));
+        UUID uuid = systemsAdminServer.uuidEntityManager.getEntityUuid(itemId);
+        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(uuid)));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
     }
 
     public void dropItem(int itemId, float worldPosX, float worldPosY) {
-        UUID itemUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(itemId).getUuid();
+        UUID itemUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(itemId);
         ItemComponent itemComponent = mItem.get(itemId);
         float dropWorldPosX = (float) (worldPosX + (Math.random() * 2f - 1f));
         float dropWorldPosY = (float) (worldPosX + (Math.random() * 2f - 1f));

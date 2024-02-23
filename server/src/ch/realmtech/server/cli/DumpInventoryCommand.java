@@ -3,7 +3,7 @@ package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.Aspect;
@@ -11,6 +11,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
 
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
@@ -23,16 +24,16 @@ public class DumpInventoryCommand implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        IntBag inventoryEntities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class, UuidComponent.class)).getEntities();
+        IntBag inventoryEntities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
         int[] inventoryData = inventoryEntities.getData();
+        SystemsAdminCommun systemsAdminCommun = dumpCommand.masterCommand.getWorld().getRegistered("systemsAdmin");
         ComponentMapper<InventoryComponent> mInventory = dumpCommand.masterCommand.getWorld().getMapper(InventoryComponent.class);
-        ComponentMapper<UuidComponent> mUuid = dumpCommand.masterCommand.getWorld().getMapper(UuidComponent.class);
         ComponentMapper<ItemComponent> mItem = dumpCommand.masterCommand.getWorld().getMapper(ItemComponent.class);
         for (int i = 0; i < inventoryEntities.size(); i++) {
             int inventoryId = inventoryData[i];
-            UuidComponent uuidComponent = mUuid.get(inventoryId);
             InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-            dumpCommand.printlnVerbose(1, String.format("%s, %s", uuidComponent, inventoryComponent));
+            UUID entityUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryId);
+            dumpCommand.printlnVerbose(1, String.format("%s, %s", entityUuid, inventoryComponent));
             StringBuilder stringBuilder = new StringBuilder();
             for (int s = 0; s < inventoryComponent.inventory.length; s++) {
                 ItemComponent itemComponent = mItem.get(inventoryComponent.inventory[s][0]);

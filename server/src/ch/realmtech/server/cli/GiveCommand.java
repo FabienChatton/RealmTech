@@ -3,7 +3,7 @@ package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
@@ -36,6 +36,7 @@ public class GiveCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         RegistryEntry<ItemRegisterEntry> itemRegisterEntry = RealmTechCoreMod.ITEMS.get(itemRegistryId);
+        SystemsAdminServer systemsAdminServer = masterCommand.serverContext.getSystemsAdmin();
         if (itemRegisterEntry == null) {
             masterCommand.output.println(String.format("This item registry id doesn't existe, %s", itemRegistryId));
             return 1;
@@ -47,14 +48,13 @@ public class GiveCommand implements Callable<Integer> {
             playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid);
         } catch (IllegalArgumentException e) {
             // uuid not valid
-            playerId = masterCommand.serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(playerIdentifier);
+            playerId = systemsAdminServer.playerManagerServer.getPlayerByUsername(playerIdentifier);
             if (playerId == -1) {
                 return -1;
             }
         }
         ComponentMapper<InventoryComponent> mInventory = masterCommand.getWorld().getMapper(InventoryComponent.class);
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = masterCommand.getWorld().getMapper(PlayerConnexionComponent.class);
-        ComponentMapper<UuidComponent> mUuid = masterCommand.getWorld().getMapper(UuidComponent.class);
 
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         InventoryComponent inventoryComponent = masterCommand.serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
@@ -67,8 +67,9 @@ public class GiveCommand implements Callable<Integer> {
                 return 0;
             }
         }
+        UUID chestInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(chestInventoryId);
         SerializedApplicationBytes ApplicationInventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(inventoryComponent);
-        masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(chestInventoryId).getUuid(), ApplicationInventoryBytes), playerConnexionComponent.channel);
+        masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(chestInventoryUuid, ApplicationInventoryBytes), playerConnexionComponent.channel);
         return 0;
     }
 }

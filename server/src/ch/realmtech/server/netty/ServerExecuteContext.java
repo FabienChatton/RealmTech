@@ -58,7 +58,7 @@ public class ServerExecuteContext implements ServerExecute {
         for (int i = 0; i < players.size(); i++) {
             int playerId = playersData[i];
             if (thisPlayerId == playerId) continue;
-            UUID uuid = serverContext.getSystemsAdmin().uuidComponentManager.getRegisteredComponent(playerId).getUuid();
+            UUID uuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
             serverContext.getServerHandler().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
         }
         serverContext.getServerHandler().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
@@ -75,7 +75,8 @@ public class ServerExecuteContext implements ServerExecute {
             logger.warn("Can not save player inventory of {}. : {} ", username, e.getMessage());
         }
         serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
-        serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(playerId).getUuid()), channel);
+        UUID playerUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
+        serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(playerUuid), channel);
     }
 
     @Override
@@ -116,8 +117,8 @@ public class ServerExecuteContext implements ServerExecute {
     public void getPlayerInventorySession(Channel clientChannel) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
-            ComponentMapper<UuidComponent> mUuid = serverContext.getEcsEngineServer().getWorld().getMapper(UuidComponent.class);
-            getInventory(clientChannel, mUuid.get(serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId)).getUuid());
+            UUID chestInventoryUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId));
+            getInventory(clientChannel, chestInventoryUuid);
         });
     }
 
@@ -138,14 +139,14 @@ public class ServerExecuteContext implements ServerExecute {
             try {
                 int[] mutatedInventories = serverContext.getSystem(InventoryManager.class).moveStackToStackRequest(srcInventory, dstInventory, itemsToMove, slotIndex);
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
-                ComponentMapper<UuidComponent> mUuid = serverContext.getEcsEngineServer().getWorld().getMapper(UuidComponent.class);
                 InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(srcInventory));
                 InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(dstInventory));
                 serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), clientChannel);
                 serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), clientChannel);
                 if (mutatedInventories != null) {
                     for (int mutatedInventory : mutatedInventories) {
-                        serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mUuid.get(mutatedInventory).getUuid(), serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(mutatedInventory))), clientChannel);
+                        UUID mutatedInventoryUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(mutatedInventory);
+                        serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mutatedInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(mutatedInventory))), clientChannel);
                     }
                 }
             } catch (IllegalAccessError e) {
@@ -171,12 +172,12 @@ public class ServerExecuteContext implements ServerExecute {
             if (cellPlaced != -1) {
                 int playerId = serverContext.getSystem(PlayerManagerServer.class).getPlayerByChannel(clientChannel);
                 int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(playerId);
-                int itemId = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(itemToPlaceUuid, ItemComponent.class);
+                int itemId = serverContext.getSystem(UuidEntityManager.class).getEntityId(itemToPlaceUuid);
                 serverContext.getSystem(InventoryManager.class).removeItemInInventory(chestInventoryId, itemId);
                 SerializedApplicationBytes cellApplicationBytes = serverContext.getSerializerController().getCellSerializerController().encode(cellPlaced);
                 serverContext.getServerHandler().broadCastPacket(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes));
 
-                UUID inventoryUuid = serverContext.getSystem(UuidComponentManager.class).getRegisteredComponent(chestInventoryId).getUuid();
+                UUID inventoryUuid = serverContext.getSystem(UuidEntityManager.class).getEntityUuid(chestInventoryId);
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
                 clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(chestInventoryId))));
             }

@@ -52,7 +52,7 @@ public class CellBeingMineSystem extends IteratingSystem {
                 UUID itemUsedUuid;
                 int selectItem = systemsAdminClient.getItemBarManager().getSelectItemOrNoting();
                 if (selectItem != -1) {
-                    itemUsedUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(selectItem).getUuid();
+                    itemUsedUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(selectItem);
                 } else {
                     itemUsedUuid = null;
                 }

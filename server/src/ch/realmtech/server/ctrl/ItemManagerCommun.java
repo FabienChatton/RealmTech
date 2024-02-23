@@ -39,7 +39,7 @@ public class ItemManagerCommun {
         }
         mItem.get(itemId).set(itemRegisterEntry);
         SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-        systemsAdminCommun.uuidComponentManager.createRegisteredComponent(itemUuid, itemId);
+        systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(itemUuid, itemId);
         return itemId;
     }
 

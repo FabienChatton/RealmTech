@@ -7,7 +7,7 @@ import com.artemis.managers.TagManager;
 
 public abstract class SystemsAdminCommun implements ArtemisPlugin {
     public final TagManager tagManager;
-    public final UuidComponentManager uuidComponentManager;
+    public final UuidEntityManager uuidEntityManager;
     public final InventoryManager inventoryManager;
     public final MapManager mapManager;
     public final SaveInfManager saveInfManager;
@@ -16,7 +16,7 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
 
     public SystemsAdminCommun() {
         tagManager = new TagManager();
-        uuidComponentManager = new UuidComponentManager();
+        uuidEntityManager = new UuidEntityManager();
         inventoryManager = new InventoryManager();
         mapManager = new MapManager();
         saveInfManager = new SaveInfManager();
@@ -28,7 +28,7 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
     public void setup(WorldConfigurationBuilder b) {
         b.with(
                 tagManager,
-                uuidComponentManager,
+                uuidEntityManager,
                 inventoryManager,
                 mapManager,
                 saveInfManager,

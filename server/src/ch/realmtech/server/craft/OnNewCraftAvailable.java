@@ -1,7 +1,9 @@
 package ch.realmtech.server.craft;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.component.CraftingTableComponent;
+import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
@@ -36,7 +38,7 @@ public final class OnNewCraftAvailable {
                         }
                     }
                     ServerContext serverContext = world.getRegistered("serverContext");
-                    UUID craftingResultUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableComponent.craftingResultInventory).getUuid();
+                    UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
 
                     serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))));
                 };
@@ -55,8 +57,8 @@ public final class OnNewCraftAvailable {
                 systemsAdminServer.inventoryManager.addItemToInventory(craftingTableComponent.craftingResultInventory, craftResultItemId);
             }
             ServerContext serverContext = world.getRegistered("serverContext");
-            UUID craftingInventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableComponent.craftingInventory).getUuid();
-            UUID craftingResultUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableComponent.craftingResultInventory).getUuid();
+            UUID craftingInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingInventory);
+            UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
 
             serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(craftingInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingInventory))));
             serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))));

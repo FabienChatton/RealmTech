@@ -35,7 +35,7 @@ public class EnergyGeneratorSystem extends IteratingSystem {
             int chestInventoryId = systemsAdminServer.inventoryManager.getChestInventoryId(entityId);
             InventoryComponent carburantInventory = mInventory.get(chestInventoryId);
 
-            UUID inventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(chestInventoryId).getUuid();
+            UUID inventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(chestInventoryId);
             int[] carburantStack = carburantInventory.inventory[0];
             int itemTemoinId = systemsAdminServer.inventoryManager.getTopItem(carburantStack);
             if (mItem.has(itemTemoinId)) {
@@ -59,7 +59,7 @@ public class EnergyGeneratorSystem extends IteratingSystem {
                 energyGeneratorComponent.setRemainingTickToBurn(energyGeneratorComponent.getRemainingTickToBurn() - 1);
                 energyBatteryComponent.addStored(1);
 
-                UUID energyGeneratorUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(entityId).getUuid();
+                UUID energyGeneratorUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(entityId);
 
                 serverContext.getServerHandler().broadCastPacket(new EnergyBatterySetEnergyPacket(energyGeneratorUuid, energyBatteryComponent.getStored()));
                 serverContext.getServerHandler().broadCastPacket(new EnergyGeneratorInfoPacket(energyGeneratorUuid, energyGeneratorComponent.getRemainingTickToBurn(), newFuel ? energyGeneratorComponent.getRemainingTickToBurn() : -1));

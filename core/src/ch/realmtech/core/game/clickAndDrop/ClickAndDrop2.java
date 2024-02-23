@@ -4,7 +4,6 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.packet.serverPacket.MoveStackToStackPacket;
 import com.artemis.ComponentMapper;
@@ -38,7 +37,7 @@ public class ClickAndDrop2 {
         this.systemsAdminClient = systemsAdminClient;
         int cursorInventoryId = world.getSystem(InventoryManager.class).getCursorInventoryId(playerId);
         InventoryComponent inventoryCursorComponent = world.getMapper(InventoryComponent.class).get(cursorInventoryId);
-        UUID cursorInventoryUuid = systemsAdminClient.uuidComponentManager.getRegisteredComponent(cursorInventoryId).getUuid();
+        UUID cursorInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(cursorInventoryId);
         clickAndDropActor = new ClickAndDropActor(context, cursorInventoryUuid, () -> inventoryCursorComponent.inventory[0], null, null) {
             @Override
             public void act(float delta) {
@@ -152,11 +151,10 @@ public class ClickAndDrop2 {
 
     public void moveStackToStackNumberSendRequest(ClickAndDropActor srcActor, ClickAndDropActor dstActor, int number) {
         ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-        ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
-        int srcInventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(srcActor.getInventoryUuid(), InventoryComponent.class);
-        int dstInventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(dstActor.getInventoryUuid(), InventoryComponent.class);
+        int srcInventoryId = systemsAdminClient.uuidEntityManager.getEntityId(srcActor.getInventoryUuid());
+        int dstInventoryId = systemsAdminClient.uuidEntityManager.getEntityId(dstActor.getInventoryUuid());
         UUID[] srcItemsUuid = new UUID[number];
 
         if (srcInventoryId == -1) {
@@ -172,7 +170,7 @@ public class ClickAndDrop2 {
         InventoryComponent dstInventoryComponent = mInventory.get(dstInventoryId);
 
         for (int i = 0; i < srcItemsUuid.length; i++) {
-            srcItemsUuid[i] = mUuid.get(srcActor.getStack()[i]).getUuid();
+            srcItemsUuid[i] = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(srcActor.getStack()[i]);
         }
         int dstIndex = -1;
         for (int i = 0; i < dstInventoryComponent.inventory.length; i++) {
@@ -181,8 +179,11 @@ public class ClickAndDrop2 {
             }
         }
 
+        UUID srcInventoryUuid = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(srcInventoryId);
+        UUID dstInventoryUuid = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(dstInventoryId);
+
         context.getConnexionHandler().sendAndFlushPacketToServer(
-                new MoveStackToStackPacket(mUuid.get(srcInventoryId).getUuid(), mUuid.get(dstInventoryId).getUuid(), srcItemsUuid, dstIndex)
+                new MoveStackToStackPacket(srcInventoryUuid, dstInventoryUuid, srcItemsUuid, dstIndex)
         );
     }
 }

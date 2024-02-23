@@ -7,7 +7,10 @@ import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
-import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.component.InfMapComponent;
+import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
@@ -206,7 +209,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid) {
         context.nextFrame(() -> {
-            int playerId = context.getEcsEngine().getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(playerUuid, PlayerComponent.class);
+            int playerId = context.getEcsEngine().getSystemsAdminClient().uuidEntityManager.getEntityId(playerUuid);
             if (playerId == -1) return;
             setPlayerConsumer.accept(playerId);
             PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(playerId);
@@ -231,7 +234,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void energyBatterySetEnergy(UUID energyBatteryUuid, long stored) {
         context.nextFrame(() -> {
-            int energyBatteryId = context.getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(energyBatteryUuid, EnergyBatteryComponent.class);
+            int energyBatteryId = context.getSystemsAdminClient().uuidEntityManager.getEntityId(energyBatteryUuid);
             context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergy(energyBatteryId, stored);
         });
     }
@@ -239,7 +242,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void energyGeneratorSetInfo(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn) {
         context.nextFrame(() -> {
-            int energyGeneratorId = context.getSystemsAdminClient().uuidComponentManager.getRegisteredComponent(energyGeneratorUuid, EnergyGeneratorComponent.class);
+            int energyGeneratorId = context.getSystemsAdminClient().uuidEntityManager.getEntityId(energyGeneratorUuid);
             context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergyGeneratorInfo(energyGeneratorId, remainingTickToBurn, lastRemainingTickToBurn);
         });
     }

@@ -2,7 +2,7 @@ package ch.realmtech.server.serialize.player;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.system.UuidComponentManager;
+import ch.realmtech.server.ecs.system.UuidEntityManager;
 import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -53,7 +53,7 @@ public class PlayerSerializerV1 implements Serializer<PlayerSerializerConfig, Co
     @Override
     public int getBytesSize(World world, SerializerController serializerController, PlayerSerializerConfig playerToSerializeConfig) {
         int playerToSerialize = playerToSerializeConfig.getPlayerId();
-        UUID playerUuid = world.getSystem(UuidComponentManager.class).getRegisteredComponent(playerToSerialize).getUuid();
+        UUID playerUuid = world.getSystem(UuidEntityManager.class).getEntityUuid(playerToSerialize);
 
         int chestInventoryLength = serializerController.getApplicationBytesLength(serializerController.getChestSerializerController(), playerToSerialize);
         int playerUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), playerUuid);

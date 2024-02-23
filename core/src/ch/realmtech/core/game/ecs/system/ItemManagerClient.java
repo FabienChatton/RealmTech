@@ -4,7 +4,10 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ctrl.ItemManagerCommun;
-import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.component.Box2dComponent;
+import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.component.TextureComponent;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
@@ -32,7 +35,6 @@ public class ItemManagerClient extends ItemManager {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<TextureComponent> mTexture;
-    private ComponentMapper<UuidComponent> mUuid;
     private Archetype defaultItemGroundArchetype;
     private Archetype defaultItemInventoryArchetype;
 
@@ -62,7 +64,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     public void supprimeItemOnGround(UUID itemUuid) {
-        int item = systemsAdminClient.uuidComponentManager.getRegisteredComponent(itemUuid, ItemComponent.class);
+        int item = systemsAdminClient.uuidEntityManager.getEntityId(itemUuid);
         if (item == -1) return;
         if (mItem.has(item)) {
             Box2dComponent box2dComponent = mBox2d.get(item);
@@ -72,7 +74,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
-        int itemId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(uuid, ItemComponent.class);
+        int itemId = systemsAdminClient.uuidEntityManager.getEntityId(uuid);
         if (itemId == -1) {
             itemId = systemsAdminClient.getItemManagerClient().newItemOnGround(worldPosX, worldPosY, itemRegisterEntry, uuid);
         }

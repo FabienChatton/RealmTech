@@ -1,7 +1,6 @@
 package ch.realmtech.server.cli;
 
 
-import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import com.artemis.Aspect;
 import com.artemis.Component;
@@ -29,13 +28,14 @@ public class DumpEntities implements Runnable {
     @Option(names = {"-u", "-uuid"}, description = "Uuid component to find")
     private String uuidFilter;
 
+    // FIXME mettre le retour des filtre uuid
     @Override
     public void run() {
         StringBuffer sb = new StringBuffer();
         IntBag entities;
         List<Class<? extends Component>> componentsFilterPlus = new ArrayList<>();
         if (uuidFilter != null) {
-            componentsFilterPlus.add(UuidComponent.class);
+//            componentsFilterPlus.add(UuidComponent.class);
         }
 
         try {
@@ -57,7 +57,7 @@ public class DumpEntities implements Runnable {
             int[] entitiesData = entities.getData();
             for (int i = 0; i < entities.size(); i++) {
                 int entityId = entitiesData[i];
-                String uuidString = systemsAdminCommun.uuidComponentManager.getRegisteredComponent(entityId).getUuid().toString();
+                String uuidString = systemsAdminCommun.uuidEntityManager.getEntityUuid(entityId).toString();
                 if (uuidString.matches(uuidFilter)) {
                     entitiesBag.add(entityId);
                 }

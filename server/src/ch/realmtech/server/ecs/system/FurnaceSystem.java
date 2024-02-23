@@ -53,12 +53,12 @@ public class FurnaceSystem extends IteratingSystem {
                     furnaceComponent.remainingTickToBurn = carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();
                     systemsAdminServer.inventoryManager.deleteItemInStack(carburantStack, carburantItemId);
 
-                    UUID carburantInventoryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(furnaceComponent.inventoryCarburant).getUuid();
+                    UUID carburantInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceComponent.inventoryCarburant);
                     serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(carburantInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(carburantInventoryComponent)));
 
 
                     serverContext.getServerHandler().broadCastPacket(new FurnaceExtraInfoPacket(
-                            systemsAdminServer.uuidComponentManager.getRegisteredComponent(entityId).getUuid(),
+                            systemsAdminServer.uuidEntityManager.getEntityUuid(entityId),
                             furnaceComponent.remainingTickToBurn,
                             -1
                     ));

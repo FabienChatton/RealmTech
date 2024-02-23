@@ -50,7 +50,7 @@ public class IaSystemServer extends BaseSystem {
         // iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(box2dComponentPlayer.body)));
         world.edit(iaTestId).create(Box2dComponent.class).set(1, 1, bodyIaTest);
         PositionComponent positionComponent = world.edit(iaTestId).create(PositionComponent.class);
-        serverContext.getSystemsAdmin().uuidComponentManager.createRegisteredComponent(UUID.randomUUID(), iaTestId);
+        serverContext.getSystemsAdmin().uuidEntityManager.registerEntityIdWithUuid(UUID.randomUUID(), iaTestId);
         positionComponent.set(x, y);
         return iaTestId;
     }

@@ -48,7 +48,7 @@ public class EnergyBatterySystem extends IteratingSystem {
             IntSet.IntSetIterator intSetIterator = dirtyEnergyBattery.iterator();
             while (intSetIterator.hasNext) {
                 int energyBatteryId = intSetIterator.next();
-                UUID energyBatteryUuid = systemsAdminServer.uuidComponentManager.getRegisteredComponent(energyBatteryId).getUuid();
+                UUID energyBatteryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(energyBatteryId);
 
                  EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyBatteryId);
                 serverContext.getServerHandler().broadCastPacket(new EnergyBatterySetEnergyPacket(energyBatteryUuid, energyBatteryComponent.getStored()));

@@ -5,19 +5,20 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.badlogic.gdx.utils.Null;
 
 import java.util.UUID;
 
 public class CraftingTableEditEntity implements EditEntity {
-    private final UUID craftingInventoryUuid;
+    private final UuidSupplierOrRandom craftingInventoryUuid;
     @Null
     private final int[][] inventory;
     private final int craftingNumberOfSlotParRow;
     private final int craftingNumberOfRow;
-    private final UUID craftingResultInventoryUuid;
+    private final UuidSupplierOrRandom craftingResultInventoryUuid;
 
-    public CraftingTableEditEntity(UUID craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
+    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid) {
         this.craftingInventoryUuid = craftingInventoryUuid;
         this.inventory = inventory;
         this.craftingNumberOfSlotParRow = craftingNumberOfSlotParRow;
@@ -26,16 +27,16 @@ public class CraftingTableEditEntity implements EditEntity {
     }
 
     public static CraftingTableEditEntity createCraftingTable(int craftingNumberOfSlotParRow, int craftingNumberOfRow) {
-        return new CraftingTableEditEntity(UUID.randomUUID(), new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, UUID.randomUUID());
+        return new CraftingTableEditEntity(new UuidSupplierOrRandom(), new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, new UuidSupplierOrRandom());
     }
 
     public static CraftingTableEditEntity createSetCraftingTable(UUID craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
-        return new CraftingTableEditEntity(craftingInventoryUuid, inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid);
+        return new CraftingTableEditEntity(new UuidSupplierOrRandom(craftingInventoryUuid), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, new UuidSupplierOrRandom(craftingResultInventoryUuid));
     }
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid, inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, RealmTechCoreMod.CRAFT));
+        executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get(), RealmTechCoreMod.CRAFT));
     }
 
     @Override

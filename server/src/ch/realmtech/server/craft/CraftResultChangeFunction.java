@@ -77,7 +77,7 @@ public final class CraftResultChangeFunction {
                         if (furnaceComponent.tickProcess == 1) {
                             ServerContext serverContext = world.getRegistered("serverContext");
                             serverContext.getServerHandler().broadCastPacket(new FurnaceExtraInfoPacket(
-                                    systemsAdminServer.uuidComponentManager.getRegisteredComponent(craftingTableId).getUuid(),
+                                    systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableId),
                                     -1,
                                     craftResult.getTimeToProcess())
                             );

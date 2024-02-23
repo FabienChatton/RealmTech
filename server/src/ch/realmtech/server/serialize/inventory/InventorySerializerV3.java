@@ -4,7 +4,7 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.Serializer;
@@ -12,16 +12,18 @@ import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.function.Function;
 
 public class InventorySerializerV3 implements Serializer<InventoryComponent, Function<ItemManager, InventoryArgs>> {
+    private ComponentMapper<ItemComponent> mItem;
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, InventoryComponent inventoryComponent) {
-        ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
-        ComponentMapper<UuidComponent> mUuid = world.getMapper(UuidComponent.class);
         ByteBuffer byteBuffer = ByteBuffer.allocate(getBytesSize(world, serializerController, inventoryComponent));
         byteBuffer.putInt(inventoryComponent.numberOfRow);
         byteBuffer.putInt(inventoryComponent.numberOfSlotParRow);
@@ -43,7 +45,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
                     int numberOfItem = InventoryManager.tailleStack(stack);
                     byteBuffer.putInt(numberOfItem);
                     for (int n = 0; n < numberOfItem; n++) {
-                        UUID itemUuid = mUuid.get(stack[stackItemIndex]).getUuid();
+                        UUID itemUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(stack[stackItemIndex]);
                         stackItemIndex++;
                         ByteBufferHelper.writeUUID(byteBuffer, itemUuid);
                     }
@@ -84,7 +86,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
         }
 
 
-        return itemManager -> {
+        return (itemManager) -> {
             int uuidIndex = 0;
             int[][] inventory = new int[numberOfRow * numberOfSlotParRow][InventoryComponent.DEFAULT_STACK_LIMITE];
             for (int i = 0; i < numberNotEmtpySlot; i++) {

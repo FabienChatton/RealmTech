@@ -5,7 +5,6 @@ import ch.realmtech.server.craft.CraftResultChange;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.UuidComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
@@ -23,7 +22,6 @@ public class CraftingSystem extends IteratingSystem {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
-    private ComponentMapper<UuidComponent> mUuid;
 
     @Override
     protected void process(int entityId) {

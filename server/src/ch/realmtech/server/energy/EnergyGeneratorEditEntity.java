@@ -38,7 +38,7 @@ public class EnergyGeneratorEditEntity implements EditEntity {
         executeOnContext.onCommun((world) -> {
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
 
-            systemsAdminCommun.uuidComponentManager.createRegisteredComponent(energyGeneratorUuid, entityId);
+            systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(energyGeneratorUuid, entityId);
             world.edit(entityId).create(EnergyGeneratorComponent.class).set(remainingTickToBurn);
             world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_ONLY);
             systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyGeneratorSerializerController());

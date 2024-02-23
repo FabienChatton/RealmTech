@@ -115,7 +115,7 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
     }
 
     public void setFurnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull) {
-        int furnaceId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(furnaceUuid, FurnaceComponent.class);
+        int furnaceId = systemsAdminClient.uuidEntityManager.getEntityId(furnaceUuid);
         FurnaceComponent furnaceComponent = mFurnace.get(furnaceId);
         FurnaceExtraInfoComponent furnaceExtraInfoComponent = mFurnaceExtraInfo.get(furnaceId);
         if (lastRemainingTickToBurnFull != -1) {

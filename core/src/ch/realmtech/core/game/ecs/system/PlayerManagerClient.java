@@ -76,7 +76,7 @@ public class PlayerManagerClient extends Manager {
 
         // player connexion
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
-        systemsAdminClient.uuidComponentManager.createRegisteredComponent(uuid, playerId);
+        systemsAdminClient.uuidEntityManager.registerEntityIdWithUuid(uuid, playerId);
 
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);

@@ -156,15 +156,7 @@ public class PlayerInventorySystem extends BaseSystem {
             inGameSystemOnInventoryOpen.onInventoryClose(world);
             inGameSystemOnInventoryOpenEnable.onInventoryClose(world);
 
-            for (UUID inventoryToClearItem : currentInventoriesToClearItemOnClose) {
-                int inventoryId = systemsAdminClient.inventoryManager.getInventoryByUUID(inventoryToClearItem);
-                if (inventoryId != -1) {
-                    InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-                    for (int[] stack : inventoryComponent.inventory) {
-                        systemsAdminClient.inventoryManager.deleteStack(stack);
-                    }
-                }
-            }
+            deleteInventoriesToClearItemsOnClose();
             currentInventoriesToClearItemOnClose = null;
 
             return true;
@@ -198,14 +190,6 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public void toggleInventoryWindow(Supplier<AddAndDisplayInventoryArgs> openPlayerInventorySupplier) {
-        if (isEnabled()) {
-            closePlayerInventory();
-        } else {
-            openPlayerInventory(openPlayerInventorySupplier);
-        }
-    }
-
     public Supplier<AddAndDisplayInventoryArgs> getDisplayInventoryPlayer() {
         return () -> {
             final Table playerInventory = new Table(context.getSkin());
@@ -220,19 +204,27 @@ public class PlayerInventorySystem extends BaseSystem {
 
             int playerId = context.getSystem(PlayerManagerClient.class).getMainPlayer();
 
+            UUID playerInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(systemsAdminClient.inventoryManager.getChestInventoryId(playerId));
+            UUID playerCraftingInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory);
+            UUID playerCraftingResultUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory);
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    builder(systemsAdminClient.uuidComponentManager.getRegisteredComponent(systemsAdminClient.inventoryManager.getChestInventoryId(playerId)).getUuid(), playerInventory).build(),
-
-                    builder(systemsAdminClient.uuidComponentManager.getRegisteredComponent(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory).getUuid(), craftingInventory)
+                    builder(playerInventoryUuid, playerInventory)
                             .build(),
-                    builder(systemsAdminClient.uuidComponentManager.getRegisteredComponent(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory).getUuid(), craftingResultInventory)
+                    builder(playerCraftingInventoryUuid, craftingInventory)
+                            .build(),
+                    builder(playerCraftingResultUuid, craftingResultInventory)
                             .notClickAndDropDst()
                             .build()
-            }, new UUID[0]); // pas d'inventaire à supprimé à la fermeture de l'inventaire, vu que les items du joueurs, on les garde
+            }, new UUID[]{
+                    playerInventoryUuid,
+                    playerCraftingInventoryUuid,
+                    playerCraftingResultUuid
+            });
         };
     }
 
     public void refreshInventory(AddAndDisplayInventoryArgs displayInventoryArgs) {
+        deleteInventoriesToClearItemsOnClose();
         clearDisplayInventory();
         displayAddTable(displayInventoryArgs.addTable());
         displayInventory(displayInventoryArgs.args());
@@ -260,7 +252,7 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void displayInventory(DisplayInventoryArgs displayInventoryArgs) {
-        int inventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(displayInventoryArgs.inventoryUuid(), InventoryComponent.class);
+        int inventoryId = systemsAdminClient.uuidEntityManager.getEntityId(displayInventoryArgs.inventoryUuid());
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryUuid(), inventoryStage, displayInventoryArgs.isClickAndDropSrc(), displayInventoryArgs.isClickAndDropDst(), displayInventoryArgs.getDstRequirePredicate());
         for (int i = 0; i < tableImages.size; i++) {
@@ -273,14 +265,14 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
         final Array<Table> tableImages = new Array<>();
-        int inventoryOriginalId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(inventoryUuid, InventoryComponent.class, InventoryUiComponent.class);
+        int inventoryOriginalId = systemsAdminClient.uuidEntityManager.getEntityId(inventoryUuid);
         InventoryComponent inventoryComponent = mInventory.get(inventoryOriginalId);
         InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryOriginalId);
         int[][] inventory = inventoryComponent.inventory;
         for (int i = 0; i < inventory.length; i++) {
             int finalI = i;
             Supplier<int[]> getStack = () -> {
-                int inventoryId = systemsAdminClient.uuidComponentManager.getRegisteredComponent(inventoryUuid);
+                int inventoryId = systemsAdminClient.uuidEntityManager.getEntityId(inventoryUuid);
                 if (inventoryId == -1) {
                     System.out.println(inventoryUuid);
                     return new int[1];
@@ -320,6 +312,18 @@ public class PlayerInventorySystem extends BaseSystem {
         nombreItem.setFontScale(0.5f);
         nombreItem.moveBy(0, backGroundTextureRegion.getRegionHeight() - 7);
         return table;
+    }
+
+    private void deleteInventoriesToClearItemsOnClose() {
+        for (UUID inventoryToClearItem : currentInventoriesToClearItemOnClose) {
+            int inventoryId = systemsAdminClient.inventoryManager.getInventoryByUUID(inventoryToClearItem);
+            if (inventoryId != -1) {
+                InventoryComponent inventoryComponent = mInventory.get(inventoryId);
+                for (int[] stack : inventoryComponent.inventory) {
+                    systemsAdminClient.inventoryManager.deleteStack(stack);
+                }
+            }
+        }
     }
 
     public void createClickAndDrop(int playerId) {

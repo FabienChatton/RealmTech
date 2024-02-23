@@ -43,7 +43,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
             faceComponent.setMultiFace(false);
             faceComponent.setFace(face);
             faceComponent.setBaseTextures("energy-battery-01");
-            systemsAdminCommun.uuidComponentManager.createRegisteredComponent(energyBatteryUuid != null ? energyBatteryUuid : UUID.randomUUID(), entityId);
+            systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(energyBatteryUuid != null ? energyBatteryUuid : UUID.randomUUID(), entityId);
         });
     }
 
