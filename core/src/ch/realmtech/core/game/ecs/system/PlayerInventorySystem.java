@@ -216,9 +216,9 @@ public class PlayerInventorySystem extends BaseSystem {
                             .notClickAndDropDst()
                             .build()
             }, new UUID[]{
-                    playerInventoryUuid,
-                    playerCraftingInventoryUuid,
-                    playerCraftingResultUuid
+//                    playerInventoryUuid,
+//                    playerCraftingInventoryUuid,
+//                    playerCraftingResultUuid
             });
         };
     }
