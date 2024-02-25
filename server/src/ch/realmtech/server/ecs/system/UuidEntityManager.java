@@ -98,12 +98,12 @@ public class UuidEntityManager extends Manager {
     public void registerEntityIdWithUuid(UUID uuid, int entityId) throws IllegalStateException {
         if (uuidEntities.stream().anyMatch((uuidEntity) -> uuidEntity.entityId() == entityId)) {
             String[] componentsClassName = getComponentsClassName(entityId);
-            throw new IllegalStateException("This entity has already a uuid. entity components: " + String.join(",", componentsClassName));
+            throw new IllegalStateException("This entity has already a uuid. entity components: " + String.join(",", componentsClassName) + " id: " + entityId + ", uuid: " + uuid);
         }
-        if (uuidEntities.stream().anyMatch((uuidEntity) -> uuidEntity.uuid() == uuid)) {
+        if (uuidEntities.stream().anyMatch((uuidEntity) -> uuidEntity.uuid().equals(uuid))) {
             int alreadyEntityId = getEntityId(uuid);
             String[] componentsClassName = getComponentsClassName(alreadyEntityId);
-            throw new IllegalStateException("This uuid has already ben registered: " + String.join(",", componentsClassName));
+            throw new IllegalStateException("This uuid has already ben registered: " + String.join(",", componentsClassName) + " id: " + entityId + ", uuid: " + uuid);
         }
         synchronized (uuidEntities) {
             uuidEntities.add(new UuidEntity(entityId, uuid));

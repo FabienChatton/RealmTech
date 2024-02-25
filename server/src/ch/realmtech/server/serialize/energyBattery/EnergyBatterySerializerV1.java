@@ -8,6 +8,7 @@ import ch.realmtech.server.energy.EnergyBatteryEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
+import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.artemis.annotations.Wire;
@@ -46,7 +47,7 @@ public class EnergyBatterySerializerV1 implements Serializer<Integer, EnergyBatt
         long capacity = buffer.readLong();
 
         byte face = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getFaceSerializerController());
-        return EnergyBatteryEditEntity.create(energyBatteryUuid, stored, capacity, face);
+        return EnergyBatteryEditEntity.create(new UuidSupplierOrRandom(energyBatteryUuid), stored, capacity, face);
     }
 
     @Override

@@ -50,8 +50,4 @@ public class CraftingTableEditEntity implements EditEntity {
         });
     }
 
-    @Override
-    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
-        deleteEntity(executeOnContext, entityId);
-    }
 }

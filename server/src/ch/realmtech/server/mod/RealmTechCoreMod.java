@@ -432,10 +432,6 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             executeOnContext.onClient((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId));
                         }
 
-                        @Override
-                        public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
-                            deleteEntity(executeOnContext, entityId);
-                        }
                     })
                     .breakWith(ItemType.HAND, "realmtech.torch")
                     .build()),

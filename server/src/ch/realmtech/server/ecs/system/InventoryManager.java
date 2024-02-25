@@ -177,6 +177,7 @@ public class InventoryManager extends Manager {
         final int tailleStack = InventoryManager.tailleStack(stack);
         for (int i = 0; i < tailleStack; i++) {
             world.delete(stack[i]);
+            systemsAdminCommun.uuidEntityManager.deleteRegisteredEntity(stack[i]);
         }
         clearStack(stack);
     }

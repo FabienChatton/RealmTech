@@ -208,7 +208,7 @@ public class MapManager extends Manager {
         System.arraycopy(cellIds, 0, newCellIds, 0, indexCell);
         System.arraycopy(cellIds, indexCell + 1, newCellIds, indexCell, newCellIds.length - indexCell);
         infChunkComponent.infCellsId = newCellIds;
-        supprimeCell(cellId, true);
+        deleteCell(cellId);
     }
     public int generateNewChunk(SaveMetadataComponent saveMetadataComponent, int chunkPosX, int chunkPosY) {
         int chunkId = world.create();
@@ -288,13 +288,13 @@ public class MapManager extends Manager {
         }
         int index = Arrays.stream(chunkComponent.infCellsId).boxed().toList().indexOf(cellId);
 
-        supprimeCell(cellId, false);
+        deleteCell(cellId);
         int newCellId = newCell(chunkId, chunkPosX, chunkPosY, cellArgs);
 
         chunkComponent.infCellsId[index] = newCellId;
     }
 
-    public void supprimeCell(int cellId, boolean deleteEntityEdit) {
+    public void deleteCell(int cellId) {
         CellComponent cellComponent = mCell.get(cellId);
         if (cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody() != null) {
             Box2dComponent box2dComponent = mBox2d.get(cellId);
@@ -302,13 +302,9 @@ public class MapManager extends Manager {
             cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
         }
         cellComponent.cellRegisterEntry.getCellBehavior().getEditEntity()
-                .ifPresent(editEntity -> {
+                .ifPresent((editEntity) -> {
                     ExecuteOnContext executeOnContext = world.getRegistered("executeOnContext");
-                    if (deleteEntityEdit) {
-                        editEntity.deleteEntity(executeOnContext, cellId);
-                    } else {
-                        editEntity.replaceEntity(executeOnContext, cellId);
-                    }
+                    editEntity.deleteEntity(executeOnContext, cellId);
                 });
         world.delete(cellId);
     }
@@ -328,7 +324,7 @@ public class MapManager extends Manager {
         world.delete(chunkId);
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            world.getSystem(MapManager.class).supprimeCell(infChunkComponent.infCellsId[i], true);
+            world.getSystem(MapManager.class).deleteCell(infChunkComponent.infCellsId[i]);
         }
     }
 

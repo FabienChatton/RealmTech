@@ -31,8 +31,4 @@ public class EnergyCableEditEntity implements EditEntity {
 
     }
 
-    @Override
-    public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
-
-    }
 }

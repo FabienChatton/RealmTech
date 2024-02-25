@@ -146,12 +146,6 @@ public class CellBehavior {
                     }
                 }
 
-                @Override
-                public void replaceEntity(ExecuteOnContext executeOnContext, int entityId) {
-                    for (EditEntity entity : editEntity) {
-                        entity.replaceEntity(executeOnContext, entityId);
-                    }
-                }
             };
             return this;
         }

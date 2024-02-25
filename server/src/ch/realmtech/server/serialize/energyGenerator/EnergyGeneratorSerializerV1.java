@@ -8,6 +8,7 @@ import ch.realmtech.server.energy.EnergyGeneratorEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
+import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import io.netty.buffer.ByteBuf;
@@ -43,7 +44,7 @@ public class EnergyGeneratorSerializerV1 implements Serializer<Integer, EnergyGe
         int remainingTickToBurn = buffer.readInt();
         long stored = buffer.readLong();
         long capacity = buffer.readLong();
-        return new EnergyGeneratorEditEntity(energyGeneratorUuid, remainingTickToBurn, stored, capacity);
+        return new EnergyGeneratorEditEntity(new UuidSupplierOrRandom(energyGeneratorUuid), remainingTickToBurn, stored, capacity);
     }
 
     @Override

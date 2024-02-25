@@ -11,6 +11,7 @@ import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
+import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import io.netty.buffer.ByteBuf;
@@ -71,7 +72,7 @@ public class FurnaceSerializerV1 implements Serializer<Integer, FurnaceEditEntit
         InventoryArgs carburentInventoryArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager()).apply(itemManager);
         UUID carburantInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
 
-        return new FurnaceEditEntity(furnaceUuid, craftingInventoryUuid, craftingInventoryArgs.inventory(), carburantInventoryUuid, carburentInventoryArgs.inventory(), craftingResultInventoryUuid, craftingResultInventoryArgs.inventory());
+        return new FurnaceEditEntity(new UuidSupplierOrRandom(furnaceUuid), new UuidSupplierOrRandom(craftingInventoryUuid), craftingInventoryArgs.inventory(), new UuidSupplierOrRandom(carburantInventoryUuid), carburentInventoryArgs.inventory(), new UuidSupplierOrRandom(craftingResultInventoryUuid), craftingResultInventoryArgs.inventory());
     }
 
     @Override
