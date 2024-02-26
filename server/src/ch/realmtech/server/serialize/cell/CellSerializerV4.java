@@ -4,6 +4,7 @@ import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.EditEntity;
+import ch.realmtech.server.level.cell.EditEntityCreate;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.serialize.AbstractSerializerController;
 import ch.realmtech.server.serialize.Serializer;
@@ -65,13 +66,16 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
         } else {
             editEntityArgs = null;
         }
-        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, (executeOnContext, entityId) -> {
-            if (editEntityArgs != null) {
-                for (int i = 0; i < editEntityArgs.length; i++) {
-                    editEntityArgs[i].createEntity(executeOnContext, entityId);
+
+        EditEntityCreate editEntityCreate = null;
+        if (editEntityArgs != null) {
+            editEntityCreate = (executeOnContext, entityId) -> {
+                for (EditEntity editEntityArg : editEntityArgs) {
+                    editEntityArg.createEntity(executeOnContext, entityId);
                 }
-            }
-        });
+            };
+        }
+        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, editEntityCreate);
     }
 
     @Override

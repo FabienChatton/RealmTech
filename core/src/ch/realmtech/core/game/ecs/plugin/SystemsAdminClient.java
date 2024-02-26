@@ -101,7 +101,6 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 playerTextureAnimated,
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
-                lightCycleSystem,
                 tiledTextureSystem,
                 playerFootStepSystem,
 
@@ -112,6 +111,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 textureRenderer,
                 cellBeingMineRenderSystem,
                 gameStageBatchEndSystem,
+                lightCycleSystem,
 
                 // ui
                 wailaSystem,
