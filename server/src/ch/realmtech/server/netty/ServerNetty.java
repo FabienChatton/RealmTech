@@ -58,7 +58,7 @@ public class ServerNetty {
                     }
                 });
         channel = sb.bind(connexionConfig.getPort()).sync().channel();
-        logger.info("Le serveur à ouvert sur le port {}", connexionConfig.getPort());
+        logger.info("Server listen port: {}", connexionConfig.getPort());
         channel.closeFuture().addListener(ChannelFutureListener.CLOSE);
     }
 

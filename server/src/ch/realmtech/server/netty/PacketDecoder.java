@@ -15,8 +15,13 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        if (in.readableBytes() < Integer.BYTES) {
+            throw new Exception("Packet received but to small to read packetId");
+        }
         int packetId = in.readInt();
-        if (ServerContext.PACKETS.containsKey(packetId)) {
+        if (!ServerContext.PACKETS.containsKey(packetId)) {
+            throw new Exception("Packet id not identified. Packet id:" + packetId);
+        } else {
             Packet incomingPacket = ServerContext.PACKETS.get(packetId).apply(in);
             out.add(incomingPacket);
         }
@@ -24,8 +29,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
-        logger.error("Une erreur est survenue {}", cause.getMessage());
+        logger.error("Exception Caught: {}", cause.getMessage());
         ctx.channel().close();
     }
 }

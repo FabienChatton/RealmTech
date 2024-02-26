@@ -27,14 +27,14 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         Channel incomingChannel = ctx.channel();
-        logger.info("{} c'est connecté du serveur", incomingChannel.remoteAddress());
+        logger.info("connexion open with: {}", incomingChannel.remoteAddress());
         channels.add(incomingChannel);
     }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         Channel incomingChannel = ctx.channel();
-        logger.info("{} c'est déconnecté du serveur", incomingChannel.remoteAddress());
+        logger.info("connexion close with: {}", incomingChannel.remoteAddress());
         serverExecute.removePlayer(incomingChannel);
         channels.remove(incomingChannel);
     }
@@ -47,7 +47,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<ServerPacket> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-        logger.error("Une erreur est survenue {}", cause.getMessage());
+        logger.error("Exception caught with {}, {}", ctx.channel().remoteAddress(), cause.getMessage());
         ctx.channel().close();
     }
 
