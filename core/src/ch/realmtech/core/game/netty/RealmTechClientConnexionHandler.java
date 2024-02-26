@@ -38,7 +38,7 @@ public class RealmTechClientConnexionHandler implements Closeable {
     public void close() throws IOException {
         try {
             if (client != null) client.close();
-            if (server != null) server.close().await();
+            if (server != null) server.saveAndClose().await();
         } catch (InterruptedException e) {
             throw new IOException(e);
         }

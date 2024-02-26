@@ -112,6 +112,7 @@ public final class EcsEngineServer implements GetWorld {
         int mapId = world.getSystem(SaveInfManager.class).generateOrLoadSave(connexionConfig);
         world.getSystem(TagManager.class).register("infMap", mapId);
         systemsAdminServer.mapSystemServer.initMap();
+        serverContext.save();
         logger.info("Map \"{}\" has successfully load", connexionConfig.getSaveName());
     }
 

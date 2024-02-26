@@ -11,7 +11,7 @@ public class StopCommand implements Callable<Integer> {
     private MasterServerCommand masterServerCommand;
     @Override
     public Integer call() throws Exception {
-        masterServerCommand.serverContext.close().await();
+        masterServerCommand.serverContext.saveAndClose().await();
         return 0;
     }
 }

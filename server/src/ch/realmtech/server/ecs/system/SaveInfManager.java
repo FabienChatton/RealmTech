@@ -76,8 +76,9 @@ public class SaveInfManager extends Manager {
 
     public int generateNewSave(ConnexionConfig connexionConfig) throws IOException {
         String saveName = connexionConfig.getSaveName();
-        if (saveName == null || saveName.isBlank()) throw new IllegalArgumentException("le nom de la sauvegarde ne peut pas être null ou vide");
-        if (saveName.contains("/")) throw new IllegalArgumentException("le nom du la sauvegarde ne peut pas contenir de \"/\"");
+        if (saveName == null || saveName.isBlank())
+            throw new IllegalArgumentException("Save name can not be empty or null.");
+        if (saveName.contains("/")) throw new IllegalArgumentException("Save name can not contains \"/\"");
         creerHiearchieDUneSave(saveName);
         int mapId = world.create();
         int metaDonneesId = createSaveMetadata(saveName, connexionConfig.getSeed());
@@ -178,7 +179,7 @@ public class SaveInfManager extends Manager {
 
     private static void creerHiearchieDUneSave(String saveName) throws IOException {
         Path savePath = getSavePath(saveName);
-        logger.info("création de la sauvegarde \"{}\"", savePath.toAbsolutePath());
+        logger.info("Creating save folder \"{}\"", savePath.toAbsolutePath());
         creerHiearchieLevel(savePath);
         creerHiearchieChunk(savePath);
     }

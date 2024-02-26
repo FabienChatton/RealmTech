@@ -29,7 +29,7 @@ class SerializerControllerTest {
 
     @AfterAll
     static void EndEmulator() throws Exception {
-        serverContext.close();
+        serverContext.saveAndClose();
     }
 
     @Test

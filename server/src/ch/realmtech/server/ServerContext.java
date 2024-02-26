@@ -35,6 +35,7 @@ public class ServerContext {
     private final CommandeServerExecute commandeServerExecute;
     private final AuthRequest authRequest;
     private OptionServer optionServer;
+    private volatile boolean saveAndClose = false;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -83,7 +84,6 @@ public class ServerContext {
             reloadOption();
             optionServer.verifyAccessToken.set(connexionConfig.isVerifyAccessToken());
             ecsEngineServer = new EcsEngineServer(this);
-            ecsEngineServer.prepareSaveToLoad(connexionConfig);
             serverExecuteContext = new ServerExecuteContext(this);
             serverNetty = new ServerNetty(connexionConfig, serverExecuteContext);
             serverResponseHandler = new ServerResponse(this);
@@ -92,11 +92,12 @@ public class ServerContext {
             tickThread = new TickThread(this);
             commandServerThread.start();
             tickThread.start();
+            ecsEngineServer.prepareSaveToLoad(connexionConfig);
             authRequest = new AuthRequest(this);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {
-                close();
+                saveAndClose();
             } catch (Exception ignored) {}
             throw e;
         }
@@ -115,26 +116,37 @@ public class ServerContext {
             commandLine.printVersionHelp(System.out);
             return;
         }
-        new ServerContext(connexionConfig);
+        ServerContext serverContext = new ServerContext(connexionConfig);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!serverContext.saveAndClose) {
+                try {
+                    serverContext.saveAndClose().await();
+                } catch (Exception e) {
+                    System.err.println("Can not close server on shutdownHook. Error: " + e.getMessage());
+                    System.err.println(e);
+                }
+            }
+        }));
     }
 
-
-    public ChannelFuture close() throws InterruptedException, IOException {
-        logger.info("Fermeture du serveur...");
+    public ChannelFuture saveAndClose() throws InterruptedException, IOException {
+        logger.info("Closing server...");
         try {
-            optionServer.save();
-        } catch (Exception e) {
-            logger.error("Option file can not be saved. {}", e.getMessage());
+            save();
+        } catch (IOException e) {
+            logger.error("Can not save. {}", e.getMessage(), e);
         }
-        try {
-            ecsEngineServer.saveMap();
-        } catch (Exception ignored) {}
-        try {
-            getSystem(PlayerManagerServer.class).savePlayers();
-        } catch (IOException ignored) {}
         tickThread.close();
         commandServerThread.close();
+        saveAndClose = true;
         return serverNetty.close();
+    }
+
+    public void save() throws IOException {
+        logger.info("Saving map...");
+        optionServer.save();
+        ecsEngineServer.saveMap();
+        getSystem(PlayerManagerServer.class).savePlayers();
     }
 
     public ServerNetty getServerNetty() {

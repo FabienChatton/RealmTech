@@ -30,7 +30,7 @@ public class TickThread extends Thread implements Closeable {
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     try {
-                        serverContext.close();
+                        serverContext.saveAndClose();
                     } catch (InterruptedException | IOException ex) {
                         logger.error("Can not close server while an exception in tick thread has occur");
                     }
