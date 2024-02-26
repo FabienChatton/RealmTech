@@ -54,23 +54,24 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
 
         float acceleration = FORCE * cellSpeedEffect;
 
-        float xFactor = 0;
-        float yFactor = 0;
+        Vector2 vector2 = new Vector2();
         if (isInputKeysLeft(inputKeys)) {
-            xFactor += -acceleration;
+            vector2.x += -1;
         }
         if (isInputKeysDown(inputKeys)) {
-            yFactor += -acceleration;
+            vector2.y += -1;
         }
         if (isInputKeysUp(inputKeys)) {
-            yFactor += acceleration;
+            vector2.y += 1;
         }
         if (isInputKeysRight(inputKeys)) {
-            xFactor += acceleration;
+            vector2.x += 1;
         }
 
-        movementComponent.speed.x = xFactor;
-        movementComponent.speed.y = yFactor;
+        vector2.nor();
+
+        movementComponent.speed.x = vector2.x * acceleration;
+        movementComponent.speed.y = vector2.y * acceleration;
     }
 
     public static byte getKeysInputPlayerMouvement(boolean left, boolean down, boolean up, boolean right) {
