@@ -1,7 +1,6 @@
 package ch.realmtech.core.screen.uiComponent;
 
 import ch.realmtech.core.RealmTech;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -46,10 +45,10 @@ public class ConsoleUi {
                 stringWriter.getBuffer().setLength(0);
             }
         };
-        consoleWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        consoleWindow.setFillParent(true);
 
         scroll = new ScrollPane(outputTextContainer, skin);
-        scroll.setFadeScrollBars(false);
+        scroll.setOverscroll(false, false);
         consoleWindow.add(scroll).colspan(2).expand().fill().padBottom(10f).left().row();
         consoleWindow.add(textFieldInput).expandX().fillX();
         consoleWindow.add(flushButton).row();
