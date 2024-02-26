@@ -10,8 +10,8 @@ import com.artemis.utils.IntBag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static picocli.CommandLine.*;
 
@@ -28,21 +28,14 @@ public class DumpEntities implements Runnable {
     @Option(names = {"-u", "-uuid"}, description = "Uuid component to find")
     private String uuidFilter;
 
-    // FIXME mettre le retour des filtre uuid
     @Override
     public void run() {
         StringBuffer sb = new StringBuffer();
         IntBag entities;
-        List<Class<? extends Component>> componentsFilterPlus = new ArrayList<>();
-        if (uuidFilter != null) {
-//            componentsFilterPlus.add(UuidComponent.class);
-        }
 
         try {
             entities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager()
-                    .get(Aspect.one(Stream.concat(
-                            findComponentsClassByName(componentFind).stream(),
-                            componentsFilterPlus.stream()).toList())
+                    .get(Aspect.one(findComponentsClassByName(componentFind).stream().toList())
                     .exclude(findComponentsClassByName(componentExclude))).getEntities();
         } catch (ClassNotFoundException e) {
             dumpCommand.masterCommand.output.println(e.getMessage());
@@ -52,13 +45,13 @@ public class DumpEntities implements Runnable {
         IntBag entitiesBag;
 
         if (uuidFilter != null) {
-            entitiesBag = new IntBag(entities.size());
-            SystemsAdminCommun systemsAdminCommun = dumpCommand.masterCommand.getWorld().getRegistered("SystemsAdmin");
+            entitiesBag = new IntBag();
+            SystemsAdminCommun systemsAdminCommun = dumpCommand.masterCommand.getWorld().getRegistered("systemsAdmin");
             int[] entitiesData = entities.getData();
             for (int i = 0; i < entities.size(); i++) {
                 int entityId = entitiesData[i];
-                String uuidString = systemsAdminCommun.uuidEntityManager.getEntityUuid(entityId).toString();
-                if (uuidString.matches(uuidFilter)) {
+                UUID entityUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(entityId);
+                if (entityUuid != null && entityUuid.toString().equals(uuidFilter)) {
                     entitiesBag.add(entityId);
                 }
             }
@@ -72,7 +65,7 @@ public class DumpEntities implements Runnable {
         }
 
         dumpCommand.atVerboseLevel(1, () -> {
-            for (int i = 0; i < entities.size(); i++) {
+            for (int i = 0; i < entitiesBag.size(); i++) {
                 int entityId = entitiesBag.get(i);
                 String entityString = dumpCommand.atVerboseLevel(2, () -> {
                     Bag<Component> components = new Bag<>();
@@ -87,7 +80,7 @@ public class DumpEntities implements Runnable {
                 sb.append(entityString).append("\n");
             }
         });
-        if (entities.isEmpty()) dumpCommand.printlnVerbose(0, "no entities");
+        if (entitiesBag.isEmpty()) dumpCommand.printlnVerbose(0, "no entities");
         else {
             dumpCommand.atVerboseLevel(1, () -> {
                 dumpCommand.masterCommand.output.println(
@@ -96,7 +89,7 @@ public class DumpEntities implements Runnable {
                 );
                 dumpCommand.masterCommand.output.println(sb);
             });
-            dumpCommand.printlnVerbose(0, "entities count: " + entities.size());
+            dumpCommand.printlnVerbose(0, "entities count: " + entitiesBag.size());
         }
     }
 
