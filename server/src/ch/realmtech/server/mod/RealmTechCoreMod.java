@@ -163,6 +163,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .speedEffect(0.5f)
                     .playerWalkSound(0.25f, SoundManager.FOOT_STEP_WATER_1, SoundManager.FOOT_STEP_WATER_2, SoundManager.FOOT_STEP_WATER_3, SoundManager.FOOT_STEP_WATER_4)
                     .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
+                    .canPlaceCellOnTop(false)
                     .build()
     ));
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
@@ -170,6 +171,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.HAND, "realmtech.buche")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .canPlaceCellOnTop(false)
                     .build()
     ));
     //</editor-fold>
@@ -195,6 +197,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .breakWith(ItemType.HAND, "realmtech.craftingTable")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
+                    .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
@@ -244,6 +247,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .breakWith(ItemType.HAND, "realmtech.furnace")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntity(FurnaceEditEntity.createFurnace())
+                    .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
@@ -319,6 +323,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .breakWith(ItemType.HAND, "realmtech.chest")
                     .editEntity(ChestEditEntity.createNewInventory(9, 3))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
                         ChestComponent chestComponent = mChest.get(cellId);
@@ -360,6 +365,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "copper-ore-03",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PICKAXE, "realmtech.copperOre")
+                    .canPlaceCellOnTop(false)
                     .build()
     ), new ItemRegisterEntry(
             "copper-ore-03",
@@ -370,6 +376,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "stone-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PICKAXE, "realmtech.stone")
+                    .canPlaceCellOnTop(false)
                     .build()
     ), new ItemRegisterEntry(
             "stone-ore-01",
@@ -380,6 +387,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "iron-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PICKAXE, "realmtech.ironOre")
+                    .canPlaceCellOnTop(false)
                     .build()
     ), new ItemRegisterEntry(
             "iron-ore-01",
@@ -389,6 +397,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "tin-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PICKAXE, "realmtech.tinOre")
+                    .canPlaceCellOnTop(false)
                     .build()
     ), new ItemRegisterEntry(
             "tin-ore-01",
@@ -398,6 +407,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "coal-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PICKAXE, "realmtech.coal")
+                    .canPlaceCellOnTop(false)
                     .build()
     ), new ItemRegisterEntry(
             "coal-ore-01",
@@ -407,6 +417,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             "gold-ore-01",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.PICKAXE, "realmtech.goldOre")
+                    .canPlaceCellOnTop(false)
                     .build()
     ), new ItemRegisterEntry(
             "gold-ore-01",
@@ -415,6 +426,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
 
     public static CellItemRegisterEntry TORCH = registerCellItem("torch", new CellRegisterEntry("torch-01", CellBehavior
                     .builder(Cells.Layer.BUILD_DECO)
+                    .canPlaceCellOnTop(false)
                     .editEntity(new EditEntity() {
                         @Override
                         public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
@@ -444,6 +456,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .breakWith(ItemType.HAND, "realmtech.energyBattery")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                     .editEntity(EnergyBatteryEditEntity.createDefault())
+                    .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
                         System.out.println(energyBatteryComponent.getStored());
@@ -456,6 +469,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
 
     public static CellItemRegisterEntry ENERGY_CABLE = registerCellItem("energyCable", new CellRegisterEntry("energy-cable-01-item", CellBehavior
             .builder(Cells.Layer.BUILD_DECO)
+                    .canPlaceCellOnTop(false)
             .breakWith(ItemType.HAND, "realmtech.energyCable")
                     .editEntity(new EnergyCableEditEntity((byte) 0))
             .build()),
@@ -469,6 +483,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .breakWith(ItemType.HAND, "realmtech.energyGenerator")
                     .editEntity(EnergyGeneratorEditEntity.createDefault(), ChestEditEntity.createNewInventory(1, 1))
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
+                    .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
                         ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);

@@ -26,6 +26,7 @@ public class CellBehavior {
     private RightClickInteraction interagieClickDroit;
     private int tiledTextureX;
     private int tiledTextureY;
+    private boolean canPlaceCellOnTop = true;
 
     public static CellBehaviorBuilder builder(byte layer) {
         return new CellBehaviorBuilder(layer);
@@ -86,6 +87,10 @@ public class CellBehavior {
 
     public int getTiledTextureY() {
         return tiledTextureY;
+    }
+
+    public boolean isCanPlaceCellOnTop() {
+        return canPlaceCellOnTop;
     }
 
     public static class CellBehaviorBuilder {
@@ -172,6 +177,14 @@ public class CellBehavior {
         public CellBehaviorBuilder tiledTexture(int maxX, int maxY) {
             cellBehavior.tiledTextureX = maxX;
             cellBehavior.tiledTextureY = maxY;
+            return this;
+        }
+
+        /**
+         * default true
+         */
+        public CellBehaviorBuilder canPlaceCellOnTop(boolean canPlaceCellOnTop) {
+            cellBehavior.canPlaceCellOnTop = canPlaceCellOnTop;
             return this;
         }
 

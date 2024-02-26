@@ -275,6 +275,13 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
             return -1;
         }
 
+        int topCellId = systemsAdminServer.mapManager.getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        CellComponent topCellComponent = mCell.get(topCellId);
+        // can not place cell on top
+        if (!topCellComponent.cellRegisterEntry.getCellBehavior().isCanPlaceCellOnTop()) {
+            return -1;
+        }
+
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         mItem.remove(itemId);
