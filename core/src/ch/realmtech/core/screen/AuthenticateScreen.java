@@ -28,6 +28,7 @@ public class AuthenticateScreen extends AbstractScreen {
         usernameTextField.setMessageText("username");
         passwordTextField.setMessageText("password");
         passwordTextField.setPasswordMode(true);
+        passwordTextField.setPasswordCharacter('*');
         loginAction = new OnClick((event, x, y)  -> verifyCredential());
         saveCredentialCheckBox = new CheckBox("save credential", skin);
         anonymousAction = new OnClick((event, x, y) -> {
