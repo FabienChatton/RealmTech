@@ -6,6 +6,10 @@ COPY ./ /build
 
 WORKDIR /build
 
+RUN apt update; apt install dos2unix
+
+RUN dos2unix ./gradlew
+
 RUN ./gradlew server:dist
 
 FROM openjdk:17-jdk-slim
