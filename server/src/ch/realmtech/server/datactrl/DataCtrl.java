@@ -1,6 +1,5 @@
 package ch.realmtech.server.datactrl;
 
-import ch.realmtech.server.ecs.system.SaveInfManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,28 +10,33 @@ import java.nio.file.Path;
 
 public class DataCtrl {
     private final static Logger logger = LoggerFactory.getLogger(DataCtrl.class);
-    public final static String ROOT_PATH = "RealmTechData";
-    public final static String PATH_PROPERTIES = "properties";
-    public final static String PLAYERS_PATH = "players";
-    public final static String OPTIONS_FILE = "options.cfg";
-    public final static String OPTIONS_SERVER_FILE = "optionsServer.cfg";
+    private volatile static String rootPath = "";
+    private final static String ROOT_DATA = "RealmTechData";
+    private final static String PATH_PROPERTIES = "properties";
+    private final static String PLAYERS_PATH = "players";
+    private final static String OPTIONS_FILE = "options.cfg";
+    private final static String ROOT_PATH_SAVES = "saves";
+    private final static String OPTIONS_SERVER_FILE = "optionsServer.cfg";
     public final static int SCREEN_WIDTH = 1024;
     public final static int SCREEN_HEIGHT = 576;
 
-    public DataCtrl() throws IOException{
-        creerHiearchieRealmTechData();
-    }
-
-    public static void creerHiearchieRealmTechData() throws IOException {
-        File root = Path.of(ROOT_PATH).toFile();
-        if (!root.exists()) {
-            Files.createDirectories(root.toPath());
+    public static void creerHiearchieRealmTechData(String rootPath) throws IOException {
+        if (!rootPath.isEmpty()) {
+            DataCtrl.rootPath = rootPath;
+            File rootPathFile = Path.of(DataCtrl.rootPath).toFile();
+            if (!rootPathFile.exists()) {
+                Files.createDirectories(rootPathFile.toPath());
+            }
         }
-        File rootSave = Path.of(String.format("%s/%s", ROOT_PATH, SaveInfManager.ROOT_PATH_SAVES)).toFile();
+        File rootData = Path.of(ROOT_DATA).toFile();
+        if (!rootData.exists()) {
+            Files.createDirectories(rootData.toPath());
+        }
+        File rootSave = Path.of(String.format("%s%s/%s", DataCtrl.rootPath, ROOT_DATA, ROOT_PATH_SAVES)).toFile();
         if (!rootSave.exists()) {
             Files.createDirectories(rootSave.toPath());
         }
-        File rootProperties = Path.of(String.format("%s/%s", ROOT_PATH, PATH_PROPERTIES)).toFile();
+        File rootProperties = Path.of(String.format("%s%s/%s", DataCtrl.rootPath, ROOT_DATA, PATH_PROPERTIES)).toFile();
         if (!rootProperties.exists()) {
             Files.createDirectories(rootProperties.toPath());
         }
@@ -46,15 +50,23 @@ public class DataCtrl {
         }
     }
 
+    public static String getRootPath() {
+        return DataCtrl.rootPath;
+    }
+
     public static File getOptionFile() {
-        return Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_FILE)).toFile();
+        return Path.of(String.format("%s%s/%s/%s", rootPath, ROOT_DATA, PATH_PROPERTIES, OPTIONS_FILE)).toFile();
     }
 
     public static File getOptionServerFile() {
-        return Path.of(String.format("%s/%s/%s", ROOT_PATH, PATH_PROPERTIES, OPTIONS_SERVER_FILE)).toFile();
+        return Path.of(String.format("%s%s/%s/%s", rootPath, ROOT_DATA, PATH_PROPERTIES, OPTIONS_SERVER_FILE)).toFile();
     }
 
     public static File getPlayersDir(String saveName) {
-        return Path.of(String.format("%s/%s/%s/%s", ROOT_PATH, SaveInfManager.ROOT_PATH_SAVES, saveName, PLAYERS_PATH)).toFile();
+        return Path.of(String.format("%s%s/%s/%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES, saveName, PLAYERS_PATH)).toFile();
+    }
+
+    public static Path getLocalPathSaveRoot() throws IOException {
+        return Path.of(String.format("%s%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES));
     }
 }

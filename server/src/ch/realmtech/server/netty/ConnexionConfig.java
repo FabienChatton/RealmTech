@@ -10,13 +10,15 @@ public final class ConnexionConfig {
     private final String saveName;
     private final boolean verifyAccessToken;
     private final long seed;
+    private final String rootPath;
 
-    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed) {
+    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed, String rootPath) {
         this.host = host;
         this.port = port;
         this.saveName = saveName;
         this.verifyAccessToken = verifyAccessToken;
         this.seed = seed;
+        this.rootPath = rootPath;
     }
 
     public String getHost() {
@@ -39,6 +41,10 @@ public final class ConnexionConfig {
         return seed;
     }
 
+    public String getRootPath() {
+        return rootPath;
+    }
+
     public static ConnexionConfigBuilder builder() {
         return new ConnexionConfigBuilder();
     }
@@ -49,6 +55,7 @@ public final class ConnexionConfig {
         private String saveName = "default";
         private boolean verifyAccessToken = true;
         private long seed = SeedGenerator.randomSeed();
+        private String rootPath = "";
 
         public ConnexionConfigBuilder setHost(String host) {
             this.host = host;
@@ -84,8 +91,13 @@ public final class ConnexionConfig {
             return this;
         }
 
+        public ConnexionConfigBuilder setRootPath(String rootPath) {
+            this.rootPath = rootPath;
+            return this;
+        }
+
         public ConnexionConfig build() {
-            return new ConnexionConfig(host, port, saveName, verifyAccessToken, seed);
+            return new ConnexionConfig(host, port, saveName, verifyAccessToken, seed, rootPath);
         }
     }
 }

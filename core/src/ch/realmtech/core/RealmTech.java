@@ -79,7 +79,15 @@ public final class RealmTech extends Game implements ClientContext {
     public void create() {
         onEcsEngineInitializes = new ArrayList<>();
         try {
-            DataCtrl.creerHiearchieRealmTechData();
+            String os = (System.getProperty("os.name")).toUpperCase();
+            String rootPath;
+            if (os.contains("WIN")) {
+                rootPath = System.getenv("AppData");
+            } else {
+                // linux
+                rootPath = System.getProperty("user.home");
+            }
+            DataCtrl.creerHiearchieRealmTechData(rootPath);
         } catch (IOException e) {
             logger.error("Can not create file structure", e);
             Gdx.app.exit();
@@ -309,6 +317,7 @@ public final class RealmTech extends Game implements ClientContext {
                     connexionConfigBuilder.setSeed(seed);
                 }
                 ConnexionConfig connexionConfig = connexionConfigBuilder
+                        .setRootPath(DataCtrl.getRootPath())
                         .setSaveName(saveName)
                         .setVerifyAccessToken(verifyAccessToken)
                         .build();

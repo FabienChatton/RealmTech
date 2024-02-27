@@ -29,8 +29,6 @@ public class SaveInfManager extends Manager {
     private SystemsAdminCommun systemsAdminCommun;
     @Wire
     private SerializerController serializerController;
-    public final static int SAVE_PROTOCOLE_VERSION = 8;
-    public final static String ROOT_PATH_SAVES = "saves";
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
@@ -119,7 +117,7 @@ public class SaveInfManager extends Manager {
      */
     public int readInfMap(String saveName) throws IOException {
         int worldId = world.create();
-        Path rootSaveDirPath = Path.of(DataCtrl.ROOT_PATH + "/" + ROOT_PATH_SAVES + "/" + saveName);
+        Path rootSaveDirPath = Path.of(getLocalPathSaveRoot() + "/" + saveName);
         logger.info("Lecture de la carte \"{}\"", rootSaveDirPath.toAbsolutePath());
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
         int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath, saveName);
@@ -156,7 +154,6 @@ public class SaveInfManager extends Manager {
     }
 
     public static List<File> listSauvegardeInfinie() throws IOException {
-        DataCtrl.creerHiearchieRealmTechData();
         File rootFile = getLocalPathSaveRoot().toFile();
         List<File> ret = new ArrayList<>();
         for (File file : rootFile.listFiles()) {
@@ -207,8 +204,7 @@ public class SaveInfManager extends Manager {
     }
 
     public static Path getLocalPathSaveRoot() throws IOException {
-        DataCtrl.creerHiearchieRealmTechData();
-        return Path.of(String.format("%s/%s", DataCtrl.ROOT_PATH, ROOT_PATH_SAVES));
+        return DataCtrl.getLocalPathSaveRoot();
     }
 
     public String getSaveName() {

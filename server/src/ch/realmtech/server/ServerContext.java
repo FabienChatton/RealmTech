@@ -76,7 +76,7 @@ public class ServerContext {
     public ServerContext(ConnexionConfig connexionConfig) throws Exception {
         try {
             try {
-                DataCtrl.creerHiearchieRealmTechData();
+                DataCtrl.creerHiearchieRealmTechData(connexionConfig.getRootPath());
             } catch (IOException e) {
                 logger.error("Can not create file structure", e);
                 System.exit(1);
