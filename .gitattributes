@@ -4,6 +4,7 @@
 
 # Never modify line endings of our bash scripts
 *.sh -crlf
+gradlew text
 
 #
 # The above will handle all files NOT found below
