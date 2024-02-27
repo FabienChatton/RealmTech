@@ -42,6 +42,7 @@ public class PlayerFootStepSystem extends IteratingSystem {
             int worldPosY = MapManager.getWorldPos(positionComponent.y);
 
             int chunk = systemsAdminClient.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), systemsAdminClient.mapManager.getInfMap().infChunks);
+            if (chunk == -1) return;
             int cellId = systemsAdminClient.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
 
             CellComponent cellComponent = mCell.get(cellId);

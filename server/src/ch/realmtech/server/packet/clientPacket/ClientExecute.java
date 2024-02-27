@@ -52,6 +52,8 @@ public interface ClientExecute {
 
     void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid);
 
+    void playerOutOfRange(UUID playerUuid);
+
     void playerCreateConnexion(UUID playerUuid);
 
     void furnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull);

@@ -30,6 +30,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final EnergyBatterySystem energyBatterySystem;
     public final EnergyGeneratorSystem energyGeneratorSystem;
     public final DirtyCellSystem dirtyCellSystem;
+    public final PlayerSubscriptionSystem playerSubscriptionSystem;
 
     public SystemsAdminServer() {
         iaSystemServer = new IaSystemServer();
@@ -57,6 +58,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         pickerGroundItemContactSystem = new PickerGroundItemContactSystem();
         playerManagerServer = new PlayerManagerServer();
         dirtyCellSystem = new DirtyCellSystem();
+        playerSubscriptionSystem = new PlayerSubscriptionSystem();
     }
 
 
@@ -87,7 +89,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 physiqueWorldStepSystem,
                 pickerGroundItemContactSystem,
                 playerManagerServer,
-                dirtyCellSystem
+                dirtyCellSystem,
+                playerSubscriptionSystem
         );
     }
 

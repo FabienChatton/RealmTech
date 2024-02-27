@@ -48,7 +48,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     private Map<Integer, List<Position>> chunkADamner;
     private Map<Integer, List<Position>> chunkAObtenir;
     private Map<Integer, List<Position>> chunkAGarders;
-
+    private boolean isInit = false;
     public void initMap() {
         infMapComponent = mInfMap.get(systemsAdminServer.tagManager.getEntityId("infMap"));
         infMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
@@ -56,6 +56,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         chunkADamner = new HashMap<>();
         chunkAObtenir = new HashMap<>();
         chunkAGarders = new HashMap<>();
+        isInit = true;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     @Override
     protected void end() {
-        if (chunkADamner.isEmpty() && chunkAObtenir.isEmpty()) return;
+        if (isInit && chunkADamner.isEmpty() && chunkAObtenir.isEmpty() || chunkAGarders == null) return;
 
         List<Position> tousChunkAGarder = new ArrayList<>();
         for (List<Position> chunkAGarder : chunkAGarders.values()) {
@@ -254,7 +255,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         if (itemDropRegisterEntry != null) {
             systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
         }
-        serverContext.getServerHandler().broadCastPacket(new CellBreakPacket(worldPosX, worldPosY));
+        serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new CellBreakPacket(worldPosX, worldPosY), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
     }
 
     public int placeItemToCell(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {

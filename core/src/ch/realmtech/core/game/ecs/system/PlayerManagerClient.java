@@ -29,6 +29,7 @@ public class PlayerManagerClient extends Manager {
     @Wire
     private BodyDef bodyDef;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;
     private final HashMap<UUID, Integer> players;
@@ -39,10 +40,8 @@ public class PlayerManagerClient extends Manager {
         players = new HashMap<>();
     }
 
-    public int createPlayerClient(float x, float y, UUID uuid) {
-        logger.info("creation du joueur client {} ", uuid);
-        final float playerWorldWith = 0.9f;
-        final float playerWorldHigh = 0.9f;
+    public int createPlayerClient(UUID uuid) {
+        logger.info("Creating player for client side: {} ", uuid);
         int playerId = world.create();
         if (!systemsAdminClient.tagManager.isRegistered(MAIN_PLAYER_TAG)) {
             systemsAdminClient.tagManager.register(MAIN_PLAYER_TAG, playerId);
@@ -52,24 +51,6 @@ public class PlayerManagerClient extends Manager {
             systemsAdminClient.tagManager.register("infMap", mapId);
             world.edit(playerId).create(MainPlayerComponent.class);
         }
-
-        PhysiqueWorldHelper.resetBodyDef(bodyDef);
-        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Body bodyPlayer = physicWorld.createBody(bodyDef);
-        bodyPlayer.setUserData(playerId);
-        PolygonShape playerShape = new PolygonShape();
-        playerShape.setAsBox(playerWorldWith / 2f, playerWorldHigh / 2f);
-        fixtureDef.shape = playerShape;
-        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
-        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
-        bodyPlayer.createFixture(fixtureDef);
-
-        playerShape.dispose();
-
-        // box2d component
-        Box2dComponent box2dComponent = world.edit(playerId).create(Box2dComponent.class);
-        box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
 
         // player component
         PlayerComponent playerComponent = world.edit(playerId).create(PlayerComponent.class);
@@ -81,10 +62,6 @@ public class PlayerManagerClient extends Manager {
         // movement component
         MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
         movementComponent.set(10, 10);
-
-        // position component
-        PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
-        positionComponent.set(box2dComponent, x, y);
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -114,6 +91,36 @@ public class PlayerManagerClient extends Manager {
         return playerId;
     }
 
+    public void playerInRange(float worldX, float worldY, UUID playerUuid) {
+        int playerId = players.get(playerUuid);
+        if (playerId == -1) return;
+
+        final float playerWorldWith = 0.9f;
+        final float playerWorldHigh = 0.9f;
+
+        PhysiqueWorldHelper.resetBodyDef(bodyDef);
+        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        Body bodyPlayer = physicWorld.createBody(bodyDef);
+        bodyPlayer.setUserData(playerId);
+        PolygonShape playerShape = new PolygonShape();
+        playerShape.setAsBox(playerWorldWith / 2f, playerWorldHigh / 2f);
+        fixtureDef.shape = playerShape;
+        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
+        bodyPlayer.createFixture(fixtureDef);
+
+        playerShape.dispose();
+
+        // box2d component
+        Box2dComponent box2dComponent = world.edit(playerId).create(Box2dComponent.class);
+        box2dComponent.set(playerWorldWith, playerWorldHigh, bodyPlayer);
+
+        // position component
+        PositionComponent positionComponent = world.edit(playerId).create(PositionComponent.class);
+        positionComponent.set(box2dComponent, worldX, worldY);
+    }
+
     public HashMap<UUID, Integer> getPlayers() {
         return players;
     }
@@ -121,9 +128,20 @@ public class PlayerManagerClient extends Manager {
     public void setPlayerPos(float x, float y, UUID uuid) {
         int playerId = players.get(uuid);
         if (playerId == -1) return;
-        Box2dComponent box2dComponent = mBox2d.get(playerId);
-        if (box2dComponent == null) return;
-        box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
+        if (!mBox2d.has(playerId)) {
+            // create the player position for the first time, when is in range
+            playerInRange(x, y, uuid);
+        } else {
+            Box2dComponent box2dComponent = mBox2d.get(playerId);
+            box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
+        }
+    }
+
+    public void playerOutOfRange(UUID playerUuid) {
+        int playerId = players.get(playerUuid);
+        if (playerId == -1) return;
+        mBox2d.remove(playerId);
+        mPos.get(playerId);
     }
 
     public void removePlayer(UUID uuid) {

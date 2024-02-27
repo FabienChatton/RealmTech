@@ -48,7 +48,8 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg) {
-        int playerId = context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.playerUuid());
+        int playerId = context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(connexionJoueurReussitArg.playerUuid());
+        context.getSystemsAdminClient().getPlayerManagerClient().playerInRange(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.playerUuid());
         PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
         World world = context.getEcsEngine().getWorld();
@@ -92,7 +93,8 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void clientConnexionRemoved() {
-        Gdx.app.postRunnable(() -> {
+        context.nextFrame(() -> {
+            context.supprimeECS();
             if (context.getScreenType() == ScreenType.GAME_SCREEN) {
                 Gdx.app.postRunnable(() -> {
                     context.setScreen(ScreenType.MENU);
@@ -101,7 +103,6 @@ public class ClientExecuteContext implements ClientExecute {
             } else if (context.getScreenType() == ScreenType.REJOINDRE_MULTI) {
                 Popup.popupErreur(context, "Server is close", context.getUiStage());
             }
-            context.supprimeECS();
         });
     }
 
@@ -184,9 +185,11 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void disconnectMessage(String message) {
-        Gdx.app.postRunnable(() -> {
+        context.nextFrame(() -> {
             context.supprimeECS();
-            context.setScreen(ScreenType.MENU);
+            Gdx.app.postRunnable(() -> {
+                context.setScreen(ScreenType.MENU);
+            });
             Popup.popupErreur(context, message, context.getUiStage());
         });
     }
@@ -218,9 +221,16 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
+    public void playerOutOfRange(UUID playerUuid) {
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getPlayerManagerClient().playerOutOfRange(playerUuid);
+        });
+    }
+
+    @Override
     public void playerCreateConnexion(UUID playerUuid) {
         context.nextFrame(() -> {
-            context.getSystemsAdminClient().getPlayerManagerClient().createPlayerClient(0, 0, playerUuid);
+            context.getSystemsAdminClient().getPlayerManagerClient().createPlayerClient(playerUuid);
         });
     }
 

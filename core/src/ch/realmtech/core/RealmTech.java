@@ -256,7 +256,9 @@ public final class RealmTech extends Game implements ClientContext {
 
     public void process(float deltaTime) {
         try {
-            ecsEngine.process(deltaTime);
+            if (ecsEngine != null) {
+                ecsEngine.process(deltaTime);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             if (uiStage.getBatch().isDrawing()) {
