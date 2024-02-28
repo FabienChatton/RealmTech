@@ -165,7 +165,7 @@ public class ServerExecuteContext implements ServerExecute {
             InventoryComponent inventoryComponent = serverContext.getSystem(InventoryManager.class).getInventoryComponentByUUID(inventoryUuid);
             if (inventoryComponent == null) return;
             SerializedApplicationBytes applicationInventoryBytes = serverContext.getSerializerController().getInventorySerializerManager().encode(inventoryComponent);
-            clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, applicationInventoryBytes));
+            clientChannel.write(new InventorySetPacket(inventoryUuid, applicationInventoryBytes));
         });
     }
 
@@ -179,11 +179,14 @@ public class ServerExecuteContext implements ServerExecute {
                 int itemId = serverContext.getSystem(UuidEntityManager.class).getEntityId(itemToPlaceUuid);
                 serverContext.getSystem(InventoryManager.class).removeItemInInventory(chestInventoryId, itemId);
                 SerializedApplicationBytes cellApplicationBytes = serverContext.getSerializerController().getCellSerializerController().encode(cellPlaced);
-                serverContext.getServerHandler().broadCastPacket(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes));
+                PositionComponent playerPositionComponent = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class).get(playerId);
+                int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.x));
+                int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.y));
+                serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes), chunkPosX, chunkPosY);
 
                 UUID inventoryUuid = serverContext.getSystem(UuidEntityManager.class).getEntityUuid(chestInventoryId);
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
-                clientChannel.writeAndFlush(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(chestInventoryId))));
+                clientChannel.write(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(chestInventoryId))));
             }
         });
     }
@@ -212,6 +215,22 @@ public class ServerExecuteContext implements ServerExecute {
             serverContext.getSystemsAdmin().mapManager.rotateCellFace(cellId, faceToRotate);
 
             serverContext.getSystemsAdmin().dirtyCellSystem.addDirtyCell(cellId);
+        });
+    }
+
+    @Override
+    public void subscribeToEntity(Channel clientChannel, UUID entityUuid) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            int playerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChannel);
+            serverContext.getSystemsAdmin().playerSubscriptionSystem.addEntityIdSubscriptionToPlayer(playerId, entityUuid);
+        });
+    }
+
+    @Override
+    public void unSubscribeToEntity(Channel clientChannel, UUID entityUuid) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            int playerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChannel);
+            serverContext.getSystemsAdmin().playerSubscriptionSystem.removeEntityIdSubscriptionToPlayer(playerId, entityUuid);
         });
     }
 }

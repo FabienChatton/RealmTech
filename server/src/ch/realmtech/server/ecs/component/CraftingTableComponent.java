@@ -9,6 +9,7 @@ import com.artemis.World;
 import com.artemis.annotations.EntityId;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -19,11 +20,11 @@ public class CraftingTableComponent extends Component {
     @EntityId
     public int craftingResultInventory;
     private Function<Integer, Optional<CraftResultChange>> isCraftResultChange;
-    private Function<World, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange;
+    private BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange;
 
     private InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry;
 
-    public void set(int craftingInventory, int craftingResultInventory, InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, Function<World, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange) {
+    public void set(int craftingInventory, int craftingResultInventory, InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.registry = registry;
@@ -39,7 +40,7 @@ public class CraftingTableComponent extends Component {
         return registry;
     }
 
-    public Consumer<Optional<CraftResult>> getOnCraftResultChange(World world) {
-        return onCraftResultChange.apply(world).apply(this);
+    public Consumer<Optional<CraftResult>> getOnCraftResultChange(World world, int craftingTableId) {
+        return onCraftResultChange.apply(world, craftingTableId).apply(this);
     }
 }

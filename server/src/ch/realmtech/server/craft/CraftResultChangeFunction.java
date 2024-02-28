@@ -50,15 +50,15 @@ public final class CraftResultChangeFunction {
     }
 
     public static Function<Integer, Optional<CraftResultChange>> CraftResultChangeFurnace(World world) {
-        return (craftingTableId) -> {
+        return (furnaceId) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
             ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
-            CraftingTableComponent craftingTableComponent = mCraftingTable.get(craftingTableId);
-            FurnaceComponent furnaceComponent = mFurnace.get(craftingTableId);
+            CraftingTableComponent craftingTableComponent = mCraftingTable.get(furnaceId);
+            FurnaceComponent furnaceComponent = mFurnace.get(furnaceId);
             InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
 
@@ -76,11 +76,11 @@ public final class CraftResultChangeFunction {
                         // sync to player for icon
                         if (furnaceComponent.tickProcess == 1) {
                             ServerContext serverContext = world.getRegistered("serverContext");
-                            serverContext.getServerHandler().broadCastPacket(new FurnaceExtraInfoPacket(
-                                    systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableId),
+                            serverContext.getServerHandler().sendPacketToSubscriberForEntityId(new FurnaceExtraInfoPacket(
+                                            systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceId),
                                     -1,
                                     craftResult.getTimeToProcess())
-                            );
+                                    , furnaceId);
                         }
                     }
                 }

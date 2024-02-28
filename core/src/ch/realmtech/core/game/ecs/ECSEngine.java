@@ -121,6 +121,7 @@ public final class ECSEngine implements Disposable, GetWorld {
             copyNextFrameRunnable = List.copyOf(nextFrameRunnable);
             nextFrameRunnable.clear();
         }
+        if (context.getEcsEngine() == null) return;
         copyNextFrameRunnable.forEach(Runnable::run);
         if (context.getEcsEngine() == null) return;
         world.setDelta(delta);

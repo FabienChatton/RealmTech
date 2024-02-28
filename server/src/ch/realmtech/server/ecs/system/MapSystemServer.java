@@ -69,8 +69,8 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         PositionComponent positionPlayerComponent = mPosition.get(playerId);
         if (positionPlayerComponent == null) return;
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-        int chunkPosX = MapManager.getChunkPos((int) positionPlayerComponent.x);
-        int chunkPosY = MapManager.getChunkPos((int) positionPlayerComponent.y);
+        int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(positionPlayerComponent.x));
+        int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(positionPlayerComponent.y));
         if (playerConnexionComponent.ancienChunkPos == null || !(playerConnexionComponent.ancienChunkPos[0] == chunkPosX && playerConnexionComponent.ancienChunkPos[1] == chunkPosY)) {
             List<Position> chunkADamnerPos = trouveChunkADamner(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY, renderDistance);
             List<Position> chunkAObtenirPos = trouveChunkAObtenir(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY);

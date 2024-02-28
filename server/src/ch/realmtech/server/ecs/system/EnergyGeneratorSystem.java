@@ -48,7 +48,7 @@ public class EnergyGeneratorSystem extends IteratingSystem {
                     newFuel = true;
 
 
-                    serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(carburantInventory)));
+                    serverContext.getServerHandler().sendPacketToSubscriberForEntityId(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(carburantInventory)), entityId);
                 }
 
             }
@@ -61,8 +61,8 @@ public class EnergyGeneratorSystem extends IteratingSystem {
 
                 UUID energyGeneratorUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(entityId);
 
-                serverContext.getServerHandler().broadCastPacket(new EnergyBatterySetEnergyPacket(energyGeneratorUuid, energyBatteryComponent.getStored()));
-                serverContext.getServerHandler().broadCastPacket(new EnergyGeneratorInfoPacket(energyGeneratorUuid, energyGeneratorComponent.getRemainingTickToBurn(), newFuel ? energyGeneratorComponent.getRemainingTickToBurn() : -1));
+                serverContext.getServerHandler().sendPacketToSubscriberForEntityId(new EnergyBatterySetEnergyPacket(energyGeneratorUuid, energyBatteryComponent.getStored()), entityId);
+                serverContext.getServerHandler().sendPacketToSubscriberForEntityId(new EnergyGeneratorInfoPacket(energyGeneratorUuid, energyGeneratorComponent.getRemainingTickToBurn(), newFuel ? energyGeneratorComponent.getRemainingTickToBurn() : -1), entityId);
             }
         }
     }

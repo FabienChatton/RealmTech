@@ -66,16 +66,6 @@ public class ServerResponse implements ServerResponseHandler {
     }
 
     @Override
-    public void sendPacketTo(ClientPacket packet, Channel... channels) {
-        if (channels.length == 0) {
-            logger.warn("Warn, a packet was send to nobody: {}", packet.getClass().getSimpleName());
-        }
-        logger.trace("Send packet {} to {}", packet.getClass().getSimpleName(), Arrays.toString(channels));
-        Arrays.stream(channels)
-                .forEach(channel -> channel.write(packet));
-    }
-
-    @Override
     public void sendPacketTo(ClientPacket packet, Channel channel) {
         logger.trace("Send packet {} to {}", packet.getClass().getSimpleName(), channel);
         channel.write(packet);

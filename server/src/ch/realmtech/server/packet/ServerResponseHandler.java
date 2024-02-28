@@ -11,7 +11,5 @@ public interface ServerResponseHandler {
 
     void broadCastPacketExcept(ClientPacket packet, Channel... channel);
 
-    void sendPacketTo(ClientPacket packet, Channel... channel);
-
     void sendPacketTo(ClientPacket packet, Channel channel);
 }

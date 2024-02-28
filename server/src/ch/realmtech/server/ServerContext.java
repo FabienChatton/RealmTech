@@ -71,6 +71,8 @@ public class ServerContext {
                 .put(EnergyGeneratorInfoPacket.class, EnergyGeneratorInfoPacket::new)
                 .put(PlayerPickUpItem.class, PlayerPickUpItem::new)
                 .put(PlayerOutOfRange.class, PlayerOutOfRange::new)
+                .put(SubscribeToEntityPacket.class, SubscribeToEntityPacket::new)
+                .put(UnSubscribeToEntityPacket.class, UnSubscribeToEntityPacket::new)
         ;
     }
 

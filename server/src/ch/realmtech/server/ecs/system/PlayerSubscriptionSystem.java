@@ -10,14 +10,26 @@ import com.artemis.utils.ImmutableIntBag;
 import com.artemis.utils.IntBag;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerSubscriptionSystem extends Manager {
     @Wire
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
+    public void addEntityIdSubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
+        int entityId = systemsAdminServer.uuidEntityManager.getEntityId(entityUuidSubscription);
+        if (entityId == -1) return;
+        addEntityIdSubscriptionToPlayer(playerId, entityId);
+    }
     public void addEntityIdSubscriptionToPlayer(int playerId, int entityIdSubscription) {
         mPlayerConnexion.get(playerId).entitySubscription.add(entityIdSubscription);
+    }
+
+    public void removeEntityIdSubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
+        int entityId = systemsAdminServer.uuidEntityManager.getEntityId(entityUuidSubscription);
+        if (entityId == -1) return;
+        removeEntityIdSubscriptionToPlayer(playerId, entityId);
     }
 
     public void removeEntityIdSubscriptionToPlayer(int playerId, int entityIdSubscription) {

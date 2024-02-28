@@ -14,12 +14,13 @@ import com.artemis.World;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class OnNewCraftAvailable {
-    public static Function<World, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onNewCraftAvailableCraftingTable() {
-        return (world) -> {
+    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onNewCraftAvailableCraftingTable() {
+        return (world, entityId) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             return (craftingTableComponent) -> {
@@ -40,14 +41,17 @@ public final class OnNewCraftAvailable {
                     ServerContext serverContext = world.getRegistered("serverContext");
                     UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
 
-                    serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))));
+                    serverContext.getServerHandler().sendPacketToSubscriberForEntityId(
+                            new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))),
+                            entityId
+                    );
                 };
             };
         };
     }
 
-    public static Function<World, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onNewCraftAvailableFurnace() {
-        return (world) -> (craftingTableComponent) -> (craftResultOpt) -> craftResultOpt.ifPresent((craftResult) -> {
+    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onNewCraftAvailableFurnace() {
+        return (world, entityId) -> (craftingTableComponent) -> (craftResultOpt) -> craftResultOpt.ifPresent((craftResult) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
 
@@ -60,8 +64,14 @@ public final class OnNewCraftAvailable {
             UUID craftingInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingInventory);
             UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
 
-            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(craftingInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingInventory))));
-            serverContext.getServerHandler().broadCastPacket(new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))));
+            serverContext.getServerHandler().sendPacketToSubscriberForEntityId(
+                    new InventorySetPacket(craftingInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingInventory))),
+                    entityId
+            );
+            serverContext.getServerHandler().sendPacketToSubscriberForEntityId(
+                    new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))),
+                    entityId
+            );
         });
     }
 }

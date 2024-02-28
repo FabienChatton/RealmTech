@@ -60,6 +60,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private Label overLabel;
     private AddAndDisplayInventoryArgs currentInventoryArgs;
     private UUID[] currentInventoriesToClearItemOnClose;
+    private Runnable currentOnInventoryClose;
     private ArrayList<ClickAndDropActor> curentClickAndDropActors;
     @Wire(name = "context")
     private RealmTech context;
@@ -155,6 +156,10 @@ public class PlayerInventorySystem extends BaseSystem {
             overWindow.remove();
             inGameSystemOnInventoryOpen.onInventoryClose(world);
             inGameSystemOnInventoryOpenEnable.onInventoryClose(world);
+            if (currentOnInventoryClose != null) {
+                currentOnInventoryClose.run();
+                currentOnInventoryClose = null;
+            }
 
             deleteInventoriesToClearItemsOnClose();
             currentInventoriesToClearItemOnClose = null;
@@ -172,6 +177,7 @@ public class PlayerInventorySystem extends BaseSystem {
             clearDisplayInventory();
             currentInventoryArgs = openPlayerInventoryFunction.get();
             currentInventoriesToClearItemOnClose = currentInventoryArgs.inventoriesToDeleteItemsOnClose();
+            currentOnInventoryClose = currentInventoryArgs.onInventoryClose();
             refreshInventory(currentInventoryArgs);
             if (context.getOption().inventoryBlur.get()) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
@@ -219,7 +225,7 @@ public class PlayerInventorySystem extends BaseSystem {
 //                    playerInventoryUuid,
 //                    playerCraftingInventoryUuid,
 //                    playerCraftingResultUuid
-            });
+            }, null);
         };
     }
 

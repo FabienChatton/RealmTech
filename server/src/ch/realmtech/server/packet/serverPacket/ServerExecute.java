@@ -27,4 +27,8 @@ public interface ServerExecute {
     void getTime(Channel clientChannel);
 
     void rotateFaceCellRequest(Channel clientChannel, int worldPosX, int worldPosY, byte layer, byte faceToRotate);
+
+    void subscribeToEntity(Channel clientChannel, UUID entityUuid);
+
+    void unSubscribeToEntity(Channel clientChannel, UUID entityUuid);
 }

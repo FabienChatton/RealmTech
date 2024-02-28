@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.EnergyBatteryComponent;
+import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.energy.EnergyTransportStatus;
 import ch.realmtech.server.packet.clientPacket.EnergyBatterySetEnergyPacket;
@@ -22,6 +23,7 @@ public class EnergyBatterySystem extends IteratingSystem {
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<EnergyBatteryComponent> mEnergyBattery;
     private ComponentMapper<CellComponent> mCell;
+    private ComponentMapper<InfChunkComponent> mChunk;
 
     public final IntSet dirtyEnergyBattery = new IntSet();
 
@@ -50,8 +52,10 @@ public class EnergyBatterySystem extends IteratingSystem {
                 int energyBatteryId = intSetIterator.next();
                 UUID energyBatteryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(energyBatteryId);
 
-                 EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyBatteryId);
-                serverContext.getServerHandler().broadCastPacket(new EnergyBatterySetEnergyPacket(energyBatteryUuid, energyBatteryComponent.getStored()));
+                EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyBatteryId);
+                CellComponent cellComponent = mCell.get(energyBatteryId);
+                InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
+                serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new EnergyBatterySetEnergyPacket(energyBatteryUuid, energyBatteryComponent.getStored()), infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
             }
             dirtyEnergyBattery.clear();
         }

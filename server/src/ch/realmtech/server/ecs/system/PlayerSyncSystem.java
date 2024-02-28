@@ -48,7 +48,7 @@ public class PlayerSyncSystem extends IteratingSystem {
             if (!playersInRange.contains(playerId)) {
                 // remove player in range
                 playerConnexionComponent.playerInRange.removeValue(playerId);
-                serverContext.getServerHandler().sendPacketTo(new PlayerOutOfRange(playerUuid));
+                serverContext.getServerHandler().sendPacketTo(new PlayerOutOfRange(playerUuid), playerConnexionComponent.channel);
             }
         }
 

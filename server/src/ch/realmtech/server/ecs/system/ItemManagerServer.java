@@ -33,6 +33,7 @@ public class ItemManagerServer extends ItemManager {
     private Archetype defaultItemInventoryArchetype;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
     @Override
@@ -75,7 +76,10 @@ public class ItemManagerServer extends ItemManager {
 
     public void playerPickUpItem(int itemId, int playerId) {
         UUID uuid = systemsAdminServer.uuidEntityManager.getEntityUuid(itemId);
-        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerHandler().broadCastPacket(new ItemOnGroundSupprimerPacket(uuid)));
+        PositionComponent playerPositionComponent = mPos.get(playerId);
+        int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.x));
+        int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.y));
+        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new ItemOnGroundSupprimerPacket(uuid), chunkPosX, chunkPosY));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
@@ -87,7 +91,9 @@ public class ItemManagerServer extends ItemManager {
         float dropWorldPosX = (float) (worldPosX + (Math.random() * 2f - 1f));
         float dropWorldPosY = (float) (worldPosX + (Math.random() * 2f - 1f));
         inventoryItemToGroundItem(itemId, dropWorldPosX, worldPosY);
-        serverContext.getServerHandler().broadCastPacket(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry, dropWorldPosX, dropWorldPosY));
+        int chunkPosX = MapManager.getWorldPos(worldPosX);
+        int chunkPosY = MapManager.getWorldPos(worldPosY);
+        serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry, dropWorldPosX, dropWorldPosY), chunkPosX, chunkPosY);
     }
 
 }
