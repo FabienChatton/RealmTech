@@ -142,7 +142,7 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedUp();
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedDown();
 
-        context.getEcsEngineOr((ecsEngine) -> {
+        context.getEcsEngineOr((ecsEngine) -> context.nextFrame(() -> {
             PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(context.getSystem(PlayerManagerClient.class).getMainPlayer());
             Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
@@ -160,7 +160,7 @@ public class GameScreen extends AbstractScreen {
             topCellId.setText(String.format("Cell Id: %d", chunkId != -1 ? context.getSystemsAdminClient().mapManager.getTopCell(chunkId, MapManager.getInnerChunk(worldPosXPointer), MapManager.getInnerChunk(worldPosYPointer)) : -1));
             reciveDataSize.setText(String.format("RDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataReciveSizePerSeconde()));
             sendDataSize.setText(String.format("SDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataSendPerSeconde()));
-        });
+        }));
     }
 
     @Override

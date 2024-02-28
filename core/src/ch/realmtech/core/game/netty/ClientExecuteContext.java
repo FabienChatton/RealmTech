@@ -48,23 +48,23 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg) {
-        int playerId = context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(connexionJoueurReussitArg.playerUuid());
-        context.getSystemsAdminClient().getPlayerManagerClient().playerInRange(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.playerUuid());
-        PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
+        Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
+        context.nextFrame(() -> {
+            int playerId = context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(connexionJoueurReussitArg.playerUuid());
+            context.getSystemsAdminClient().getPlayerManagerClient().playerInRange(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.playerUuid());
+            PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
-        World world = context.getEcsEngine().getWorld();
-        Function<ItemManager, InventoryArgs> inventoryGet = context.getSerializerController().getInventorySerializerManager().decode(connexionJoueurReussitArg.applicationInventoryBytes());
-        // inventory chest
-        InventoryArgs inventoryArgs = inventoryGet.apply(context.getWorld().getRegistered("itemManager"));
-        context.getSystem(InventoryManager.class).createChest(playerId, inventoryArgs.inventory(), connexionJoueurReussitArg.inventoryUuid(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
-        // crafting table
-        context.getSystem(InventoryManager.class).createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
-        // inventory cursor
-        context.getSystem(InventoryManager.class).createCursorInventory(playerId, connexionJoueurReussitArg.inventoryCursorUuid(), 1, 1);
+            World world = context.getEcsEngine().getWorld();
+            Function<ItemManager, InventoryArgs> inventoryGet = context.getSerializerController().getInventorySerializerManager().decode(connexionJoueurReussitArg.applicationInventoryBytes());
+            // inventory chest
+            InventoryArgs inventoryArgs = inventoryGet.apply(context.getWorld().getRegistered("itemManager"));
+            context.getSystem(InventoryManager.class).createChest(playerId, inventoryArgs.inventory(), connexionJoueurReussitArg.inventoryUuid(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
+            // crafting table
+            context.getSystem(InventoryManager.class).createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
+            // inventory cursor
+            context.getSystem(InventoryManager.class).createCursorInventory(playerId, connexionJoueurReussitArg.inventoryCursorUuid(), 1, 1);
 
-        Gdx.app.postRunnable(() -> {
             context.getSystem(PlayerInventorySystem.class).createClickAndDrop(playerId);
-            context.setScreen(ScreenType.GAME_SCREEN);
         });
     }
 

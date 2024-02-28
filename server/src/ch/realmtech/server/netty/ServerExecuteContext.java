@@ -30,53 +30,57 @@ public class ServerExecuteContext implements ServerExecute {
 
     @Override
     public void connexionPlayerRequest(Channel clientChanel, String username) {
-        logger.info("Player {} try to login. {}", username, clientChanel);
-        UUID playerUuid;
-        try {
-            if (serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(username) != -1)
-                throw new IllegalArgumentException("A Player with this username already existe on the server");
-            playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
-            logger.info("Player {} has successfully been authenticated. {}. Verify access token: {}", username, clientChanel.remoteAddress(), serverContext.getOptionServer().verifyAccessToken.get());
-            if (serverContext.getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid) != -1) {
-                throw new IllegalArgumentException("A player with the same uuid already existe on the server");
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            logger.info("Player {} try to login. {}", username, clientChanel);
+            UUID playerUuid;
+            try {
+                if (serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(username) != -1)
+                    throw new IllegalArgumentException("A Player with this username already existe on the server");
+                playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
+                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel.remoteAddress(), serverContext.getOptionServer().verifyAccessToken.get());
+                if (serverContext.getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid) != -1) {
+                    throw new IllegalArgumentException("A player with the same uuid already existe on the server");
+                }
+            } catch (Exception e) {
+                serverContext.getServerHandler().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
+                logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
+                serverContext.getEcsEngineServer().nextTick(clientChanel::close);
+                return;
             }
-        } catch (Exception e) {
-            serverContext.getServerHandler().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
-            logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
-            serverContext.getEcsEngineServer().nextTick(clientChanel::close);
-            return;
-        }
-        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
-        serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
-        serverContext.getSystem(PlayerManagerServer.class).setPlayerUsername(playerUuid, username);
+            ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
+            serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
+            serverContext.getSystem(PlayerManagerServer.class).setPlayerUsername(playerUuid, username);
 
-        // new player with new connexion get all players.
-        // players already on server get this player.
-        IntBag players = serverContext.getSystemsAdmin().playerManagerServer.getPlayers();
-        int[] playersData = players.getData();
-        int thisPlayerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChanel);
-        for (int i = 0; i < players.size(); i++) {
-            int playerId = playersData[i];
-            if (thisPlayerId == playerId) continue;
-            UUID uuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
-            serverContext.getServerHandler().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
-        }
-        serverContext.getServerHandler().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
+            // new player with new connexion get all players.
+            // players already on server get this player.
+            IntBag players = serverContext.getSystemsAdmin().playerManagerServer.getPlayers();
+            int[] playersData = players.getData();
+            int thisPlayerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChanel);
+            for (int i = 0; i < players.size(); i++) {
+                int playerId = playersData[i];
+                if (thisPlayerId == playerId) continue;
+                UUID uuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
+                serverContext.getServerHandler().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
+            }
+            serverContext.getServerHandler().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
+        });
     }
 
     @Override
     public void removePlayer(Channel channel) {
-        int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(channel);
-        if (playerId == -1) return;
-        try {
-            serverContext.getSystem(PlayerManagerServer.class).savePlayer(playerId);
-        } catch (IOException e) {
-            String username = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId).getUsername();
-            logger.warn("Can not save player inventory of {}. : {} ", username, e.getMessage());
-        }
-        serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
-        UUID playerUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
-        serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(playerUuid), channel);
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            int playerId = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).getPlayerByChannel(channel);
+            if (playerId == -1) return;
+            try {
+                serverContext.getSystem(PlayerManagerServer.class).savePlayer(playerId);
+            } catch (IOException e) {
+                String username = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId).getUsername();
+                logger.warn("Can not save player inventory of {}. : {} ", username, e.getMessage());
+            }
+            serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
+            UUID playerUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
+            serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(playerUuid), channel);
+        });
     }
 
     @Override
