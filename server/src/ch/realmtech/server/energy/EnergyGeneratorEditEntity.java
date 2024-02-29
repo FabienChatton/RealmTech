@@ -8,8 +8,6 @@ import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 
-import java.util.UUID;
-
 public class EnergyGeneratorEditEntity implements EditEntity {
     private final UuidSupplierOrRandom energyGeneratorUuid;
     private final int remainingTickToBurn;
@@ -42,7 +40,7 @@ public class EnergyGeneratorEditEntity implements EditEntity {
             systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyGeneratorSerializerController());
         });
         executeOnContext.onClient((systemsAdminClientForClient, world) -> {
-            systemsAdminClientForClient.getEnergyBatteryIconSystem().createEnergyGeneratorIcon(entityId, energyGeneratorUuid.get());
+            systemsAdminClientForClient.getEnergyBatteryIconSystem().createEnergyGeneratorIcon(entityId, new UuidSupplierOrRandom().get());
         });
     }
 
@@ -52,6 +50,4 @@ public class EnergyGeneratorEditEntity implements EditEntity {
             systemsAdminClientForClient.getEnergyBatteryIconSystem().deleteGeneratorBatteryIcons(entityId);
         });
     }
-
-    private record PersisteEnergyGeneratorInfo(UUID uuidInventoryIcon) { }
 }
