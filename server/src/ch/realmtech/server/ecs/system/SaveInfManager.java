@@ -118,7 +118,7 @@ public class SaveInfManager extends Manager {
     public int readInfMap(String saveName) throws IOException {
         int worldId = world.create();
         Path rootSaveDirPath = Path.of(getLocalPathSaveRoot() + "/" + saveName);
-        logger.info("Lecture de la carte \"{}\"", rootSaveDirPath.toAbsolutePath());
+        logger.info("Reading save from path: \"{}\"", rootSaveDirPath.normalize().toAbsolutePath());
         InfMapComponent infMapComponent = world.edit(worldId).create(InfMapComponent.class);
         int infMetaDonneesId = readInfMetaDonnees(rootSaveDirPath, saveName);
         SaveMetadataComponent metaDonneesComponent = mMetaDonnees.get(infMetaDonneesId);

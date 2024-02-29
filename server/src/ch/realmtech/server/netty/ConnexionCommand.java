@@ -21,7 +21,7 @@ public class ConnexionCommand implements Callable<ConnexionConfig> {
     @Option(names = {"-nv", "--not-verify-access-token"}, description = "Tell to not verify access token when a player join the game.")
     private boolean notVerifyAccessToken;
 
-    @Option(names = {"-r", "--root-path"}, description = "The root path of the RealmTechData folder. Default in current directory", defaultValue = "")
+    @Option(names = {"-r", "--root-path"}, description = "The root path of the RealmTechData folder. Default in current directory", defaultValue = ".")
     private String rootPath;
 
     @Override
@@ -31,7 +31,7 @@ public class ConnexionCommand implements Callable<ConnexionConfig> {
                 .setPort(port, true)
                 .setSeed(seed != 0 ? seed : SeedGenerator.randomSeed())
                 .setVerifyAccessToken(!notVerifyAccessToken)
-                .setRootPath(rootPath.isBlank() ? "" : rootPath + "/")
+                .setRootPath(rootPath)
                 .build();
     }
 }

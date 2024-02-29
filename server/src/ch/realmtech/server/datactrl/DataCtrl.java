@@ -32,11 +32,11 @@ public class DataCtrl {
         if (!rootData.exists()) {
             Files.createDirectories(rootData.toPath());
         }
-        File rootSave = Path.of(String.format("%s%s/%s", DataCtrl.rootPath, ROOT_DATA, ROOT_PATH_SAVES)).toFile();
+        File rootSave = Path.of(String.format("%s/%s/%s", DataCtrl.rootPath, ROOT_DATA, ROOT_PATH_SAVES)).toFile();
         if (!rootSave.exists()) {
             Files.createDirectories(rootSave.toPath());
         }
-        File rootProperties = Path.of(String.format("%s%s/%s", DataCtrl.rootPath, ROOT_DATA, PATH_PROPERTIES)).toFile();
+        File rootProperties = Path.of(String.format("%s/%s/%s", DataCtrl.rootPath, ROOT_DATA, PATH_PROPERTIES)).toFile();
         if (!rootProperties.exists()) {
             Files.createDirectories(rootProperties.toPath());
         }
@@ -55,18 +55,18 @@ public class DataCtrl {
     }
 
     public static File getOptionFile() {
-        return Path.of(String.format("%s%s/%s/%s", rootPath, ROOT_DATA, PATH_PROPERTIES, OPTIONS_FILE)).toFile();
+        return Path.of(String.format("%s/%s/%s/%s", rootPath, ROOT_DATA, PATH_PROPERTIES, OPTIONS_FILE)).toFile();
     }
 
     public static File getOptionServerFile() {
-        return Path.of(String.format("%s%s/%s/%s", rootPath, ROOT_DATA, PATH_PROPERTIES, OPTIONS_SERVER_FILE)).toFile();
+        return Path.of(String.format("%s/%s/%s/%s", rootPath, ROOT_DATA, PATH_PROPERTIES, OPTIONS_SERVER_FILE)).toFile();
     }
 
     public static File getPlayersDir(String saveName) {
-        return Path.of(String.format("%s%s/%s/%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES, saveName, PLAYERS_PATH)).toFile();
+        return Path.of(String.format("%s/%s/%s/%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES, saveName, PLAYERS_PATH)).toFile();
     }
 
     public static Path getLocalPathSaveRoot() throws IOException {
-        return Path.of(String.format("%s%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES));
+        return Path.of(String.format("%s/%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES));
     }
 }
