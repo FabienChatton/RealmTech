@@ -266,4 +266,15 @@ public class PlayerManagerServer extends Manager {
         }
     }
 
+    public int getPlayerByUsernameOrUuid(String playerIdentifier) {
+        int playerId;
+        try {
+            UUID playerUuid = UUID.fromString(playerIdentifier);
+            playerId = getPlayerByUuid(playerUuid);
+        } catch (IllegalArgumentException e) {
+            // uuid not valid
+            playerId = systemsAdminServer.playerManagerServer.getPlayerByUsername(playerIdentifier);
+        }
+        return playerId;
+    }
 }

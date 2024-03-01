@@ -17,6 +17,7 @@ import static picocli.CommandLine.*;
                 DumpPlayersCommand.class,
                 DumpInventoryCommand.class,
                 DumpEntities.class,
+                DumpSubscription.class,
         }
 )
 public class DumpCommand implements Callable<Integer> {

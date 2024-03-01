@@ -9,7 +9,9 @@ import com.artemis.annotations.Wire;
 import com.artemis.utils.ImmutableIntBag;
 import com.artemis.utils.IntBag;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class PlayerSubscriptionSystem extends Manager {
@@ -41,7 +43,6 @@ public class PlayerSubscriptionSystem extends Manager {
         int[] playersData = players.getData();
         IntBag playersSubscription = new IntBag(Math.min(players.size(), 64));
 
-        players:
         for (int i = 0; i < players.size(); i++) {
             int playerId = playersData[i];
             List<Position> chunkPoss = mPlayerConnexion.get(playerId).chunkPoss;
@@ -72,5 +73,22 @@ public class PlayerSubscriptionSystem extends Manager {
             }
         }
         return playersSubscription;
+    }
+
+    public List<UUID> getSubscriptionForPlayer(int playerId) {
+        List<UUID> uuids = new ArrayList<>();
+        if (!mPlayerConnexion.has(playerId)) {
+            throw new NoSuchElementException("entityId: " + playerId + " don't have subscription component");
+        }
+
+        PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+        IntBag entitySubscription = playerConnexionComponent.entitySubscription;
+        for (int i = 0; i < entitySubscription.size(); i++) {
+            int entityId = entitySubscription.get(i);
+            UUID entityUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(entityId);
+            uuids.add(entityUuid);
+        }
+
+        return uuids;
     }
 }

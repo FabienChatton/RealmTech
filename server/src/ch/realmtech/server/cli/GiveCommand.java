@@ -42,18 +42,8 @@ public class GiveCommand implements Callable<Integer> {
             return 1;
         }
 
-        int playerId;
-        try {
-            UUID playerUuid = UUID.fromString(playerIdentifier);
-            playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid);
-        } catch (IllegalArgumentException e) {
-            // uuid not valid
-            playerId = systemsAdminServer.playerManagerServer.getPlayerByUsername(playerIdentifier);
-            if (playerId == -1) {
-                return -1;
-            }
-        }
-        ComponentMapper<InventoryComponent> mInventory = masterCommand.getWorld().getMapper(InventoryComponent.class);
+        int playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUsernameOrUuid(playerIdentifier);
+
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = masterCommand.getWorld().getMapper(PlayerConnexionComponent.class);
 
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
