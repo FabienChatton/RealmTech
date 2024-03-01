@@ -32,6 +32,10 @@ public class ClientConnexionIntern implements ClientConnexion {
 
     @Override
     public void close() throws IOException {
-        serverContext.close();
+        try {
+            serverContext.saveAndClose();
+        } catch (InterruptedException e) {
+            throw new IOException(e);
+        }
     }
 }
