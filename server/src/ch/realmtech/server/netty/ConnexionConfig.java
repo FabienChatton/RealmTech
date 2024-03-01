@@ -1,6 +1,7 @@
 package ch.realmtech.server.netty;
 
 import ch.realmtech.server.level.worldGeneration.SeedGenerator;
+import ch.realmtech.server.packet.clientPacket.ClientExecute;
 
 import java.util.Random;
 
@@ -11,14 +12,16 @@ public final class ConnexionConfig {
     private final boolean verifyAccessToken;
     private final long seed;
     private final String rootPath;
+    private final ClientExecute clientExecute;
 
-    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed, String rootPath) {
+    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed, String rootPath, ClientExecute clientExecute) {
         this.host = host;
         this.port = port;
         this.saveName = saveName;
         this.verifyAccessToken = verifyAccessToken;
         this.seed = seed;
         this.rootPath = rootPath;
+        this.clientExecute = clientExecute;
     }
 
     public String getHost() {
@@ -45,6 +48,10 @@ public final class ConnexionConfig {
         return rootPath;
     }
 
+    public ClientExecute getClientExecute() {
+        return clientExecute;
+    }
+
     public static ConnexionConfigBuilder builder() {
         return new ConnexionConfigBuilder();
     }
@@ -56,6 +63,7 @@ public final class ConnexionConfig {
         private boolean verifyAccessToken = true;
         private long seed = SeedGenerator.randomSeed();
         private String rootPath = "";
+        private ClientExecute clientExecute = null;
 
         public ConnexionConfigBuilder setHost(String host) {
             this.host = host;
@@ -96,8 +104,13 @@ public final class ConnexionConfig {
             return this;
         }
 
+        public ConnexionConfigBuilder setClientExecute(ClientExecute clientExecute) {
+            this.clientExecute = clientExecute;
+            return this;
+        }
+
         public ConnexionConfig build() {
-            return new ConnexionConfig(host, port, saveName, verifyAccessToken, seed, rootPath);
+            return new ConnexionConfig(host, port, saveName, verifyAccessToken, seed, rootPath, clientExecute);
         }
     }
 }

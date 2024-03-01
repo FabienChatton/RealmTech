@@ -2,7 +2,7 @@ package ch.realmtech.server.cli;
 
 
 import ch.realmtech.server.ecs.system.TimeSystem;
-import ch.realmtech.server.packet.ServerResponseHandler;
+import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.TimeSetPacket;
 
 import static picocli.CommandLine.*;
@@ -17,7 +17,7 @@ public class TimeSetCommand implements Runnable {
     @Override
     public void run() {
         TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdmin().timeSystem;
-        ServerResponseHandler serverHandler = timeCommand.masterServerCommand.serverContext.getServerHandler();
+        ServerConnexion serverHandler = timeCommand.masterServerCommand.serverContext.getServerHandler();
         float parseDelta;
         try {
             // set absolute time

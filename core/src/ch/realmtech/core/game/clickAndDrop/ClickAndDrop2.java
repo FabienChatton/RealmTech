@@ -182,7 +182,7 @@ public class ClickAndDrop2 {
         UUID srcInventoryUuid = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(srcInventoryId);
         UUID dstInventoryUuid = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(dstInventoryId);
 
-        context.getConnexionHandler().sendAndFlushPacketToServer(
+        context.getClientConnexion().sendAndFlushPacketToServer(
                 new MoveStackToStackPacket(srcInventoryUuid, dstInventoryUuid, srcItemsUuid, dstIndex)
         );
     }

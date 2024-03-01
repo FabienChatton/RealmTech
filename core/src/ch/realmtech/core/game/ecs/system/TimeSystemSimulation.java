@@ -14,7 +14,7 @@ public class TimeSystemSimulation extends BaseSystem {
     protected void processSystem() {
         accumulatedDelta += world.getDelta();
         if (tickNextTimeGetRequest-- == 0) {
-            context.getConnexionHandler().sendAndFlushPacketToServer(new TimeGetRequestPacket());
+            context.getClientConnexion().sendAndFlushPacketToServer(new TimeGetRequestPacket());
             tickNextTimeGetRequest = 60;
         }
     }

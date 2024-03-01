@@ -340,7 +340,6 @@ pas être négatif.
 ### Hiérarchie dossier
 ```text
 |-- $nomDeLaSauvegarde
-    |-- playerInventory.psi
     |-- level
     |   |-- header.rsh
     |   |-- chunks
@@ -350,15 +349,16 @@ pas être négatif.
     |       |-- ...  
     |-- players
         |-- [uuid]
-            |-- inventory.pis
+            |-- inventory.ps
 ```
 #### Fichier header.rsh
 Ce fichier contient des métadonnées sur le monde.
 ```text
-nomSauvegade, bytes len n + '\n'
+nomSauvegade, bytes len n + '\0'
 seed, long
 ```
-#### Fichier .rsc
+
+#### Fichier .rcs
 Un fichier .rsc contient les données d'un chunk. Le fichier est nommée en
 fonction du <code>chunk pos</code> du chunk. Les deux coordonnées sont
 séparés par une virgule, par exemple : 12,-34.rsc.
@@ -371,8 +371,62 @@ pour chaque cellule :
 Un chunk fait <code>version protocole (int) + nombre de cells (short) * taille cell (5 bytes) + chunkPosX (int) + chunkPosY (int)</code>.
 
 Une cellule fait <code>5 bytes</code>.
-#### Fichier .psi
 
-Le fichier de sauvegarde de l’inventaire d'un joueur.
-Il utilise le serializer du coffre pour sauvegarder l'inventaire
-du joueur.
+## Connexion entre client et serveur
+
+Toutes sessions de jeu de RealmTech nécessitent une server et un client.
+Dans le cas d'une partie multijoueur, le serveur est dédié et les clients,
+peuvent se connecter. Dans le cas d'une partie solo, le client crée aussi
+le serveur.
+
+Dans le cas d'une connexion externe, c'est-à-dire en multijoueur, la connexion
+entre le client et le server se fait via un socket tcp.
+
+```mermaid
+sequenceDiagram
+    box Client
+        participant Client
+        participant ClientExecute
+        participant ClientConnexion
+    end
+    box External Server
+        participant ServerConnexion
+        participant ServerExecute
+        participant Server
+    end
+
+    Note over ClientConnexion,ServerConnexion: Socket tcp
+    Client->>ClientConnexion: demande d'envoie au server
+    ClientConnexion->>ServerConnexion: envoie packet
+    ServerConnexion->>ServerExecute: reçoit packet
+    ServerExecute->>ServerExecute: execute on server
+    Server-->>ServerConnexion: envoie au client
+    ServerConnexion-->>ClientConnexion: envoie packet
+    ClientConnexion-->>ClientExecute: reçoit packet
+    ClientExecute->>ClientExecute: execute on client
+```
+
+Dans le cas d'une connexion interne, c'est-à-dire une partie solo,
+le serveur est directement appelé par le client, et le client est
+directement appelé par le server. C'est possible parce que l'un est
+l'autre ont le contexte d'execution de l'autre.
+
+```mermaid
+sequenceDiagram
+    box Client
+        participant Client
+        participant ServerExecute
+        participant ClientConnexion
+    end
+    box Internal Server
+        participant ServerConnexion
+        participant ClientExecute
+        participant Server
+    end
+    Client->>ClientConnexion: demande d'envoie au server
+    ClientConnexion->>ServerExecute: execute on server
+    ServerExecute->>ServerExecute: execute on server
+    Server->>ServerConnexion: envoie au client
+    ServerConnexion->>ClientExecute: execute on client
+    ClientExecute->>ClientExecute: execute on client
+```

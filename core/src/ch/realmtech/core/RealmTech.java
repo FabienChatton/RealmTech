@@ -7,8 +7,10 @@ import ch.realmtech.core.game.ecs.ECSEngine;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
+import ch.realmtech.core.game.netty.ClientConnexion;
+import ch.realmtech.core.game.netty.ClientConnexionExtern;
+import ch.realmtech.core.game.netty.ClientConnexionIntern;
 import ch.realmtech.core.game.netty.ClientExecuteContext;
-import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.option.Option;
@@ -204,7 +206,7 @@ public final class RealmTech extends Game implements ClientContext {
 
     @Override
     public void sendRequest(ServerPacket packet) {
-        ecsEngine.getConnexionHandler().sendAndFlushPacketToServer(packet);
+        ecsEngine.getClientConnexion().sendAndFlushPacketToServer(packet);
     }
 
     public Stage getGameStage() {
@@ -273,11 +275,11 @@ public final class RealmTech extends Game implements ClientContext {
         }
     }
 
-    public void nouveauECS(RealmTechClientConnexionHandler clientConnexionHandler) throws Exception {
+    public void nouveauECS(ClientConnexion clientConnexion) throws Exception {
         if (ecsEngine != null) {
             supprimeECS();
         }
-        ecsEngine = new ECSEngine(this, clientConnexionHandler);
+        ecsEngine = new ECSEngine(this, clientConnexion);
         onEcsEngineInitializes.forEach((ecsEngineConsumer) -> ecsEngineConsumer.accept(ecsEngine));
         onEcsEngineInitializes.clear();
     }
@@ -297,7 +299,7 @@ public final class RealmTech extends Game implements ClientContext {
                         .setHost(host)
                         .setPort(port, false)
                         .build();
-                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionConfig, clientExecute, false, this);
+                ClientConnexion clientConnexionHandler = ClientConnexionExtern.create(connexionConfig, clientExecute, this);
                 nouveauECS(clientConnexionHandler);
                 authControllerClient.sendAuthAndJoinServer(clientConnexionHandler, verifyAccessToken);
 
@@ -322,10 +324,11 @@ public final class RealmTech extends Game implements ClientContext {
                         .setRootPath(DataCtrl.getRootPath())
                         .setSaveName(saveName)
                         .setVerifyAccessToken(verifyAccessToken)
+                        .setClientExecute(clientExecute)
                         .build();
-                RealmTechClientConnexionHandler clientConnexionHandler = new RealmTechClientConnexionHandler(connexionConfig, clientExecute, true, this);
-                nouveauECS(clientConnexionHandler);
-                authControllerClient.sendAuthAndJoinServer(clientConnexionHandler, verifyAccessToken);
+                ClientConnexion clientConnexion = new ClientConnexionIntern(connexionConfig);
+                nouveauECS(clientConnexion);
+                authControllerClient.sendAuthAndJoinServer(clientConnexion, verifyAccessToken);
             }
         }
     }
@@ -344,8 +347,9 @@ public final class RealmTech extends Game implements ClientContext {
     public ClientExecute getClientExecute() {
         return clientExecute;
     }
-    public RealmTechClientConnexionHandler getConnexionHandler() {
-        return ecsEngine.getConnexionHandler();
+
+    public ClientConnexion getClientConnexion() {
+        return ecsEngine.getClientConnexion();
     }
     public void nextFrame(Runnable runnable) {
         if (ecsEngine != null) {

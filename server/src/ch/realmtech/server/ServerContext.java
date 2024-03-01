@@ -10,26 +10,28 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.packet.PacketMap;
-import ch.realmtech.server.packet.ServerResponseHandler;
+import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.*;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.tick.TickThread;
 import com.artemis.BaseSystem;
-import io.netty.channel.ChannelFuture;
+import com.badlogic.gdx.utils.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-public class ServerContext {
+public class ServerContext implements Closeable {
     private final static Logger logger = LoggerFactory.getLogger(ServerContext.class);
     public final static PacketMap PACKETS = new PacketMap();
+    @Null
     private final ServerNetty serverNetty;
     private final EcsEngineServer ecsEngineServer;
     private final ServerExecute serverExecuteContext;
-    private final ServerResponseHandler serverResponseHandler;
+    private final ServerConnexion serverConnexion;
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
@@ -85,11 +87,19 @@ public class ServerContext {
                 System.exit(1);
             }
             reloadOption();
+            logger.info("Verify access token: {}", optionServer.verifyAccessToken.get());
             optionServer.verifyAccessToken.set(connexionConfig.isVerifyAccessToken());
             ecsEngineServer = new EcsEngineServer(this);
             serverExecuteContext = new ServerExecuteContext(this);
-            serverNetty = new ServerNetty(connexionConfig, serverExecuteContext);
-            serverResponseHandler = new ServerResponse(this);
+            if (connexionConfig.getClientExecute() == null) {
+                logger.info("Open a external server");
+                serverNetty = new ServerNetty(connexionConfig, serverExecuteContext);
+                serverConnexion = new ServerConnexionExtern(this);
+            } else {
+                logger.info("Open a internal server");
+                serverConnexion = new ServerConnexionIntern(this, connexionConfig.getClientExecute());
+                serverNetty = null;
+            }
             commandeServerExecute = new CommandeServerExecute(this);
             commandServerThread = new CommandServerThread(this, commandeServerExecute);
             tickThread = new TickThread(this);
@@ -109,7 +119,13 @@ public class ServerContext {
     public static void main(String[] args) throws Exception {
         ConnexionCommand connexionCommand = new ConnexionCommand();
         CommandLine commandLine = new CommandLine(connexionCommand);
-        commandLine.parseArgs(args);
+        try {
+            commandLine.parseArgs(args);
+        } catch (Exception e) {
+            commandLine.usage(System.out);
+            System.exit(0);
+            return;
+        }
         ConnexionConfig connexionConfig = connexionCommand.call();
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
@@ -123,7 +139,7 @@ public class ServerContext {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (!serverContext.saveAndClose) {
                 try {
-                    serverContext.saveAndClose().await();
+                    serverContext.saveAndClose();
                 } catch (Exception e) {
                     System.err.println("Can not close server on shutdownHook. Error: " + e.getMessage());
                     System.err.println(e);
@@ -132,17 +148,32 @@ public class ServerContext {
         }));
     }
 
-    public ChannelFuture saveAndClose() throws InterruptedException, IOException {
-        logger.info("Closing server...");
+    public void saveAndClose() throws InterruptedException, IOException {
         try {
             save();
         } catch (IOException e) {
-            logger.error("Can not save. {}", e.getMessage(), e);
+            logger.error("Can not save {}", e.getMessage(), e);
         }
+        try {
+            close();
+        } catch (Exception e) {
+            logger.error("Can not close server {}", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        logger.info("Closing server...");
         tickThread.close();
         commandServerThread.close();
         saveAndClose = true;
-        return serverNetty.close();
+        try {
+            if (serverNetty != null) {
+                serverNetty.close().await();
+            }
+        } catch (InterruptedException e) {
+            throw new IOException(e);
+        }
     }
 
     public void save() throws IOException {
@@ -160,8 +191,8 @@ public class ServerContext {
         return ecsEngineServer;
     }
 
-    public ServerResponseHandler getServerHandler() {
-        return serverResponseHandler;
+    public ServerConnexion getServerHandler() {
+        return serverConnexion;
     }
 
     public <T extends BaseSystem> T getSystem(Class<T> systemClass) {
@@ -171,10 +202,10 @@ public class ServerContext {
     public SystemsAdminServer getSystemsAdmin() {
         return ecsEngineServer.getSystemsAdminServer();
     }
-
     public CommandeServerExecute getCommandeExecute() {
         return commandeServerExecute;
     }
+
     public SerializerController getSerializerController() {
         return ecsEngineServer.getSerializerController();
     }
@@ -185,6 +216,10 @@ public class ServerContext {
 
     public OptionServer getOptionServer() {
         return optionServer;
+    }
+
+    public ServerExecute getServerExecuteContext() {
+        return serverExecuteContext;
     }
 
     public void reloadOption() throws IOException {

@@ -70,19 +70,16 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
-//        logger.debug("chunk à mounter {},{}", chunkPosX, chunkPosY);
         context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(applicationChunkBytes));
     }
 
     @Override
     public void chunkADamner(int chunkPosX, int chunkPosY) {
-//        logger.debug("chunk à damner {},{}", chunkPosX, chunkPosY);
         context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY));
     }
 
     @Override
     public void chunkARemplacer(int chunkPosX, int chunkPosY, SerializedApplicationBytes chunkApplicationBytes, int oldChunkPosX, int oldChunkPosY) {
-//        logger.debug("chunk à remplacer old {},{}. new {},{} ", oldChunkPosX, oldChunkPosY, chunkPosX, chunkPosY);
         context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkApplicationBytes, oldChunkPosX, oldChunkPosY));
     }
 

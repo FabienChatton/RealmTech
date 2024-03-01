@@ -4,7 +4,7 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.packet.ClientPacket;
-import ch.realmtech.server.packet.ServerResponseHandler;
+import ch.realmtech.server.packet.ServerConnexion;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.ImmutableIntBag;
 import io.netty.channel.Channel;
@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class ServerResponse implements ServerResponseHandler {
-    private final static Logger logger = LoggerFactory.getLogger(ServerResponse.class);
+public class ServerConnexionExtern implements ServerConnexion {
+    private final static Logger logger = LoggerFactory.getLogger(ServerConnexionExtern.class);
     private final ServerContext serverContext;
 
-    public ServerResponse(ServerContext serverContext) {
+    public ServerConnexionExtern(ServerContext serverContext) {
         this.serverContext = serverContext;
     }
 

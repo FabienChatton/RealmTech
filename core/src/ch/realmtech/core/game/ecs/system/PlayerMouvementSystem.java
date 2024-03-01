@@ -38,7 +38,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
                 InputMapper.moveRight.isPressed
         );
         if (inputKeys != 0) {
-            context.getConnexionHandler().sendAndFlushPacketToServer(new PlayerMovePacket(inputKeys));
+            context.getClientConnexion().sendAndFlushPacketToServer(new PlayerMovePacket(inputKeys));
             int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
 
             PositionComponent positionComponent = mPosition.get(entityId);

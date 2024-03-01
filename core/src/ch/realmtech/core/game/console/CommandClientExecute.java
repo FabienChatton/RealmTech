@@ -18,7 +18,7 @@ public class CommandClientExecute {
         String[] args = stringCommande.split(" ");
         String stringCommandeWithoutContext = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         if (args[0].equals("s") || args[0].equals("server")) {
-            context.getConnexionHandler().sendAndFlushPacketToServer(new ConsoleCommandeRequestPacket(stringCommandeWithoutContext));
+            context.getClientConnexion().sendAndFlushPacketToServer(new ConsoleCommandeRequestPacket(stringCommandeWithoutContext));
         } else if (args[0].equals("c") || args[0].equals("client")) {
             MasterClientCommand masterClientCommand = new MasterClientCommand(context, output);
             CommandLine commandLine = new CommandLine(masterClientCommand);

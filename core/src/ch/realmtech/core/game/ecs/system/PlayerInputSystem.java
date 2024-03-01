@@ -60,7 +60,7 @@ public class PlayerInputSystem extends BaseSystem {
                         if (selectItem != 0) {
                             // place bloc if no interaction
                             UUID itemUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(selectItem);
-                            context.getConnexionHandler().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
+                            context.getClientConnexion().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
                         }
                     });
         }

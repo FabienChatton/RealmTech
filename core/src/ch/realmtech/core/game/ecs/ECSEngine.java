@@ -11,7 +11,7 @@ import ch.realmtech.core.game.ecs.plugin.strategy.SystemEnableOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.TickEmulationInvocationStrategy;
 import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
-import ch.realmtech.core.game.netty.RealmTechClientConnexionHandler;
+import ch.realmtech.core.game.netty.ClientConnexion;
 import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.serialize.SerializerController;
@@ -42,7 +42,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     public final com.badlogic.gdx.physics.box2d.World physicWorld;
     private final InGameSystemOnInventoryOpen systemDisableOnPlayerInventoryOpen;
     private final SystemEnableOnInventoryOpen systemEnableOnPlayerInventoryOpen;
-    private final RealmTechClientConnexionHandler connexionHandler;
+    private final ClientConnexion clientConnexion;
     private final List<Runnable> nextFrameRunnable;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
     private final SystemsAdminClient systemAdminClient;
@@ -52,9 +52,9 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final ExecuteOnContextClient executeOnContextClient;
     private final TickEmulationInvocationStrategy tickEmulationInvocationStrategy;
 
-    public ECSEngine(final RealmTech context, RealmTechClientConnexionHandler connexionHandler) throws Exception {
+    public ECSEngine(final RealmTech context, ClientConnexion clientConnexion) throws Exception {
         this.context = context;
-        this.connexionHandler = connexionHandler;
+        this.clientConnexion = clientConnexion;
         tickEmulationInvocationStrategy = new TickEmulationInvocationStrategy();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         rayHandler = new RayHandler(physicWorld);
@@ -133,7 +133,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         world.dispose();
         physicWorld.dispose();
         try {
-            connexionHandler.close();
+            clientConnexion.close();
             serverTickBeatMonitoring.close();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -188,8 +188,8 @@ public final class ECSEngine implements Disposable, GetWorld {
         return fixtureDef;
     }
 
-    public RealmTechClientConnexionHandler getConnexionHandler() {
-        return connexionHandler;
+    public ClientConnexion getClientConnexion() {
+        return clientConnexion;
     }
     public Vector2 getGameCoordinate(Vector2 screenCoordinate) {
         Vector3 unproject = context.getGameStage().getCamera().unproject(new Vector3(screenCoordinate, 0));

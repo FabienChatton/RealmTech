@@ -1,7 +1,6 @@
 package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.SaveInfManager;
@@ -43,7 +42,6 @@ public final class EcsEngineServer implements GetWorld {
         logger.trace("debut de l'initialisation du ecs");
         this.serverContext = serverContext;
         Box2D.init();
-        DataCtrl dataCtrl = new DataCtrl();
         physicWorld = new com.badlogic.gdx.physics.box2d.World(new Vector2(0, 0), true);
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
@@ -59,7 +57,6 @@ public final class EcsEngineServer implements GetWorld {
         worldConfiguration.register("physicWorld", physicWorld);
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
-        worldConfiguration.register(dataCtrl);
         worldConfiguration.register(systemsAdminServer);
         worldConfiguration.register("itemManager", systemsAdminServer.itemManagerServer);
         worldConfiguration.register("systemsAdmin", systemsAdminServer);

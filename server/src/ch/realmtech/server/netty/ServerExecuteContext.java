@@ -37,14 +37,16 @@ public class ServerExecuteContext implements ServerExecute {
                 if (serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(username) != -1)
                     throw new IllegalArgumentException("A Player with this username already existe on the server");
                 playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
-                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel.remoteAddress(), serverContext.getOptionServer().verifyAccessToken.get());
+                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel, serverContext.getOptionServer().verifyAccessToken.get());
                 if (serverContext.getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid) != -1) {
                     throw new IllegalArgumentException("A player with the same uuid already existe on the server");
                 }
             } catch (Exception e) {
                 serverContext.getServerHandler().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
                 logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
-                serverContext.getEcsEngineServer().nextTick(clientChanel::close);
+                if (clientChanel != null) {
+                    serverContext.getEcsEngineServer().nextTick(clientChanel::close);
+                }
                 return;
             }
             ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
