@@ -17,7 +17,7 @@ public class TimeSetCommand implements Runnable {
     @Override
     public void run() {
         TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdmin().timeSystem;
-        ServerConnexion serverHandler = timeCommand.masterServerCommand.serverContext.getServerHandler();
+        ServerConnexion serverHandler = timeCommand.masterServerCommand.serverContext.getServerConnexion();
         float parseDelta;
         try {
             // set absolute time

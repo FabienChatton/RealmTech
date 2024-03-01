@@ -226,13 +226,18 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
                             clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
+
+                            // subscribe
+                            clientContext.sendRequest(new SubscribeToEntityPacket(inventoryCraftUuid));
                             SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
                             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[] {
                                     DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
                                     DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId), craftingInventory).build(),
                                     DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build()
-                            }, new UUID[]{inventoryCraftUuid, inventoryResultUuid}, null);
+                            }, new UUID[]{inventoryCraftUuid, inventoryResultUuid}, () -> {
+                                clientContext.sendRequest(new UnSubscribeToEntityPacket(inventoryCraftUuid));
+                            });
                         });
                     })
                     .build()

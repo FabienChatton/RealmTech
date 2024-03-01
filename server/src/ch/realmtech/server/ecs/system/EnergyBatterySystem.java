@@ -55,7 +55,7 @@ public class EnergyBatterySystem extends IteratingSystem {
                 EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyBatteryId);
                 CellComponent cellComponent = mCell.get(energyBatteryId);
                 InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
-                serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new EnergyBatterySetEnergyPacket(energyBatteryUuid, energyBatteryComponent.getStored()), infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
+                serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnergyBatterySetEnergyPacket(energyBatteryUuid, energyBatteryComponent.getStored()), infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
             }
             dirtyEnergyBattery.clear();
         }

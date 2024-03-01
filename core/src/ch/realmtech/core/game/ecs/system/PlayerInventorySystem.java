@@ -16,6 +16,8 @@ import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
+import ch.realmtech.server.packet.serverPacket.UnSubscribeToEntityPacket;
 import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.registery.RegistryEntry;
 import com.artemis.BaseSystem;
@@ -213,6 +215,9 @@ public class PlayerInventorySystem extends BaseSystem {
             UUID playerInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(systemsAdminClient.inventoryManager.getChestInventoryId(playerId));
             UUID playerCraftingInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory);
             UUID playerCraftingResultUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory);
+
+            // subscribe
+            context.sendRequest(new SubscribeToEntityPacket(playerCraftingInventoryUuid));
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
                     builder(playerInventoryUuid, playerInventory)
                             .build(),
@@ -225,7 +230,9 @@ public class PlayerInventorySystem extends BaseSystem {
 //                    playerInventoryUuid,
 //                    playerCraftingInventoryUuid,
 //                    playerCraftingResultUuid
-            }, null);
+            }, () -> {
+                context.sendRequest(new UnSubscribeToEntityPacket(playerCraftingResultUuid));
+            });
         };
     }
 

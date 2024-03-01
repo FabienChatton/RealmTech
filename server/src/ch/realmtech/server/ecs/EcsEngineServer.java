@@ -101,7 +101,7 @@ public final class EcsEngineServer implements GetWorld {
         ++tickCount;
 
         long t2 = System.currentTimeMillis();
-        serverContext.getServerHandler().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f, deltaTime));
+        serverContext.getServerConnexion().broadCastPacket(new TickBeatPacket((t2 - t1) / 1000f, deltaTime));
     }
 
     public void prepareSaveToLoad(ConnexionConfig connexionConfig) throws IOException {

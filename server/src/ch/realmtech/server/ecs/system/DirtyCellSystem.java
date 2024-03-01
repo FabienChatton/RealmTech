@@ -35,7 +35,7 @@ public class DirtyCellSystem extends BaseSystem {
             int worldPosX = systemsAdminServer.mapManager.getWorldPosX(cellComponent);
             int worldPosY = systemsAdminServer.mapManager.getWorldPosY(cellComponent);
             SerializedApplicationBytes cellEncode = serverContext.getSerializerController().getCellSerializerController().encode(cellId);
-            serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new CellSetPacket(worldPosX, worldPosY, cellComponent.cellRegisterEntry.getCellBehavior().getLayer(), cellEncode), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
+            serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new CellSetPacket(worldPosX, worldPosY, cellComponent.cellRegisterEntry.getCellBehavior().getLayer(), cellEncode), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
         }
     }
 

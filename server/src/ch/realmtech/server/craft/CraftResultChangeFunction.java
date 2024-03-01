@@ -76,7 +76,7 @@ public final class CraftResultChangeFunction {
                         // sync to player for icon
                         if (furnaceComponent.tickProcess == 1) {
                             ServerContext serverContext = world.getRegistered("serverContext");
-                            serverContext.getServerHandler().sendPacketToSubscriberForEntityId(new FurnaceExtraInfoPacket(
+                            serverContext.getServerConnexion().sendPacketToSubscriberForEntityId(new FurnaceExtraInfoPacket(
                                             systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceId),
                                     -1,
                                     craftResult.getTimeToProcess())

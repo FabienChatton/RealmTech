@@ -79,7 +79,7 @@ public class ItemManagerServer extends ItemManager {
         PositionComponent playerPositionComponent = mPos.get(playerId);
         int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.x));
         int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.y));
-        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new ItemOnGroundSupprimerPacket(uuid), chunkPosX, chunkPosY));
+        serverContext.getEcsEngineServer().nextTickSchedule(2, () -> serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new ItemOnGroundSupprimerPacket(uuid), chunkPosX, chunkPosY));
         ItemManagerCommun.removeBox2dAndPosition(itemId, mBox2d, physicWorld, world);
         world.edit(itemId).remove(ItemPickableComponent.class);
         systemsAdminServer.inventoryManager.addItemToInventory(systemsAdminServer.inventoryManager.getChestInventory(playerId), itemId);
@@ -93,7 +93,7 @@ public class ItemManagerServer extends ItemManager {
         inventoryItemToGroundItem(itemId, dropWorldPosX, worldPosY);
         int chunkPosX = MapManager.getWorldPos(worldPosX);
         int chunkPosY = MapManager.getWorldPos(worldPosY);
-        serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry, dropWorldPosX, dropWorldPosY), chunkPosX, chunkPosY);
+        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry, dropWorldPosX, dropWorldPosY), chunkPosX, chunkPosY);
     }
 
 }

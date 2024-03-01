@@ -21,6 +21,6 @@ public class PhysicEntityIaTestSystem extends IteratingSystem {
         Bag<Component> bag = new Bag<>();
         world.getEntity(entityId).getComponents(bag);
         SerializedApplicationBytes physicEntityBytes = world.getRegistered(SerializerController.class).getPhysicEntitySerializerController().encode(entityId);
-        serverContext.getServerHandler().broadCastPacket(new PhysicEntitySetPacket(physicEntityBytes));
+        serverContext.getServerConnexion().broadCastPacket(new PhysicEntitySetPacket(physicEntityBytes));
     }
 }

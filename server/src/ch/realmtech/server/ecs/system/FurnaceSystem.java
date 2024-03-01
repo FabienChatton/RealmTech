@@ -54,13 +54,13 @@ public class FurnaceSystem extends IteratingSystem {
                     systemsAdminServer.inventoryManager.deleteItemInStack(carburantStack, carburantItemId);
 
                     UUID carburantInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceComponent.inventoryCarburant);
-                    serverContext.getServerHandler().sendPacketToSubscriberForEntityId(
+                    serverContext.getServerConnexion().sendPacketToSubscriberForEntityId(
                             new InventorySetPacket(carburantInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(carburantInventoryComponent)),
                             entityId
                     );
 
 
-                    serverContext.getServerHandler().sendPacketToSubscriberForEntityId(new FurnaceExtraInfoPacket(
+                    serverContext.getServerConnexion().sendPacketToSubscriberForEntityId(new FurnaceExtraInfoPacket(
                             systemsAdminServer.uuidEntityManager.getEntityUuid(entityId),
                             furnaceComponent.remainingTickToBurn,
                             -1

@@ -69,7 +69,7 @@ public class GiveCommand implements Callable<Integer> {
         }
         UUID chestInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(chestInventoryId);
         SerializedApplicationBytes ApplicationInventoryBytes = masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(inventoryComponent);
-        masterCommand.serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(chestInventoryUuid, ApplicationInventoryBytes), playerConnexionComponent.channel);
+        masterCommand.serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(chestInventoryUuid, ApplicationInventoryBytes), playerConnexionComponent.channel);
         return 0;
     }
 }

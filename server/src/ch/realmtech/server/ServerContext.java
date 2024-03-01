@@ -191,7 +191,7 @@ public class ServerContext implements Closeable {
         return ecsEngineServer;
     }
 
-    public ServerConnexion getServerHandler() {
+    public ServerConnexion getServerConnexion() {
         return serverConnexion;
     }
 

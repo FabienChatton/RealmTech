@@ -48,10 +48,10 @@ public class PlayerSyncSystem extends IteratingSystem {
             if (!playersInRange.contains(playerId)) {
                 // remove player in range
                 playerConnexionComponent.playerInRange.removeValue(playerId);
-                serverContext.getServerHandler().sendPacketTo(new PlayerOutOfRange(playerUuid), playerConnexionComponent.channel);
+                serverContext.getServerConnexion().sendPacketTo(new PlayerOutOfRange(playerUuid), playerConnexionComponent.channel);
             }
         }
 
-        serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new PlayerSyncPacket(playerEncode, playerUuid), chunkPosX, chunkPosY);
+        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new PlayerSyncPacket(playerEncode, playerUuid), chunkPosX, chunkPosY);
     }
 }

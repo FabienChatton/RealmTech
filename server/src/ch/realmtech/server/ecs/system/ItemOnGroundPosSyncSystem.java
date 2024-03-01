@@ -29,7 +29,7 @@ public class ItemOnGroundPosSyncSystem extends IteratingSystem {
         Box2dComponent box2dComponent = mBox2d.get(entityId);
         if (box2dComponent.body.isAwake()) {
             UUID uuid = systemsAdminServer.uuidEntityManager.getEntityUuid(entityId);
-            serverContext.getServerHandler().broadCastPacket(new ItemOnGroundPacket(uuid, itemComponent.itemRegisterEntry, positionComponent.x, positionComponent.y));
+            serverContext.getServerConnexion().broadCastPacket(new ItemOnGroundPacket(uuid, itemComponent.itemRegisterEntry, positionComponent.x, positionComponent.y));
         }
     }
 }

@@ -130,7 +130,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         this.chunkADamner.forEach((playerId, chunkPoss) -> {
             PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
             chunkPoss.forEach(chunkPos -> {
-                serverContext.getServerHandler().sendPacketTo(new ChunkADamnePacket(chunkPos.x(), chunkPos.y()), playerConnexionComponent.channel);
+                serverContext.getServerConnexion().sendPacketTo(new ChunkADamnePacket(chunkPos.x(), chunkPos.y()), playerConnexionComponent.channel);
                 playerConnexionComponent.chunkPoss.remove(chunkPos);
             });
         });
@@ -140,7 +140,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
             chunkPoss.forEach(chunkPos -> {
                 int chunkId = systemsAdminServer.mapManager.getChunk(chunkPos.x(), chunkPos.y(), infMapComponent.infChunks);
                 InfChunkComponent infChunkComponent = mChunk.get(chunkId);
-                serverContext.getServerHandler().sendPacketTo(new ChunkAMonterPacket(serverContext.getSerializerController().getChunkSerializerController().encode(infChunkComponent)), playerConnexionComponent.channel);
+                serverContext.getServerConnexion().sendPacketTo(new ChunkAMonterPacket(serverContext.getSerializerController().getChunkSerializerController().encode(infChunkComponent)), playerConnexionComponent.channel);
                 playerConnexionComponent.chunkPoss.add(new Position(chunkPos.x(), chunkPos.y()));
             });
         });
@@ -255,12 +255,12 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         if (itemDropRegisterEntry != null) {
             systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
         }
-        serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new CellBreakPacket(worldPosX, worldPosY), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
+        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new CellBreakPacket(worldPosX, worldPosY), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
     }
 
     public int placeItemToCell(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
         int itemId = systemsAdminServer.uuidEntityManager.getEntityId(itemToPlaceUuid);
-        if (itemId == -1) return -1;
+        if (!mItem.has(itemId)) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
         CellRegisterEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell();
         if (placeCell == null) return -1;

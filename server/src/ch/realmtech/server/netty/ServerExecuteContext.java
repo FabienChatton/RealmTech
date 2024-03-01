@@ -42,7 +42,7 @@ public class ServerExecuteContext implements ServerExecute {
                     throw new IllegalArgumentException("A player with the same uuid already existe on the server");
                 }
             } catch (Exception e) {
-                serverContext.getServerHandler().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
+                serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
                 logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
                 if (clientChanel != null) {
                     serverContext.getEcsEngineServer().nextTick(clientChanel::close);
@@ -50,7 +50,7 @@ public class ServerExecuteContext implements ServerExecute {
                 return;
             }
             ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).createPlayerServer(clientChanel, playerUuid);
-            serverContext.getServerHandler().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
+            serverContext.getServerConnexion().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
             serverContext.getSystem(PlayerManagerServer.class).setPlayerUsername(playerUuid, username);
 
             // new player with new connexion get all players.
@@ -62,9 +62,9 @@ public class ServerExecuteContext implements ServerExecute {
                 int playerId = playersData[i];
                 if (thisPlayerId == playerId) continue;
                 UUID uuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
-                serverContext.getServerHandler().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
+                serverContext.getServerConnexion().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
             }
-            serverContext.getServerHandler().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
+            serverContext.getServerConnexion().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
         });
     }
 
@@ -81,7 +81,7 @@ public class ServerExecuteContext implements ServerExecute {
             }
             serverContext.getEcsEngineServer().getWorld().getSystem(PlayerManagerServer.class).removePlayer(channel);
             UUID playerUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(playerId);
-            serverContext.getServerHandler().broadCastPacketExcept(new DeconnectionJoueurPacket(playerUuid), channel);
+            serverContext.getServerConnexion().broadCastPacketExcept(new DeconnectionJoueurPacket(playerUuid), channel);
         });
     }
 
@@ -135,7 +135,7 @@ public class ServerExecuteContext implements ServerExecute {
             try (PrintWriter printWriter = new PrintWriter(baos, true, StandardCharsets.US_ASCII)) {
                 serverContext.getCommandeExecute().execute(stringCommande, printWriter);
             }
-            serverContext.getServerHandler().sendPacketTo(new WriteToConsolePacket(baos.toString()), clientChannel);
+            serverContext.getServerConnexion().sendPacketTo(new WriteToConsolePacket(baos.toString()), clientChannel);
         });
     }
 
@@ -147,12 +147,12 @@ public class ServerExecuteContext implements ServerExecute {
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
                 InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(srcInventory));
                 InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystem(InventoryManager.class).getInventoryByUUID(dstInventory));
-                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), clientChannel);
-                serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), clientChannel);
+                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), clientChannel);
+                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), clientChannel);
                 if (mutatedInventories != null) {
                     for (int mutatedInventory : mutatedInventories) {
                         UUID mutatedInventoryUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(mutatedInventory);
-                        serverContext.getServerHandler().sendPacketTo(new InventorySetPacket(mutatedInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(mutatedInventory))), clientChannel);
+                        serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(mutatedInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(mutatedInventory))), clientChannel);
                     }
                 }
             } catch (IllegalAccessError e) {
@@ -167,7 +167,7 @@ public class ServerExecuteContext implements ServerExecute {
             InventoryComponent inventoryComponent = serverContext.getSystem(InventoryManager.class).getInventoryComponentByUUID(inventoryUuid);
             if (inventoryComponent == null) return;
             SerializedApplicationBytes applicationInventoryBytes = serverContext.getSerializerController().getInventorySerializerManager().encode(inventoryComponent);
-            clientChannel.write(new InventorySetPacket(inventoryUuid, applicationInventoryBytes));
+            serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(inventoryUuid, applicationInventoryBytes), clientChannel);
         });
     }
 
@@ -184,11 +184,11 @@ public class ServerExecuteContext implements ServerExecute {
                 PositionComponent playerPositionComponent = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class).get(playerId);
                 int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.x));
                 int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPositionComponent.y));
-                serverContext.getServerHandler().sendPacketToSubscriberForChunkPos(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes), chunkPosX, chunkPosY);
+                serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new CellAddPacket(worldPosX, worldPosY, cellApplicationBytes), chunkPosX, chunkPosY);
 
                 UUID inventoryUuid = serverContext.getSystem(UuidEntityManager.class).getEntityUuid(chestInventoryId);
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
-                clientChannel.write(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(chestInventoryId))));
+                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(inventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(chestInventoryId))), clientChannel);
             }
         });
     }
@@ -197,7 +197,7 @@ public class ServerExecuteContext implements ServerExecute {
     public void getTime(Channel clientChannel) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             float time = serverContext.getSystemsAdmin().timeSystem.getAccumulatedDelta();
-            clientChannel.writeAndFlush(new TimeSetPacket(time));
+            serverContext.getServerConnexion().sendPacketTo(new TimeSetPacket(time), clientChannel);
         });
     }
 
