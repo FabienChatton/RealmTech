@@ -6,36 +6,23 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableIntBag;
 import com.artemis.utils.IntBag;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerSubscriptionSystem extends Manager {
     @Wire
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
 
-    public void addEntityIdSubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
-        int entityId = systemsAdminServer.uuidEntityManager.getEntityId(entityUuidSubscription);
-        if (entityId == -1) return;
-        addEntityIdSubscriptionToPlayer(playerId, entityId);
-    }
-    public void addEntityIdSubscriptionToPlayer(int playerId, int entityIdSubscription) {
+    public void addEntitySubscriptionToPlayer(int playerId, UUID entityIdSubscription) {
         mPlayerConnexion.get(playerId).entitySubscription.add(entityIdSubscription);
     }
 
-    public void removeEntityIdSubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
-        int entityId = systemsAdminServer.uuidEntityManager.getEntityId(entityUuidSubscription);
-        if (entityId == -1) return;
-        removeEntityIdSubscriptionToPlayer(playerId, entityId);
-    }
-
-    public void removeEntityIdSubscriptionToPlayer(int playerId, int entityIdSubscription) {
-        mPlayerConnexion.get(playerId).entitySubscription.removeValue(entityIdSubscription);
+    public void removeEntitySubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
+        mPlayerConnexion.get(playerId).entitySubscription.remove(entityUuidSubscription);
     }
 
     public ImmutableIntBag<?> getPlayersInRangeForChunkPos(Position chunkPos) {
@@ -54,7 +41,7 @@ public class PlayerSubscriptionSystem extends Manager {
         return playersSubscription;
     }
 
-    public ImmutableIntBag<?> getPlayerForEntityIdSubscription(int entityIdSubscription) {
+    public ImmutableIntBag<?> getPlayerForEntityIdSubscription(UUID entityIdSubscription) {
         IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
         int[] playersData = players.getData();
         IntBag playersSubscription = new IntBag(Math.min(players.size(), 64));
@@ -62,11 +49,11 @@ public class PlayerSubscriptionSystem extends Manager {
         players:
         for (int i = 0; i < players.size(); i++) {
             int playerId = playersData[i];
-            IntBag playerEntitySubscription = mPlayerConnexion.get(playerId).entitySubscription;
-            int[] playerEntitySubscriptionData = playerEntitySubscription.getData();
-            for (int j = 0; j < playerEntitySubscription.size(); j++) {
-                int playerEntityIDSubscription = playerEntitySubscriptionData[i];
-                if (playerEntityIDSubscription == entityIdSubscription) {
+            Bag<UUID> playerEntitySubscription = mPlayerConnexion.get(playerId).entitySubscription;
+            Iterator<UUID> uuidIterator = playerEntitySubscription.iterator();
+            while (uuidIterator.hasNext()) {
+                UUID playerEntityIDSubscription = uuidIterator.next();
+                if (playerEntityIDSubscription.equals(entityIdSubscription)) {
                     playersSubscription.add(playerId);
                     continue players;
                 }
@@ -82,10 +69,9 @@ public class PlayerSubscriptionSystem extends Manager {
         }
 
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-        IntBag entitySubscription = playerConnexionComponent.entitySubscription;
+        Bag<UUID> entitySubscription = playerConnexionComponent.entitySubscription;
         for (int i = 0; i < entitySubscription.size(); i++) {
-            int entityId = entitySubscription.get(i);
-            UUID entityUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(entityId);
+            UUID entityUuid = entitySubscription.get(i);
             uuids.add(entityUuid);
         }
 

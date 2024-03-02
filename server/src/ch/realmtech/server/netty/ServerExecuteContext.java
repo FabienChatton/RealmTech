@@ -224,7 +224,7 @@ public class ServerExecuteContext implements ServerExecute {
     public void subscribeToEntity(Channel clientChannel, UUID entityUuid) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChannel);
-            serverContext.getSystemsAdmin().playerSubscriptionSystem.addEntityIdSubscriptionToPlayer(playerId, entityUuid);
+            serverContext.getSystemsAdmin().playerSubscriptionSystem.addEntitySubscriptionToPlayer(playerId, entityUuid);
         });
     }
 
@@ -232,7 +232,7 @@ public class ServerExecuteContext implements ServerExecute {
     public void unSubscribeToEntity(Channel clientChannel, UUID entityUuid) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChannel);
-            serverContext.getSystemsAdmin().playerSubscriptionSystem.removeEntityIdSubscriptionToPlayer(playerId, entityUuid);
+            serverContext.getSystemsAdmin().playerSubscriptionSystem.removeEntitySubscriptionToPlayer(playerId, entityUuid);
         });
     }
 }

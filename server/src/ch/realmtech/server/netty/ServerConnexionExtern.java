@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class ServerConnexionExtern implements ServerConnexion {
     private final static Logger logger = LoggerFactory.getLogger(ServerConnexionExtern.class);
@@ -29,8 +30,8 @@ public class ServerConnexionExtern implements ServerConnexion {
     }
 
     @Override
-    public void sendPacketToSubscriberForEntityId(ClientPacket packet, int entityIdSubscription) {
-        ImmutableIntBag<?> players = serverContext.getSystemsAdmin().playerSubscriptionSystem.getPlayerForEntityIdSubscription(entityIdSubscription);
+    public void sendPacketToSubscriberForEntity(ClientPacket packet, UUID entitySubscription) {
+        ImmutableIntBag<?> players = serverContext.getSystemsAdmin().playerSubscriptionSystem.getPlayerForEntityIdSubscription(entitySubscription);
         for (int i = 0; i < players.size(); i++) {
             int playerId = players.get(i);
             ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class);

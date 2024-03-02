@@ -2,22 +2,24 @@ package ch.realmtech.server.ecs.component;
 
 import ch.realmtech.server.divers.Position;
 import com.artemis.Component;
+import com.artemis.utils.Bag;
 import com.artemis.utils.IntBag;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerConnexionComponent extends Component {
     public Channel channel;
     public int[] ancienChunkPos = null;
     public List<Position> chunkPoss;
     private String username = "unknown";
-    public final IntBag entitySubscription;
+    public final Bag<UUID> entitySubscription;
     public final IntBag playerInRange;
 
     public PlayerConnexionComponent() {
-        entitySubscription = new IntBag();
+        entitySubscription = new Bag<>();
         playerInRange = new IntBag();
     }
 

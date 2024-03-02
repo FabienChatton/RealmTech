@@ -8,6 +8,8 @@ import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import com.artemis.utils.ImmutableIntBag;
 import io.netty.channel.Channel;
 
+import java.util.UUID;
+
 public class ServerConnexionIntern implements ServerConnexion {
     private final ClientExecute clientExecute;
     private final ServerContext serverContext;
@@ -23,8 +25,8 @@ public class ServerConnexionIntern implements ServerConnexion {
     }
 
     @Override
-    public void sendPacketToSubscriberForEntityId(ClientPacket packet, int entityIdSubscription) {
-        ImmutableIntBag<?> players = serverContext.getSystemsAdmin().playerSubscriptionSystem.getPlayerForEntityIdSubscription(entityIdSubscription);
+    public void sendPacketToSubscriberForEntity(ClientPacket packet, UUID entitySubscription) {
+        ImmutableIntBag<?> players = serverContext.getSystemsAdmin().playerSubscriptionSystem.getPlayerForEntityIdSubscription(entitySubscription);
         for (int i = 0; i < players.size(); i++) {
             packet.executeOnClient(clientExecute);
         }

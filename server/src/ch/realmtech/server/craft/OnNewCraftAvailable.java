@@ -41,9 +41,9 @@ public final class OnNewCraftAvailable {
                     ServerContext serverContext = world.getRegistered("serverContext");
                     UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
 
-                    serverContext.getServerConnexion().sendPacketToSubscriberForEntityId(
+                    serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                             new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))),
-                            craftingTableComponent.craftingInventory
+                            systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingInventory)
                     );
                 };
             };
@@ -64,13 +64,13 @@ public final class OnNewCraftAvailable {
             UUID craftingInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingInventory);
             UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
 
-            serverContext.getServerConnexion().sendPacketToSubscriberForEntityId(
+            serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                     new InventorySetPacket(craftingInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingInventory))),
-                    entityId
+                    systemsAdminServer.uuidEntityManager.getEntityUuid(entityId)
             );
-            serverContext.getServerConnexion().sendPacketToSubscriberForEntityId(
+            serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                     new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))),
-                    entityId
+                    systemsAdminServer.uuidEntityManager.getEntityUuid(entityId)
             );
         });
     }
