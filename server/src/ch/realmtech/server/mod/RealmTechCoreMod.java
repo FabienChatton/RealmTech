@@ -169,7 +169,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .build()
     ));
     public final static CellRegisterEntry TREE_CELL = registerCell("tree", new CellRegisterEntry(
-            "tree-02",
+            "tree-06",
             CellBehavior.builder(Cells.Layer.GROUND_DECO)
                     .breakWith(ItemType.HAND, "realmtech.buche")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
