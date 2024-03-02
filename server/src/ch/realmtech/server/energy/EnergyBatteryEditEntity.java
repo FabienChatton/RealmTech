@@ -48,7 +48,10 @@ public class EnergyBatteryEditEntity implements EditEntity {
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-
+        executeOnContext.onCommun((world) -> {
+            SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
+            systemsAdminCommun.uuidEntityManager.deleteRegisteredEntity(entityId);
+        });
     }
 
 }
