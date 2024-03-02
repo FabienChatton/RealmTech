@@ -616,7 +616,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             Introducing electricity into your world will introduce a lot of complexity.
             The first complexity will be the orientation of the cells.
             To manipulate this orientation, use a wrench.
-            To chisel the wrench, place a wrench in the top corner and a wrench in the middle and bottom corners to make a Y shape.
+            To craft the wrench, place a iron ingot in the left and top corner and iron ingot in the middle and bottom middle. Like a Y shape.
             The notary cells that can be turned are the cables and batteries.
             To turn the cell, the location of your click is important: click on the right-hand part of the cell to turn it to the right.
             Click on the left-hand side of the cell to turn it to the left. And the same for top and bottom.
@@ -645,8 +645,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             Just having energy cables doesn't help. They take their usefulness to transport energy.
             But to transport energy, you have to have energy in the first place.
             That's what this quest is all about. Your first source of energy will be an energy generator.
-            To craft the energy generator, there are two possibilities: either place the furnace form in
-            the crafting inventory and place an energy battery in the center, or place a furnace with an
+            To craft the energy generator, place a furnace with an
             energy battery in the crafting inventory (regardless of item location).
             To create your first energy units, place coal in the furnace and the furnace's internal battery will fill up.
             """));
