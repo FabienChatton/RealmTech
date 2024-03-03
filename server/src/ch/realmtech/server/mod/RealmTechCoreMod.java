@@ -114,7 +114,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             ItemBehavior.builder().build()
     ));
     public final static ItemRegisterEntry WRENCH = registerItem("wrench", new ItemRegisterEntry(
-            "pelle-stone-01",
+            "wrench-01",
             ItemBehavior.builder()
                     .interagieClickDroit(WrenchRightClick.wrenchRightClick())
                     .build()
