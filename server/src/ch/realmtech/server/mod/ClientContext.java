@@ -12,4 +12,5 @@ public interface ClientContext extends GetWorld {
     void openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventorySupplier);
     Skin getSkin();
     void sendRequest(ServerPacket packet);
+    void writeToConsole(String s);
 }

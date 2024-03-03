@@ -477,7 +477,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
                     .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
-                        System.out.println(energyBatteryComponent.getStored());
+                        clientContext.writeToConsole(Long.toString(energyBatteryComponent.getStored()));
                     })
                     .build()),
             new ItemRegisterEntry("energy-battery-01-0100", ItemBehavior

@@ -357,6 +357,7 @@ public final class RealmTech extends Game implements ClientContext {
         }
     }
 
+    @Override
     public void writeToConsole(String s) {
         gameScreen.writeToConsole(s);
     }
