@@ -7,7 +7,7 @@ et de Gregtech (pour la mécanique de progression des tiers). L'un
 des buts premiers RealmTech est de changer la mécanique de progression
 de Factorio pour qu'elle soit moins dans la production massive, 
 mais dans l'évolution progressive des matériaux pour accéder
-à de meilleures machines.L'un des buts est aussi de pouvoir avoir
+à de meilleures machines. L'un des buts est aussi de pouvoir avoir
 une plus grande liberté de construction avec des blocs décoratifs
 pour créer ses propres bâtiments.
 
@@ -41,6 +41,8 @@ docker run -d -p 25533:25533 -v ./RealmTechData/:/app/RealmTechData -e PORT=2553
 
 ## Road Map
 
+## version current: 0.1
+
 ### indev
 
 1. [x] Sauvegarde de la carte générée
@@ -59,20 +61,47 @@ docker run -d -p 25533:25533 -v ./RealmTechData/:/app/RealmTechData -e PORT=2553
 2. [x] Serveur interne
 3. [x] Console de debug
 
-### alpha
+### 0.1
 
 1. [x] Cycle jour/nuit
-2. [ ] Machine électrique
-3. [ ] Infrastructure, convoyeur/pipe
-4. [ ] Machine multi-cellules
-5. [ ] Raccourci clavier
+2. [x] Machine électrique
 
-### beta 
+### 0.2
 
+1. [ ] Mode survie
+2. [ ] Construction de bâtiment
+
+### 0.3
+
+1. [ ] Tier énergétique
+
+### 0.4
+
+1. [ ] Extraction des minerais
+2. [ ] Convoyer
+
+### 0.5
 1. [ ] Pétrole
-2. [ ] Véhicule
-3. [ ] Trains
-4. [ ] Dimensions
+
+### 0.6
+
+1. [ ] Véhicule
+
+### 0.7
+
+1. [ ] Trains
+
+### 0.8
+
+1. [ ] Dimensions
+
+### 0.9
+
+1. [ ] Voyage interplanétaire
+
+### 1.0
+
+1. [ ] End game
 
 ## Documentation Architecture
 RealmTech est la globalité du projet. La partie client est en soi, le jeu vu par le joueur. La partie serveur contient le serveur de jeu. Pour que le jeu fonctionne, il est nécessaire d'avoir une partie client et une partie serveur. Cependant, pas d'inquiétude : le client inclut également le serveur. De plus, le serveur peut être utilisé de manière "Standalone", c'est-à-dire sans le client. Ainsi, des clients peuvent se connecter à un serveur hébergé sur une machine dédiée.
@@ -310,7 +339,7 @@ classDiagram
 ## RealmTechData
 Le dossier RealmTechData contient les informations nécessaires à
 l'exécution du jeu. Le dossier est créé lors de la première execution
-du jeu. Le dossier est sauvegardé au meme emplacement que le jar ou a la racine du repo.
+du jeu. Le dossier est sauvegardé dans <code>%appdata%</code>.
 Le dossier contient les fichiers de configurations et les sauvegardes des mondes.
 
 ### Hiérarchie du dossier
