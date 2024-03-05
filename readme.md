@@ -15,7 +15,7 @@ pour créer ses propres bâtiments.
 
 ## Pour le grand public
 
-Vous pouvez trouver realmtech sur le site internet ou la release github.
+Vous pouvez trouver RealmTech sur le site internet ou la release github.
 
 [![Release]][Link]
 [![Download]][Site]
