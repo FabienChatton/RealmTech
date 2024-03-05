@@ -28,7 +28,7 @@ public class DataCtrl {
                 Files.createDirectories(rootPathFile.toPath());
             }
         }
-        File rootData = Path.of(ROOT_DATA).toFile();
+        File rootData = Path.of(String.format("%s/%s", rootPath, ROOT_DATA)).toFile();
         if (!rootData.exists()) {
             Files.createDirectories(rootData.toPath());
         }
