@@ -3,6 +3,7 @@ package ch.realmtech.server.level.cell;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
@@ -47,6 +48,10 @@ public class CraftingTableEditEntity implements EditEntity {
             InventoryComponent resultInventory = world.getSystem(InventoryManager.class).mInventory.get(craftingTableComponent.craftingInventory);
             world.getSystem(InventoryManager.class).removeInventory(craftingInventory.inventory);
             world.getSystem(InventoryManager.class).removeInventory(resultInventory.inventory);
+            SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
+
+            systemsAdmin.uuidEntityManager.deleteRegisteredEntity(craftingTableComponent.craftingInventory);
+            systemsAdmin.uuidEntityManager.deleteRegisteredEntity(craftingTableComponent.craftingResultInventory);
         });
     }
 

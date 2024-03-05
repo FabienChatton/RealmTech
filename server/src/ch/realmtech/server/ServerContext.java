@@ -103,10 +103,11 @@ public class ServerContext implements Closeable {
             commandeServerExecute = new CommandeServerExecute(this);
             commandServerThread = new CommandServerThread(this, commandeServerExecute);
             tickThread = new TickThread(this);
-            commandServerThread.start();
-            tickThread.start();
             ecsEngineServer.prepareSaveToLoad(connexionConfig);
             authRequest = new AuthRequest(this);
+
+            tickThread.start();
+            commandServerThread.start();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             try {

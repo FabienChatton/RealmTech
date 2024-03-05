@@ -79,9 +79,9 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
             chunkADamner.put(playerId, chunkADamnerPos);
             chunkAObtenir.put(playerId, chunkAObtenirPos);
             chunkAGarders.put(playerId, chunkAGarder);
-                if (playerConnexionComponent.ancienChunkPos == null) {
-                    playerConnexionComponent.ancienChunkPos = new int[2];
-                }
+            if (playerConnexionComponent.ancienChunkPos == null) {
+                playerConnexionComponent.ancienChunkPos = new int[2];
+            }
             playerConnexionComponent.ancienChunkPos[0] = chunkPosX;
             playerConnexionComponent.ancienChunkPos[1] = chunkPosY;
         }
@@ -89,7 +89,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     @Override
     protected void end() {
-        if (isInit && chunkADamner.isEmpty() && chunkAObtenir.isEmpty() || chunkAGarders == null) return;
+        if (isInit && chunkADamner.isEmpty() && chunkAObtenir.isEmpty()) return;
 
         List<Position> tousChunkAGarder = new ArrayList<>();
         for (List<Position> chunkAGarder : chunkAGarders.values()) {

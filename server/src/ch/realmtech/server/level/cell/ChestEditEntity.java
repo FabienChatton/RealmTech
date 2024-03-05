@@ -40,8 +40,9 @@ public class ChestEditEntity implements EditEntity {
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
         // executeOnContext.onServer((world) -> world.getSystem(MapSystemServer.class).deleteChestDropItemServer(entityId));
         executeOnContext.onCommun((world) -> {
-            InventoryComponent chestInventory = ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).inventoryManager.getChestInventory(entityId);
-            world.getSystem(InventoryManager.class).removeInventory(chestInventory.inventory);
+            SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
+            int chestInventoryId = systemsAdmin.inventoryManager.getChestInventoryId(entityId);
+            world.getSystem(InventoryManager.class).removeInventoryUi(chestInventoryId);
         });
     }
 
