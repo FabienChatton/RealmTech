@@ -15,8 +15,16 @@ pour créer ses propres bâtiments.
 
 ## Pour le grand public
 
-Vous pouvez soit utiliser la release sur github, à droite de ce texte
-Ou télécharger sur [le site internet](http://chattonf01.emf-informatique.ch/RealmTech/download/)
+Vous pouvez trouver realmtech sur le site internet ou la release github.
+
+[![Release]][Link]
+[![Download]][Site]
+<!----------------------------------------------------------------------------->
+[Link]: https://github.com/FabienChatton/RealmTech/releases
+[Site]: https://chattonf01.emf-informatique.ch/RealmTech/download/
+<!---------------------------------[ Buttons ]--------------------------------->
+[Release]: https://img.shields.io/badge/Release-FC1D1D?style=for-the-badge&logoColor=white&logo=DocuSign
+[Download]: https://img.shields.io/badge/Download-EFFDE?style=for-the-badge&logoColor=white&logo=DocuSign
 
 ## Pour les programmeurs
 ### cmd
