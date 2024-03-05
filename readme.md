@@ -11,7 +11,14 @@ mais dans l'évolution progressive des matériaux pour accéder
 une plus grande liberté de construction avec des blocs décoratifs
 pour créer ses propres bâtiments.
 
-## Jouer au jeu
+# Jouer au jeu
+
+## Pour le grand public
+
+Vous pouvez soit utiliser la release sur github, à droite de ce texte
+Ou télécharger sur [le site internet](http://chattonf01.emf-informatique.ch/RealmTech/download/)
+
+## Pour les programmeurs
 ### cmd
 ```shell
 git clone https://github.com/FabienChatton/RealmTech
