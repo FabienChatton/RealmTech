@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+    <dontWrapJar>false</dontWrapJar>
+    <headerType>gui</headerType>
+    <jar>C:\Users\Fabien\github\RealmTech\desktop\build\libs\desktop-1.0.jar</jar>
+    <outfile>C:\Users\Fabien\github\RealmTech\desktop\RealmTech-0.1.0.exe</outfile>
+    <errTitle>Installer java 17. Probablement Windows x64 installer</errTitle>
+    <cmdLine></cmdLine>
+    <chdir>.</chdir>
+    <priority>normal</priority>
+    <downloadUrl>https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html</downloadUrl>
+    <supportUrl></supportUrl>
+    <stayAlive>false</stayAlive>
+    <restartOnCrash>false</restartOnCrash>
+    <manifest></manifest>
+    <icon>C:\Users\Fabien\github\RealmTech\assets\logo\logo-RealmTech-icon.ico</icon>
+    <jre>
+        <path>%JAVA_HOME%;%PATH%</path>
+        <requiresJdk>false</requiresJdk>
+        <requires64Bit>false</requires64Bit>
+        <minVersion>17</minVersion>
+        <maxVersion></maxVersion>
+    </jre>
+</launch4jConfig>
