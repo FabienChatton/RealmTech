@@ -39,7 +39,7 @@ public class AuthenticateScreen extends AbstractScreen {
             if (!saveCredentialCheckBox.isChecked()) {
                 PersisteCredential.forget();
             }
-            Popup.popupConfirmation(context, "Without password the user will not be authenticated. In game, the player will not be saved, including his inventory. The save our inventory, you must be login", uiStage, () -> {
+            Popup.popupConfirmation(context, "Without password the user will not be authenticated. You will not able to join a multiplayer server if the server need authentification. To join a multiplayer game with authentification, you must be login", uiStage, () -> {
                 context.getAuthControllerClient().setUsername(usernameTextField.getText());
                 context.setVerifyAccessToken(false);
                 context.setScreen(ScreenType.MENU);

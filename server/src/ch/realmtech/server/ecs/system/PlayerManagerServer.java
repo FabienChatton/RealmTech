@@ -51,7 +51,7 @@ public class PlayerManagerServer extends Manager {
         players = new IntBag();
     }
 
-    public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid) {
+    public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid, String playerUsername) {
         final float playerWorldWith = 0.9f;
         final float playerWorldHigh = 0.9f;
         int playerId = world.create();
@@ -69,13 +69,11 @@ public class PlayerManagerServer extends Manager {
         int chestId;
         int heart = -1;
 
-        if (serverContext.getOptionServer().verifyAccessToken.get()) {
-            try {
-                loadPlayerSave(playerUuid, playerId);
-                hasPlayerSaveSuccess = true;
-            } catch (IOException e) {
-                logger.warn("Can not load player save. UUID: {}, {}", playerUuid, e.getMessage());
-            }
+        try {
+            loadPlayerSave(playerUsername, playerId);
+            hasPlayerSaveSuccess = true;
+        } catch (IOException e) {
+            logger.warn("Can not load player save. Username: {}, {}", playerUsername, e.getMessage());
         }
 
         if (hasPlayerSaveSuccess) {
@@ -179,13 +177,10 @@ public class PlayerManagerServer extends Manager {
     }
 
     public void savePlayer(int playerId) throws IOException {
-        // don't save player if login as anonymous
-        if (!serverContext.getOptionServer().verifyAccessToken.get()) return;
-
         File playerFile;
         try {
-            UUID playerUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(playerId);
-            Path playerDir = getPlayerDir(playerUuid);
+            String playerUsername = mPlayerConnexion.get(playerId).getUsername();
+            Path playerDir = getPlayerDir(playerUsername);
             if (!playerDir.toFile().exists()) Files.createDirectories(playerDir);
             playerFile = getPLayerFile(playerDir).toFile();
         } catch (Exception e) {
@@ -201,8 +196,8 @@ public class PlayerManagerServer extends Manager {
         }
     }
 
-    public void loadPlayerSave(UUID playerUuid, int playerId) throws IOException {
-        try (FileInputStream fis = new FileInputStream(getPLayerFile(getPlayerDir(playerUuid)).toFile())) {
+    public void loadPlayerSave(String playerUsername, int playerId) throws IOException {
+        try (FileInputStream fis = new FileInputStream(getPLayerFile(getPlayerDir(playerUsername)).toFile())) {
             byte[] rawInventoryBytes = fis.readAllBytes();
             Consumer<Integer> setPlayer = serverContext.getSerializerController().getPlayerSerializerController().decode(new SerializedApplicationBytes(rawInventoryBytes));
             setPlayer.accept(playerId);
@@ -213,8 +208,8 @@ public class PlayerManagerServer extends Manager {
         return Path.of(playerDir.toString(), "player.ps");
     }
 
-    private Path getPlayerDir(UUID playerUuid) {
-        return Path.of(DataCtrl.getPlayersDir(systemsAdminServer.saveInfManager.getSaveName()).toPath().toString(), playerUuid.toString());
+    private Path getPlayerDir(String playerUsername) {
+        return Path.of(DataCtrl.getPlayersDir(systemsAdminServer.saveInfManager.getSaveName()).toPath().toString(), playerUsername);
     }
 
     public int getPlayerByUsername(String username) {

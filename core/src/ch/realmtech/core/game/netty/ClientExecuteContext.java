@@ -182,11 +182,9 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void disconnectMessage(String message) {
-        context.nextFrame(() -> {
+        Gdx.app.postRunnable(() -> {
             context.supprimeECS();
-            Gdx.app.postRunnable(() -> {
-                context.setScreen(ScreenType.MENU);
-            });
+            context.setScreen(ScreenType.MENU);
             Popup.popupErreur(context, message, context.getUiStage());
         });
     }
