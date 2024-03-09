@@ -30,7 +30,7 @@ public class IaTestSteerable implements Steerable<Vector2> {
         maxAngularSpeed = 10.0f;
 
         Box2dLocation box2dLocation = new Box2dLocation(body);
-        box2dLocation.getPosition().set(0, 0);
+        box2dLocation.getPosition().set(body.getPosition());
     }
 
     public void update (float delta) {

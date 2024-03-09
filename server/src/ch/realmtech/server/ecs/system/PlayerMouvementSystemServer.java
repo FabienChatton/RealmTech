@@ -8,21 +8,21 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
-@All({PlayerConnexionComponent.class, MovementComponent.class})
+@All({PlayerConnexionComponent.class, PlayerMovementComponent.class})
 public class PlayerMouvementSystemServer extends IteratingSystem {
     @Wire
     private SystemsAdminServer systemsAdminServer;
-    private ComponentMapper<MovementComponent> mMovement;
+    private ComponentMapper<PlayerMovementComponent> mMovement;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<CellComponent> mCell;
     private final static float FORCE = 8f;
     @Override
     protected void process(int entityId) {
-        MovementComponent movementComponent = mMovement.get(entityId);
+        PlayerMovementComponent playerMovementComponent = mMovement.get(entityId);
         Box2dComponent box2dComponent = mBox2d.get(entityId);
-        float impulseX = (movementComponent.speed.x - box2dComponent.body.getLinearVelocity().x) * box2dComponent.body.getMass();
-        float impulseY = (movementComponent.speed.y - box2dComponent.body.getLinearVelocity().y) * box2dComponent.body.getMass();
+        float impulseX = (playerMovementComponent.speed.x - box2dComponent.body.getLinearVelocity().x) * box2dComponent.body.getMass();
+        float impulseY = (playerMovementComponent.speed.y - box2dComponent.body.getLinearVelocity().y) * box2dComponent.body.getMass();
         Vector2 worldCenter = box2dComponent.body.getWorldCenter();
         box2dComponent.body.applyLinearImpulse(
                 impulseX,
@@ -31,13 +31,13 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
                 worldCenter.y,
                 true
         );
-        movementComponent.speed.x = 0;
-        movementComponent.speed.y = 0;
+        playerMovementComponent.speed.x = 0;
+        playerMovementComponent.speed.y = 0;
     }
 
     public void playerMove(Channel clientChannel, byte inputKeys) {
         int playerId = systemsAdminServer.playerManagerServer.getPlayerByChannel(clientChannel);
-        MovementComponent movementComponent = mMovement.get(playerId);
+        PlayerMovementComponent playerMovementComponent = mMovement.get(playerId);
         Box2dComponent box2dComponent = mBox2d.get(playerId);
         PositionComponent positionComponent = mPos.get(playerId);
         InfMapComponent infMapComponent = systemsAdminServer.tagManager.getEntity("infMap").getComponent(InfMapComponent.class);
@@ -70,8 +70,8 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
 
         vector2.nor();
 
-        movementComponent.speed.x = vector2.x * acceleration;
-        movementComponent.speed.y = vector2.y * acceleration;
+        playerMovementComponent.speed.x = vector2.x * acceleration;
+        playerMovementComponent.speed.y = vector2.y * acceleration;
     }
 
     public static byte getKeysInputPlayerMouvement(boolean left, boolean down, boolean up, boolean right) {

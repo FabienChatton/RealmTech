@@ -16,6 +16,6 @@ public class SummonCommand implements Runnable {
 
     @Override
     public void run() {
-        masterServerCommand.serverContext.getSystemsAdmin().iaSystemServer.createIaTest(x, y);
+        // masterServerCommand.serverContext.getSystemsAdmin().iaSystemServer.createIaTest(x, y);
     }
 }

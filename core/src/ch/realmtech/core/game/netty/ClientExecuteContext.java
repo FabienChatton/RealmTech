@@ -196,12 +196,14 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void physicEntity(PhysicEntityArgs physicEntityArgs) {
-        UUID uuid = physicEntityArgs.uuid();
-        float x = physicEntityArgs.x();
-        float y = physicEntityArgs.y();
-        if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
-            context.getSystemsAdminClient().getIaManagerClient().otherIa(uuid, x, y);
-        }
+        context.nextFrame(() -> {
+            UUID uuid = physicEntityArgs.uuid();
+            float x = physicEntityArgs.x();
+            float y = physicEntityArgs.y();
+            if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
+                context.getSystemsAdminClient().getIaManagerClient().otherIa(uuid, x, y);
+            }
+        });
     }
 
     @Override

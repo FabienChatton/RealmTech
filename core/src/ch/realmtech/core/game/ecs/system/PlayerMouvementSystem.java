@@ -11,7 +11,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 
 @All({PlayerComponent.class,
-        MovementComponent.class,
+        PlayerMovementComponent.class,
         PositionComponent.class,
         Box2dComponent.class})
 public class PlayerMouvementSystem extends IteratingSystem {
@@ -19,7 +19,7 @@ public class PlayerMouvementSystem extends IteratingSystem {
     private RealmTech context;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<CellComponent> mCell;
-    private ComponentMapper<MovementComponent> mMouvement;
+    private ComponentMapper<PlayerMovementComponent> mMouvement;
     private ComponentMapper<PositionComponent> mPosition;
     private ComponentMapper<Box2dComponent> mBox2d;
     private boolean directionChange = false;

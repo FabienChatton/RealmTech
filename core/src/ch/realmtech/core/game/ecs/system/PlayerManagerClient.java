@@ -60,8 +60,10 @@ public class PlayerManagerClient extends Manager {
         systemsAdminClient.uuidEntityManager.registerEntityIdWithUuid(uuid, playerId);
 
         // movement component
-        MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
-        movementComponent.set(10, 10);
+        PlayerMovementComponent playerMovementComponent = world.edit(playerId).create(PlayerMovementComponent.class);
+        playerMovementComponent.set(10, 10);
+
+        MouvementComponent mouvementComponent = world.edit(playerId).create(MouvementComponent.class);
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -70,22 +72,23 @@ public class PlayerManagerClient extends Manager {
         // animation
         TextureComponent textureComponent = world.edit(playerId).create(TextureComponent.class);
         textureComponent.scale = 1.6f;
+        TextureAnimationComponent textureAnimationComponent = world.edit(playerId).create(TextureAnimationComponent.class);
         TextureAtlas.AtlasRegion textureFront0 = textureAtlas.findRegion("reimu-front-0");
         TextureAtlas.AtlasRegion textureFront1 = textureAtlas.findRegion("reimu-front-1");
         TextureAtlas.AtlasRegion textureFront2 = textureAtlas.findRegion("reimu-front-2");
-        playerComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
+        textureAnimationComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
         TextureAtlas.AtlasRegion textureLeft0 = textureAtlas.findRegion("reimu-left-0");
         TextureAtlas.AtlasRegion textureLeft1 = textureAtlas.findRegion("reimu-left-1");
         TextureAtlas.AtlasRegion textureLeft2 = textureAtlas.findRegion("reimu-left-2");
-        playerComponent.animationLeft = new TextureRegion[]{textureLeft0, textureLeft1, textureLeft2};
+        textureAnimationComponent.animationLeft = new TextureRegion[]{textureLeft0, textureLeft1, textureLeft2};
         TextureAtlas.AtlasRegion textureBack0 = textureAtlas.findRegion("reimu-back-0");
         TextureAtlas.AtlasRegion textureBack1 = textureAtlas.findRegion("reimu-back-1");
         TextureAtlas.AtlasRegion textureBack2 = textureAtlas.findRegion("reimu-back-2");
-        playerComponent.animationBack = new TextureRegion[]{textureBack0, textureBack1, textureBack2};
+        textureAnimationComponent.animationBack = new TextureRegion[]{textureBack0, textureBack1, textureBack2};
         TextureAtlas.AtlasRegion textureRight0 = textureAtlas.findRegion("reimu-right-0");
         TextureAtlas.AtlasRegion textureRight1 = textureAtlas.findRegion("reimu-right-1");
         TextureAtlas.AtlasRegion textureRight2 = textureAtlas.findRegion("reimu-right-2");
-        playerComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
+        textureAnimationComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
 
         players.put(uuid, playerId);
         return playerId;

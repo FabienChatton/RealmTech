@@ -15,7 +15,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final PlayerInputSystem playerInputSystem;
     private final PlayerMouvementTextureSystem playerMouvementTextureSystem;
     private final PlayerMouvementSystem playerMouvementSystem;
-    private final PlayerTextureAnimated playerTextureAnimated;
+    private final FourDirectionTextureAnimated fourDirectionTextureAnimated;
     private final IaManagerClient iaManagerClient;
     private final UpdateBox2dWithPosition updateBox2dWithPosition;
     private final CameraFollowPlayerSystem cameraFollowPlayerSystem;
@@ -48,7 +48,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         playerInputSystem = new PlayerInputSystem();
         playerMouvementTextureSystem = new PlayerMouvementTextureSystem();
         playerMouvementSystem = new PlayerMouvementSystem();
-        playerTextureAnimated = new PlayerTextureAnimated();
+        fourDirectionTextureAnimated = new FourDirectionTextureAnimated();
         iaManagerClient = new IaManagerClient();
         updateBox2dWithPosition = new UpdateBox2dWithPosition();
         timeSystemSimulation = new TimeSystemSimulation();
@@ -98,7 +98,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 energyBatteryIconSystem,
                 playerMouvementTextureSystem,
                 playerMouvementSystem,
-                playerTextureAnimated,
+                fourDirectionTextureAnimated,
                 updateBox2dWithPosition,
                 cameraFollowPlayerSystem,
                 tiledTextureSystem,
@@ -143,8 +143,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return playerMouvementSystem;
     }
 
-    public PlayerTextureAnimated getPlayerTextureAnimated() {
-        return playerTextureAnimated;
+    public FourDirectionTextureAnimated getPlayerTextureAnimated() {
+        return fourDirectionTextureAnimated;
     }
 
     public IaManagerClient getIaManagerClient() {

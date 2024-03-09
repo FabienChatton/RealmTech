@@ -2,6 +2,7 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.CellComponent;
+import ch.realmtech.server.ecs.component.MouvementComponent;
 import ch.realmtech.server.ecs.component.PlayerComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -24,10 +25,11 @@ public class PlayerFootStepSystem extends IteratingSystem {
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<CellComponent> mCell;
+    private ComponentMapper<MouvementComponent> mMouvement;
     @Override
     protected void process(int entityId) {
-        PlayerComponent playerComponent = mPlayer.get(entityId);
-        if (playerComponent.oldPoss.isEmpty()) {
+        MouvementComponent playerMouvementComponent = mMouvement.get(entityId);
+        if (playerMouvementComponent.oldPoss.isEmpty()) {
             return;
         }
 
@@ -36,7 +38,7 @@ public class PlayerFootStepSystem extends IteratingSystem {
         int mainPlayer = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         PositionComponent mainPlayerPositionComponent = mPos.get(mainPlayer);
 
-        if (playerComponent.oldPoss.get(0).x != positionComponent.x || playerComponent.oldPoss.get(0).y != positionComponent.y) {
+        if (playerMouvementComponent.oldPoss.get(0).x != positionComponent.x || playerMouvementComponent.oldPoss.get(0).y != positionComponent.y) {
 
             int worldPosX = MapManager.getWorldPos(positionComponent.x);
             int worldPosY = MapManager.getWorldPos(positionComponent.y);

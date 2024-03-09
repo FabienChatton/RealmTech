@@ -124,8 +124,8 @@ public class PlayerManagerServer extends Manager {
         int inventoryCursorId = systemsAdminServer.inventoryManager.createCursorInventory(playerId, UUID.randomUUID(), 1, 1);
 
         // movement component
-        MovementComponent movementComponent = world.edit(playerId).create(MovementComponent.class);
-        movementComponent.set(10, 10);
+        PlayerMovementComponent playerMovementComponent = world.edit(playerId).create(PlayerMovementComponent.class);
+        playerMovementComponent.set(10, 10);
 
 
         // default crafting table
