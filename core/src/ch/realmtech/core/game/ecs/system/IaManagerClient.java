@@ -2,13 +2,12 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.PhysiqueWorldHelper;
-import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.component.TextureComponent;
+import ch.realmtech.server.ecs.component.*;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.HashMap;
@@ -60,7 +59,16 @@ public class IaManagerClient extends Manager {
         world.edit(iaTestId).create(PositionComponent.class);
         systemsAdminClient.uuidEntityManager.registerEntityIdWithUuid(uuid, iaTestId);
         TextureComponent textureComponent = world.edit(iaTestId).create(TextureComponent.class);
-        textureComponent.set(textureAtlas.findRegion("sandales-01"));
+        textureComponent.scale = 1.6f;
+        TextureAnimationComponent textureAnimationComponent = world.edit(iaTestId).create(TextureAnimationComponent.class);
+
+        TextureAtlas.AtlasRegion textureFront0 = textureAtlas.findRegion("zombie-0");
+        TextureAtlas.AtlasRegion textureFront1 = textureAtlas.findRegion("zombie-1");
+        TextureAtlas.AtlasRegion textureFront2 = textureAtlas.findRegion("zombie-2");
+
+        world.edit(iaTestId).create(MouvementComponent.class);
+
+        textureAnimationComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
         return iaTestId;
     }
 }

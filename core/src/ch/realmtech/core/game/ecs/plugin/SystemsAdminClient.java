@@ -13,7 +13,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final PlayerManagerClient playerManagerClient;
     private final ItemManagerClient itemManagerClient;
     private final PlayerInputSystem playerInputSystem;
-    private final PlayerMouvementTextureSystem playerMouvementTextureSystem;
+    private final MouvementSystem mouvementSystem;
     private final PlayerMouvementSystem playerMouvementSystem;
     private final FourDirectionTextureAnimated fourDirectionTextureAnimated;
     private final IaManagerClient iaManagerClient;
@@ -46,7 +46,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         playerManagerClient = new PlayerManagerClient();
         itemManagerClient = new ItemManagerClient();
         playerInputSystem = new PlayerInputSystem();
-        playerMouvementTextureSystem = new PlayerMouvementTextureSystem();
+        mouvementSystem = new MouvementSystem();
         playerMouvementSystem = new PlayerMouvementSystem();
         fourDirectionTextureAnimated = new FourDirectionTextureAnimated();
         iaManagerClient = new IaManagerClient();
@@ -96,7 +96,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
                 furnaceSimulationSystem,
                 craftingManager,
                 energyBatteryIconSystem,
-                playerMouvementTextureSystem,
+                mouvementSystem,
                 playerMouvementSystem,
                 fourDirectionTextureAnimated,
                 updateBox2dWithPosition,
@@ -135,8 +135,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return playerInputSystem;
     }
 
-    public PlayerMouvementTextureSystem getPlayerMouvementTextureSystem() {
-        return playerMouvementTextureSystem;
+    public MouvementSystem getPlayerMouvementTextureSystem() {
+        return mouvementSystem;
     }
 
     public PlayerMouvementSystem getPlayerMouvementSystem() {

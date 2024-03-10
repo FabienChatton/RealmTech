@@ -41,20 +41,32 @@ public class FourDirectionTextureAnimated extends IteratingSystem {
 
     private void updateAnimation(TextureAnimationComponent textureAnimation, MouvementComponent mouvementComponent, TextureComponent textureComponent) {
         final TextureRegion textureRegion;
-        if (++textureAnimation.animationIndex >= textureAnimation.animationFront.length) {
-            textureAnimation.animationIndex = 1;
-        }
+
         if (isInputKeysUp(mouvementComponent.lastDirection)) {
-            textureRegion = textureAnimation.animationBack[textureAnimation.animationIndex];
+            textureRegion = getTextureRegion(textureAnimation.animationBack, textureAnimation);
         } else if (isInputKeysLeft(mouvementComponent.lastDirection)) {
-            textureRegion = textureAnimation.animationLeft[textureAnimation.animationIndex];
+            textureRegion = getTextureRegion(textureAnimation.animationLeft, textureAnimation);
         } else if (isInputKeysDown(mouvementComponent.lastDirection)) {
             textureRegion = textureAnimation.animationFront[textureAnimation.animationIndex];
         } else if (isInputKeysRight(mouvementComponent.lastDirection)) {
-            textureRegion = textureAnimation.animationRight[textureAnimation.animationIndex];
+            textureRegion = getTextureRegion(textureAnimation.animationRight, textureAnimation);
+
         } else {
             textureRegion = textureAnimation.animationFront[0];
         }
         textureComponent.texture = textureRegion;
+    }
+
+    private TextureRegion getTextureRegion(TextureRegion[] textureArray, TextureAnimationComponent textureAnimation) {
+        final TextureRegion textureRegion;
+        if (++textureAnimation.animationIndex >= textureAnimation.animationFront.length) {
+            textureAnimation.animationIndex = 1;
+        }
+        if (textureArray != null) {
+            textureRegion = textureArray[textureAnimation.animationIndex];
+        } else {
+            textureRegion = textureAnimation.animationFront[textureAnimation.animationIndex];
+        }
+        return textureRegion;
     }
 }

@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 
 @SystemServerTickSlave
 @All({MouvementComponent.class, PositionComponent.class})
-public class PlayerMouvementTextureSystem extends IteratingSystem {
+public class MouvementSystem extends IteratingSystem {
     private ComponentMapper<MouvementComponent> mMovement;
     private ComponentMapper<PositionComponent> mPos;
 
