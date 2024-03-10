@@ -51,8 +51,8 @@ public class IaSystemServer extends BaseSystem {
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(0.9f, 0.9f);
         fixtureDef.shape = playerShape;
-        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
-        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
+        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT | PhysiqueWorldHelper.BIT_PLAYER;
         bodyIaTest.createFixture(fixtureDef);
         bodyIaTest.setTransform(x, y, bodyIaTest.getAngle());
 

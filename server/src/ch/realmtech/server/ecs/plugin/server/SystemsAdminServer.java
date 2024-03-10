@@ -31,6 +31,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final EnergyGeneratorSystem energyGeneratorSystem;
     public final DirtyCellSystem dirtyCellSystem;
     public final PlayerSubscriptionSystem playerSubscriptionSystem;
+    public final PlayerMobContactSystem playerMobContactSystem;
 
     public SystemsAdminServer() {
         iaSystemServer = new IaSystemServer();
@@ -44,6 +45,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         furnaceSystem = new FurnaceSystem();
         energyBatterySystem = new EnergyBatterySystem();
         energyGeneratorSystem = new EnergyGeneratorSystem();
+        playerMobContactSystem = new PlayerMobContactSystem();
 
         craftingSystem = new CraftingSystem();
         craftingManager = new CraftingManager();
@@ -76,6 +78,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 furnaceSystem,
                 energyBatterySystem,
                 energyGeneratorSystem,
+                playerMobContactSystem,
 
                 craftingSystem,
                 craftingManager,

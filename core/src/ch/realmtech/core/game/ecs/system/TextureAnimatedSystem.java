@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import static ch.realmtech.server.ecs.system.PlayerMouvementSystemServer.*;
 
 @All({TextureComponent.class, TextureAnimationComponent.class, MouvementComponent.class})
-public class FourDirectionTextureAnimated extends IteratingSystem {
+public class TextureAnimatedSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
     private ComponentMapper<TextureComponent> mTexture;
@@ -47,7 +47,7 @@ public class FourDirectionTextureAnimated extends IteratingSystem {
         } else if (isInputKeysLeft(mouvementComponent.lastDirection)) {
             textureRegion = getTextureRegion(textureAnimation.animationLeft, textureAnimation);
         } else if (isInputKeysDown(mouvementComponent.lastDirection)) {
-            textureRegion = textureAnimation.animationFront[textureAnimation.animationIndex];
+            textureRegion = getTextureRegion(textureAnimation.animationLeft, textureAnimation);
         } else if (isInputKeysRight(mouvementComponent.lastDirection)) {
             textureRegion = getTextureRegion(textureAnimation.animationRight, textureAnimation);
 
