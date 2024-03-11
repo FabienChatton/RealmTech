@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
 
+@Deprecated
 public class CellRegisterEntry implements Entry<CellRegisterEntry> {
 
     private TextureRegion textureRegion;

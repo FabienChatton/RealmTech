@@ -7,7 +7,6 @@ import ch.realmtech.server.ecs.component.EnergyGeneratorComponent;
 import ch.realmtech.server.ecs.component.EnergyGeneratorIconComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.forclient.EnergyIconSystemForClient;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -40,8 +39,9 @@ public class EnergyGeneratorClientSystem extends IteratingSystem implements Ener
 
         systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, iconInventoryUuid, new int[1][1], 1, 1);
 
-        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
-        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
+        // TODO remettre l'icon de la furnace
+        //int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
+        //systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
 
         mEnergyGeneratorIcon.create(motherId).set(iconFireId);
         EnergyGeneratorExtraInfoComponent energyGeneratorExtraInfoComponent = mEnergyGeneratorExtraInfo.create(motherId).set(0);

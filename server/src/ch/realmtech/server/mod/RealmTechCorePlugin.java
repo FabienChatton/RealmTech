@@ -7,6 +7,6 @@ public class RealmTechCorePlugin implements ArtemisPlugin {
 
     @Override
     public void setup(WorldConfigurationBuilder b) {
-        b.dependsOn(RealmTechCoreMod.class);
+
     }
 }

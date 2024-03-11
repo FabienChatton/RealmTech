@@ -1,0 +1,11 @@
+package ch.realmtech.server.newMod.ItemsEntry;
+
+import ch.realmtech.server.item.ItemBehavior;
+import ch.realmtech.server.newRegistry.NewItemEntry;
+
+public class StickItemEntry extends NewItemEntry {
+    public StickItemEntry() {
+        super("stick", "stick-02", ItemBehavior.builder()
+                .build());
+    }
+}

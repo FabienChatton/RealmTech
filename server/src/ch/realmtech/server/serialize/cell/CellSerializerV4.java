@@ -5,7 +5,8 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.level.cell.EditEntityCreate;
-import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.serialize.AbstractSerializerController;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -13,11 +14,14 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 import com.artemis.utils.ImmutableBag;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
+    @Wire(name = "rootRegistry")
+    private NewRegistry<?> rootRegistry;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<ChestComponent> mChest;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
@@ -29,7 +33,7 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer cellToSerialize) {
         CellComponent cellComponentToSerialize = mCell.get(cellToSerialize);
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, cellToSerialize));
-        int hashCellRegisterEntry = CellRegisterEntry.getHash(cellComponentToSerialize.cellRegisterEntry);
+        int hashCellRegisterEntry = cellComponentToSerialize.cellRegisterEntry.getId();
         byte innerChunkPos = Cells.getInnerChunkPos(cellComponentToSerialize.getInnerPosX(), cellComponentToSerialize.getInnerPosY());
 
         buffer.writeInt(hashCellRegisterEntry);
@@ -75,7 +79,7 @@ public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
                 }
             };
         }
-        return new CellArgs(CellRegisterEntry.getCellModAndCellHash(hashCellRegisterEntry), innerChunkPos, editEntityCreate);
+        return new CellArgs(RegistryUtils.findEntryUnsafe(rootRegistry, hashCellRegisterEntry), innerChunkPos, editEntityCreate);
     }
 
     @Override

@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 
+@Deprecated
 public class RealmTechCoreMod implements ArtemisPlugin {
 
     public final static String MOD_ID = "realmtech";

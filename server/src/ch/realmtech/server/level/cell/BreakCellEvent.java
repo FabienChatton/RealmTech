@@ -4,11 +4,10 @@ import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.item.ItemType;
-import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class BreakCellEvent {
-
-    public static BreakCell dropOnBreak(final ItemRegisterEntry itemRegisterEntryToDrop) {
+    public static BreakCell dropOnBreak(NewItemEntry dropItem) {
         return (cellManager, world, chunkId, cellId, itemUseByPlayer, playerSrc) -> {
             CellComponent cellToBreak = world.getMapper(CellComponent.class).get(cellId);
             InfChunkComponent infChunkComponent = world.getMapper(InfChunkComponent.class).get(chunkId);
@@ -18,7 +17,7 @@ public class BreakCellEvent {
                 cellManager.breakCell(
                         MapManager.getWorldPos(infChunkComponent.chunkPosX, cellToBreak.getInnerPosX()),
                         MapManager.getWorldPos(infChunkComponent.chunkPosY, cellToBreak.getInnerPosY()),
-                        itemRegisterEntryToDrop,
+                        dropItem,
                         playerSrc);
                 return true;
             } else {

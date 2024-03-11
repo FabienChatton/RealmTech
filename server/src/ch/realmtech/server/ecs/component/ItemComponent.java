@@ -1,12 +1,12 @@
 package ch.realmtech.server.ecs.component;
 
-import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.newRegistry.NewItemEntry;
 import com.artemis.Component;
 
 public class ItemComponent extends Component {
-    public ItemRegisterEntry itemRegisterEntry;
+    public NewItemEntry itemRegisterEntry;
 
-    public void set(ItemRegisterEntry itemRegisterEntry) {
+    public void set(NewItemEntry itemRegisterEntry) {
         this.itemRegisterEntry = itemRegisterEntry;
     }
 

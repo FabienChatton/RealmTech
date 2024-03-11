@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.NoSuchElementException;
 
+@Deprecated
 public class ItemRegisterEntry implements Entry<ItemRegisterEntry> {
     private Archetype archetype;
     private TextureRegion textureRegion;

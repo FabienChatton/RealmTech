@@ -2,6 +2,7 @@ package ch.realmtech.server.item;
 
 import ch.realmtech.server.level.RightClickInteractionItemClient;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.newRegistry.NewCellEntry;
 import ch.realmtech.server.registery.CellRegisterEntry;
 import com.badlogic.gdx.utils.Null;
 
@@ -11,8 +12,10 @@ public class ItemBehavior {
     private int attackDommage;
     private ItemType itemType;
     private float speedEffect;
+    @Deprecated
     @Null
     private CellRegisterEntry placeCell;
+    private NewCellEntry newPlaceCellEntry;
     @Null
     private String placeCellName;
     private int timeToBurn = 0;
@@ -40,12 +43,21 @@ public class ItemBehavior {
         return speedEffect;
     }
 
+    @Deprecated
     public CellRegisterEntry getPlaceCell() {
         if (placeCell == null) {
             if (placeCellName == null || placeCellName.isBlank()) return null;
             placeCell = RealmTechCoreMod.CELLS.get(placeCellName).getEntry();
         }
         return placeCell;
+    }
+
+    public NewCellEntry getNewPlaceCellEntry() {
+        return newPlaceCellEntry;
+    }
+
+    public String getPlaceCellName() {
+        return placeCellName;
     }
 
     public Optional<RightClickInteractionItemClient> getInteragieClickDroit() {
@@ -58,6 +70,10 @@ public class ItemBehavior {
 
     public boolean isIcon() {
         return icon;
+    }
+
+    public void setPlaceCell(NewCellEntry newCellEntry) {
+        this.newPlaceCellEntry = newCellEntry;
     }
 
     public static class ItemBehaviorBuilder {

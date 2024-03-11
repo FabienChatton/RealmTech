@@ -8,7 +8,8 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
-import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
 import com.artemis.ComponentMapper;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class ItemManagerClient extends ItemManager {
@@ -52,7 +54,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     @Override
-    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
+    public int newItemOnGround(float worldPosX, float worldPosY, NewItemEntry itemRegisterEntry, UUID itemUuid) {
         int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
         ItemComponent itemComponent = mItem.get(itemId);
         TextureComponent textureComponent = mTexture.create(itemId);
@@ -73,10 +75,13 @@ public class ItemManagerClient extends ItemManager {
         }
     }
 
-    public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
+    public void setItemOnGroundPos(UUID uuid, int itemRegisterEntryHash, float worldPosX, float worldPosY) {
         int itemId = systemsAdminClient.uuidEntityManager.getEntityId(uuid);
         if (itemId == -1) {
-            itemId = systemsAdminClient.getItemManagerClient().newItemOnGround(worldPosX, worldPosY, itemRegisterEntry, uuid);
+            Optional<NewItemEntry> itemEntry = RegistryUtils.findEntry(context.getRootRegistry(), itemRegisterEntryHash);
+            if (itemEntry.isPresent()) {
+                itemId = systemsAdminClient.getItemManagerClient().newItemOnGround(worldPosX, worldPosY, itemEntry.get(), uuid);
+            }
         }
         if (!mBox2d.has(itemId)) {
             inventoryItemToGroundItem(itemId, worldPosX, worldPosY);
@@ -90,7 +95,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     @Override
-    public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
+    public int newItemInventory(NewItemEntry itemRegisterEntry, UUID itemUuid) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
         ItemComponent itemComponent = world.edit(itemId).create(ItemComponent.class);
         itemComponent.set(itemRegisterEntry);

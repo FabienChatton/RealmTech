@@ -1,28 +1,28 @@
 package ch.realmtech.server.serialize.cell;
 
 import ch.realmtech.server.level.cell.EditEntityCreate;
-import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.newRegistry.NewCellEntry;
 import com.badlogic.gdx.utils.Null;
 
 import java.util.Optional;
 
 public final class CellArgs {
-    private final CellRegisterEntry cellRegisterEntry;
+    private final NewCellEntry cellRegisterEntry;
     private final byte innerChunk;
     @Null
     private final EditEntityCreate editEntityArgs;
 
-    public CellArgs(CellRegisterEntry cellRegisterEntry, byte innerChunk, EditEntityCreate editEntityArgs) {
+    public CellArgs(NewCellEntry cellRegisterEntry, byte innerChunk, EditEntityCreate editEntityArgs) {
         this.cellRegisterEntry = cellRegisterEntry;
         this.innerChunk = innerChunk;
         this.editEntityArgs = editEntityArgs;
     }
 
-    public CellArgs(CellRegisterEntry cellRegisterEntry, byte innerChunk) {
+    public CellArgs(NewCellEntry cellRegisterEntry, byte innerChunk) {
         this(cellRegisterEntry, innerChunk, null);
     }
 
-    public CellRegisterEntry getCellRegisterEntry() {
+    public NewCellEntry getCellRegisterEntry() {
         return cellRegisterEntry;
     }
 

@@ -1,17 +1,17 @@
 package ch.realmtech.server.ecs.component;
 
 import ch.realmtech.server.level.cell.Cells;
-import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.newRegistry.NewCellEntry;
 import com.artemis.PooledComponent;
 import com.artemis.annotations.EntityId;
 
 public class CellComponent extends PooledComponent {
     private byte innerPos;
-    public CellRegisterEntry cellRegisterEntry;
+    public NewCellEntry cellRegisterEntry;
     @EntityId
     public int chunkId;
 
-    public CellComponent set(byte innerPosX, byte innerPosY, CellRegisterEntry cellRegisterEntry, int chunkId) {
+    public CellComponent set(byte innerPosX, byte innerPosY, NewCellEntry cellRegisterEntry, int chunkId) {
         innerPos = Cells.getInnerChunkPos(innerPosX, innerPosY);
         this.cellRegisterEntry = cellRegisterEntry;
         this.chunkId = chunkId;

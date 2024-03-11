@@ -1,9 +1,8 @@
 package ch.realmtech.server.level.cell;
 
-import ch.realmtech.server.registery.ItemRegisterEntry;
-import com.badlogic.gdx.utils.Null;
+import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public interface CellManager {
 
-    void breakCell(int worldPosX, int worldPosY, @Null ItemRegisterEntry itemDropRegisterEntry, int playerSrc);
+    void breakCell(int worldPosX, int worldPosY, NewItemEntry itemDropRegisterEntry, int playerSrc);
 }

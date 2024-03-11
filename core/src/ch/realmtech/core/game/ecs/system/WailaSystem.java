@@ -5,7 +5,6 @@ import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.item.ItemType;
-import ch.realmtech.server.registery.CellRegisterEntry;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -85,7 +84,7 @@ public class WailaSystem extends BaseSystem {
         // waila
         wailaWindow.getTitleLabel().setText(cellComponent.cellRegisterEntry.toString());
         wailaCellImage.setDrawable(new TextureRegionDrawable(cellComponent.cellRegisterEntry.getTextureRegion(context.getTextureAtlas())));
-        wailaCellInfoHash.setText("Id: " + CellRegisterEntry.hashString(cellComponent.cellRegisterEntry.toString()));
+        wailaCellInfoHash.setText("Id: " + cellComponent.cellRegisterEntry.getId());
 
         ItemType curentItemType;
         if (!mItem.has(systemsAdminClient.getItemBarManager().getSelectItem())) {

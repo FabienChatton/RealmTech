@@ -7,9 +7,9 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.newRegistry.NewItemEntry;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.InfRegistryAnonyme;
-import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -556,7 +556,7 @@ public class InventoryManager extends Manager {
         return mInventory.get(craftingTableComponent.craftingResultInventory);
     }
 
-    public List<ItemRegisterEntry> mapInventoryToItemRegistry(int inventoryId) {
+    public List<NewItemEntry> mapInventoryToItemRegistry(int inventoryId) {
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         return Arrays.stream(inventoryComponent.inventory)
                 .map((stack) -> mItem.get(stack[0]))

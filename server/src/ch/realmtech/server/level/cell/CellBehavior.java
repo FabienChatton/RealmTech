@@ -4,13 +4,11 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.RightClickInteraction;
 import ch.realmtech.server.mod.PlayerFootStepSound;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 public class CellBehavior {
     private ItemType breakWith;
@@ -18,7 +16,7 @@ public class CellBehavior {
     private PlayerFootStepSound playerFootStepSound;
     private final byte layer;
     private BreakCell breakCellEvent;
-    private Supplier<BreakCell> getBreakCellEvent;
+    private String dropItemRegistryName;
     private int breakStepNeed = 20;
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
@@ -36,7 +34,7 @@ public class CellBehavior {
         return builder(layer.layer);
     }
 
-    private CellBehavior(byte layer) {
+    protected CellBehavior(byte layer) {
         this.layer = layer;
     }
 
@@ -57,7 +55,6 @@ public class CellBehavior {
     }
 
     public BreakCell getBreakCellEvent() {
-        if (breakCellEvent == null && getBreakCellEvent != null) breakCellEvent = getBreakCellEvent.get();
         return breakCellEvent != null ? breakCellEvent : BreakCellEvent.dropNothing();
     }
 
@@ -93,6 +90,15 @@ public class CellBehavior {
         return canPlaceCellOnTop;
     }
 
+    public String getDropItemRegistryName() {
+        return dropItemRegistryName;
+    }
+
+    public void setBreakCellEvent(BreakCell breakCell) {
+        this.breakCellEvent = breakCell;
+    }
+
+
     public static class CellBehaviorBuilder {
         private final CellBehavior cellBehavior;
 
@@ -116,12 +122,12 @@ public class CellBehavior {
         }
 
         public CellBehaviorBuilder dropOnBreak(String dropItemRegistryName) {
-            cellBehavior.getBreakCellEvent = () -> BreakCellEvent.dropOnBreak(RealmTechCoreMod.ITEMS.get(dropItemRegistryName).getEntry());
+            cellBehavior.dropItemRegistryName = dropItemRegistryName;
             return this;
         }
 
         public CellBehaviorBuilder dropNothing() {
-            cellBehavior.getBreakCellEvent = BreakCellEvent::dropNothing;
+            cellBehavior.dropItemRegistryName = null;
             return this;
         }
 

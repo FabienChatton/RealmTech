@@ -1,8 +1,9 @@
 package ch.realmtech.server.level.worldGeneration;
 
 
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.newRegistry.NewCellEntry;
+import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 
 import java.util.Random;
 
@@ -33,7 +34,7 @@ public class PerlineNoise3 implements GetNoise {
         float layerWeight = 1;
         float weightSum = 0;
         for (int i = 0; i < octave; i++) {
-            ret += simplexNoise.noise(x * layerFrequency, y * layerFrequency) * layerWeight;
+            ret += (float) (simplexNoise.noise(x * layerFrequency, y * layerFrequency) * layerWeight);
             layerFrequency *= 2;
             weightSum += layerWeight;
             layerWeight *= roughness;
@@ -42,25 +43,25 @@ public class PerlineNoise3 implements GetNoise {
 
     }
 
-    public CellRegisterEntry getGroundDeco(PerlinNoise perlinNoise, int x, int y) {
-        CellRegisterEntry ret = null;
+    public NewCellEntry getGroundDeco(PerlinNoise perlinNoise, int x, int y, NewRegistry<?> rootRegistry) {
+        NewCellEntry ret = null;
         if (perlinNoise.getNoise(this, x, y, simplexNoiseGold) > 0.999999f) {
-            ret = RealmTechCoreMod.GOLD_ORE.cellRegisterEntry();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.goldOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseIron) > 0.999f) {
-            ret = RealmTechCoreMod.IRON_ORE.cellRegisterEntry();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.ironOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCopper) > 0.999f) {
-            ret = RealmTechCoreMod.COPPER_ORE.cellRegisterEntry();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.copperOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCoal) > 0.999f) {
-            ret = RealmTechCoreMod.COAL_ORE.cellRegisterEntry();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.coalOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseStone) > 0.999f) {
-            ret = RealmTechCoreMod.STONE.cellRegisterEntry();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.stoneOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseTree) > 0.999f) {
-            ret = RealmTechCoreMod.TREE_CELL;
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.tree").get();
         }
         return ret;
     }
