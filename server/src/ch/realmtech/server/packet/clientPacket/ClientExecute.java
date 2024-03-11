@@ -2,6 +2,7 @@ package ch.realmtech.server.packet.clientPacket;
 
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.ClientPacket;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -36,7 +37,7 @@ public interface ClientExecute {
 
     <T extends ClientPacket> void packetReciveMonitoring(T packet);
 
-    void setItemOnGroundPos(UUID uuid, int itemRegisterEntryHash, float posX, float posY);
+    void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float posX, float posY);
 
     void supprimeItemOnGround(UUID itemUuid);
 

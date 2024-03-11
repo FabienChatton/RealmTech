@@ -3,7 +3,9 @@ package ch.realmtech.server.serialize;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.level.cell.ChestEditEntity;
+import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
@@ -40,8 +42,8 @@ class SerializerControllerTest {
         int expectedInventoryId = serverContext.getEcsEngineServer().getSystemsAdminServer().inventoryManager.createChest(expectedChestId, UUID.randomUUID(), 3, 9);
         InventoryComponent expectedChestInventory = inventoryManager.getChestInventory(expectedChestId);
         for (int i = 0; i < 100; i++) {
-            // int newItemId = serverContext.getSystem(ItemManagerServer.class).newItemInventory(RealmTechCoreMod.PIOCHE_BOIS_ITEM, UUID.randomUUID());
-            // inventoryManager.addItemToInventory(expectedChestInventory, newItemId);
+            int newItemId = serverContext.getSystem(ItemManagerServer.class).newItemInventory(RealmTechCoreMod.PIOCHE_BOIS_ITEM, UUID.randomUUID());
+            inventoryManager.addItemToInventory(expectedChestInventory, newItemId);
         }
 
         SerializedApplicationBytes serializedApplicationBytes = serializerController.getChestSerializerController().encode(expectedChestId);

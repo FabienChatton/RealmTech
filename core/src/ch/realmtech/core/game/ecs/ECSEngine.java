@@ -106,7 +106,6 @@ public final class ECSEngine implements Disposable, GetWorld {
         worldConfiguration.register(serializerController);
         worldConfiguration.register(rayHandler);
         worldConfiguration.register("executeOnContext", executeOnContextClient);
-        worldConfiguration.register("rootRegistry", context.getRootRegistry());
 
         worldConfiguration.setInvocationStrategy(tickEmulationInvocationStrategy);
         world = new World(worldConfiguration);

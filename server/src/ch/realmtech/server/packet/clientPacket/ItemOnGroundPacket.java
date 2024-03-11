@@ -1,6 +1,7 @@
 package ch.realmtech.server.packet.clientPacket;
 
 import ch.realmtech.server.packet.ClientPacket;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import io.netty.buffer.ByteBuf;
 
 import java.util.UUID;
@@ -10,13 +11,13 @@ public class ItemOnGroundPacket implements ClientPacket {
     private final UUID uuid;
     private final float worldPosX;
     private final float worldPosY;
-    private final int itemRegisterEntryId;
+    private final ItemRegisterEntry itemRegisterEntry;
 
-    public ItemOnGroundPacket(UUID uuid, int itemRegisterEntryId, float worldPosX, float worldPosY) {
+    public ItemOnGroundPacket(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
         this.uuid = uuid;
         this.worldPosX = worldPosX;
         this.worldPosY = worldPosY;
-        this.itemRegisterEntryId = itemRegisterEntryId;
+        this.itemRegisterEntry = itemRegisterEntry;
     }
 
     public ItemOnGroundPacket(ByteBuf byteBuf) {
@@ -25,12 +26,12 @@ public class ItemOnGroundPacket implements ClientPacket {
         uuid = new UUID(msb, lsb);
         worldPosX = byteBuf.readFloat();
         worldPosY = byteBuf.readFloat();
-        itemRegisterEntryId = byteBuf.readInt();
+        itemRegisterEntry = ItemRegisterEntry.getItemByHash(byteBuf.readInt());
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.setItemOnGroundPos(uuid, itemRegisterEntryId, worldPosX, worldPosY);
+        clientExecute.setItemOnGroundPos(uuid, itemRegisterEntry, worldPosX, worldPosY);
     }
 
     @Override
@@ -39,7 +40,7 @@ public class ItemOnGroundPacket implements ClientPacket {
         byteBuf.writeLong(uuid.getLeastSignificantBits());
         byteBuf.writeFloat(worldPosX);
         byteBuf.writeFloat(worldPosY);
-        byteBuf.writeInt(itemRegisterEntryId);
+        byteBuf.writeInt(ItemRegisterEntry.getHash(itemRegisterEntry));
     }
 
     @Override

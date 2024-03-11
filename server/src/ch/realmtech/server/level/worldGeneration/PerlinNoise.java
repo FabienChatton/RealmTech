@@ -1,8 +1,7 @@
 package ch.realmtech.server.level.worldGeneration;
 
-import ch.realmtech.server.newRegistry.NewCellEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.registery.CellRegisterEntry;
 import com.artemis.World;
 
 import java.util.Random;
@@ -14,13 +13,11 @@ public class PerlinNoise {
     private final static float ROUGHNESS = 0.6f;
     private final static float SCALE = 0.005f;
     private final World world;
-    private final NewRegistry rootRegistry;
 
     public PerlinNoise(Random rand, PerlineNoise3 perlinNoise, World world) {
         this.rand = rand;
         this.perlinNoise = perlinNoise;
         this.world = world;
-        this.rootRegistry = world.getRegistered("rootRegistry");
     }
 
 
@@ -36,22 +33,22 @@ public class PerlinNoise {
         return perlinNoise.getNoise(x, y, OCTAVE, ROUGHNESS, SCALE, simplexNoise);
     }
 
-    public NewCellEntry[] generateCell(int x, int y) {
+    public CellRegisterEntry[] generateCell(int x, int y) {
         float ground = getGroundNoise(x, y);
-        NewCellEntry groundCellRegisterEntry;
+        final CellRegisterEntry groundCellRegisterEntry;
         if (ground < 0.5f) {
-            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.grass").get();
+            groundCellRegisterEntry = RealmTechCoreMod.GRASS_CELL;
         } else if (ground < 0.95f) {
-            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.sand").get();
+            groundCellRegisterEntry = RealmTechCoreMod.SAND_CELL;
         } else {
-            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.water").get();
+            groundCellRegisterEntry = RealmTechCoreMod.WATER_CELL;
         }
-        final NewCellEntry groundDecoCellRegisterEntry;
-        if (!groundCellRegisterEntry.getName().equals("water")) {
-            groundDecoCellRegisterEntry = perlinNoise.getGroundDeco(this, x, y, rootRegistry);
+        final CellRegisterEntry groundDecoCellRegisterEntry;
+        if (groundCellRegisterEntry != RealmTechCoreMod.WATER_CELL) {
+            groundDecoCellRegisterEntry = perlinNoise.getGroundDeco(this, x, y);
         } else {
             groundDecoCellRegisterEntry = null;
         }
-        return new NewCellEntry[]{groundCellRegisterEntry, groundDecoCellRegisterEntry};
+        return new CellRegisterEntry[]{groundCellRegisterEntry, groundDecoCellRegisterEntry};
     }
 }

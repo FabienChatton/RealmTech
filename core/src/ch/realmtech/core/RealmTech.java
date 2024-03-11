@@ -22,8 +22,6 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.netty.ConnexionConfig;
-import ch.realmtech.server.newMod.ModLoader;
-import ch.realmtech.server.newRegistry.NewRegistry;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.serialize.SerializerController;
@@ -78,7 +76,6 @@ public final class RealmTech extends Game implements ClientContext {
     private AuthControllerClient authControllerClient;
     private boolean verifyAccessToken;
     private List<Consumer<ECSEngine>> onEcsEngineInitializes;
-    private NewRegistry<?> rootRegistry;
 
     @Override
     public void create() {
@@ -123,10 +120,6 @@ public final class RealmTech extends Game implements ClientContext {
         setScreen(ScreenType.LOADING);
         authRequestClient = new AuthRequestClient(this);
         authControllerClient = new AuthControllerClient(authRequestClient);
-
-        rootRegistry = NewRegistry.createRoot();
-        ModLoader modLoader = new ModLoader(rootRegistry);
-        modLoader.initializeCoreMod();
     }
 
     public void loadingFinish() {
@@ -367,11 +360,6 @@ public final class RealmTech extends Game implements ClientContext {
     @Override
     public void writeToConsole(String s) {
         gameScreen.writeToConsole(s);
-    }
-
-    @Override
-    public NewRegistry<?> getRootRegistry() {
-        return rootRegistry;
     }
 
     public SerializerController getSerializerController() {

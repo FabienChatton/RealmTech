@@ -3,9 +3,9 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.newRegistry.NewItemEntry;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.InfRegistryAnonymeImmutable;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 
@@ -19,7 +19,7 @@ public class CraftingManager extends Manager {
         return getCraftResult(craftingTableComponent.getRegistry(), systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
     }
 
-    public Optional<CraftResult> getCraftResult(InfRegistryAnonymeImmutable<CraftingRecipeEntry> craftRegistry, List<NewItemEntry> itemInventoryRegistry) {
+    public Optional<CraftResult> getCraftResult(InfRegistryAnonymeImmutable<CraftingRecipeEntry> craftRegistry, List<ItemRegisterEntry> itemInventoryRegistry) {
         List<CraftResult> craftResults = craftRegistry.getEnfants().stream()
                 .map((craftingRecipe) -> craftingRecipe.getEntry().craft(itemInventoryRegistry))
                 .filter(Optional::isPresent)

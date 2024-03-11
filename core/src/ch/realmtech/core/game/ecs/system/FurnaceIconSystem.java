@@ -95,12 +95,11 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, UUID.randomUUID(), new int[1][1], 1, 1);
         systemsAdminClient.inventoryManager.createInventoryUiIcon(iconProcessId, UUID.randomUUID(), new int[1][1], 1, 1);
 
-        // TODO remettre l'icon de la furnace
-//        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
-//        int iconProcessItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01, UUID.randomUUID());
+        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
+        int iconProcessItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01, UUID.randomUUID());
 
-//        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
-//        systemsAdminClient.inventoryManager.addItemToInventory(iconProcessId, iconProcessItemId);
+        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
+        systemsAdminClient.inventoryManager.addItemToInventory(iconProcessId, iconProcessItemId);
         world.edit(motherEntity).create(FurnaceIconsComponent.class).set(iconFireId, iconProcessId);
         world.edit(motherEntity).create(FurnaceExtraInfoComponent.class);
     }

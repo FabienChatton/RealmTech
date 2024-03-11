@@ -5,7 +5,7 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -29,10 +29,14 @@ public class ItemManagerCommun {
         );
     }
 
-    public static int createNewItem(World world, NewItemEntry itemRegisterEntry, Archetype defaultItemGroundArchetype, UUID itemUuid) {
+    public static int createNewItem(World world, ItemRegisterEntry itemRegisterEntry, Archetype defaultItemGroundArchetype, UUID itemUuid) {
         int itemId;
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
-        itemId = world.create(defaultItemGroundArchetype);
+        if (itemRegisterEntry.getArchetype() != null) {
+            itemId = world.create(itemRegisterEntry.getArchetype());
+        } else {
+            itemId = world.create(defaultItemGroundArchetype);
+        }
         mItem.get(itemId).set(itemRegisterEntry);
         SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
         systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(itemUuid, itemId);

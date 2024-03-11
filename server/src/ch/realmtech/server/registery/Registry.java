@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@Deprecated
 public class Registry<T extends Entry<T>> {
     private final Registry<T> parent;
     private final String name;
@@ -23,8 +22,8 @@ public class Registry<T extends Entry<T>> {
         return new Registry<>(null, name);
     }
 
-    public static <T extends Entry<T>> Registry<T> create(String name, Registry<? extends T> parent) {
-        return new Registry<>((Registry<T>) parent, name);
+    public static <T extends Entry<T>> Registry<T> create(String name, Registry<T> parent) {
+        return new Registry<>(parent, name);
     }
 
     public T add(String name, T registryEntry) {

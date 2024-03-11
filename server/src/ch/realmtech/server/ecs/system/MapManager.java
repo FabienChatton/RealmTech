@@ -7,7 +7,7 @@ import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.level.map.WorldMap;
 import ch.realmtech.server.level.worldGeneration.PerlinNoise;
-import ch.realmtech.server.newRegistry.NewCellEntry;
+import ch.realmtech.server.registery.CellRegisterEntry;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -230,10 +230,10 @@ public class MapManager extends Manager {
         int worldX = MapManager.getWorldPos(chunkPosX, innerChunkX);
         int worldY = MapManager.getWorldPos(chunkPosY, innerChunkY);
         PerlinNoise perlinNoise = saveMetadataComponent.perlinNoise;
-        NewCellEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
+        final CellRegisterEntry[] cellRegisterEntries = perlinNoise.generateCell(worldX, worldY);
         final int[] cellIds = new int[(int) Arrays.stream(cellRegisterEntries).filter(Objects::nonNull).count()];
         for (int i = 0; i < cellRegisterEntries.length; i++) {
-            NewCellEntry cellRegisterEntry = cellRegisterEntries[i];
+            CellRegisterEntry cellRegisterEntry = cellRegisterEntries[i];
             if (cellRegisterEntry != null) {
                 cellIds[i] = newCell(chunkId, chunkPosX, chunkPosY, new CellArgs(cellRegisterEntry, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
             }
@@ -245,7 +245,7 @@ public class MapManager extends Manager {
         int cellId = world.create();
         byte innerX = Cells.getInnerChunkPosX(cellArgs.getInnerChunk());
         byte innerY = Cells.getInnerChunkPosY(cellArgs.getInnerChunk());
-        NewCellEntry cellRegisterEntry = cellArgs.getCellRegisterEntry();
+        CellRegisterEntry cellRegisterEntry = cellArgs.getCellRegisterEntry();
         world.edit(cellId).create(CellComponent.class).set(innerX, innerY, cellRegisterEntry, chunkId);
         cellArgs.getEditEntityArgs()
                 .or(() -> cellRegisterEntry.getCellBehavior().getEditEntity())

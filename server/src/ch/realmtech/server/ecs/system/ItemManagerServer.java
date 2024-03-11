@@ -5,9 +5,9 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ctrl.ItemManagerCommun;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.newRegistry.NewItemEntry;
 import ch.realmtech.server.packet.clientPacket.ItemOnGroundPacket;
 import ch.realmtech.server.packet.clientPacket.ItemOnGroundSupprimerPacket;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.Archetype;
 import com.artemis.ArchetypeBuilder;
 import com.artemis.ComponentMapper;
@@ -58,14 +58,14 @@ public class ItemManagerServer extends ItemManager {
      * @return
      */
     @Override
-    public int newItemOnGround(float worldPosX, float worldPosY, NewItemEntry itemRegisterEntry, UUID itemUuid) {
+    public int newItemOnGround(float worldPosX, float worldPosY, ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
         final int itemId = ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemGroundArchetype, itemUuid);
         inventoryItemToGroundItem(itemId, worldPosX, worldPosY);
         return itemId;
     }
 
     @Override
-    public int newItemInventory(NewItemEntry itemRegisterEntry, UUID itemUuid) {
+    public int newItemInventory(ItemRegisterEntry itemRegisterEntry, UUID itemUuid) {
         return ItemManagerCommun.createNewItem(world, itemRegisterEntry, defaultItemInventoryArchetype, itemUuid);
     }
 
@@ -93,7 +93,7 @@ public class ItemManagerServer extends ItemManager {
         inventoryItemToGroundItem(itemId, dropWorldPosX, worldPosY);
         int chunkPosX = MapManager.getWorldPos(worldPosX);
         int chunkPosY = MapManager.getWorldPos(worldPosY);
-        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry.getId(), dropWorldPosX, dropWorldPosY), chunkPosX, chunkPosY);
+        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new ItemOnGroundPacket(itemUuid, itemComponent.itemRegisterEntry, dropWorldPosX, dropWorldPosY), chunkPosX, chunkPosY);
     }
 
 }

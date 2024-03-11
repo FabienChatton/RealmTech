@@ -6,17 +6,18 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
 import ch.realmtech.server.level.cell.Cells;
-import ch.realmtech.server.newRegistry.NewCellEntry;
-import ch.realmtech.server.newRegistry.NewItemEntry;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
+import ch.realmtech.server.registery.CellRegisterEntry;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.utils.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,13 +246,15 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     }
 
     @Override
-    public void breakCell(int worldPosX, int worldPosY, NewItemEntry itemDropRegisterEntry, int playerSrc) {
+    public void breakCell(int worldPosX, int worldPosY, @Null ItemRegisterEntry itemDropRegisterEntry, int playerSrc) {
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
         int chunk = systemsAdminServer.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
         int topCell = systemsAdminServer.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         if (topCell == -1) return;
         systemsAdminServer.mapManager.damneCell(chunk, topCell);
-        systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
+        if (itemDropRegisterEntry != null) {
+            systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
+        }
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new CellBreakPacket(worldPosX, worldPosY), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
     }
 
@@ -259,7 +262,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         int itemId = systemsAdminServer.uuidEntityManager.getEntityId(itemToPlaceUuid);
         if (!mItem.has(itemId)) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
-        NewCellEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getNewPlaceCellEntry();
+        CellRegisterEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getPlaceCell();
         if (placeCell == null) return -1;
 
         int chunkPosX = MapManager.getChunkPos(worldPosX);

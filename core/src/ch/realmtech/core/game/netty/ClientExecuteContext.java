@@ -17,6 +17,7 @@ import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.registery.ItemRegisterEntry;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
@@ -165,8 +166,8 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void setItemOnGroundPos(UUID uuid, int itemRegisterEntryHash, float worldPosX, float worldPosY) {
-        context.nextFrame(() -> context.getSystem(ItemManagerClient.class).setItemOnGroundPos(uuid, itemRegisterEntryHash, worldPosX, worldPosY));
+    public void setItemOnGroundPos(UUID uuid, ItemRegisterEntry itemRegisterEntry, float worldPosX, float worldPosY) {
+        context.nextFrame(() -> context.getSystem(ItemManagerClient.class).setItemOnGroundPos(uuid, itemRegisterEntry, worldPosX, worldPosY));
     }
 
     @Override

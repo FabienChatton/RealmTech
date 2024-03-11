@@ -9,8 +9,6 @@ import ch.realmtech.server.ecs.EcsEngineServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.netty.*;
-import ch.realmtech.server.newMod.ModLoader;
-import ch.realmtech.server.newRegistry.NewRegistry;
 import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.*;
@@ -40,7 +38,6 @@ public class ServerContext implements Closeable {
     private final AuthRequest authRequest;
     private OptionServer optionServer;
     private volatile boolean saveAndClose = false;
-    private NewRegistry<?> rootRegistry;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -89,10 +86,6 @@ public class ServerContext implements Closeable {
                 logger.error("Can not create file structure", e);
                 System.exit(1);
             }
-            rootRegistry = NewRegistry.createRoot();
-            ModLoader modLoader = new ModLoader(rootRegistry);
-            modLoader.initializeCoreMod();
-
             reloadOption();
             logger.info("Verify access token: {}", optionServer.verifyAccessToken.get());
             optionServer.verifyAccessToken.set(connexionConfig.isVerifyAccessToken());
@@ -232,9 +225,5 @@ public class ServerContext implements Closeable {
 
     public void reloadOption() throws IOException {
         optionServer = OptionServer.getOptionFileAndLoadOrCreate();
-    }
-
-    public NewRegistry<?> getRootRegistry() {
-        return rootRegistry;
     }
 }

@@ -2,7 +2,6 @@ package ch.realmtech.server.registery;
 
 import java.util.Optional;
 
-@Deprecated
 public interface Entry<T extends Entry<T>> {
     default Optional<RegistryEntry<T>> findRegistryEntry(Registry<T> registry) {
         return registry.getEnfants().stream()

@@ -62,7 +62,6 @@ public final class EcsEngineServer implements GetWorld {
         worldConfiguration.register("systemsAdmin", systemsAdminServer);
         worldConfiguration.register(serializerController);
         worldConfiguration.register("executeOnContext", executeOnContextServer);
-        worldConfiguration.register("rootRegistry", serverContext.getRootRegistry());
 
         this.world = new World(worldConfiguration);
         executeOnContextServer.initialize(world);
