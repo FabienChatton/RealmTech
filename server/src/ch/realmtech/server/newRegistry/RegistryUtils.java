@@ -67,7 +67,7 @@ public class RegistryUtils {
 
     @SuppressWarnings("unchecked")
     public static <T extends NewEntry> List<T> flatEntry(NewRegistry<?> registry, Class<T> clazz) {
-        return (List<T>) flatEntry(registry).stream().filter(clazz::isInstance);
+        return (List<T>) flatEntry(registry).stream().filter(clazz::isInstance).toList();
     }
 
     @SuppressWarnings("unchecked")

@@ -1,6 +1,5 @@
 package ch.realmtech.server.ecs.component;
 
-import ch.realmtech.server.craft.CraftResultChange;
 import ch.realmtech.server.newCraft.NewCraftResult;
 import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
 import ch.realmtech.server.newRegistry.NewRegistry;
@@ -19,12 +18,12 @@ public class CraftingTableComponent extends Component {
 
     @EntityId
     public int craftingResultInventory;
-    private Function<Integer, Optional<CraftResultChange>> isCraftResultChange;
+    private Function<Integer, Optional<Optional<NewCraftResult>>> isCraftResultChange;
     private BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange;
 
     private NewRegistry<? extends NewCraftRecipeEntry> registry;
 
-    public void set(int craftingInventory, int craftingResultInventory, NewRegistry<? extends NewCraftRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange) {
+    public void set(int craftingInventory, int craftingResultInventory, NewRegistry<? extends NewCraftRecipeEntry> registry, Function<Integer, Optional<Optional<NewCraftResult>>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.registry = registry;
@@ -32,7 +31,7 @@ public class CraftingTableComponent extends Component {
         this.onCraftResultChange = onCraftResultChange;
     }
 
-    public Function<Integer, Optional<CraftResultChange>> getIsCraftResultChange() {
+    public Function<Integer, Optional<Optional<NewCraftResult>>> getIsCraftResultChange() {
         return isCraftResultChange;
     }
 

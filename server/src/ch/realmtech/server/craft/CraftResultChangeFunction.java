@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public final class CraftResultChangeFunction {
-    public static Function<Integer, Optional<CraftResultChange>> CraftResultChangeCraftingTable(World world) {
+    public static Function<Integer, Optional<Optional<NewCraftResult>>> CraftResultChangeCraftingTable(World world) {
         return (craftingTableId) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
@@ -40,14 +40,14 @@ public final class CraftResultChangeFunction {
                 }
             }
             if (canProcessCraft) {
-                return Optional.of(new CraftResultChange(craftResult));
+                return Optional.of(craftResult);
             } else {
                 return Optional.empty();
             }
         };
     }
 
-    public static Function<Integer, Optional<CraftResultChange>> CraftResultChangeFurnace(World world) {
+    public static Function<Integer, Optional<Optional<NewCraftResult>>> CraftResultChangeFurnace(World world) {
         return (furnaceId) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
@@ -66,7 +66,7 @@ public final class CraftResultChangeFunction {
                 NewCraftResult craftResult = craftResultOpt.get();
                 if (furnaceComponent.tickProcess >= craftResult.getTimeToProcess()) {
                     furnaceComponent.tickProcess = 0;
-                    return Optional.of(new CraftResultChange(craftResultOpt));
+                    return Optional.of(craftResultOpt);
                 } else {
                     if (furnaceComponent.remainingTickToBurn > 0) {
                         furnaceComponent.tickProcess++;

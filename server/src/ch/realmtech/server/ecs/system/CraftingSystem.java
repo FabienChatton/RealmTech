@@ -1,11 +1,11 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.craft.CraftResultChange;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.newCraft.NewCraftResult;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -27,9 +27,9 @@ public class CraftingSystem extends IteratingSystem {
     protected void process(int entityId) {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
 
-        Optional<CraftResultChange> craftResultChangeOpt = craftingTableComponent.getIsCraftResultChange().apply(entityId);
+        Optional<Optional<NewCraftResult>> craftResultChangeOpt = craftingTableComponent.getIsCraftResultChange().apply(entityId);
         craftResultChangeOpt.ifPresent((craftResultChange) -> {
-            craftingTableComponent.getOnCraftResultChange(world, entityId).accept(craftResultChange.craftResult());
+            craftingTableComponent.getOnCraftResultChange(world, entityId).accept(craftResultChange);
         });
     }
 
