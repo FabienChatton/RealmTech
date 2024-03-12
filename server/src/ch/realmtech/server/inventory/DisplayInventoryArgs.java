@@ -1,7 +1,7 @@
 package ch.realmtech.server.inventory;
 
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
-import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.newRegistry.NewItemEntry;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 
@@ -14,9 +14,9 @@ public final class DisplayInventoryArgs {
     private final boolean clickAndDropSrc;
     private final boolean clickAndDropDst;
     @Null
-    private final BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate;
+    private final BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate;
 
-    private DisplayInventoryArgs(UUID inventoryUuid, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+    private DisplayInventoryArgs(UUID inventoryUuid, Table inventoryTable, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate) {
         this.inventoryUuid = inventoryUuid;
         this.inventoryTable = inventoryTable;
         this.clickAndDropSrc = clickAndDropSrc;
@@ -44,7 +44,7 @@ public final class DisplayInventoryArgs {
         return clickAndDropDst;
     }
 
-    public BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> getDstRequirePredicate() {
+    public BiPredicate<SystemsAdminClientForClient, NewItemEntry> getDstRequirePredicate() {
         return dstRequirePredicate;
     }
 
@@ -53,7 +53,7 @@ public final class DisplayInventoryArgs {
         private final Table inventoryTable;
         private boolean clickAndDropSrc = true;
         private boolean clickAndDropDst = true;
-        private BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate = null;
+        private BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate = null;
 
         private DisplayInventoryArgsBuilder(UUID inventoryUuid, Table inventoryTable) {
             this.inventoryUuid = inventoryUuid;
@@ -70,7 +70,7 @@ public final class DisplayInventoryArgs {
             return this;
         }
 
-        public DisplayInventoryArgsBuilder dstRequire(BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+        public DisplayInventoryArgsBuilder dstRequire(BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate) {
             this.dstRequirePredicate = dstRequirePredicate;
             return this;
         }

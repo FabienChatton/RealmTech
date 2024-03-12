@@ -36,10 +36,15 @@ import java.util.function.Consumer;
 public class RealmTechCoreMod implements ArtemisPlugin {
 
     public final static String MOD_ID = "realmtech";
+    @Deprecated
     public final static Registry<CellRegisterEntry> CELLS = Registry.create(MOD_ID);
+    @Deprecated
     public final static Registry<ItemRegisterEntry> ITEMS = Registry.create(MOD_ID);
+    @Deprecated
     public final static Registry<QuestEntry> QUESTS = Registry.create(MOD_ID);
+    @Deprecated
     public final static InfRegistryAnonyme<CraftingRecipeEntry> CRAFT = InfRegistryAnonyme.create();
+    @Deprecated
     public final static InfRegistryAnonyme<CraftingRecipeEntry> FURNACE_RECIPE = InfRegistryAnonyme.create();
 
     @Override

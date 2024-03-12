@@ -8,6 +8,7 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.item.ItemResultCraftPickEvent;
+import ch.realmtech.server.newCraft.NewCraftResult;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -19,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class OnNewCraftAvailable {
-    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onNewCraftAvailableCraftingTable() {
+    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onNewCraftAvailableCraftingTable() {
         return (world, entityId) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
@@ -30,10 +31,10 @@ public final class OnNewCraftAvailable {
                         // remove result inventory because no craft is available
                         systemsAdminServer.inventoryManager.removeInventory(resultInventoryComponent.inventory);
                     } else {
-                        CraftResult craftResult = craftResultOpt.get();
+                        NewCraftResult craftResult = craftResultOpt.get();
                         // add result item to result inventory
-                        for (int i = 0; i < craftResult.getNombreResult(); i++) {
-                            int nouvelItemResult = world.getSystem(ItemManagerServer.class).newItemInventory(craftResult.getItemRegisterEntry(), UUID.randomUUID());
+                        for (int i = 0; i < craftResult.getResultNumber(); i++) {
+                            int nouvelItemResult = world.getSystem(ItemManagerServer.class).newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
                             world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(craftingTableComponent.craftingInventory));
                             world.getSystem(InventoryManager.class).addItemToStack(resultInventoryComponent.inventory[0], nouvelItemResult);
                         }
@@ -50,14 +51,14 @@ public final class OnNewCraftAvailable {
         };
     }
 
-    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onNewCraftAvailableFurnace() {
+    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onNewCraftAvailableFurnace() {
         return (world, entityId) -> (craftingTableComponent) -> (craftResultOpt) -> craftResultOpt.ifPresent((craftResult) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
 
             systemsAdminServer.inventoryManager.deleteOneItem(systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingInventory).inventory[0]);
-            for (int i = 0; i < craftResult.getNombreResult(); i++) {
-                int craftResultItemId = systemsAdminServer.itemManagerServer.newItemInventory(craftResult.getItemRegisterEntry(), UUID.randomUUID());
+            for (int i = 0; i < craftResult.getResultNumber(); i++) {
+                int craftResultItemId = systemsAdminServer.itemManagerServer.newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
                 systemsAdminServer.inventoryManager.addItemToInventory(craftingTableComponent.craftingResultInventory, craftResultItemId);
             }
             ServerContext serverContext = world.getRegistered("serverContext");

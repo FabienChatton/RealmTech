@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class NewRegistry<T extends NewEntry> {
-    final NewRegistry<? extends NewEntry> parentRegistry;
-    final List<NewRegistry<? extends NewEntry>> childRegistries;
+    final NewRegistry<? extends T> parentRegistry;
+    final List<NewRegistry<? extends T>> childRegistries;
     final List<T> entries;
     private final String name;
 
-    private NewRegistry(NewRegistry<?> parentRegistry, String name) {
+    private NewRegistry(NewRegistry<T> parentRegistry, String name) {
         this.parentRegistry = parentRegistry;
         this.name = name;
         entries = new ArrayList<>();
@@ -26,8 +26,9 @@ public class NewRegistry<T extends NewEntry> {
         return new NewRegistry<>(null, ".");
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends NewEntry> NewRegistry<T> createRegistry(NewRegistry<?> parentRegistry, String name) {
-        return new NewRegistry<>(parentRegistry, name);
+        return (NewRegistry<T>) new NewRegistry<>(parentRegistry, name);
     }
 
     public void addEntry(T entry) {
@@ -43,7 +44,7 @@ public class NewRegistry<T extends NewEntry> {
         return name;
     }
 
-    public List<NewRegistry<?>> getChildRegistries() {
+    public List<NewRegistry<? extends T>> getChildRegistries() {
         return Collections.unmodifiableList(childRegistries);
     }
 

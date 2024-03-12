@@ -1,22 +1,20 @@
 package ch.realmtech.server.newRegistry;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 public abstract class NewEntry {
     private final String name;
-    private NewRegistry<?> parentRegistry;
+    protected NewRegistry<?> parentRegistry;
 
+    void setParentRegistry(final NewRegistry<?> parentRegistry) {
+        this.parentRegistry = parentRegistry;
+    }
+
+    public abstract void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate;
     public NewEntry(String name) {
         this.name = name;
     }
 
     public String getName() {
         return name;
-    }
-
-    void setParentRegistry(final NewRegistry<?> parentRegistry) {
-        this.parentRegistry = parentRegistry;
     }
 
     public String toFqrn() {
@@ -31,8 +29,4 @@ public abstract class NewEntry {
     public String toString() {
         return parentRegistry != null ? toFqrn() : name;
     }
-
-    public abstract void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate;
-
-    public abstract TextureRegion getTextureRegion(TextureAtlas textureAtlas);
 }

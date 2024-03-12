@@ -15,11 +15,9 @@ import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
-import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.newRegistry.NewItemEntry;
 import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
 import ch.realmtech.server.packet.serverPacket.UnSubscribeToEntityPacket;
-import ch.realmtech.server.registery.ItemRegisterEntry;
-import ch.realmtech.server.registery.RegistryEntry;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -99,12 +97,9 @@ public class PlayerInventorySystem extends BaseSystem {
                 trouve = true;
                 ItemComponent itemComponent = mItem.get(actor.getStack()[0]);
                 if (itemComponent != null) {
-                    RegistryEntry<ItemRegisterEntry> registryEntry = itemComponent.itemRegisterEntry.findRegistryEntry(RealmTechCoreMod.ITEMS)
-                            .or(() -> RealmTechCoreMod.NO_ITEM.findRegistryEntry(RealmTechCoreMod.ITEMS))
-                            .orElseThrow();
-                    overWindow.getTitleLabel().setText(registryEntry.getName());
+                    overWindow.getTitleLabel().setText(itemComponent.itemRegisterEntry.getName());
                     overWindow.setBounds(screenMouseOver.x + 16, screenMouseOver.y - actor.getHeight(), 300, 70);
-                    overLabel.setText(registryEntry.getID() + "\n" + registryEntry.getHashID());
+                    overLabel.setText(itemComponent.itemRegisterEntry.getId());
                 } else {
                     overWindow.remove();
                 }
@@ -276,7 +271,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemRegisterEntry> dstRequirePredicate) {
+    public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate) {
         final Array<Table> tableImages = new Array<>();
         int inventoryOriginalId = systemsAdminClient.uuidEntityManager.getEntityId(inventoryUuid);
         InventoryComponent inventoryComponent = mInventory.get(inventoryOriginalId);

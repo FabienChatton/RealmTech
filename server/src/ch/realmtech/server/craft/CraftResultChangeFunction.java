@@ -7,13 +7,11 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.CraftingManager;
+import ch.realmtech.server.newCraft.NewCraftResult;
 import ch.realmtech.server.packet.clientPacket.FurnaceExtraInfoPacket;
-import ch.realmtech.server.registery.ItemRegisterEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -26,7 +24,7 @@ public final class CraftResultChangeFunction {
             InventoryComponent craftingInventoryComponent = systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent craftingResultInventoryComponent = systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingResultInventory);
 
-            Optional<CraftResult> craftResult = world.getSystem(CraftingManager.class).getCraftResult(craftingTableComponent);
+            Optional<NewCraftResult> craftResult = world.getSystem(CraftingManager.class).getNewCraftResult(craftingTableComponent);
 
             boolean canProcessCraft = false;
             ItemComponent itemDejaResultComponent = systemsAdminServer.inventoryManager.mItem.get(craftingResultInventoryComponent.inventory[0][0]);
@@ -62,10 +60,10 @@ public final class CraftResultChangeFunction {
             InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
             InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
 
-            Optional<CraftResult> craftResultOpt = world.getSystem(CraftingManager.class).getCraftResult(craftingTableComponent);
+            Optional<NewCraftResult> craftResultOpt = world.getSystem(CraftingManager.class).getNewCraftResult(craftingTableComponent);
 
             if (craftResultOpt.isPresent()) {
-                CraftResult craftResult = craftResultOpt.get();
+                NewCraftResult craftResult = craftResultOpt.get();
                 if (furnaceComponent.tickProcess >= craftResult.getTimeToProcess()) {
                     furnaceComponent.tickProcess = 0;
                     return Optional.of(new CraftResultChange(craftResultOpt));
@@ -90,26 +88,5 @@ public final class CraftResultChangeFunction {
 
             return Optional.empty();
         };
-    }
-
-    public static Optional<CraftResult> getCraftResult(SystemsAdminServer systemsAdminServer, CraftingTableComponent craftingTableComponent, InventoryComponent craftingInventoryComponent) {
-        List<ItemRegisterEntry> itemRegisterEntries = Arrays.stream(craftingInventoryComponent.inventory)
-                .map((stack) -> systemsAdminServer.inventoryManager.mItem.get(stack[0]))
-                .map((itemComponent) -> itemComponent != null ? itemComponent.itemRegisterEntry : null)
-                .toList();
-
-        List<CraftResult> craftResults = craftingTableComponent.getRegistry().getEnfants().stream()
-                .map((craftingRecipe) -> craftingRecipe.getEntry().craft(itemRegisterEntries))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-
-        Optional<CraftResult> craftResult;
-        if (!craftResults.isEmpty()) {
-            craftResult = Optional.of(craftResults.get(0));
-        } else {
-            craftResult = Optional.empty();
-        }
-        return craftResult;
     }
 }

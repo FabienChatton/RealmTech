@@ -6,9 +6,6 @@ import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.forclient.FurnaceIconSystemForClient;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.registery.ItemRegisterEntry;
-import ch.realmtech.server.registery.RegistryEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -17,7 +14,6 @@ import com.badlogic.gdx.graphics.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @All({FurnaceComponent.class, FurnaceIconsComponent.class, FurnaceExtraInfoComponent.class})
@@ -68,14 +64,14 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         ItemComponent iconProcessItemComponent = mItem.get(iconProcessId);
         String iconProcessTextureName = formatPourDix(ref, max, prefixTextureName);
 
-        Optional<RegistryEntry<ItemRegisterEntry>> iconProcessTo = RealmTechCoreMod.ITEMS.getEnfants().stream()
-                .filter((itemRegisterEntry) -> itemRegisterEntry.getEntry().getTextureRegionName().equals(iconProcessTextureName))
-                .findFirst();
-        if (iconProcessTo.isPresent()) {
-            iconProcessItemComponent.itemRegisterEntry = iconProcessTo.get().getEntry();
-        } else {
-            logger.warn("Can not find icon, calculated texture: {}", iconProcessTextureName);
-        }
+//        Optional<RegistryEntry<ItemRegisterEntry>> iconProcessTo = RealmTechCoreMod.ITEMS.getEnfants().stream()
+//                .filter((itemRegisterEntry) -> itemRegisterEntry.getEntry().getTextureRegionName().equals(iconProcessTextureName))
+//                .findFirst();
+//        if (iconProcessTo.isPresent()) {
+//            iconProcessItemComponent.itemRegisterEntry = iconProcessTo.get().getEntry();
+//        } else {
+//            logger.warn("Can not find icon, calculated texture: {}", iconProcessTextureName);
+//        }
     }
 
     private String formatPourDix(int ref, int max, String prefixTextureName) {

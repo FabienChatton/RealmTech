@@ -1,7 +1,7 @@
 package ch.realmtech.server.ecs.component;
 
-import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.craft.CraftResultChange;
+import ch.realmtech.server.newCraft.NewCraftResult;
 import ch.realmtech.server.registery.CraftingRecipeEntry;
 import ch.realmtech.server.registery.InfRegistryAnonymeImmutable;
 import com.artemis.Component;
@@ -20,11 +20,11 @@ public class CraftingTableComponent extends Component {
     @EntityId
     public int craftingResultInventory;
     private Function<Integer, Optional<CraftResultChange>> isCraftResultChange;
-    private BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange;
+    private BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange;
 
     private InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry;
 
-    public void set(int craftingInventory, int craftingResultInventory, InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange) {
+    public void set(int craftingInventory, int craftingResultInventory, InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.registry = registry;
@@ -40,7 +40,7 @@ public class CraftingTableComponent extends Component {
         return registry;
     }
 
-    public Consumer<Optional<CraftResult>> getOnCraftResultChange(World world, int craftingTableId) {
+    public Consumer<Optional<NewCraftResult>> getOnCraftResultChange(World world, int craftingTableId) {
         return onCraftResultChange.apply(world, craftingTableId).apply(this);
     }
 }

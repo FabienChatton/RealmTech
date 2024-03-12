@@ -1,15 +1,17 @@
 package ch.realmtech.server.newMod;
 
 import ch.realmtech.server.newMod.CellsEntry.*;
+import ch.realmtech.server.newMod.CraftEntry.PlankCraftEntry;
 import ch.realmtech.server.newMod.ItemsEntry.*;
 import ch.realmtech.server.newRegistry.NewCellEntry;
+import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
 import ch.realmtech.server.newRegistry.NewItemEntry;
 import ch.realmtech.server.newRegistry.NewRegistry;
 
 public class NewRealmTechCoreMod implements ModInitializer {
     @Override
     public String getModId() {
-        return "newRealmTech";
+        return "realmtech";
     }
 
     @Override
@@ -64,6 +66,14 @@ public class NewRealmTechCoreMod implements ModInitializer {
         itemsRegistry.addEntry(new TorchItemEntry());
         itemsRegistry.addEntry(new WoodenPickaxeItemEntry());
         itemsRegistry.addEntry(new WoodenShovelItemEntry());
+        itemsRegistry.addEntry(new WoodItemEntry());
         itemsRegistry.addEntry(new WrenchItemEntry());
+
+        // craft recipe
+        NewRegistry<?> crafts = NewRegistry.createRegistry(modRegistry, "crafts");
+
+        // craft crafting table
+        NewRegistry<NewCraftRecipeEntry> craftCraftingTableRegistry = NewRegistry.createRegistry(crafts, "craftingTable");
+        craftCraftingTableRegistry.addEntry(new PlankCraftEntry());
     }
 }

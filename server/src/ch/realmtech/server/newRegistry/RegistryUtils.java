@@ -25,9 +25,9 @@ public class RegistryUtils {
         if (query.contains(".")) {
             Optional<? extends NewEntry> fqrnEntry;
             if (!query.startsWith(".")) {
-                fqrnEntry = searchFqrnEntry("." + query, registry);
+                fqrnEntry = searchFqrnEntry(registry, "." + query);
             } else {
-                fqrnEntry = searchFqrnEntry(query, registry);
+                fqrnEntry = searchFqrnEntry(registry, query);
             }
             newEntry = (Optional<T>) fqrnEntry;
         } else {
@@ -64,7 +64,22 @@ public class RegistryUtils {
         }
     }
 
-    private static Optional<? extends NewEntry> searchFqrnEntry(String fqrn, NewRegistry<?> registry) {
+    @SuppressWarnings("unchecked")
+    public static <T extends NewEntry> T evaluateSafe(NewRegistry<?> registry, String query, Class<T> entryClass) throws InvalideEvaluate {
+        Optional<NewEntry> entryFind = findEntry(registry, query);
+        if (entryFind.isEmpty()) {
+            throw new InvalideEvaluate("Can not find " + query + " entry.");
+        } else {
+            NewEntry newEntry = entryFind.get();
+            if (!entryClass.isInstance(newEntry)) {
+                throw new InvalideEvaluate(query + " not a instanceof " + entryClass.getSimpleName());
+            } else {
+                return (T) newEntry;
+            }
+        }
+    }
+
+    private static Optional<? extends NewEntry> searchFqrnEntry(NewRegistry<? extends NewEntry> registry, String fqrn) {
         String[] names = fqrn.split("\\.", 2);
         if (registry.getName().equals(names[0])) {
             if (!names[1].contains(".")) {
@@ -75,14 +90,44 @@ public class RegistryUtils {
                 return registry.childRegistries.stream()
                         .filter((childRegistry) -> childRegistry.getName().equals(names[1].split("\\.")[0]))
                         .findFirst()
-                        .map((childRegistry) -> searchFqrnEntry(names[1], childRegistry))
+                        .map((childRegistry) -> searchFqrnEntry(childRegistry, names[1]))
                         .flatMap(Function.identity());
             }
         } else {
             return registry.childRegistries.stream()
-                    .map((childRegistry) -> searchFqrnEntry(names[1], childRegistry))
+                    .map((childRegistry) -> searchFqrnEntry(childRegistry, names[1]))
                     .findFirst()
                     .flatMap(Function.identity());
+        }
+    }
+
+    public static Optional<NewRegistry<?>> findRegistry(NewRegistry<?> registry, String query) {
+        if (query.contains(".")) {
+            Optional<NewRegistry<?>> fqrnRegistry;
+            if (!query.startsWith(".")) {
+                fqrnRegistry = searchRegistryFqrn(registry, "." + query);
+            } else {
+                fqrnRegistry = searchRegistryFqrn(registry, query);
+            }
+            return fqrnRegistry;
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<NewRegistry<?>> searchRegistryFqrn(NewRegistry<?> registry, String fqrn) {
+        String[] names = fqrn.split("\\.", 2);
+        if (names.length == 1 && names[0].equals(registry.getName())) {
+            return Optional.of(registry);
+        } else {
+            Optional<NewRegistry<?>> newRegistry = registry.getChildRegistries().stream()
+                    .filter((childRegistry) -> childRegistry.getName().equals(names[1].split("\\.")[0]))
+                    .map((childRegistry) -> searchRegistryFqrn(childRegistry, names[1]))
+                    .filter(Optional::isPresent)
+                    .findFirst()
+                    .flatMap(Function.identity());
+
+            return newRegistry;
         }
     }
 }

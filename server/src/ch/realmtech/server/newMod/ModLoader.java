@@ -3,8 +3,11 @@ package ch.realmtech.server.newMod;
 import ch.realmtech.server.newRegistry.InvalideEvaluate;
 import ch.realmtech.server.newRegistry.NewRegistry;
 import ch.realmtech.server.newRegistry.RegistryUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModLoader {
+    private final static Logger logger = LoggerFactory.getLogger(ModLoader.class);
     private final NewRegistry<?> rootRegistry;
 
     public ModLoader(NewRegistry<?> rootRegistry) {
@@ -22,7 +25,9 @@ public class ModLoader {
             try {
                 entry.evaluate(rootRegistry);
             } catch (InvalideEvaluate e) {
-                System.err.println("invalide evaluation. Error: " + e.getMessage() + "\n" + e);
+                logger.warn("Invalide evaluation for {} entry. Error: {}", entry, e.getMessage());
+            } catch (Exception e) {
+                logger.error("Error during evaluation for {} entry. Error: {}", entry, e.getMessage(), e);
             }
         });
     }
