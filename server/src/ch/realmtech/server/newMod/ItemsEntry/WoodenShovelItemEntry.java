@@ -10,4 +10,9 @@ public class WoodenShovelItemEntry extends NewItemEntry {
                 .setItemType(ItemType.SHOVEL)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -694017506;
+    }
 }

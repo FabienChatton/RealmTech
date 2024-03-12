@@ -75,4 +75,9 @@ public class EnergyGeneratorCellEntry extends NewCellEntry {
                 })
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -560459038;
+    }
 }

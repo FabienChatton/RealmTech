@@ -36,4 +36,9 @@ public class TorchCellEntry extends NewCellEntry {
                 .breakWith(ItemType.HAND, "realmtech.items.torch")
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1395027571;
+    }
 }

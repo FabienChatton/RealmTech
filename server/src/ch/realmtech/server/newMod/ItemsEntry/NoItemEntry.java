@@ -9,4 +9,9 @@ public class NoItemEntry extends NewItemEntry {
         super("noitem", "default-texture", ItemBehavior.builder()
                 .setItemType(ItemType.HAND).build());
     }
+
+    @Override
+    public int getId() {
+        return 124155069;
+    }
 }

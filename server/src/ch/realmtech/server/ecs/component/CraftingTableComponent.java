@@ -2,8 +2,8 @@ package ch.realmtech.server.ecs.component;
 
 import ch.realmtech.server.craft.CraftResultChange;
 import ch.realmtech.server.newCraft.NewCraftResult;
-import ch.realmtech.server.registery.CraftingRecipeEntry;
-import ch.realmtech.server.registery.InfRegistryAnonymeImmutable;
+import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
+import ch.realmtech.server.newRegistry.NewRegistry;
 import com.artemis.Component;
 import com.artemis.World;
 import com.artemis.annotations.EntityId;
@@ -22,9 +22,9 @@ public class CraftingTableComponent extends Component {
     private Function<Integer, Optional<CraftResultChange>> isCraftResultChange;
     private BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange;
 
-    private InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry;
+    private NewRegistry<? extends NewCraftRecipeEntry> registry;
 
-    public void set(int craftingInventory, int craftingResultInventory, InfRegistryAnonymeImmutable<CraftingRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange) {
+    public void set(int craftingInventory, int craftingResultInventory, NewRegistry<? extends NewCraftRecipeEntry> registry, Function<Integer, Optional<CraftResultChange>> canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onCraftResultChange) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.registry = registry;
@@ -36,7 +36,7 @@ public class CraftingTableComponent extends Component {
         return isCraftResultChange;
     }
 
-    public InfRegistryAnonymeImmutable<CraftingRecipeEntry> getRegistry() {
+    public NewRegistry<? extends NewCraftRecipeEntry> getRegistry() {
         return registry;
     }
 

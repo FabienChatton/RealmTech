@@ -12,4 +12,9 @@ public class CopperOreCellEntry extends NewCellEntry {
                 .canPlaceCellOnTop(false)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 947251712;
+    }
 }

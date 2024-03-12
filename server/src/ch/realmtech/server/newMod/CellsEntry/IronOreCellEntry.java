@@ -12,4 +12,9 @@ public class IronOreCellEntry extends NewCellEntry {
                 .canPlaceCellOnTop(false)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -497482319;
+    }
 }

@@ -15,4 +15,9 @@ public class WaterCellEntry extends NewCellEntry {
                 .canPlaceCellOnTop(false)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1397383054;
+    }
 }

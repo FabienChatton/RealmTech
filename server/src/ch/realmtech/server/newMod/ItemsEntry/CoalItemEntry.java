@@ -9,4 +9,9 @@ public class CoalItemEntry extends NewItemEntry {
                 .setTimeToBurn(1000)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -1063884736;
+    }
 }

@@ -14,4 +14,9 @@ public class EnergyCableCellEntry extends NewCellEntry {
                 .editEntity(new EnergyCableEditEntity((byte) 0))
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 235045836;
+    }
 }

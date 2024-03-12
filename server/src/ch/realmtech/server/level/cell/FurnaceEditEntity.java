@@ -36,7 +36,7 @@ public class FurnaceEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory, RealmTechCoreMod.FURNACE_RECIPE));
+        executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory));
         executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
     }
 

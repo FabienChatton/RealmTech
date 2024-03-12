@@ -15,4 +15,9 @@ public class TreeCellEntry extends NewCellEntry {
                 .build()
         );
     }
+
+    @Override
+    public int getId() {
+        return -1063375289;
+    }
 }

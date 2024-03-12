@@ -9,4 +9,9 @@ public class TorchItemEntry extends NewItemEntry {
                 .placeCell("realmtech.cells.torch")
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1395027571;
+    }
 }

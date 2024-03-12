@@ -14,4 +14,9 @@ public class GrassCellEntry extends NewCellEntry {
                 .tiledTexture(1, 1)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1383095341;
+    }
 }

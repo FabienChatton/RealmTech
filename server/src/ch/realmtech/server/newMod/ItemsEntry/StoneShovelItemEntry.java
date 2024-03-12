@@ -10,4 +10,9 @@ public class StoneShovelItemEntry extends NewItemEntry {
                 .setItemType(ItemType.SHOVEL)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -23851682;
+    }
 }

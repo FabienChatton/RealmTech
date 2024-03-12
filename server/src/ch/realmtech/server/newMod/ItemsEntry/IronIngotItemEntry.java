@@ -8,4 +8,9 @@ public class IronIngotItemEntry extends NewItemEntry {
         super("ironIngot", "iron-ingot-01", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -1344793514;
+    }
 }

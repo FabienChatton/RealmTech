@@ -12,4 +12,9 @@ public class GoldOreCellEntry extends NewCellEntry {
                 .canPlaceCellOnTop(false)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1933521689;
+    }
 }

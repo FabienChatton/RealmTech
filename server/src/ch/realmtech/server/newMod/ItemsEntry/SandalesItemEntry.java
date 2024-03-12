@@ -9,4 +9,9 @@ public class SandalesItemEntry extends NewItemEntry {
                 .setSpeedEffect(2)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -233843002;
+    }
 }

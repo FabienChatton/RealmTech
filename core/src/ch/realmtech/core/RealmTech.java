@@ -21,6 +21,7 @@ import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.newMod.ModLoader;
 import ch.realmtech.server.newRegistry.NewRegistry;
@@ -127,6 +128,10 @@ public final class RealmTech extends Game implements ClientContext {
         rootRegistry = NewRegistry.createRoot();
         ModLoader modLoader = new ModLoader(rootRegistry);
         modLoader.initializeCoreMod();
+
+        System.out.println(RealmTechCoreMod.ITEMS.getEnfants().stream()
+                .map((cellRegistry) -> cellRegistry.getName() + " " + cellRegistry.getHashID())
+                .toList());
     }
 
     public void loadingFinish() {
@@ -332,6 +337,7 @@ public final class RealmTech extends Game implements ClientContext {
                         .setSaveName(saveName)
                         .setVerifyAccessToken(verifyAccessToken)
                         .setClientExecute(clientExecute)
+                        .setRootRegistry(rootRegistry)
                         .build();
                 ClientConnexion clientConnexion = new ClientConnexionIntern(connexionConfig);
                 nouveauECS(clientConnexion);

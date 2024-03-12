@@ -12,4 +12,9 @@ public class CoalOreCellEntry extends NewCellEntry {
                 .canPlaceCellOnTop(false)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -1626413438;
+    }
 }

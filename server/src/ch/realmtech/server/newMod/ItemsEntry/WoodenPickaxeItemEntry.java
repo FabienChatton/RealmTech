@@ -10,4 +10,9 @@ public class WoodenPickaxeItemEntry extends NewItemEntry {
                 .setItemType(ItemType.PICKAXE)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -1321815926;
+    }
 }

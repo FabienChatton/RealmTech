@@ -8,4 +8,9 @@ public class StoneOreItemEntry extends NewItemEntry {
         super("stoneOre", "stone-ore-01", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1394250460;
+    }
 }

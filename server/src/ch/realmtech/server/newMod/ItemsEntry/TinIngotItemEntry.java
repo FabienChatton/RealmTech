@@ -8,4 +8,9 @@ public class TinIngotItemEntry extends NewItemEntry {
         super("tinIngot", "tin-ingot-01", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -5490089;
+    }
 }

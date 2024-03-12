@@ -8,4 +8,9 @@ public class IronOreItemEntry extends NewItemEntry {
         super("ironOre", "iron-ore-01", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -497482319;
+    }
 }

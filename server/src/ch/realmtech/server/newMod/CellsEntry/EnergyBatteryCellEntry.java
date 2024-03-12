@@ -21,4 +21,9 @@ public class EnergyBatteryCellEntry extends NewCellEntry {
                 })
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1670110684;
+    }
 }

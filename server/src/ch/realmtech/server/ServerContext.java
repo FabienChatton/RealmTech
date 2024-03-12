@@ -40,7 +40,7 @@ public class ServerContext implements Closeable {
     private final AuthRequest authRequest;
     private OptionServer optionServer;
     private volatile boolean saveAndClose = false;
-    private NewRegistry<?> rootRegistry;
+    private final NewRegistry<?> rootRegistry;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -89,9 +89,13 @@ public class ServerContext implements Closeable {
                 logger.error("Can not create file structure", e);
                 System.exit(1);
             }
-            rootRegistry = NewRegistry.createRoot();
-            ModLoader modLoader = new ModLoader(rootRegistry);
-            modLoader.initializeCoreMod();
+            if (connexionConfig.getRootRegistry() != null) {
+                rootRegistry = connexionConfig.getRootRegistry();
+            } else {
+                rootRegistry = NewRegistry.createRoot();
+                ModLoader modLoader = new ModLoader(rootRegistry);
+                modLoader.initializeCoreMod();
+            }
 
             reloadOption();
             logger.info("Verify access token: {}", optionServer.verifyAccessToken.get());

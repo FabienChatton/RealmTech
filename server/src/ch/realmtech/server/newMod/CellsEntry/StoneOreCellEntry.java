@@ -7,9 +7,14 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class StoneOreCellEntry extends NewCellEntry {
     public StoneOreCellEntry() {
-        super("stone", "stone-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+        super("stoneOre", "stone-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
                 .breakWith(ItemType.PICKAXE, "realmtech.items.stoneOre")
                 .canPlaceCellOnTop(false)
                 .build());
+    }
+
+    @Override
+    public int getId() {
+        return 1394250460;
     }
 }

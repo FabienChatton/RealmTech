@@ -12,6 +12,7 @@ import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CraftingTableEditEntity;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
+import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.newRegistry.NewCellEntry;
 import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
@@ -30,46 +31,53 @@ public class CraftingTableCellEntry extends NewCellEntry {
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                 .canPlaceCellOnTop(false)
-                .interagieClickDroit((clientContext, cellId) -> {
-                    ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
-                    ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
-                    CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
-                    clientContext.openPlayerInventory(() -> {
-                        final Table playerInventory = new Table(clientContext.getSkin());
-                        final Table craftingInventory = new Table(clientContext.getSkin());
-                        final Table craftingResultInventory = new Table(clientContext.getSkin());
-                        Consumer<Window> addTable = (window) -> {
-                            Table craftingTable = new Table(craftingInventory.getSkin());
-                            craftingTable.add(craftingInventory).padRight(32f);
-                            craftingTable.add(craftingResultInventory);
-                            craftingTable.padBottom(10f);
-                            window.add(craftingTable).row();
-                            window.add(playerInventory);
-                        };
-                        int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
-                        int inventoryCraftId = craftingTableComponent.craftingInventory;
-                        int inventoryResultId = craftingTableComponent.craftingResultInventory;
-                        UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
-                        UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryCraftId);
-                        UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryResultId);
-
-                        clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
-                        clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
-                        clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
-
-                        // subscribe
-                        clientContext.sendRequest(new SubscribeToEntityPacket(inventoryCraftUuid));
-                        SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
-
-                        return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
-                                DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId), craftingInventory).build(),
-                                DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build()
-                        }, new UUID[]{inventoryCraftUuid, inventoryResultUuid}, () -> {
-                            clientContext.sendRequest(new UnSubscribeToEntityPacket(inventoryCraftUuid));
-                        });
-                    });
-                })
+                .interagieClickDroit(CraftingTableCellEntry::rightClickInteraction)
                 .build());
+    }
+
+    private static void rightClickInteraction(ClientContext clientContext, int cellId) {
+        ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
+        ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
+        CraftingTableComponent craftingTableComponent = mCrafting.get(cellId);
+        clientContext.openPlayerInventory(() -> {
+            final Table playerInventory = new Table(clientContext.getSkin());
+            final Table craftingInventory = new Table(clientContext.getSkin());
+            final Table craftingResultInventory = new Table(clientContext.getSkin());
+            Consumer<Window> addTable = (window) -> {
+                Table craftingTable = new Table(craftingInventory.getSkin());
+                craftingTable.add(craftingInventory).padRight(32f);
+                craftingTable.add(craftingResultInventory);
+                craftingTable.padBottom(10f);
+                window.add(craftingTable).row();
+                window.add(playerInventory);
+            };
+            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+            int inventoryCraftId = craftingTableComponent.craftingInventory;
+            int inventoryResultId = craftingTableComponent.craftingResultInventory;
+            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
+            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryCraftId);
+            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryResultId);
+
+            clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
+            clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
+            clientContext.sendRequest(new InventoryGetPacket(inventoryResultUuid));
+
+            // subscribe
+            clientContext.sendRequest(new SubscribeToEntityPacket(inventoryCraftUuid));
+            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
+
+            return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
+                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId), craftingInventory).build(),
+                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build()
+            }, new UUID[]{inventoryCraftUuid, inventoryResultUuid}, () -> {
+                clientContext.sendRequest(new UnSubscribeToEntityPacket(inventoryCraftUuid));
+            });
+        });
+    }
+
+    @Override
+    public int getId() {
+        return 129156771;
     }
 }

@@ -10,4 +10,9 @@ public class WrenchItemEntry extends NewItemEntry {
                 .interagieClickDroit(WrenchRightClick.wrenchRightClick())
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 384462994;
+    }
 }

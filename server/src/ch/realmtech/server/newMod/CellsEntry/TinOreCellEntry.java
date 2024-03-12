@@ -12,4 +12,9 @@ public class TinOreCellEntry extends NewCellEntry {
                 .canPlaceCellOnTop(false)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 290502642;
+    }
 }

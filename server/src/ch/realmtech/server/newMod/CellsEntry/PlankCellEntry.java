@@ -14,4 +14,9 @@ public class PlankCellEntry extends NewCellEntry {
                 .dropOnBreak("realmtech.items.plank")
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1235390862;
+    }
 }

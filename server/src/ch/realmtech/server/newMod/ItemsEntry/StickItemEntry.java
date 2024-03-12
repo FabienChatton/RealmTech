@@ -8,4 +8,9 @@ public class StickItemEntry extends NewItemEntry {
         super("stick", "stick-02", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1394244359;
+    }
 }

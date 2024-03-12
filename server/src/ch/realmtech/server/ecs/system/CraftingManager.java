@@ -23,11 +23,6 @@ public class CraftingManager extends Manager {
     @Wire(name = "rootRegistry")
     private NewRegistry<?> rootRegistry;
 
-    @Deprecated
-    public Optional<CraftResult> getCraftResult(CraftingTableComponent craftingTableComponent) {
-        return getCraftResult(craftingTableComponent.getRegistry(), systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
-    }
-
     public Optional<NewCraftResult> getNewCraftResult(CraftingTableComponent craftingTableComponent) {
         Optional<NewRegistry<?>> craftRegistry = RegistryUtils.findRegistry(rootRegistry, "realmtech.crafts.craftingTable");
         return getNewCraftResult((NewRegistry<? extends NewCraftRecipeEntry>) craftRegistry.get(), systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));

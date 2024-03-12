@@ -9,4 +9,9 @@ public class FurnaceItemEntry extends NewItemEntry {
                 .placeCell("realmtech.cells.furnace")
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1223648783;
+    }
 }

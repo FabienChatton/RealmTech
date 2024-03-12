@@ -8,4 +8,9 @@ public class TinOreItemEntry extends NewItemEntry {
         super("tinOre", "tin-ore-01", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 290502642;
+    }
 }

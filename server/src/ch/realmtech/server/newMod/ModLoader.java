@@ -15,6 +15,7 @@ public class ModLoader {
     }
 
     public void initializeCoreMod() {
+        long t1 = System.currentTimeMillis();
         NewRealmTechCoreMod newRealmTechCoreMod = new NewRealmTechCoreMod();
         String coreModId = newRealmTechCoreMod.getModId();
         NewRegistry<?> coreModRegistry = NewRegistry.createRegistry(rootRegistry, coreModId);
@@ -30,5 +31,7 @@ public class ModLoader {
                 logger.error("Error during evaluation for {} entry. Error: {}", entry, e.getMessage(), e);
             }
         });
+
+        logger.info("All mods are initialized in {}s", (System.currentTimeMillis() - t1) / 1000f);
     }
 }

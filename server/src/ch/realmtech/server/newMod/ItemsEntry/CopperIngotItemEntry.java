@@ -8,4 +8,9 @@ public class CopperIngotItemEntry extends NewItemEntry {
         super("copperIngot", "copper-ingot-01", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -229826331;
+    }
 }

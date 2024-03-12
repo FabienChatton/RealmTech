@@ -5,7 +5,6 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.badlogic.gdx.utils.Null;
 
@@ -37,7 +36,7 @@ public class CraftingTableEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get(), RealmTechCoreMod.CRAFT));
+        executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get()));
     }
 
     @Override

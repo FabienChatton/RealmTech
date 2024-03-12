@@ -14,4 +14,9 @@ public class SandCellEntry extends NewCellEntry {
                 .tiledTexture(2, 2)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return -1063421139;
+    }
 }

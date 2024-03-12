@@ -9,4 +9,9 @@ public class EnergyCableItemEntry extends NewItemEntry {
                 .placeCell("realmtech.cells.energyCable")
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 235045836;
+    }
 }

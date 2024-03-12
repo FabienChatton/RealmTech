@@ -8,4 +8,9 @@ public class PlankItemEntry extends NewItemEntry {
         super("plank", "plank-02", ItemBehavior.builder()
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1235390862;
+    }
 }

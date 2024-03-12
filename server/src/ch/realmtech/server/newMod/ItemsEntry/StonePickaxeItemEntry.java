@@ -10,4 +10,9 @@ public class StonePickaxeItemEntry extends NewItemEntry {
                 .setItemType(ItemType.PICKAXE)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1989233778;
+    }
 }

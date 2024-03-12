@@ -9,4 +9,9 @@ public class WoodItemEntry extends NewItemEntry {
                 .setTimeToBurn(60)
                 .build());
     }
+
+    @Override
+    public int getId() {
+        return 1378568676;
+    }
 }

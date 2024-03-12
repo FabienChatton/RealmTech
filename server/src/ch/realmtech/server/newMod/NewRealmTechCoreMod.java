@@ -53,7 +53,6 @@ public class NewRealmTechCoreMod implements ModInitializer {
         itemsRegistry.addEntry(new GoldOreItemEntry());
         itemsRegistry.addEntry(new IronIngotItemEntry());
         itemsRegistry.addEntry(new IronOreItemEntry());
-        itemsRegistry.addEntry(new LogItemEntry());
         itemsRegistry.addEntry(new NoItemEntry());
         itemsRegistry.addEntry(new PlankItemEntry());
         itemsRegistry.addEntry(new SandalesItemEntry());
