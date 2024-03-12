@@ -480,6 +480,22 @@ public class InventoryManager extends Manager {
         return new int[]{craftingInventoryId, craftingResultInventoryId};
     }
 
+    public int[] createNewCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
+        int craftingInventoryId = world.create();
+        int craftingResultInventoryId = world.create();
+
+        Optional<NewRegistry<?>> registry = RegistryUtils.findRegistry(rootRegistry, "realmtech.crafts.craftingTable");
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, (NewRegistry<? extends NewCraftRecipeEntry>) registry.get(), CraftResultChangeFunction.CraftResultChangeCraftingTable(world), OnNewCraftAvailable.onNewCraftAvailableCraftingTable());
+        systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getCraftingTableController());
+        EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
+        systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(craftingInventoryUuid, craftingInventoryId);
+        craftingInventoryEdit.create(InventoryComponent.class).set(craftingInventory, craftingNumberOfSlotParRow, craftingNumberOfRow);
+        systemsAdminCommun.onContextType(ContextType.CLIENT, () -> craftingInventoryEdit.create(InventoryUiComponent.class).set());
+
+        createInventoryUi(craftingResultInventoryId, craftingResultInventoryUuid, 1, 1);
+        return new int[]{craftingInventoryId, craftingResultInventoryId};
+    }
+
     public int[] createFurnace(int motherEntity, UUID furnaceUuid, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventoryUuid, int[][] carburantInventory, UUID craftingResultInventoryUuid, int[][] craftingResultInventory) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();

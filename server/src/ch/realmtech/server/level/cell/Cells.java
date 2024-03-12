@@ -27,12 +27,6 @@ public class Cells {
         return (byte) ((innerChunkPosX << 4) + innerChunkPosY);
     }
 
-    public static boolean testRequireTools(ItemRegisterEntry itemUsed, CellComponent cellToBreak) {
-        ItemType itemUsedType = itemUsed.getItemBehavior().getItemType();
-        ItemType breakWithType = cellToBreak.cellRegisterEntry.getCellBehavior().getBreakWith();
-        return itemUsedType == breakWithType;
-    }
-
     public static boolean testRequireTools(ItemType itemUsedType, ItemType breakWithType) {
         return itemUsedType == breakWithType;
     }

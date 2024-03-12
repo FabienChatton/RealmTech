@@ -3,10 +3,8 @@ package ch.realmtech.server.newMod;
 import ch.realmtech.server.newMod.CellsEntry.*;
 import ch.realmtech.server.newMod.CraftEntry.PlankCraftEntry;
 import ch.realmtech.server.newMod.ItemsEntry.*;
-import ch.realmtech.server.newRegistry.NewCellEntry;
-import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newMod.NewQuest.*;
+import ch.realmtech.server.newRegistry.*;
 
 public class NewRealmTechCoreMod implements ModInitializer {
     @Override
@@ -74,5 +72,19 @@ public class NewRealmTechCoreMod implements ModInitializer {
         // craft crafting table
         NewRegistry<NewCraftRecipeEntry> craftCraftingTableRegistry = NewRegistry.createRegistry(crafts, "craftingTable");
         craftCraftingTableRegistry.addEntry(new PlankCraftEntry());
+
+        // quests
+        NewRegistry<NewQuestEntry> questRegistry = NewRegistry.createRegistry(modRegistry, "quests");
+        questRegistry.addEntry(new CraftingExpansionQuestEntry());
+        questRegistry.addEntry(new FirstCraftQuestEntry());
+        questRegistry.addEntry(new FirstEnergyBatteryQuestEntry());
+        questRegistry.addEntry(new FirstEnergyCableQuestEntry());
+        questRegistry.addEntry(new FirstEnergyGeneratorQuestEntry());
+        questRegistry.addEntry(new FirstQuestEntry());
+        questRegistry.addEntry(new FirstResourcesQuestEntry());
+        questRegistry.addEntry(new FirstToolQuestEntry());
+        questRegistry.addEntry(new GetReadyForElectricityQuestEntry());
+        questRegistry.addEntry(new KnowYouWorldQuestEntry());
+        questRegistry.addEntry(new ThermalExpansionQuestEntry());
     }
 }

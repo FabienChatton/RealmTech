@@ -1,5 +1,6 @@
 package ch.realmtech.server.registery;
 
+@Deprecated
 public class RegistryEntry<T extends Entry<T>> extends Registry<T> implements AbstractRegistryEntry<T> {
     private final T entry;
 

@@ -44,6 +44,7 @@ public class RegistryUtils {
         return (Optional<T>) flatEntry(registry).stream().filter((entry) -> entry.getId() == entryHash).findFirst();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends NewEntry> T findEntryUnsafe(NewRegistry<?> registry, int entryHash) throws IllegalRegistryId {
         Optional<? extends NewEntry> res = flatEntry(registry).stream().filter((entry) -> entry.getId() == entryHash).findFirst();
         if (res.isPresent()) {
@@ -62,6 +63,11 @@ public class RegistryUtils {
                     .flatMap(Collection::stream)
                     .toList();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends NewEntry> List<T> flatEntry(NewRegistry<?> registry, Class<T> clazz) {
+        return (List<T>) flatEntry(registry).stream().filter(clazz::isInstance);
     }
 
     @SuppressWarnings("unchecked")

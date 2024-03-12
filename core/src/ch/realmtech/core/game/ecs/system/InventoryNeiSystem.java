@@ -4,9 +4,8 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.strategy.OnPlayerInventoryOpenGetInputProcessor;
 import ch.realmtech.core.helper.ButtonsMenu;
 import ch.realmtech.core.helper.OnClick;
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.registery.ItemRegisterEntry;
-import ch.realmtech.server.registery.RegistryEntry;
+import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
@@ -81,7 +80,7 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
     }
 
     private ArrayList<Table> addActorItemToNeiTable() {
-        List<RegistryEntry<ItemRegisterEntry>> items = RealmTechCoreMod.ITEMS.getEnfants().stream().filter((item) -> !item.getEntry().getItemBehavior().isIcon()).toList();
+        List<NewItemEntry> items = RegistryUtils.flatEntry(context.getRootRegistry(), NewItemEntry.class);
         int itemPerRow = 4;
         int itemPerColum = 16;
         int itemPerPageMax = itemPerRow * itemPerColum;
@@ -92,8 +91,8 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
             Table page = new Table(context.getSkin());
             pages.add(page);
             for (int itemPerPage = 0; itemIndex < items.size() && itemPerPage < itemPerPageMax; itemIndex++, itemPerPage++) {
-                RegistryEntry<ItemRegisterEntry> item = items.get(itemIndex);
-                Actor actorImage = new NeiTableActor(context, item.getEntry());
+                NewItemEntry item = items.get(itemIndex);
+                Actor actorImage = new NeiTableActor(context, item);
                 actorImage.setSize(32, 32);
                 if (itemIndex % itemPerRow == 0) {
                     page.row();
@@ -135,12 +134,12 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
 }
 
 class NeiTableActor extends Actor {
-    private final ItemRegisterEntry itemRegisterEntry;
+    private final NewItemEntry item;
     private final TextureRegion textureRegion;
 
-    public NeiTableActor(RealmTech context, ItemRegisterEntry itemRegisterEntry) {
-        this.itemRegisterEntry = itemRegisterEntry;
-        this.textureRegion = this.itemRegisterEntry.getTextureRegion(context.getTextureAtlas());
+    public NeiTableActor(RealmTech context, NewItemEntry itemRegisterEntry) {
+        this.item = itemRegisterEntry;
+        this.textureRegion = this.item.getTextureRegion(context.getTextureAtlas());
     }
 
     @Override
@@ -149,7 +148,7 @@ class NeiTableActor extends Actor {
         batch.draw(textureRegion, getX(), getY());
     }
 
-    public ItemRegisterEntry getItemRegisterEntry() {
-        return itemRegisterEntry;
+    public NewItemEntry getItemRegisterEntry() {
+        return item;
     }
 }

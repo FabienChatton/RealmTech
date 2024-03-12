@@ -3,6 +3,7 @@ package ch.realmtech.server.registery;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class InfRegistryAnonyme<T extends Entry<T>> implements InfRegistryAnonymeImmutable<T> {
     private final InfRegistryAnonyme<T> parent;
     private final List<RegistryEntryAnonyme<T>> enfants;
