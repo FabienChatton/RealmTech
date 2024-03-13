@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewCraftPatternShape;
 
 public class StonePickaxeStoneCraftEntry extends NewCraftPatternShape {
     public StonePickaxeStoneCraftEntry() {
-        super("stonePickaxeStoneCraft", "realmtech.items.stonePickaxe", 1, new char[][]{
+        super("stonePickaxeCraft", "realmtech.items.stonePickaxe", 1, new char[][]{
                 {'p', 'p', 'p'},
                 {' ', 's', ' '},
                 {' ', 's', ' '}
