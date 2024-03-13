@@ -6,9 +6,7 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.newCraft.NewCraftChangeFunctions;
-import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.*;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -459,7 +457,10 @@ public class InventoryManager extends Manager {
 
     /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
-        return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, null);
+        String tagQuery = "#craftingTableRecipes";
+        List<? extends NewEntry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
+        List<NewCraftRecipeEntry> craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
+        return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, craftRecipes);
     }
 
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid, List<NewCraftRecipeEntry> craftRecipes) {

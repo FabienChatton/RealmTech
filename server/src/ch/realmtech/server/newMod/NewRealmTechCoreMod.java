@@ -3,6 +3,10 @@ package ch.realmtech.server.newMod;
 import ch.realmtech.server.newMod.CellsEntry.*;
 import ch.realmtech.server.newMod.CraftEntry.*;
 import ch.realmtech.server.newMod.ItemsEntry.*;
+import ch.realmtech.server.newMod.NewFurnaceCraftEntry.CopperIngotCraftEntry;
+import ch.realmtech.server.newMod.NewFurnaceCraftEntry.GoldIngotCraftEntry;
+import ch.realmtech.server.newMod.NewFurnaceCraftEntry.IronIngotCraftEntry;
+import ch.realmtech.server.newMod.NewFurnaceCraftEntry.TinIngotCraftEntry;
 import ch.realmtech.server.newMod.NewQuest.*;
 import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
 import ch.realmtech.server.newRegistry.*;
@@ -85,6 +89,13 @@ public class NewRealmTechCoreMod implements ModInitializer {
         craftCraftingTableRegistry.addEntry(new EnergyBatteryCraftEntry());
         craftCraftingTableRegistry.addEntry(new EnergyCableCraftEntry());
         craftCraftingTableRegistry.addEntry(new WrenchCraftEntry());
+
+        // craft furnace
+        NewRegistry<NewFurnaceCraftShapeless> craftFurnaceRegistry = NewRegistry.createRegistry(crafts, "furnace", "furnaceRecipes");
+        craftFurnaceRegistry.addEntry(new IronIngotCraftEntry());
+        craftFurnaceRegistry.addEntry(new TinIngotCraftEntry());
+        craftFurnaceRegistry.addEntry(new CopperIngotCraftEntry());
+        craftFurnaceRegistry.addEntry(new GoldIngotCraftEntry());
 
         // quests
         NewRegistry<NewQuestEntry> questRegistry = NewRegistry.createRegistry(modRegistry, "quests");

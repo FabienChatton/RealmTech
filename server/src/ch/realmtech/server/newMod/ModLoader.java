@@ -45,7 +45,7 @@ public class ModLoader {
                 EvaluateAfter evaluateAfter = entry.getClass().getMethod("evaluate", NewRegistry.class).getAnnotation(EvaluateAfter.class);
                 if (evaluateAfter != null) {
                     if (RegistryUtils.findRegistry(rootRegistry, evaluateAfter.value()).isEmpty() && RegistryUtils.findEntry(rootRegistry, evaluateAfter.value()).isEmpty()) {
-                        throw new InvalideEvaluate("fqrn found: " + evaluateAfter.value());
+                        throw new InvalideEvaluate("Can not find " + evaluateAfter.value() + " registry or entry");
                     }
                     boolean registryEvaluated = RegistryUtils.findRegistry(rootRegistry, evaluateAfter.value())
                             .map((findRegistry) -> findRegistry.getEntries().stream().allMatch(NewEntry::isEvaluated)).orElse(false);

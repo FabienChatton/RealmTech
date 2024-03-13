@@ -23,11 +23,7 @@ public class EditEntityFactory extends NewEntry {
         super.evaluate(rootRegistry);
         String tagQuery = "#craftingTableRecipes";
         List<? extends NewEntry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
-        if (craftRecipeEntires.isEmpty()) {
-            throw new InvalideEvaluate("No craft recipe with this tag: " + tagQuery);
-        } else {
-            craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
-        }
+        craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
     }
 
     public CraftingTableEditEntity createCraftingTable(int craftingNumberOfSlotParRow, int craftingNumberOfRow) {

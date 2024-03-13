@@ -45,12 +45,12 @@ public class RegistryUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends NewEntry> T findEntryUnsafe(NewRegistry<?> registry, int entryHash) throws IllegalRegistryId {
-        Optional<? extends NewEntry> res = flatEntry(registry).stream().filter((entry) -> entry.getId() == entryHash).findFirst();
+    public static <T extends NewEntry> T findEntryUnsafe(NewRegistry<?> registry, int id) throws IllegalRegistryId {
+        Optional<? extends NewEntry> res = flatEntry(registry).stream().filter((entry) -> entry.getId() == id).findFirst();
         if (res.isPresent()) {
             return (T) res.get();
         } else {
-            throw new IllegalRegistryId("Id:" + entryHash + " not found");
+            throw new IllegalRegistryId("Id:" + id + " not found");
         }
     }
 
