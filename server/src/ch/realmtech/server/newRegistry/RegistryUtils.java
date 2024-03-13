@@ -70,6 +70,17 @@ public class RegistryUtils {
         return (List<T>) flatEntry(registry).stream().filter(clazz::isInstance).toList();
     }
 
+    public static List<NewRegistry<?>> flatRegistries(NewRegistry<?> registry) {
+        if (registry.childRegistries.isEmpty()) {
+            return List.of(registry);
+        } else {
+            return registry.childRegistries.stream()
+                    .map(RegistryUtils::flatRegistries)
+                    .flatMap(Collection::stream)
+                    .toList();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static <T extends NewEntry> T evaluateSafe(NewRegistry<?> registry, String query, Class<T> entryClass) throws InvalideEvaluate {
         Optional<NewEntry> entryFind = findEntry(registry, query);
@@ -116,9 +127,15 @@ public class RegistryUtils {
                 fqrnRegistry = searchRegistryFqrn(registry, query);
             }
             return fqrnRegistry;
+        } else if (query.startsWith("#")) {
+            return findRegistryTag(registry, query);
         } else {
             return Optional.empty();
         }
+    }
+
+    private static Optional<NewRegistry<?>> findRegistryTag(NewRegistry<?> registry, String tagQuery) {
+        return flatRegistries(registry).stream().filter((findRegistry) -> findRegistry.getTags().contains(tagQuery.substring(1))).findFirst();
     }
 
     private static Optional<NewRegistry<?>> searchRegistryFqrn(NewRegistry<?> registry, String fqrn) {

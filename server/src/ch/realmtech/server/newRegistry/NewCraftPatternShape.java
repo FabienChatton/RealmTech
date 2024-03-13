@@ -24,6 +24,7 @@ public class NewCraftPatternShape extends NewCraftRecipeEntry {
 
     @Override
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
+        super.evaluate(rootRegistry);
         craftPattern2d = new NewItemEntry[craftPattern2dName.length][];
         for (int i = 0; i < craftPattern2dName.length; i++) {
             craftPattern2d[i] = new NewItemEntry[craftPattern2dName[i].length];

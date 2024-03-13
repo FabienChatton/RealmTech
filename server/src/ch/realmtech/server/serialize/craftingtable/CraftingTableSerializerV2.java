@@ -7,18 +7,25 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.UuidEntityManager;
 import ch.realmtech.server.level.cell.CraftingTableEditEntity;
+import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
+import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class CraftingTableSerializerV2 implements Serializer<Integer, CraftingTableEditEntity> {
+    @Wire(name = "rootRegistry")
+    private NewRegistry<?> rootRegistry;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
 
     @Override
@@ -48,7 +55,8 @@ public class CraftingTableSerializerV2 implements Serializer<Integer, CraftingTa
 
         UUID craftingResultInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
 
-        return CraftingTableEditEntity.createSetCraftingTable(craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
+        Optional<EditEntityFactory> editEntityFactory = RegistryUtils.findEntry(rootRegistry, EditEntityFactory.KNOW_FQRN);
+        return editEntityFactory.orElseThrow().createSetCraftingTable(craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
     }
 
     @Override

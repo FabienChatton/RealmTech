@@ -4,6 +4,7 @@ import ch.realmtech.server.newMod.CellsEntry.*;
 import ch.realmtech.server.newMod.CraftEntry.PlankCraftEntry;
 import ch.realmtech.server.newMod.ItemsEntry.*;
 import ch.realmtech.server.newMod.NewQuest.*;
+import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
 import ch.realmtech.server.newRegistry.*;
 
 public class NewRealmTechCoreMod implements ModInitializer {
@@ -70,7 +71,7 @@ public class NewRealmTechCoreMod implements ModInitializer {
         NewRegistry<?> crafts = NewRegistry.createRegistry(modRegistry, "crafts");
 
         // craft crafting table
-        NewRegistry<NewCraftRecipeEntry> craftCraftingTableRegistry = NewRegistry.createRegistry(crafts, "craftingTable");
+        NewRegistry<NewCraftRecipeEntry> craftCraftingTableRegistry = NewRegistry.createRegistry(crafts, "craftingTable", "craftingTableRecipes");
         craftCraftingTableRegistry.addEntry(new PlankCraftEntry());
 
         // quests
@@ -86,5 +87,9 @@ public class NewRealmTechCoreMod implements ModInitializer {
         questRegistry.addEntry(new GetReadyForElectricityQuestEntry());
         questRegistry.addEntry(new KnowYouWorldQuestEntry());
         questRegistry.addEntry(new ThermalExpansionQuestEntry());
+
+        // entity edit factory
+        NewRegistry<EditEntityFactory> entityEditFactory = NewRegistry.createRegistry(modRegistry, "editEntity");
+        entityEditFactory.addEntry(new EditEntityFactory());
     }
 }

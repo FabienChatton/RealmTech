@@ -5,10 +5,11 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.badlogic.gdx.utils.Null;
 
-import java.util.UUID;
+import java.util.List;
 
 public class CraftingTableEditEntity implements EditEntity {
     private final UuidSupplierOrRandom craftingInventoryUuid;
@@ -17,26 +18,20 @@ public class CraftingTableEditEntity implements EditEntity {
     private final int craftingNumberOfSlotParRow;
     private final int craftingNumberOfRow;
     private final UuidSupplierOrRandom craftingResultInventoryUuid;
+    private final List<NewCraftRecipeEntry> craftRecipes;
 
-    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid) {
+    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid, List<NewCraftRecipeEntry> craftRecipes) {
         this.craftingInventoryUuid = craftingInventoryUuid;
         this.inventory = inventory;
         this.craftingNumberOfSlotParRow = craftingNumberOfSlotParRow;
         this.craftingNumberOfRow = craftingNumberOfRow;
         this.craftingResultInventoryUuid = craftingResultInventoryUuid;
-    }
-
-    public static CraftingTableEditEntity createCraftingTable(int craftingNumberOfSlotParRow, int craftingNumberOfRow) {
-        return new CraftingTableEditEntity(new UuidSupplierOrRandom(), new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, new UuidSupplierOrRandom());
-    }
-
-    public static CraftingTableEditEntity createSetCraftingTable(UUID craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
-        return new CraftingTableEditEntity(new UuidSupplierOrRandom(craftingInventoryUuid), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, new UuidSupplierOrRandom(craftingResultInventoryUuid));
+        this.craftRecipes = craftRecipes;
     }
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get()));
+        executeOnContext.onCommun(world -> world.getSystem(InventoryManager.class).createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get(), craftRecipes));
     }
 
     @Override

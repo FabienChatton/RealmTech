@@ -10,10 +10,15 @@ import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.cell.CellBehavior;
 import ch.realmtech.server.level.cell.Cells;
-import ch.realmtech.server.level.cell.CraftingTableEditEntity;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
+import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.newMod.EvaluateAfter;
+import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
+import ch.realmtech.server.newRegistry.InvalideEvaluate;
 import ch.realmtech.server.newRegistry.NewCellEntry;
+import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
 import ch.realmtech.server.packet.serverPacket.UnSubscribeToEntityPacket;
@@ -21,18 +26,32 @@ import com.artemis.ComponentMapper;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class CraftingTableCellEntry extends NewCellEntry {
+    private EditEntityFactory editEntityCreateCraftingTable;
     public CraftingTableCellEntry() {
         super("craftingTable", "table-craft-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
                 .breakWith(ItemType.HAND, "realmtech.items.craftingTable")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
+                //.editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                 .canPlaceCellOnTop(false)
                 .interagieClickDroit(CraftingTableCellEntry::rightClickInteraction)
                 .build());
+    }
+
+    @Override
+    @EvaluateAfter(EditEntityFactory.KNOW_FQRN)
+    public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
+        super.evaluate(rootRegistry);
+        editEntityCreateCraftingTable = RegistryUtils.evaluateSafe(rootRegistry, "realmtech.editEntity.factory", EditEntityFactory.class);
+    }
+
+    @Override
+    public Optional<EditEntity> getEditEntityOnCreate() {
+        return Optional.of(editEntityCreateCraftingTable.createCraftingTable(3, 3));
     }
 
     private static void rightClickInteraction(ClientContext clientContext, int cellId) {

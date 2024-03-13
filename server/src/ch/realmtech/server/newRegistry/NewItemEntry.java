@@ -20,6 +20,7 @@ public abstract class NewItemEntry extends NewEntry {
 
     @Override
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
+        super.evaluate(rootRegistry);
         if (itemBehavior.getPlaceCellName() != null) {
             itemBehavior.setPlaceCell(RegistryUtils.evaluateSafe(rootRegistry, itemBehavior.getPlaceCellName(), NewCellEntry.class));
         }

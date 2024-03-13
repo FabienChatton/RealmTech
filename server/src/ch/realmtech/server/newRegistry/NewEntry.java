@@ -3,12 +3,15 @@ package ch.realmtech.server.newRegistry;
 public abstract class NewEntry {
     private final String name;
     protected NewRegistry<?> parentRegistry;
+    private boolean isEvaluated;
 
     void setParentRegistry(final NewRegistry<?> parentRegistry) {
         this.parentRegistry = parentRegistry;
     }
 
-    public abstract void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate;
+    public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
+        isEvaluated = true;
+    }
     public NewEntry(String name) {
         this.name = name;
     }
@@ -23,6 +26,10 @@ public abstract class NewEntry {
 
     public int getId() {
         return toFqrn().hashCode();
+    }
+
+    public boolean isEvaluated() {
+        return isEvaluated;
     }
 
     @Override

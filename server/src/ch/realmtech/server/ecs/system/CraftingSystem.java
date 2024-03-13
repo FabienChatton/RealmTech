@@ -28,9 +28,7 @@ public class CraftingSystem extends IteratingSystem {
         CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
 
         Optional<Optional<NewCraftResult>> craftResultChangeOpt = craftingTableComponent.getIsCraftResultChange().apply(entityId);
-        craftResultChangeOpt.ifPresent((craftResultChange) -> {
-            craftingTableComponent.getOnCraftResultChange(world, entityId).accept(craftResultChange);
-        });
+        craftResultChangeOpt.ifPresent((craftResultChange) -> craftingTableComponent.getOnCraftResultChange(world, entityId).accept(craftResultChange));
     }
 
 }

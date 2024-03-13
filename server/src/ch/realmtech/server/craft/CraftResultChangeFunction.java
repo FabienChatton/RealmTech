@@ -15,6 +15,7 @@ import com.artemis.World;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Deprecated
 public final class CraftResultChangeFunction {
     public static Function<Integer, Optional<Optional<NewCraftResult>>> CraftResultChangeCraftingTable(World world) {
         return (craftingTableId) -> {

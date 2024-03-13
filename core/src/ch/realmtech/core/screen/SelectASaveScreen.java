@@ -101,6 +101,7 @@ public class SelectASaveScreen extends AbstractScreen {
                 context.rejoindreSoloServeur(file.getName(), null);
             } catch (Exception e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
+                logger.error(e.getMessage(), e);
                 context.supprimeECS();
             }
         });

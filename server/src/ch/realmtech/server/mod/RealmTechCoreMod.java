@@ -204,7 +204,7 @@ public class RealmTechCoreMod implements ArtemisPlugin {
             CellBehavior.builder(Cells.Layer.BUILD_DECO)
                     .breakWith(ItemType.HAND, "realmtech.craftingTable")
                     .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                    .editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
+                    //.editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                     .canPlaceCellOnTop(false)
                     .interagieClickDroit((clientContext, cellId) -> {
                         ComponentMapper<CraftingTableComponent> mCrafting = clientContext.getWorld().getMapper(CraftingTableComponent.class);
