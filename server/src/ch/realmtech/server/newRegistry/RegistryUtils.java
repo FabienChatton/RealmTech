@@ -65,6 +65,10 @@ public class RegistryUtils {
         }
     }
 
+    public static List<? extends NewEntry> findEntries(NewRegistry<?> rootRegistry, String tag) {
+        return flatEntry(rootRegistry).stream().filter((entry) -> entry.parentRegistry.getTags().contains(tag.substring(1))).toList();
+    }
+
     @SuppressWarnings("unchecked")
     public static <T extends NewEntry> List<T> flatEntry(NewRegistry<?> registry, Class<T> clazz) {
         return (List<T>) flatEntry(registry).stream().filter(clazz::isInstance).toList();

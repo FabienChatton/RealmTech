@@ -6,9 +6,7 @@ import ch.realmtech.server.newMod.EvaluateAfter;
 import ch.realmtech.server.newRegistry.*;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class EditEntityFactory extends NewEntry {
@@ -24,12 +22,11 @@ public class EditEntityFactory extends NewEntry {
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
         String tagQuery = "#craftingTableRecipes";
-        Optional<NewRegistry<?>> craftRegistry = RegistryUtils.findRegistry(rootRegistry, tagQuery);
-        if (craftRegistry.isEmpty()) {
-            throw new InvalideEvaluate("Can not find " + tagQuery + " entry.");
+        List<? extends NewEntry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
+        if (craftRecipeEntires.isEmpty()) {
+            throw new InvalideEvaluate("No craft recipe with this tag: " + tagQuery);
         } else {
-            NewRegistry<?> registry = craftRegistry.get();
-            craftRecipes = (List<NewCraftRecipeEntry>) new ArrayList<>(registry.getEntries());
+            craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
         }
     }
 

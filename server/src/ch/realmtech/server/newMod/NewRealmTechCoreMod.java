@@ -1,7 +1,7 @@
 package ch.realmtech.server.newMod;
 
 import ch.realmtech.server.newMod.CellsEntry.*;
-import ch.realmtech.server.newMod.CraftEntry.PlankCraftEntry;
+import ch.realmtech.server.newMod.CraftEntry.*;
 import ch.realmtech.server.newMod.ItemsEntry.*;
 import ch.realmtech.server.newMod.NewQuest.*;
 import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
@@ -73,6 +73,18 @@ public class NewRealmTechCoreMod implements ModInitializer {
         // craft crafting table
         NewRegistry<NewCraftRecipeEntry> craftCraftingTableRegistry = NewRegistry.createRegistry(crafts, "craftingTable", "craftingTableRecipes");
         craftCraftingTableRegistry.addEntry(new PlankCraftEntry());
+        craftCraftingTableRegistry.addEntry(new StickCraftEntry());
+        craftCraftingTableRegistry.addEntry(new CraftingTableCraftEntry());
+        craftCraftingTableRegistry.addEntry(new ChestCraftEntry());
+        craftCraftingTableRegistry.addEntry(new WoodenPickaxeCraftEntry());
+        craftCraftingTableRegistry.addEntry(new WoodenShovelCraftEntry());
+        craftCraftingTableRegistry.addEntry(new StonePickaxeStoneCraftEntry());
+        craftCraftingTableRegistry.addEntry(new StoneShovelCraftEntry());
+        craftCraftingTableRegistry.addEntry(new TorchCraftEntry());
+        craftCraftingTableRegistry.addEntry(new FurnaceCraftEntry());
+        craftCraftingTableRegistry.addEntry(new EnergyBatteryCraftEntry());
+        craftCraftingTableRegistry.addEntry(new EnergyCableCraftEntry());
+        craftCraftingTableRegistry.addEntry(new WrenchCraftEntry());
 
         // quests
         NewRegistry<NewQuestEntry> questRegistry = NewRegistry.createRegistry(modRegistry, "quests");
