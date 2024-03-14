@@ -53,7 +53,6 @@ public class ModLoader {
         logger.info("All mods are initialized in {}s", (System.currentTimeMillis() - t1) / 1000f);
     }
 
-    @SuppressWarnings("unchecked")
     private List<NewEntry> sortEntryDependency(NewRegistry<?> rootRegistry, List<? extends NewEntry> entries) {
         DirectedAcyclicGraph<NewEntry, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
         for (NewEntry entry : entries) {
@@ -64,10 +63,7 @@ public class ModLoader {
                 EvaluateAfter evaluateAfter = entry.getClass().getMethod("evaluate", NewRegistry.class).getAnnotation(EvaluateAfter.class);
                 if (evaluateAfter != null) {
                     for (String evaluateAfterQuery : evaluateAfter.value()) {
-                        List<NewEntry> entriesDependent = RegistryUtils.findRegistry(rootRegistry, evaluateAfterQuery).map((registry) -> (List<NewEntry>) registry.getEntries())
-                                .or(() -> RegistryUtils.findEntry(rootRegistry, evaluateAfterQuery).map(List::of))
-                                .orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateAfterQuery + " registry or entry"));
-
+                        List<NewEntry> entriesDependent = processEvaluateAnnotation(rootRegistry, evaluateAfterQuery);
                         for (NewEntry entryDependent : entriesDependent) {
                             try {
                                 graph.addEdge(entryDependent, entry);
@@ -77,6 +73,20 @@ public class ModLoader {
                         }
                     }
                 }
+                EvaluateBefore evaluateBefore = entry.getClass().getMethod("evaluate", NewRegistry.class).getAnnotation(EvaluateBefore.class);
+                if (evaluateBefore != null) {
+                    for (String evaluateBeforeQuery : evaluateBefore.value()) {
+                        List<NewEntry> entriesDependent = processEvaluateAnnotation(rootRegistry, evaluateBeforeQuery);
+                        for (NewEntry entryDependent : entriesDependent) {
+                            try {
+                                graph.addEdge(entry, entryDependent);
+                            } catch (IllegalArgumentException e) {
+                                throw new InvalideEvaluate("Circular dependency, can not depend on " + evaluateBeforeQuery);
+                            }
+                        }
+                    }
+                }
+
             } catch (InvalideEvaluate e) {
                 logger.warn("Invalide dependency sort for {} entry. Error: {}", entry, e.getMessage());
                 isFail = true;
@@ -87,5 +97,13 @@ public class ModLoader {
         }
 
         return StreamSupport.stream(graph.spliterator(), false).toList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<NewEntry> processEvaluateAnnotation(NewRegistry<?> rootRegistry, String evaluateQuery) throws InvalideEvaluate {
+        return RegistryUtils.findRegistry(rootRegistry, evaluateQuery)
+                .map((registry) -> (List<NewEntry>) registry.getEntries())
+                .or(() -> RegistryUtils.findEntry(rootRegistry, evaluateQuery).map(List::of))
+                .orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateQuery + " registry or entry"));
     }
 }
