@@ -10,6 +10,11 @@ public abstract class NewQuestEntry extends NewEntry {
         this.content = content;
     }
 
+    @Override
+    public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
+
+    }
+
     public String getTitle() {
         return title;
     }

@@ -34,7 +34,6 @@ public class NewCraftPatternShapeless extends NewCraftRecipeEntry {
 
     @Override
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
-        super.evaluate(rootRegistry);
         itemResult = RegistryUtils.evaluateSafe(rootRegistry, itemResultName, NewItemEntry.class);
         itemsRequires = new ArrayList<>(itemsRequireName.length);
         for (String itemRequireName : itemsRequireName) {

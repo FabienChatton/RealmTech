@@ -21,7 +21,6 @@ public class NewFurnaceCraftShapeless extends NewFurnaceCraftRecipeEntry {
 
     @Override
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
-        super.evaluate(rootRegistry);
         newCraftPatternShapeless.evaluate(rootRegistry);
     }
 }

@@ -20,7 +20,6 @@ public abstract class NewCellEntry extends NewEntry {
 
     @Override
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
-        super.evaluate(rootRegistry);
         if (cellBehavior.getDropItemRegistryName() != null) {
             cellBehavior.setBreakCellEvent(BreakCellEvent.dropOnBreak(RegistryUtils.evaluateSafe(rootRegistry, cellBehavior.getDropItemRegistryName(), NewItemEntry.class)));
         } else {

@@ -67,6 +67,7 @@ project(":server") {
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-ai:1.8.1"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        api "org.jgrapht:jgrapht-core:1.5.2"
     }
 }
 

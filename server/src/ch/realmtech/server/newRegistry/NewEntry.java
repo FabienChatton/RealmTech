@@ -9,9 +9,7 @@ public abstract class NewEntry {
         this.parentRegistry = parentRegistry;
     }
 
-    public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
-        isEvaluated = true;
-    }
+    public abstract void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate;
     public NewEntry(String name) {
         this.name = name;
     }
@@ -30,6 +28,10 @@ public abstract class NewEntry {
 
     public boolean isEvaluated() {
         return isEvaluated;
+    }
+
+    public void setEvaluated(boolean evaluated) {
+        isEvaluated = evaluated;
     }
 
     @Override

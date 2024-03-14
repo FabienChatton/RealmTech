@@ -18,9 +18,9 @@ public class EditEntityFactory extends NewEntry {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     @EvaluateAfter("realmtech.crafts.craftingTable")
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
-        super.evaluate(rootRegistry);
         String tagQuery = "#craftingTableRecipes";
         List<? extends NewEntry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
         craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
