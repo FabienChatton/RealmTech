@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class EditEntityFactory extends NewEntry {
-    public final static String KNOW_FQRN = "realmtech.editEntity.factory";
     private List<NewCraftRecipeEntry> craftRecipes;
 
     public EditEntityFactory() {

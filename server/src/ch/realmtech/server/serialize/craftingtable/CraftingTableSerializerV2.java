@@ -55,7 +55,7 @@ public class CraftingTableSerializerV2 implements Serializer<Integer, CraftingTa
 
         UUID craftingResultInventoryUuid = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController());
 
-        Optional<EditEntityFactory> editEntityFactory = RegistryUtils.findEntry(rootRegistry, EditEntityFactory.KNOW_FQRN);
+        Optional<EditEntityFactory> editEntityFactory = RegistryUtils.findEntry(rootRegistry, EditEntityFactory.class);
         return editEntityFactory.orElseThrow().createSetCraftingTable(craftingInventoryUuid, craftingInventoryArgs.inventory(), craftingInventoryArgs.numberOfSlotParRow(), craftingInventoryArgs.numberOfRow(), craftingResultInventoryUuid);
     }
 

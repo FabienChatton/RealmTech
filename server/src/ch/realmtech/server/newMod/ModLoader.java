@@ -72,6 +72,15 @@ public class ModLoader {
                             }
                         }
                     }
+                    for (Class<? extends NewEntry> clazz : evaluateAfter.classes()) {
+                        NewEntry entryDependent = RegistryUtils.findEntry(rootRegistry, clazz)
+                                .orElseThrow(() -> new InvalideEvaluate("Can not find " + clazz.toString() + " entry"));
+                        try {
+                            graph.addEdge(entryDependent, entry);
+                        } catch (IllegalArgumentException e) {
+                            throw new InvalideEvaluate("Circular dependency, can not depend on " + clazz.toString());
+                        }
+                    }
                 }
                 EvaluateBefore evaluateBefore = entry.getClass().getMethod("evaluate", NewRegistry.class).getAnnotation(EvaluateBefore.class);
                 if (evaluateBefore != null) {
@@ -83,6 +92,15 @@ public class ModLoader {
                             } catch (IllegalArgumentException e) {
                                 throw new InvalideEvaluate("Circular dependency, can not depend on " + evaluateBeforeQuery);
                             }
+                        }
+                    }
+                    for (Class<? extends NewEntry> clazz : evaluateBefore.classes()) {
+                        NewEntry entryDependent = RegistryUtils.findEntry(rootRegistry, clazz)
+                                .orElseThrow(() -> new InvalideEvaluate("Can not find " + clazz.toString() + " entry"));
+                        try {
+                            graph.addEdge(entry, entryDependent);
+                        } catch (IllegalArgumentException e) {
+                            throw new InvalideEvaluate("Circular dependency, can not depend on " + clazz.toString());
                         }
                     }
                 }

@@ -74,6 +74,15 @@ public class RegistryUtils {
         return (List<T>) flatEntry(registry).stream().filter(clazz::isInstance).toList();
     }
 
+    public static <T extends NewEntry> Optional<T> findEntry(NewRegistry<?> registry, Class<T> entryClazz) {
+        List<T> entries = flatEntry(registry, entryClazz);
+        if (entries.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(entries.get(0));
+        }
+    }
+
     public static List<NewRegistry<?>> flatRegistries(NewRegistry<?> registry) {
         if (registry.childRegistries.isEmpty()) {
             return List.of(registry);

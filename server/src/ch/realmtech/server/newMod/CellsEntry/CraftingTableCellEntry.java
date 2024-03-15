@@ -43,7 +43,7 @@ public class CraftingTableCellEntry extends NewCellEntry {
     }
 
     @Override
-    @EvaluateAfter(EditEntityFactory.KNOW_FQRN)
+    @EvaluateAfter(classes = {EditEntityFactory.class})
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
         editEntityCreateCraftingTable = RegistryUtils.evaluateSafe(rootRegistry, "realmtech.editEntity.factory", EditEntityFactory.class);
