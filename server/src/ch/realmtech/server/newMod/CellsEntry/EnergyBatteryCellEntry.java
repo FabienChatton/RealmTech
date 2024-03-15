@@ -10,8 +10,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class EnergyBatteryCellEntry extends NewCellEntry {
     public EnergyBatteryCellEntry() {
-        super("energyBattery", "energy-battery-01-0100", CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                .breakWith(ItemType.HAND, "realmtech.items.energyBattery")
+        super("EnergyBattery", "energy-battery-01-0100", CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                .breakWith(ItemType.HAND, "realmtech.items.EnergyBattery")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .editEntity(EnergyBatteryEditEntity.createDefault())
                 .canPlaceCellOnTop(false)

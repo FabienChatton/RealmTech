@@ -27,8 +27,8 @@ import java.util.function.Consumer;
 
 public class EnergyGeneratorCellEntry extends NewCellEntry {
     public EnergyGeneratorCellEntry() {
-        super("energyGenerator", "furnace-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                .breakWith(ItemType.HAND, "realmtech.items.energyGenerator")
+        super("EnergyGenerator", "furnace-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                .breakWith(ItemType.HAND, "realmtech.items.EnergyGenerator")
                 .editEntity(EnergyGeneratorEditEntity.createDefault(), ChestEditEntity.createNewInventory(1, 1))
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .canPlaceCellOnTop(false)

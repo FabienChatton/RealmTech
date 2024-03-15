@@ -4,7 +4,7 @@ import ch.realmtech.server.newRegistry.NewQuestEntry;
 
 public class ThermalExpansionQuestEntry extends NewQuestEntry {
     public ThermalExpansionQuestEntry() {
-        super("thermalExpansion", "Thermal Expansion", """
+        super("ThermalExpansion", "Thermal Expansion", """
                 Now it's time to process your ores. To do this, you need a furnace.
                 To get your first furnace, you need 8 stones, and craft the furnace in a crafting table by placing
                 the 8 stones in the edges of the crafting inventory to make an "O" shape.

@@ -4,7 +4,7 @@ import ch.realmtech.server.newRegistry.NewQuestEntry;
 
 public class CraftingExpansionQuestEntry extends NewQuestEntry {
     public CraftingExpansionQuestEntry() {
-        super("craftingExpansion", "First craft", """
+        super("CraftingExpansion", "First craft", """
                 The first utility item you'll craft is a crafting table.
                 The crafting table extends the size of the crafting table in the player's inventory.
                 With the crafting table, the size of the crafting inventory is 3x3.

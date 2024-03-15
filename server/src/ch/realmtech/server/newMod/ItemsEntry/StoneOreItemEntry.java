@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class StoneOreItemEntry extends NewItemEntry {
     public StoneOreItemEntry() {
-        super("stoneOre", "stone-ore-01", ItemBehavior.builder()
+        super("StoneOre", "stone-ore-01", ItemBehavior.builder()
                 .build());
     }
 

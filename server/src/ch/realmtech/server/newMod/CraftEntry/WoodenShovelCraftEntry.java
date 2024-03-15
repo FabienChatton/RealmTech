@@ -5,10 +5,10 @@ import ch.realmtech.server.newRegistry.NewCraftPatternShape;
 
 public class WoodenShovelCraftEntry extends NewCraftPatternShape {
     public WoodenShovelCraftEntry() {
-        super("woodenShovelCraft", "realmtech.items.woodenShovel", 1, new char[][]{
+        super("WoodenShovelCraft", "realmtech.items.WoodenShovel", 1, new char[][]{
                 {' ', 'a', ' '},
                 {' ', 'b', ' '},
                 {' ', 'b', ' '}
-        }, new NewPatternArgs('a', "realmtech.items.plank"), new NewPatternArgs('b', "realmtech.items.stick"));
+        }, new NewPatternArgs('a', "realmtech.items.Plank"), new NewPatternArgs('b', "realmtech.items.Stick"));
     }
 }

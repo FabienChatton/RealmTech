@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class IronIngotItemEntry extends NewItemEntry {
     public IronIngotItemEntry() {
-        super("ironIngot", "iron-ingot-01", ItemBehavior.builder()
+        super("IronIngot", "iron-ingot-01", ItemBehavior.builder()
                 .build());
     }
 

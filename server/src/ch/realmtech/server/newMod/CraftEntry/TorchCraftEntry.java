@@ -5,9 +5,9 @@ import ch.realmtech.server.newRegistry.NewCraftPatternShape;
 
 public class TorchCraftEntry extends NewCraftPatternShape {
     public TorchCraftEntry() {
-        super("torchCraft", "realmtech.items.torch", 1, new char[][]{
+        super("TorchCraft", "realmtech.items.Torch", 1, new char[][]{
                 {'c'},
                 {'s'}
-        }, new NewPatternArgs('c', "realmtech.items.coal"), new NewPatternArgs('s', "realmtech.items.stick"));
+        }, new NewPatternArgs('c', "realmtech.items.Coal"), new NewPatternArgs('s', "realmtech.items.Stick"));
     }
 }

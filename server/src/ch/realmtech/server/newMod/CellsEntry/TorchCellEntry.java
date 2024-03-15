@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.Color;
 
 public class TorchCellEntry extends NewCellEntry {
     public TorchCellEntry() {
-        super("torch", "torch-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
+        super("Torch", "torch-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
                 .canPlaceCellOnTop(false)
                 .editEntity(new EditEntity() {
                     @Override
@@ -33,7 +33,7 @@ public class TorchCellEntry extends NewCellEntry {
                     }
 
                 })
-                .breakWith(ItemType.HAND, "realmtech.items.torch")
+                .breakWith(ItemType.HAND, "realmtech.items.Torch")
                 .build());
     }
 

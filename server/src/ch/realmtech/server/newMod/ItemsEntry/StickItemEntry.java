@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class StickItemEntry extends NewItemEntry {
     public StickItemEntry() {
-        super("stick", "stick-02", ItemBehavior.builder()
+        super("Stick", "stick-02", ItemBehavior.builder()
                 .build());
     }
 

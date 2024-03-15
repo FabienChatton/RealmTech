@@ -7,8 +7,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class GoldOreCellEntry extends NewCellEntry {
     public GoldOreCellEntry() {
-        super("goldOre", "gold-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                .breakWith(ItemType.PICKAXE, "realmtech.items.goldOre")
+        super("GoldOre", "gold-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                .breakWith(ItemType.PICKAXE, "realmtech.items.GoldOre")
                 .canPlaceCellOnTop(false)
                 .build());
     }

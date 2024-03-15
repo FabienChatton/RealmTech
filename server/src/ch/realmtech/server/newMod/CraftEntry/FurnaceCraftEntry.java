@@ -5,10 +5,10 @@ import ch.realmtech.server.newRegistry.NewCraftPatternShape;
 
 public class FurnaceCraftEntry extends NewCraftPatternShape {
     public FurnaceCraftEntry() {
-        super("furnaceCraft", "realmtech.items.furnace", 1, new char[][]{
+        super("FurnaceCraft", "realmtech.items.Furnace", 1, new char[][]{
                 {'p', 'p', 'p'},
                 {'p', ' ', 'p'},
                 {'p', 'p', 'p'}
-        }, new NewPatternArgs('p', "realmtech.items.stoneOre"));
+        }, new NewPatternArgs('p', "realmtech.items.StoneOre"));
     }
 }

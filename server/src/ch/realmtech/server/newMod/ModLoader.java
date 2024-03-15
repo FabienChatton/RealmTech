@@ -28,9 +28,9 @@ public class ModLoader {
         NewRegistry<?> coreModRegistry = NewRegistry.createRegistry(rootRegistry, coreModId);
 
         newRealmTechCoreMod.initializeModRegistry(coreModRegistry);
+        checkName(rootRegistry);
 
         List<? extends NewEntry> entries = RegistryUtils.flatEntry(rootRegistry);
-
         List<NewEntry> entrySort = sortEntryDependency(rootRegistry, entries);
 
         for (NewEntry entry : entrySort) {
@@ -123,5 +123,57 @@ public class ModLoader {
                 .map((registry) -> (List<NewEntry>) registry.getEntries())
                 .or(() -> RegistryUtils.findEntry(rootRegistry, evaluateQuery).map(List::of))
                 .orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateQuery + " registry or entry"));
+    }
+
+    private void checkName(NewRegistry<?> rootRegistry) {
+        boolean invalideEntryName = RegistryUtils.flatEntry(rootRegistry).stream()
+                .filter((entry) -> !entry.getName().matches("[A-Z][a-zA-Z]*"))
+                .peek((invalideNameEntry) -> logger.warn("Invalide name for {} entry. Error: {}", invalideNameEntry, "Entry name must begin with upper case"))
+                .map((registry) -> true)
+                .findAny()
+                .orElse(false);
+
+        if (invalideEntryName) {
+            isFail = true;
+        }
+
+        boolean invalideRegistryName = RegistryUtils.flatRegistries(rootRegistry).stream()
+                .filter((registry) -> registry.getName().matches("[A-Z][a-zA-Z]*"))
+                .peek((invalideNameEntry) -> logger.warn("Invalide name for {} registry. Error: {}", invalideNameEntry, "Registry name must not begin with upper case"))
+                .map((registry) -> true)
+                .findAny()
+                .orElse(false);
+
+        if (invalideRegistryName) {
+            isFail = true;
+        }
+
+        boolean invalideRegistryNameDot = rootRegistry.getChildRegistries().stream()
+                .anyMatch((childRegistry) -> RegistryUtils.flatRegistries(childRegistry).stream()
+                        .filter((registry) -> registry.getName().contains("."))
+                        .peek((invalideRegistry) -> logger.warn("Invalide name for {} registry. Error: {}", invalideRegistry, "Registry name must not contains \".\""))
+                        .map((registry) -> true)
+                        .findAny()
+                        .orElse(false)
+                );
+
+        if (invalideRegistryNameDot) {
+            isFail = true;
+        }
+
+        boolean invalideTagName = rootRegistry.getChildRegistries().stream()
+                .anyMatch((childRegistry) -> RegistryUtils.flatRegistries(childRegistry).stream()
+                        .anyMatch((registry) -> registry.getTags().stream()
+                                .filter((tag) -> tag.contains("."))
+                                .peek((invalideTag) -> logger.warn("Invalide name for {} tag in registry {}. Error: {}", invalideTag, registry, "Tag name must not contains \".\""))
+                                .map((tag) -> true)
+                                .findAny()
+                                .orElse(false))
+
+                );
+
+        if (invalideTagName) {
+            isFail = true;
+        }
     }
 }

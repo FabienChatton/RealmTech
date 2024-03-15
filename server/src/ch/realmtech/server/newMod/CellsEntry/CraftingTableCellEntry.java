@@ -33,8 +33,8 @@ import java.util.function.Consumer;
 public class CraftingTableCellEntry extends NewCellEntry {
     private EditEntityFactory editEntityCreateCraftingTable;
     public CraftingTableCellEntry() {
-        super("craftingTable", "table-craft-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                .breakWith(ItemType.HAND, "realmtech.items.craftingTable")
+        super("CraftingTable", "table-craft-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                .breakWith(ItemType.HAND, "realmtech.items.CraftingTable")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 //.editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                 .canPlaceCellOnTop(false)
@@ -46,7 +46,7 @@ public class CraftingTableCellEntry extends NewCellEntry {
     @EvaluateAfter(classes = {EditEntityFactory.class})
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        editEntityCreateCraftingTable = RegistryUtils.evaluateSafe(rootRegistry, "realmtech.editEntity.factory", EditEntityFactory.class);
+        editEntityCreateCraftingTable = RegistryUtils.evaluateSafe(rootRegistry, "realmtech.editEntity.Factory", EditEntityFactory.class);
     }
 
     @Override

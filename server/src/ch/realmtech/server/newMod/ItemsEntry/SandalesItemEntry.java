@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class SandalesItemEntry extends NewItemEntry {
     public SandalesItemEntry() {
-        super("sandales", "sandales-01", ItemBehavior.builder()
+        super("Sandales", "sandales-01", ItemBehavior.builder()
                 .setSpeedEffect(2)
                 .build());
     }

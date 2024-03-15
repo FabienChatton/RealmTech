@@ -6,7 +6,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class StoneShovelItemEntry extends NewItemEntry {
     public StoneShovelItemEntry() {
-        super("stoneShovel", "pelle-stone-01", ItemBehavior.builder()
+        super("StoneShovel", "pelle-stone-01", ItemBehavior.builder()
                 .setItemType(ItemType.SHOVEL)
                 .build());
     }

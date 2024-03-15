@@ -5,10 +5,10 @@ import ch.realmtech.server.newRegistry.NewCraftPatternShape;
 
 public class WoodenPickaxeCraftEntry extends NewCraftPatternShape {
     public WoodenPickaxeCraftEntry() {
-        super("woodenPickaxeCraft", "realmtech.items.woodenPickaxe", 1, new char[][]{
+        super("WoodenPickaxeCraft", "realmtech.items.WoodenPickaxe", 1, new char[][]{
                 {'p', 'p', 'p'},
                 {' ', 's', ' '},
                 {' ', 's', ' '}
-        }, new NewPatternArgs('p', "realmtech.items.plank"), new NewPatternArgs('s', "realmtech.items.stick"));
+        }, new NewPatternArgs('p', "realmtech.items.Plank"), new NewPatternArgs('s', "realmtech.items.Stick"));
     }
 }

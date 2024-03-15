@@ -6,7 +6,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class WoodenPickaxeItemEntry extends NewItemEntry {
     public WoodenPickaxeItemEntry() {
-        super("woodenPickaxe", "pioche-bois-01", ItemBehavior.builder()
+        super("WoodenPickaxe", "pioche-bois-01", ItemBehavior.builder()
                 .setItemType(ItemType.PICKAXE)
                 .build());
     }

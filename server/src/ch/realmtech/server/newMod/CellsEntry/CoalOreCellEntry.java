@@ -7,8 +7,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class CoalOreCellEntry extends NewCellEntry {
     public CoalOreCellEntry() {
-        super("coalOre", "coal-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                .breakWith(ItemType.PICKAXE, "realmtech.items.coal")
+        super("CoalOre", "coal-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                .breakWith(ItemType.PICKAXE, "realmtech.items.Coal")
                 .canPlaceCellOnTop(false)
                 .build());
     }

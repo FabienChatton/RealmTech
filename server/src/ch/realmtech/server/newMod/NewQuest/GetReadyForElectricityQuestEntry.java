@@ -4,7 +4,7 @@ import ch.realmtech.server.newRegistry.NewQuestEntry;
 
 public class GetReadyForElectricityQuestEntry extends NewQuestEntry {
     public GetReadyForElectricityQuestEntry() {
-        super("getReadyForElectricity", "Get ready for electricity", """
+        super("GetReadyForElectricity", "Get ready for electricity", """
                 Introducing electricity into your world will introduce a lot of complexity.
                 The first complexity will be the orientation of the cells.
                 To manipulate this orientation, use a wrench.

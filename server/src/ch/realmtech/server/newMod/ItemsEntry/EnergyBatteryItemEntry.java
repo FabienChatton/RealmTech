@@ -5,8 +5,8 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class EnergyBatteryItemEntry extends NewItemEntry {
     public EnergyBatteryItemEntry() {
-        super("energyBattery", "energy-battery-01-0100", ItemBehavior.builder()
-                .placeCell("realmtech.cells.energyBattery")
+        super("EnergyBattery", "energy-battery-01-0100", ItemBehavior.builder()
+                .placeCell("realmtech.cells.EnergyBattery")
                 .build());
     }
 

@@ -7,8 +7,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class CopperOreCellEntry extends NewCellEntry {
     public CopperOreCellEntry() {
-        super("copperOre", "copper-ore-03", CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                .breakWith(ItemType.PICKAXE, "realmtech.items.copperOre")
+        super("CopperOre", "copper-ore-03", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                .breakWith(ItemType.PICKAXE, "realmtech.items.CopperOre")
                 .canPlaceCellOnTop(false)
                 .build());
     }

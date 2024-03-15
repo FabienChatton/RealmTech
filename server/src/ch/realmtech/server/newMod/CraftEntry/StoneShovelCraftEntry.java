@@ -5,10 +5,10 @@ import ch.realmtech.server.newRegistry.NewCraftPatternShape;
 
 public class StoneShovelCraftEntry extends NewCraftPatternShape {
     public StoneShovelCraftEntry() {
-        super("stoneShovelCraft", "realmtech.items.stoneShovel", 1, new char[][]{
+        super("StoneShovelCraft", "realmtech.items.StoneShovel", 1, new char[][]{
                 {' ', 's', ' '},
                 {' ', 'a', ' '},
                 {' ', 'a', ' '},
-        }, new NewPatternArgs('s', "realmtech.items.stoneOre"), new NewPatternArgs('a', "realmtech.items.stick"));
+        }, new NewPatternArgs('s', "realmtech.items.StoneOre"), new NewPatternArgs('a', "realmtech.items.Stick"));
     }
 }

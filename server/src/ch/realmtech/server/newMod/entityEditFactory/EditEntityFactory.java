@@ -13,7 +13,7 @@ public class EditEntityFactory extends NewEntry {
     private List<NewCraftRecipeEntry> craftRecipes;
 
     public EditEntityFactory() {
-        super("factory");
+        super("Factory");
     }
 
     @Override

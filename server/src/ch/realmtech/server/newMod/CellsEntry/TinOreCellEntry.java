@@ -7,8 +7,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class TinOreCellEntry extends NewCellEntry {
     public TinOreCellEntry() {
-        super("tinOre", "tin-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                .breakWith(ItemType.PICKAXE, "realmtech.items.tinOre")
+        super("TinOre", "tin-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                .breakWith(ItemType.PICKAXE, "realmtech.items.TinOre")
                 .canPlaceCellOnTop(false)
                 .build());
     }

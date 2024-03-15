@@ -27,8 +27,8 @@ import java.util.function.Consumer;
 
 public class FurnaceCellEntry extends NewCellEntry {
     public FurnaceCellEntry() {
-        super("furnace", "furnace-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                .breakWith(ItemType.HAND, "realmtech.items.furnace")
+        super("Furnace", "furnace-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                .breakWith(ItemType.HAND, "realmtech.items.Furnace")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .editEntity(FurnaceEditEntity.createFurnace())
                 .canPlaceCellOnTop(false)

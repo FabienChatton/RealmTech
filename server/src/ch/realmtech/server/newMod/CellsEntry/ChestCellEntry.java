@@ -23,8 +23,8 @@ import java.util.function.Consumer;
 
 public class ChestCellEntry extends NewCellEntry {
     public ChestCellEntry() {
-        super("chest", "chest-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
-                .breakWith(ItemType.HAND, "realmtech.items.chest")
+        super("Chest", "chest-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
+                .breakWith(ItemType.HAND, "realmtech.items.Chest")
                 .editEntity(ChestEditEntity.createNewInventory(9, 3))
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .canPlaceCellOnTop(false)

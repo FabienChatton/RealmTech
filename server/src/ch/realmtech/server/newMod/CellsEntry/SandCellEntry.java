@@ -8,7 +8,7 @@ import ch.realmtech.server.sound.SoundManager;
 
 public class SandCellEntry extends NewCellEntry {
     public SandCellEntry() {
-        super("sand", "sand-01", CellBehavior.builder(Cells.Layer.GROUND)
+        super("Sand", "sand-01", CellBehavior.builder(Cells.Layer.GROUND)
                 .playerWalkSound(0.25f, SoundManager.FOOT_STEP_SAND_1, SoundManager.FOOT_STEP_SAND_2, SoundManager.FOOT_STEP_SAND_3, SoundManager.FOOT_STEP_SAND_4, SoundManager.FOOT_STEP_SAND_5, SoundManager.FOOT_STEP_SAND_6, SoundManager.FOOT_STEP_SAND_7, SoundManager.FOOT_STEP_SAND_8, SoundManager.FOOT_STEP_SAND_9, SoundManager.FOOT_STEP_SAND_10)
                 .breakStepNeed(CellBeingMineComponent.INFINITE_MINE)
                 .tiledTexture(2, 2)

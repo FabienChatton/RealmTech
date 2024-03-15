@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class CoalItemEntry extends NewItemEntry {
     public CoalItemEntry() {
-        super("coal", "coal-01", ItemBehavior.builder()
+        super("Coal", "coal-01", ItemBehavior.builder()
                 .setTimeToBurn(1000)
                 .build());
     }

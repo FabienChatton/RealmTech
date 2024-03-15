@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class TinIngotItemEntry extends NewItemEntry {
     public TinIngotItemEntry() {
-        super("tinIngot", "tin-ingot-01", ItemBehavior.builder()
+        super("TinIngot", "tin-ingot-01", ItemBehavior.builder()
                 .build());
     }
 

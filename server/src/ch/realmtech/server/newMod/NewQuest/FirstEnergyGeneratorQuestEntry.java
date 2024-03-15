@@ -4,7 +4,7 @@ import ch.realmtech.server.newRegistry.NewQuestEntry;
 
 public class FirstEnergyGeneratorQuestEntry extends NewQuestEntry {
     public FirstEnergyGeneratorQuestEntry() {
-        super("firstEnergyGenerator", "First Energy Generator", """
+        super("FirstEnergyGenerator", "First Energy Generator", """
                 Just having energy cables doesn't help. They take their usefulness to transport energy.
                 But to transport energy, you have to have energy in the first place.
                 That's what this quest is all about. Your first source of energy will be an energy generator.

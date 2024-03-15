@@ -5,8 +5,8 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class CraftingTableItemEntry extends NewItemEntry {
     public CraftingTableItemEntry() {
-        super("craftingTable", "table-craft-01", ItemBehavior.builder()
-                .placeCell("realmtech.cells.craftingTable")
+        super("CraftingTable", "table-craft-01", ItemBehavior.builder()
+                .placeCell("realmtech.cells.CraftingTable")
                 .build());
     }
 

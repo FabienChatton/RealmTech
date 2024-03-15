@@ -6,7 +6,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class NoItemEntry extends NewItemEntry {
     public NoItemEntry() {
-        super("noitem", "default-texture", ItemBehavior.builder()
+        super("Noitem", "default-texture", ItemBehavior.builder()
                 .setItemType(ItemType.HAND).build());
     }
 

@@ -4,6 +4,6 @@ import ch.realmtech.server.newRegistry.NewFurnaceCraftShapeless;
 
 public class TinIngotCraftEntry extends NewFurnaceCraftShapeless {
     public TinIngotCraftEntry() {
-        super("tinIngotCraft", "realmtech.items.tinIngot", 1, 100, "realmtech.items.tinOre");
+        super("TinIngotCraft", "realmtech.items.TinIngot", 1, 100, "realmtech.items.TinOre");
     }
 }

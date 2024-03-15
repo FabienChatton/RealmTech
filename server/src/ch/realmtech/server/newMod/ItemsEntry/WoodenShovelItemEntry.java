@@ -6,7 +6,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class WoodenShovelItemEntry extends NewItemEntry {
     public WoodenShovelItemEntry() {
-        super("woodenShovel", "pelle-bois-01", ItemBehavior.builder()
+        super("WoodenShovel", "pelle-bois-01", ItemBehavior.builder()
                 .setItemType(ItemType.SHOVEL)
                 .build());
     }

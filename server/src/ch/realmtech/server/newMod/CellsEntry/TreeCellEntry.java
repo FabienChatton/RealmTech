@@ -8,8 +8,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class TreeCellEntry extends NewCellEntry {
     public TreeCellEntry() {
-        super("tree", "tree-06", CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                .breakWith(ItemType.HAND, "realmtech.items.wood")
+        super("Tree", "tree-06", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                .breakWith(ItemType.HAND, "realmtech.items.Wood")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .canPlaceCellOnTop(false)
                 .build()

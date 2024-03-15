@@ -6,7 +6,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class WrenchItemEntry extends NewItemEntry {
     public WrenchItemEntry() {
-        super("wrench", "wrench-01", ItemBehavior.builder()
+        super("Wrench", "wrench-01", ItemBehavior.builder()
                 .interagieClickDroit(WrenchRightClick.wrenchRightClick())
                 .build());
     }

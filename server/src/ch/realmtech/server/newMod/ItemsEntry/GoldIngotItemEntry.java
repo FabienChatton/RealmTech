@@ -5,7 +5,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class GoldIngotItemEntry extends NewItemEntry {
     public GoldIngotItemEntry() {
-        super("goldIngot", "gold-ingot-01", ItemBehavior.builder()
+        super("GoldIngot", "gold-ingot-01", ItemBehavior.builder()
                 .build());
     }
 

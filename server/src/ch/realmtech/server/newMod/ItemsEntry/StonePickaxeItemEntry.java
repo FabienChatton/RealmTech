@@ -6,7 +6,7 @@ import ch.realmtech.server.newRegistry.NewItemEntry;
 
 public class StonePickaxeItemEntry extends NewItemEntry {
     public StonePickaxeItemEntry() {
-        super("stonePickaxe", "pioche-stone-01", ItemBehavior.builder()
+        super("StonePickaxe", "pioche-stone-01", ItemBehavior.builder()
                 .setItemType(ItemType.PICKAXE)
                 .build());
     }

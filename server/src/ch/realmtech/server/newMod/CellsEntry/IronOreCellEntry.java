@@ -7,8 +7,8 @@ import ch.realmtech.server.newRegistry.NewCellEntry;
 
 public class IronOreCellEntry extends NewCellEntry {
     public IronOreCellEntry() {
-        super("ironOre", "iron-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
-                .breakWith(ItemType.PICKAXE, "realmtech.items.ironOre")
+        super("IronOre", "iron-ore-01", CellBehavior.builder(Cells.Layer.GROUND_DECO)
+                .breakWith(ItemType.PICKAXE, "realmtech.items.IronOre")
                 .canPlaceCellOnTop(false)
                 .build());
     }
