@@ -21,8 +21,7 @@ public class EditEntityFactory extends NewEntry {
     @EvaluateAfter("realmtech.crafts.craftingTable")
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
         String tagQuery = "#craftingTableRecipes";
-        List<? extends NewEntry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
-        craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
+        craftRecipes = (List<NewCraftRecipeEntry>) RegistryUtils.findEntries(rootRegistry, tagQuery);
     }
 
     public CraftingTableEditEntity createCraftingTable(int craftingNumberOfSlotParRow, int craftingNumberOfRow) {
