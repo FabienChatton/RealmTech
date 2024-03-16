@@ -31,8 +31,13 @@ public class TickThread extends Thread implements Closeable {
                     logger.error(e.getMessage(), e);
                     try {
                         serverContext.saveAndClose();
-                    } catch (InterruptedException | IOException ex) {
-                        logger.error("Can not close server while an exception in tick thread has occur");
+                    } catch (Exception ex) {
+                        serverContext.getClientInternalConnexion().ifPresent((internalConnexion) -> internalConnexion.displayErrorPopup("Can not save server while an exception in tick thread has occur"));
+                        try {
+                            serverContext.close();
+                        } catch (Exception exc) {
+                            serverContext.getClientInternalConnexion().ifPresent((internalConnexion) -> internalConnexion.displayErrorPopup("Can not close server."));
+                        }
                     }
                 }
             }

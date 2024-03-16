@@ -90,7 +90,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void clientConnexionRemoved() {
         context.nextFrame(() -> {
-            context.supprimeECS();
+            context.closeEcs();
             if (context.getScreenType() == ScreenType.GAME_SCREEN) {
                 Gdx.app.postRunnable(() -> {
                     context.setScreen(ScreenType.MENU);
@@ -182,7 +182,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void disconnectMessage(String message) {
         Gdx.app.postRunnable(() -> {
-            context.supprimeECS();
+            context.closeEcs();
             context.setScreen(ScreenType.MENU);
             Popup.popupErreur(context, message, context.getUiStage());
         });

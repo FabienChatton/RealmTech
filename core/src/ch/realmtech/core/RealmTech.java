@@ -20,7 +20,7 @@ import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
-import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.newMod.ModLoader;
 import ch.realmtech.server.newRegistry.NewRegistry;
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public final class RealmTech extends Game implements ClientContext {
+public final class RealmTech extends Game implements InternalConnexion {
     public final static float WORLD_WIDTH = 16f;
     public final static float WORLD_HEIGHT = 9f;
     public final static int SCREEN_WIDTH = DataCtrl.SCREEN_WIDTH;
@@ -247,7 +247,7 @@ public final class RealmTech extends Game implements ClientContext {
             logger.error("Option file can not be saved. {}", e.getMessage());
         }
         discord.stop();
-        supprimeECS();
+        closeEcs();
     }
 
     public TextureAtlas getTextureAtlas() {
@@ -276,7 +276,7 @@ public final class RealmTech extends Game implements ClientContext {
             if (gameStage.getBatch().isDrawing()) {
                 gameStage.getBatch().end();
             }
-            supprimeECS();
+            closeEcs();
             setScreen(ScreenType.MENU);
             Popup.popupErreur(this, e.toString(), uiStage);
         }
@@ -284,19 +284,27 @@ public final class RealmTech extends Game implements ClientContext {
 
     public void nouveauECS(ClientConnexion clientConnexion) throws Exception {
         if (ecsEngine != null) {
-            supprimeECS();
+            closeEcs();
         }
         ecsEngine = new ECSEngine(this, clientConnexion);
         onEcsEngineInitializes.forEach((ecsEngineConsumer) -> ecsEngineConsumer.accept(ecsEngine));
         onEcsEngineInitializes.clear();
     }
 
-    public void supprimeECS() {
-        if (ecsEngine != null) {
-            ecsEngine.clearAllEntity();
-            ecsEngine.dispose();
-        }
-        ecsEngine = null;
+    @Override
+    public void closeEcs() {
+        Gdx.app.postRunnable(() -> {
+            if (ecsEngine != null) {
+                ecsEngine.clearAllEntity();
+                ecsEngine.dispose();
+            }
+            ecsEngine = null;
+        });
+    }
+
+    @Override
+    public void displayErrorPopup(String message) {
+        Gdx.app.postRunnable(() -> Popup.popupErreur(this, message, uiStage));
     }
 
     public void rejoindreMulti(String host, int port) throws Exception {
@@ -334,7 +342,7 @@ public final class RealmTech extends Game implements ClientContext {
                         .setClientExecute(clientExecute)
                         .setRootRegistry(rootRegistry)
                         .build();
-                ClientConnexion clientConnexion = new ClientConnexionIntern(connexionConfig);
+                ClientConnexion clientConnexion = new ClientConnexionIntern(this, connexionConfig);
                 nouveauECS(clientConnexion);
                 authControllerClient.sendAuthAndJoinServer(clientConnexion, verifyAccessToken);
             }

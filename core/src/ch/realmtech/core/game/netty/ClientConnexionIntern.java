@@ -1,6 +1,7 @@
 package ch.realmtech.core.game.netty;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.packet.ServerPacket;
 import io.netty.channel.Channel;
@@ -15,10 +16,11 @@ public class ClientConnexionIntern implements ClientConnexion {
     private final Channel clientChanel;
     private final ServerContext serverContext;
 
-    public ClientConnexionIntern(ConnexionConfig connexionConfig) throws Exception {
+    public ClientConnexionIntern(InternalConnexion clientRef, ConnexionConfig connexionConfig) throws Exception {
         this.clientChanel = new EmbeddedChannel();
         try {
             serverContext = new ServerContext(connexionConfig);
+            serverContext.setClientRef(clientRef);
         } catch (Exception e) {
             logger.error("Can not open server");
             throw e;

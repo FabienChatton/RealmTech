@@ -26,7 +26,6 @@ import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -136,7 +135,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         try {
             clientConnexion.close();
             serverTickBeatMonitoring.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         System.gc();

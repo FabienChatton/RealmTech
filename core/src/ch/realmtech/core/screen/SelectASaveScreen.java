@@ -102,7 +102,7 @@ public class SelectASaveScreen extends AbstractScreen {
             } catch (Exception e) {
                 Popup.popupErreur(context, e.getMessage(), uiStage);
                 logger.error(e.getMessage(), e);
-                context.supprimeECS();
+                context.closeEcs();
             }
         });
     }

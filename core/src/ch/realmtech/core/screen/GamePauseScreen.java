@@ -59,7 +59,7 @@ public class GamePauseScreen extends AbstractScreen {
         return new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                context.supprimeECS();
+                context.closeEcs();
                 context.setScreen(ScreenType.MENU);
             }
         };

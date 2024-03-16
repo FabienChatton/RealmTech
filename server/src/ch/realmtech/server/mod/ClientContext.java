@@ -14,6 +14,5 @@ public interface ClientContext extends GetWorld {
     Skin getSkin();
     void sendRequest(ServerPacket packet);
     void writeToConsole(String s);
-
     NewRegistry<?> getRootRegistry();
 }

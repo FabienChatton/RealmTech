@@ -8,6 +8,7 @@ import ch.realmtech.server.datactrl.OptionServer;
 import ch.realmtech.server.ecs.EcsEngineServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
+import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.newMod.ModLoader;
 import ch.realmtech.server.newRegistry.NewRegistry;
@@ -25,6 +26,7 @@ import picocli.CommandLine;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Optional;
 
 public class ServerContext implements Closeable {
     private final static Logger logger = LoggerFactory.getLogger(ServerContext.class);
@@ -41,6 +43,7 @@ public class ServerContext implements Closeable {
     private OptionServer optionServer;
     private volatile boolean saveAndClose = false;
     private final NewRegistry<?> rootRegistry;
+    private InternalConnexion clientRef;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -186,6 +189,9 @@ public class ServerContext implements Closeable {
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
+        if (clientRef != null) {
+            clientRef.closeEcs();
+        }
     }
 
     public void save() throws IOException {
@@ -240,5 +246,13 @@ public class ServerContext implements Closeable {
 
     public NewRegistry<?> getRootRegistry() {
         return rootRegistry;
+    }
+
+    public void setClientRef(InternalConnexion clientRef) {
+        this.clientRef = clientRef;
+    }
+
+    public Optional<InternalConnexion> getClientInternalConnexion() {
+        return Optional.ofNullable(clientRef);
     }
 }
