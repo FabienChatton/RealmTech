@@ -46,22 +46,22 @@ public class PerlineNoise3 implements GetNoise {
     public NewCellEntry getGroundDeco(PerlinNoise perlinNoise, int x, int y, NewRegistry<?> rootRegistry) {
         NewCellEntry ret = null;
         if (perlinNoise.getNoise(this, x, y, simplexNoiseGold) > 0.999999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.goldOre").get();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.GoldOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseIron) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.ironOre").get();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.IronOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCopper) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.copperOre").get();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.CopperOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCoal) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.coalOre").get();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.CoalOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseStone) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.stoneOre").get();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.StoneOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseTree) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.tree").get();
+            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.Tree").get();
         }
         return ret;
     }

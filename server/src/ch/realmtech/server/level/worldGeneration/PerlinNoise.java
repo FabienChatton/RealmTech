@@ -40,11 +40,11 @@ public class PerlinNoise {
         float ground = getGroundNoise(x, y);
         NewCellEntry groundCellRegisterEntry;
         if (ground < 0.5f) {
-            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.grass").get();
+            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.Grass").get();
         } else if (ground < 0.95f) {
-            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.sand").get();
+            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.Sand").get();
         } else {
-            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.water").get();
+            groundCellRegisterEntry = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.Water").get();
         }
         final NewCellEntry groundDecoCellRegisterEntry;
         if (!groundCellRegisterEntry.getName().equals("water")) {
