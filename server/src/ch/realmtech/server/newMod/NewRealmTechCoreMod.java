@@ -9,6 +9,8 @@ import ch.realmtech.server.newMod.NewFurnaceCraftEntry.IronIngotCraftEntry;
 import ch.realmtech.server.newMod.NewFurnaceCraftEntry.TinIngotCraftEntry;
 import ch.realmtech.server.newMod.NewQuest.*;
 import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
+import ch.realmtech.server.newMod.options.OptionLoader;
+import ch.realmtech.server.newMod.options.VerifyTokenOptionEntry;
 import ch.realmtech.server.newRegistry.*;
 
 public class NewRealmTechCoreMod implements ModInitializer {
@@ -114,5 +116,15 @@ public class NewRealmTechCoreMod implements ModInitializer {
         // entity edit factory
         NewRegistry<EditEntityFactory> entityEditFactory = NewRegistry.createRegistry(modRegistry, "editEntity");
         entityEditFactory.addEntry(new EditEntityFactory());
+
+        // options
+        NewRegistry<NewEntry> optionsRegistry = NewRegistry.createRegistry(modRegistry, "options");
+        // option loader
+        optionsRegistry.addEntry(new OptionLoader());
+
+        // custom options
+        NewRegistry<NewEntry> customOptionRegistry = NewRegistry.createRegistry(optionsRegistry, "customOptions", "customOptions");
+        customOptionRegistry.addEntry(new VerifyTokenOptionEntry());
+
     }
 }
