@@ -55,15 +55,21 @@ public class RegistryUtils {
     }
 
     public static List<? extends NewEntry> flatEntry(NewRegistry<?> registry) {
+        return flatEntry(registry, new ArrayList<>());
+    }
+
+    private static List<? extends NewEntry> flatEntry(NewRegistry<?> registry, List<NewEntry> entries) {
+        entries.addAll(registry.getEntries());
         if (registry.childRegistries.isEmpty()) {
-            return registry.entries;
+            return entries;
         } else {
             return registry.childRegistries.stream()
-                    .map(RegistryUtils::flatEntry)
+                    .map((childRegistry) -> flatEntry(childRegistry, entries))
                     .flatMap(Collection::stream)
                     .toList();
         }
     }
+
 
     public static List<? extends NewEntry> findEntries(NewRegistry<?> rootRegistry, String tag) {
         return flatEntry(rootRegistry).stream().filter((entry) -> entry.parentRegistry.getTags().contains(tag.substring(1))).toList();
