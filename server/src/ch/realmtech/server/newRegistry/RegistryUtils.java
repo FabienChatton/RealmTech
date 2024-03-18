@@ -66,6 +66,7 @@ public class RegistryUtils {
             return registry.childRegistries.stream()
                     .map((childRegistry) -> flatEntry(childRegistry, entries))
                     .flatMap(Collection::stream)
+                    .distinct()
                     .toList();
         }
     }
