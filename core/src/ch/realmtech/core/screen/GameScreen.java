@@ -6,6 +6,7 @@ import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.game.ecs.system.QuestSystem;
 import ch.realmtech.core.helper.Popup;
+import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -88,7 +89,7 @@ public class GameScreen extends AbstractScreen {
             }
         }
         // open inventory
-        if (Gdx.input.isKeyJustPressed(context.getOption().openInventory.get()) && consoleUi.getConsoleWindow().getParent() == null) {
+        if (Gdx.input.isKeyJustPressed(InputMapper.openInventory.getKey()) && consoleUi.getConsoleWindow().getParent() == null) {
             if (!context.getSystem(PlayerInventorySystem.class).isEnabled()) {
                 context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
                 context.getSystem(PlayerInventorySystem.class).openPlayerInventory(context.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
@@ -97,7 +98,7 @@ public class GameScreen extends AbstractScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(context.getOption().keyOpenQuest.get()) && consoleUi.getConsoleWindow().getParent() == null) {
+        if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey()) && consoleUi.getConsoleWindow().getParent() == null) {
             if (!context.getSystem(QuestSystem.class).isEnabled()) {
                 context.getSystemsAdminClient().getQuestManager().openQuest();
             } else {
@@ -117,9 +118,9 @@ public class GameScreen extends AbstractScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(context.getOption().keyDropItem.get())) {
-            //context.getEcsEngine().dropCurentPlayerItem();
-        }
+//        if (Gdx.input.isKeyJustPressed(context.getOption().keyDropItem.get())) {
+//            context.getEcsEngine().dropCurentPlayerItem();
+//        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
             context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 0);
@@ -142,7 +143,7 @@ public class GameScreen extends AbstractScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedUp();
         if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedDown();
 
-        context.getEcsEngineOr((ecsEngine) -> context.nextFrame(() -> {
+        context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {
                 PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(context.getSystem(PlayerManagerClient.class).getMainPlayer());
                 Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());

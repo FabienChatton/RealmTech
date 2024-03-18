@@ -34,11 +34,11 @@ public final class Option extends OptionCtrl {
     private String authServerBaseUrl;
     private String createAccessTokenUrn;
     private String verifyLoginUrn;
-    public final BooleanRun tiledTexture = new BooleanRun((bool, context) -> context.getEcsEngineOr(ecsEngine -> {
+    public final BooleanRun tiledTexture = new BooleanRun((bool, context) -> context.getWorldOr((ecsEngine) -> {
         if (!bool) {
-            ecsEngine.getSystemsAdminClient().getTiledTextureSystem().removeAllTiledTextureComponent();
+            context.getSystemsAdminClient().getTiledTextureSystem().removeAllTiledTextureComponent();
         }
-        ecsEngine.getSystemsAdminClient().getTiledTextureSystem().setEnabled(bool);
+        context.getSystemsAdminClient().getTiledTextureSystem().setEnabled(bool);
     }));
     private final Properties properties;
 

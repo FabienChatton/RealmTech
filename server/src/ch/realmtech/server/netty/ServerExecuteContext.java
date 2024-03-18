@@ -4,7 +4,9 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.level.cell.BreakCell;
+import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.ServerExecute;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -23,9 +25,13 @@ import java.util.UUID;
 public class ServerExecuteContext implements ServerExecute {
     private final static Logger logger = LoggerFactory.getLogger(ServerExecuteContext.class);
     private final ServerContext serverContext;
+    private final Boolean verifyToken;
 
     public ServerExecuteContext(ServerContext serverContext) {
         this.serverContext = serverContext;
+        verifyToken = RegistryUtils.findEntry(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class)
+                .orElseThrow(() -> new RuntimeException(VerifyTokenOptionEntry.class + " not found in root registry"))
+                .getValue();
     }
 
     @Override
@@ -37,7 +43,7 @@ public class ServerExecuteContext implements ServerExecute {
                 if (serverContext.getSystemsAdmin().playerManagerServer.getPlayerByUsername(username) != -1)
                     throw new IllegalArgumentException("A Player with this username already existe on the server");
                 playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
-                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel, serverContext.getOptionServer().verifyAccessToken.get());
+                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel, verifyToken);
                 if (serverContext.getSystem(PlayerManagerServer.class).getPlayerByUuid(playerUuid) != -1) {
                     throw new IllegalArgumentException("A player with the same uuid already existe on the server");
                 }

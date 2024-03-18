@@ -18,7 +18,7 @@ public class TorchCellEntry extends NewCellEntry {
                 .editEntity(new EditEntity() {
                     @Override
                     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-                        executeOnContext.onClient((systemsAdminClient, world) -> {
+                        executeOnContext.onClientWorld((systemsAdminClient, world) -> {
                             CellComponent cellComponent = world.getMapper(CellComponent.class).get(entityId);
                             InfChunkComponent chunkComponent = world.getMapper(InfChunkComponent.class).get(cellComponent.chunkId);
                             int worldX = MapManager.getWorldPos(chunkComponent.chunkPosX, cellComponent.getInnerPosX());
@@ -29,7 +29,7 @@ public class TorchCellEntry extends NewCellEntry {
 
                     @Override
                     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-                        executeOnContext.onClient((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId));
+                        executeOnContext.onClientWorld((systemsAdminClient, world) -> systemsAdminClient.getLightManager().disposeLight(entityId));
                     }
 
                 })

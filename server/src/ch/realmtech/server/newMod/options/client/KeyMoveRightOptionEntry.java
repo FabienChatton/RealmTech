@@ -15,6 +15,10 @@ public class KeyMoveRightOptionEntry extends OptionClientEntry<Integer> {
     }
 
     @Override
+    public void setValue(String value) {
+        optionLoader.setValueInt(this, value);
+    }
+    @Override
     public Integer getDefaultValue() {
         return Input.Keys.D;
     }

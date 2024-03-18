@@ -3,7 +3,6 @@ package ch.realmtech.core.game.ecs;
 import box2dLight.RayHandler;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.console.CommandClientExecute;
-import ch.realmtech.core.game.ecs.plugin.ExecuteOnContextClient;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.SystemDisableOnInventoryOpen;
@@ -48,7 +47,6 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final CommandClientExecute commandClientExecute;
     private final SerializerController serializerController;
     private final RayHandler rayHandler;
-    private final ExecuteOnContextClient executeOnContextClient;
     private final TickEmulationInvocationStrategy tickEmulationInvocationStrategy;
 
     public ECSEngine(final RealmTech context, ClientConnexion clientConnexion) throws Exception {
@@ -64,7 +62,6 @@ public final class ECSEngine implements Disposable, GetWorld {
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController();
         systemAdminClient = new SystemsAdminClient();
-        executeOnContextClient = new ExecuteOnContextClient();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemAdminClient)
@@ -104,13 +101,12 @@ public final class ECSEngine implements Disposable, GetWorld {
         worldConfiguration.register("systemsAdmin", systemAdminClient);
         worldConfiguration.register(serializerController);
         worldConfiguration.register(rayHandler);
-        worldConfiguration.register("executeOnContext", executeOnContextClient);
+        worldConfiguration.register("executeOnContext", context.getExecuteOnContext());
         worldConfiguration.register("rootRegistry", context.getRootRegistry());
 
         worldConfiguration.setInvocationStrategy(tickEmulationInvocationStrategy);
         world = new World(worldConfiguration);
 
-        executeOnContextClient.initialize(world);
         serializerController.initialize(world);
         systemEnableOnPlayerInventoryOpen.initialize(world);
     }

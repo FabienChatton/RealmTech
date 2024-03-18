@@ -9,7 +9,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SoundManager {
     public final static String OPEN_INVENTORY = "sound/effects/inventory/cloth-inventory.wav";
@@ -56,9 +55,9 @@ public class SoundManager {
     public final static String BREAKING_CELL = "sound/effects/level/break/bfh1_breaking_02.ogg";
     private final HashMap<String, Long> soundLoop;
     private final AssetManager assetManager;
-    private final AtomicInteger optionSound;
+    private final Integer optionSound;
 
-    public SoundManager(AssetManager assetManager, AtomicInteger optionSound) {
+    public SoundManager(AssetManager assetManager, Integer optionSound) {
         this.assetManager = assetManager;
         this.optionSound = optionSound;
         soundLoop = new HashMap<>();
@@ -72,7 +71,7 @@ public class SoundManager {
     }
 
     private float getSoundPourCent() {
-        return optionSound.get() / 100f;
+        return optionSound / 100f;
     }
 
     public static void LoadAsset(AssetManager assetManager) {

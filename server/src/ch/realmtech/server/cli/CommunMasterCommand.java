@@ -9,6 +9,7 @@ import static picocli.CommandLine.Command;
         DumpCommand.class,
         RuntimeInfoCommand.class,
         OptionsCommand.class,
+        WhereCommand.class,
 })
 public abstract class CommunMasterCommand implements CommendContext {
     final PrintWriter output;

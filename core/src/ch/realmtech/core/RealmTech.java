@@ -4,6 +4,7 @@ import ch.realmtech.core.auth.AuthControllerClient;
 import ch.realmtech.core.auth.AuthRequestClient;
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
+import ch.realmtech.core.game.ecs.plugin.ExecuteOnContextClient;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
 import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
@@ -13,17 +14,21 @@ import ch.realmtech.core.game.netty.ClientConnexionIntern;
 import ch.realmtech.core.game.netty.ClientExecuteContext;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
-import ch.realmtech.core.option.Option;
 import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.AuthenticateScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.datactrl.DataCtrl;
+import ch.realmtech.server.ecs.ExecuteOnContext;
+import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.newMod.ModLoader;
+import ch.realmtech.server.newMod.options.OptionLoader;
+import ch.realmtech.server.newMod.options.client.SoundOptionEntry;
 import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.serialize.SerializerController;
@@ -69,7 +74,6 @@ public final class RealmTech extends Game implements InternalConnexion {
     private Discord discord;
 
     private TextureAtlas textureAtlas;
-    private Option option;
     private SoundManager soundManager;
     private ClientExecute clientExecute;
     private ScreenType currentScreenType;
@@ -77,8 +81,10 @@ public final class RealmTech extends Game implements InternalConnexion {
     private AuthRequestClient authRequestClient;
     private AuthControllerClient authControllerClient;
     private boolean verifyAccessToken;
-    private List<Consumer<ECSEngine>> onEcsEngineInitializes;
+    private List<Consumer<GetWorld>> onEcsEngineInitializes;
+    private ExecuteOnContextClient executeOnContextClient;
     private NewRegistry<?> rootRegistry;
+    private OptionLoader optionLoader;
 
     @Override
     public void create() {
@@ -97,10 +103,16 @@ public final class RealmTech extends Game implements InternalConnexion {
             logger.error("Can not create file structure", e);
             Gdx.app.exit();
         }
+        executeOnContextClient = new ExecuteOnContextClient(this);
+
+        rootRegistry = NewRegistry.createRoot();
+        ModLoader modLoader = new ModLoader(this, rootRegistry);
+        modLoader.initializeCoreMod();
+
         try {
-            reloadOption();
-        } catch (IOException e) {
-            logger.error("Can not create option properties.", e);
+            optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);
+        } catch (Exception e) {
+            logger.error("Can not create option loader.", e);
             Gdx.app.exit();
         }
         assetManager = new AssetManager();
@@ -108,7 +120,8 @@ public final class RealmTech extends Game implements InternalConnexion {
         initMap();
         initSound();
         Box2D.init();
-        soundManager = new SoundManager(assetManager, option.sound);
+        Integer soundOption = RegistryUtils.findEntry(rootRegistry, SoundOptionEntry.class).orElseThrow(() -> new RuntimeException("Can not find sound option")).getValue();
+        soundManager = new SoundManager(assetManager, soundOption);
         discord = new Discord(Thread.currentThread());
         discord.init();
         gameStage = new Stage(
@@ -124,9 +137,6 @@ public final class RealmTech extends Game implements InternalConnexion {
         authRequestClient = new AuthRequestClient(this);
         authControllerClient = new AuthControllerClient(authRequestClient);
 
-        rootRegistry = NewRegistry.createRoot();
-        ModLoader modLoader = new ModLoader(rootRegistry);
-        modLoader.initializeCoreMod();
     }
 
     public void loadingFinish() {
@@ -242,7 +252,7 @@ public final class RealmTech extends Game implements InternalConnexion {
         uiStage.dispose();
         assetManager.dispose();
         try {
-            option.save();
+            optionLoader.saveClientOption();
         } catch (IOException e) {
             logger.error("Option file can not be saved. {}", e.getMessage());
         }
@@ -391,19 +401,12 @@ public final class RealmTech extends Game implements InternalConnexion {
         return authControllerClient;
     }
 
-    public Option getOption() {
-        return option;
-    }
-
-    public void reloadOption() throws IOException {
-        option = Option.getOptionFileAndLoadOrCreate(this);
-    }
-
     /**
      * Safely execute on game running. If the ecs engine is not initialized, execute when the ecs engine is initialized,
      * or execute directly.
      */
-    public void getEcsEngineOr(Consumer<ECSEngine> ecsEngineConsumer) {
+    @Override
+    public void getWorldOr(Consumer<GetWorld> ecsEngineConsumer) {
         if (getEcsEngine() != null) {
             ecsEngineConsumer.accept(getEcsEngine());
         } else {
@@ -413,5 +416,10 @@ public final class RealmTech extends Game implements InternalConnexion {
 
     public void setVerifyAccessToken(boolean verifyAccessToken) {
         this.verifyAccessToken = verifyAccessToken;
+    }
+
+    @Override
+    public ExecuteOnContext getExecuteOnContext() {
+        return executeOnContextClient;
     }
 }

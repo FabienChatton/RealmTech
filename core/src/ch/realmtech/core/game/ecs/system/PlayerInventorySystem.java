@@ -15,7 +15,9 @@ import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
+import ch.realmtech.server.newMod.options.client.InventoryBlurOptionEntry;
 import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
 import ch.realmtech.server.packet.serverPacket.UnSubscribeToEntityPacket;
 import com.artemis.BaseSystem;
@@ -75,6 +77,7 @@ public class PlayerInventorySystem extends BaseSystem {
     private ClickAndDrop2 clickAndDrop2;
     private Shaders blurShader;
     private Shaders grayShader;
+    private Boolean inventoryBlurOption;
 
     @Override
     protected void processSystem() {
@@ -118,6 +121,7 @@ public class PlayerInventorySystem extends BaseSystem {
     @Override
     protected void initialize() {
         super.initialize();
+        inventoryBlurOption = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), InventoryBlurOptionEntry.class).getValue();
         this.inventoryStage = new Stage(uiStage.getViewport(), uiStage.getBatch());
         this.inventoryWindow = new Window("Inventaire", context.getSkin()) {
             @Override
@@ -176,7 +180,7 @@ public class PlayerInventorySystem extends BaseSystem {
             currentInventoriesToClearItemOnClose = currentInventoryArgs.inventoriesToDeleteItemsOnClose();
             currentOnInventoryClose = currentInventoryArgs.onInventoryClose();
             refreshInventory(currentInventoryArgs);
-            if (context.getOption().inventoryBlur.get()) {
+            if (inventoryBlurOption) {
                 context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
             }
             context.getSoundManager().playOpenInventory();

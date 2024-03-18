@@ -37,12 +37,12 @@ public class FurnaceEditEntity implements EditEntity {
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory));
-        executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
+        executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
     }
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onClient((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
+        executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
     }
 
     public static BiPredicate<SystemsAdminClientForClient, NewItemEntry> testValideItemForCraft() {

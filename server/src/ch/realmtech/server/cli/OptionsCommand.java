@@ -13,6 +13,7 @@ import static picocli.CommandLine.ParentCommand;
         OptionsSaveCommand.class,
         OptionsReloadCommand.class,
         OptionsSetCommand.class,
+            OptionsResetCommand.class,
     }
 )
 public class OptionsCommand implements Runnable {

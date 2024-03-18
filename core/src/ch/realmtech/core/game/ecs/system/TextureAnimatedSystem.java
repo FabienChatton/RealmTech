@@ -4,6 +4,8 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ecs.component.MouvementComponent;
 import ch.realmtech.server.ecs.component.TextureAnimationComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
+import ch.realmtech.server.newMod.options.client.FpsOptionEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -20,13 +22,19 @@ public class TextureAnimatedSystem extends IteratingSystem {
     private ComponentMapper<TextureComponent> mTexture;
     private ComponentMapper<MouvementComponent> mMouvement;
     private ComponentMapper<TextureAnimationComponent> mTextureAnimation;
+    private Integer fpsOption;
+
+    @Override
+    protected void initialize() {
+        fpsOption = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), FpsOptionEntry.class).getValue();
+    }
 
     @Override
     protected void process(int entityId) {
         MouvementComponent mouvementComponent = mMouvement.get(entityId);
         TextureAnimationComponent textureAnimation = mTextureAnimation.get(entityId);
         if (mouvementComponent.oldPoss.size() < 2) return;
-        float cooldown = Gdx.graphics.getDeltaTime() * ((float) context.getOption().fps.get() / 10f);
+        float cooldown = Gdx.graphics.getDeltaTime() * ((float) fpsOption / 10f);
         if (mouvementComponent.oldPoss.get(0).equals(mouvementComponent.oldPoss.get(1)) && textureAnimation.cooldown > cooldown) {
             textureAnimation.cooldown = cooldown;
         } else {

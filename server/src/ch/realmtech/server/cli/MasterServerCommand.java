@@ -1,11 +1,11 @@
 package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.datactrl.OptionCtrl;
+import ch.realmtech.server.ecs.Context;
+import ch.realmtech.server.newRegistry.NewRegistry;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.World;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 
@@ -42,12 +42,12 @@ public class MasterServerCommand extends CommunMasterCommand implements Callable
     }
 
     @Override
-    public OptionCtrl getOptionCtrl() {
-        return serverContext.getOptionServer();
+    public NewRegistry<?> getRootRegistry() {
+        return serverContext.getRootRegistry();
     }
 
     @Override
-    public void reloadOption() throws IOException {
-        serverContext.reloadOption();
+    public Context getContext() {
+        return serverContext;
     }
 }

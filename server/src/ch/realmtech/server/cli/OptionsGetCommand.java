@@ -1,6 +1,9 @@
 package ch.realmtech.server.cli;
 
 
+import ch.realmtech.server.newRegistry.OptionEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
+
 import java.util.Optional;
 
 import static picocli.CommandLine.*;
@@ -14,9 +17,12 @@ public class OptionsGetCommand implements Runnable {
 
     @Override
     public void run() {
-        Optional<?> option = optionsCommand.masterCommand.getOptionCtrl().getOptionValue(optionName);
-        if (option.isPresent()) {
-            optionsCommand.masterCommand.output.println(option.get());
+        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
+
+        });
+        Optional<OptionEntry<?>> optionEntry = RegistryUtils.findEntry(optionsCommand.masterCommand.getRootRegistry(), optionName);
+        if (optionEntry.isPresent()) {
+            optionsCommand.masterCommand.output.println(optionEntry.get().getValue());
         } else {
             optionsCommand.masterCommand.output.println("No option found for \"" + optionName + "\".");
         }

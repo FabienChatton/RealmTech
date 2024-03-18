@@ -1,13 +1,18 @@
 package ch.realmtech.server.newMod.options.client;
 
-import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.newMod.options.OptionLoader;
 import ch.realmtech.server.newRegistry.OptionClientEntry;
+import ch.realmtech.server.options.OptionSlider;
 import com.badlogic.gdx.Gdx;
 
+@OptionSlider(min = 0, max = 300, stepSize = 5)
 public class FpsOptionEntry extends OptionClientEntry<Integer> {
-    public FpsOptionEntry() {
+    private final Context context;
+
+    public FpsOptionEntry(Context context) {
         super("Fps");
+        this.context = context;
     }
 
     @Override
@@ -16,12 +21,17 @@ public class FpsOptionEntry extends OptionClientEntry<Integer> {
     }
 
     @Override
+    public void setValue(String value) {
+        optionLoader.setValueInt(this, value);
+    }
+
+    @Override
     public Integer getDefaultValue() {
         return 60;
     }
 
     @Override
-    public void onValueChange(ClientContext clientContext, Integer oldValue, Integer newValue) {
-        Gdx.graphics.setForegroundFPS(newValue);
+    public void onValueChange(Integer oldValue, Integer newValue) {
+        context.getExecuteOnContext().onClientContext(() -> Gdx.graphics.setForegroundFPS(newValue));
     }
 }

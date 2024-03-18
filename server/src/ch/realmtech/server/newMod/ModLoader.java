@@ -1,5 +1,6 @@
 package ch.realmtech.server.newMod;
 
+import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.newRegistry.InvalideEvaluate;
 import ch.realmtech.server.newRegistry.NewEntry;
 import ch.realmtech.server.newRegistry.NewRegistry;
@@ -14,10 +15,12 @@ import java.util.stream.StreamSupport;
 
 public class ModLoader {
     private final static Logger logger = LoggerFactory.getLogger(ModLoader.class);
+    private final Context context;
     private final NewRegistry<?> rootRegistry;
     private boolean isFail;
 
-    public ModLoader(NewRegistry<?> rootRegistry) {
+    public ModLoader(Context context, NewRegistry<?> rootRegistry) {
+        this.context = context;
         this.rootRegistry = rootRegistry;
     }
 
@@ -27,7 +30,7 @@ public class ModLoader {
         String coreModId = newRealmTechCoreMod.getModId();
         NewRegistry<?> coreModRegistry = NewRegistry.createRegistry(rootRegistry, coreModId);
 
-        newRealmTechCoreMod.initializeModRegistry(coreModRegistry);
+        newRealmTechCoreMod.initializeModRegistry(coreModRegistry, context);
         checkName(rootRegistry);
 
         List<? extends NewEntry> entries = RegistryUtils.flatEntry(rootRegistry);

@@ -14,6 +14,11 @@ public class RenderDistanceOptionEntry extends OptionServerEntry<Integer> {
     }
 
     @Override
+    public void setValue(String value) {
+        optionLoader.setValueInt(this, value);
+    }
+
+    @Override
     public Integer getDefaultValue() {
         return 6;
     }

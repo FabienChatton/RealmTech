@@ -1,6 +1,10 @@
 package ch.realmtech.server.auth;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.newMod.options.server.AuthServerBaseUrlServerOptionEntry;
+import ch.realmtech.server.newMod.options.server.VerifyAccessTokenUrnOptionEntry;
+import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,9 +21,18 @@ public class AuthRequest {
     }
 
     public String verifyAccessToken(String username) throws IOException, InterruptedException, FailedRequest {
-        if (!serverContext.getOptionServer().verifyAccessToken.get()) return UUID.randomUUID().toString();
+        VerifyTokenOptionEntry verifyToken = RegistryUtils.findEntry(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class)
+                .orElseThrow(() -> new RuntimeException(VerifyTokenOptionEntry.class + " not found in root registry"));
+
+        AuthServerBaseUrlServerOptionEntry authServerBaseUrlServerOptionEntry = RegistryUtils.findEntry(serverContext.getRootRegistry(), AuthServerBaseUrlServerOptionEntry.class)
+                .orElseThrow(() -> new RuntimeException(AuthServerBaseUrlServerOptionEntry.class + " not found in root registry"));
+
+        VerifyAccessTokenUrnOptionEntry verifyAccessTokenUrnOptionEntry = RegistryUtils.findEntry(serverContext.getRootRegistry(), VerifyAccessTokenUrnOptionEntry.class)
+                .orElseThrow(() -> new RuntimeException(VerifyAccessTokenUrnOptionEntry.class + " not found in root registry"));
+
+        if (!verifyToken.getValue()) return UUID.randomUUID().toString();
         HttpRequest verifyCodeRequest = HttpRequest.newBuilder()
-                .uri(URI.create(serverContext.getOptionServer().getAuthServerBaseUrl() + "/" + serverContext.getOptionServer().getVerifyAccessTokenUrn()))
+                .uri(URI.create(authServerBaseUrlServerOptionEntry.getValue() + "/" + verifyAccessTokenUrnOptionEntry))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "username" + "=" + username

@@ -1,5 +1,6 @@
 package ch.realmtech.server.newMod;
 
+import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.newMod.CellsEntry.*;
 import ch.realmtech.server.newMod.CraftEntry.*;
 import ch.realmtech.server.newMod.ItemsEntry.*;
@@ -24,7 +25,7 @@ public class NewRealmTechCoreMod implements ModInitializer {
     }
 
     @Override
-    public void initializeModRegistry(NewRegistry<?> modRegistry) {
+    public void initializeModRegistry(NewRegistry<?> modRegistry, Context context) {
         // cells
         NewRegistry<NewCellEntry> cellsRegistry = NewRegistry.createRegistry(modRegistry, "cells");
         cellsRegistry.addEntry(new ChestCellEntry());
@@ -137,21 +138,20 @@ public class NewRealmTechCoreMod implements ModInitializer {
         NewRegistry<OptionClientEntry<?>> clientOptionRegistry = NewRegistry.createRegistry(optionsRegistry, "client", "customOptions", "clientOptions");
         clientOptionRegistry.addEntry(new AuthServerBaseUrlClientOptionEntry());
         clientOptionRegistry.addEntry(new CreateAccessTokenUrnOptionEntry());
-        clientOptionRegistry.addEntry(new FpsOptionEntry());
-        clientOptionRegistry.addEntry(new FullScreenOptionEntry());
+        clientOptionRegistry.addEntry(new FpsOptionEntry(context));
+        clientOptionRegistry.addEntry(new FullScreenOptionEntry(context));
         clientOptionRegistry.addEntry(new InventoryBlurOptionEntry());
         clientOptionRegistry.addEntry(new KeyDropItemOptionEntry());
         clientOptionRegistry.addEntry(new KeyMoveDownOptionEntry());
         clientOptionRegistry.addEntry(new KeyMoveLeftOptionEntry());
         clientOptionRegistry.addEntry(new KeyMoveRightOptionEntry());
         clientOptionRegistry.addEntry(new KeyMoveUpOptionEntry());
-        clientOptionRegistry.addEntry(new KeyMoveUpOptionEntry());
+        clientOptionRegistry.addEntry(new KeyOpenQuestOptionEntry());
         clientOptionRegistry.addEntry(new OpenInventoryOptionEntry());
         clientOptionRegistry.addEntry(new SoundOptionEntry());
         clientOptionRegistry.addEntry(new TiledTextureOptionEntry());
         clientOptionRegistry.addEntry(new VerifyLoginUrn());
-        clientOptionRegistry.addEntry(new VsyncOptionEntry());
-
+        clientOptionRegistry.addEntry(new VsyncOptionEntry(context));
 
     }
 }

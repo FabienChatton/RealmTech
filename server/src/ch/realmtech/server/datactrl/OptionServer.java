@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Deprecated
 public class OptionServer extends OptionCtrl {
     private final static Logger logger = LoggerFactory.getLogger(OptionServer.class);
     private String authServerBaseUrl;

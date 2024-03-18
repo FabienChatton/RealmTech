@@ -7,27 +7,26 @@ import ch.realmtech.core.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.observer.Subcriber;
-import ch.realmtech.core.option.BooleanRun;
-import ch.realmtech.core.option.IntegerRun;
+import ch.realmtech.server.newRegistry.NewEntry;
+import ch.realmtech.server.newRegistry.OptionClientEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.options.OptionSlider;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import static ch.realmtech.core.helper.ButtonsMenu.CheckBoxMenu;
 
 public class OptionsScreen extends AbstractScreen {
-    private final static String TAG = OptionsScreen.class.getSimpleName();
     private final Table optionTable;
 
     public OptionsScreen(RealmTech context) {
@@ -36,6 +35,7 @@ public class OptionsScreen extends AbstractScreen {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void show() {
         super.show();
 
@@ -44,55 +44,48 @@ public class OptionsScreen extends AbstractScreen {
             InputMapper.reset();
         }));
         TextButtonMenu resetOptionButton = new TextButtonMenu(context, "reset options", new OnClick((event, x, y) -> {
-            context.getOption().setDefaultOption();
+            List<? extends NewEntry> clientOptions = RegistryUtils.findEntries(context.getRootRegistry(), "#clientOptions");
+            clientOptions.forEach((clientOption) -> ((OptionClientEntry<?>) clientOption).resetValue());
+
             hide();
             show();
         }));
         resetOptionButton.setDefaultColor(Color.RED);
 
-        // keyMoveForward
-        optionTable.add(new Label("keyMoveForward", skin)).left();
-        optionTable.add(newKeysBind(context.getOption().keyMoveUp)).padLeft(10f).padBottom(10f).row();
-        // keyMoveLeft
-        optionTable.add(new Label("keyMoveLeft", skin)).left();
-        optionTable.add(newKeysBind(context.getOption().keyMoveLeft)).padLeft(10f).padBottom(10f).row();
-        // keyMoveRight
-        optionTable.add(new Label("keyMoveRight", skin)).left();
-        optionTable.add(newKeysBind(context.getOption().keyMoveRight)).padLeft(10f).padBottom(10f).row();
-        // keyMoveBack
-        optionTable.add(new Label("keyMoveBack", skin)).left();
-        optionTable.add(newKeysBind(context.getOption().keyMoveDown)).padLeft(10f).padBottom(10f).row();
-        // keyDropItem
-        optionTable.add(new Label("keyDropItem", skin)).left();
-        optionTable.add(newKeysBind(context.getOption().keyDropItem)).padLeft(10f).padBottom(10f).row();
-        // openInventory
-        optionTable.add(new Label("openInventory", skin)).left();
-        optionTable.add(newKeysBind(context.getOption().openInventory)).padLeft(10f).padBottom(10f).row();
-        // full screen
-        optionTable.add(new Label("fullScreen", skin)).left();
-        newBooleanRun(optionTable, context.getOption().fullScreen);
-        // vsync
-        optionTable.add(new Label("vsync", skin)).left();
-        newBooleanRun(optionTable, context.getOption().vsync);
-        // fps
-        optionTable.add(new Label("fps", skin)).left();
-        newSlider(optionTable, 0, 300, 5, false, skin, context.getOption().fps);
-        optionTable.add(new Label("inventoryBlur", skin)).left();
-        newBoolean(optionTable, context.getOption().inventoryBlur);
-        // tiled texture
-        optionTable.add(new Label("Tiled Texture", skin)).left();
-        newBooleanRun(optionTable, context.getOption().tiledTexture);
-        // sound
-        optionTable.add(new Label("volume sonore", skin)).left();
-        newSlider(optionTable, 0, 100, 5, false, skin, context.getOption().sound);
+        List<? extends NewEntry> clientOptions = RegistryUtils.findEntries(context.getRootRegistry(), "#clientOptions");
 
-        //reset button
-        optionTable.add(resetOptionButton).left();
-        optionTable.add(backButton).right();
+        clientOptions.forEach((clientOption) -> {
+            OptionClientEntry<?> clientOptionEntry = (OptionClientEntry<?>) clientOption;
+            optionTable.add(new Label(clientOption.getName(), skin)).left();
+            Type genericSuperclass = ((ParameterizedType) clientOptionEntry.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            if (genericSuperclass.getTypeName().equals("java.lang.Integer")) {
+                OptionSlider sliderAnnotation = clientOptionEntry.getClass().getDeclaredAnnotation(OptionSlider.class);
+                OptionClientEntry<Integer> clientOptionEntryInt = (OptionClientEntry<Integer>) clientOption;
+                if (sliderAnnotation != null) {
+                    newSlider(optionTable, sliderAnnotation.min(), sliderAnnotation.max(), sliderAnnotation.stepSize(), sliderAnnotation.vertical(), skin, clientOptionEntryInt);
+                } else {
+                    optionTable.add(newKeysBind(clientOptionEntryInt)).padLeft(10f).padBottom(10f);
+                }
+            } else if (genericSuperclass.getTypeName().equals("java.lang.Boolean")) {
+                OptionClientEntry<Boolean> clientOptionEntryBoolean = (OptionClientEntry<Boolean>) clientOptionEntry;
+                newBooleanRun(optionTable, clientOptionEntryBoolean);
+            } else if (genericSuperclass.getTypeName().equals("java.lang.String")) {
+                OptionClientEntry<String> clientOptionEntryString = (OptionClientEntry<String>) clientOptionEntry;
+                optionTable.row();
+                optionTable.add(newTextFiledBind(clientOptionEntryString)).colspan(2).width(600f).padBottom(20f).center();
+                optionTable.row();
+            }
+            optionTable.row();
+        });
 
         ScrollPaneMenu scrollPane = new ScrollPaneMenu(context, optionTable);
-        uiTable.add(scrollPane).expand().fill().center();
+        uiTable.add(scrollPane).width(800).center().row();
         scrollPane.focus();
+        //reset button
+        Table bottomButtons = new Table();
+        bottomButtons.add(resetOptionButton).padRight(25f);
+        bottomButtons.add(backButton).padLeft(25f);
+        uiTable.add(bottomButtons);
     }
 
     @Override
@@ -107,8 +100,8 @@ public class OptionsScreen extends AbstractScreen {
         super.resume();
     }
 
-    private TextButton newKeysBind(AtomicInteger atomicInteger) {
-        TextButtonMenu field = new TextButtonMenu(context, Input.Keys.toString(atomicInteger.get()));
+    private TextButton newKeysBind(OptionClientEntry<Integer> optionClientEntry) {
+        TextButtonMenu field = new TextButtonMenu(context, Input.Keys.toString(optionClientEntry.getValue()));
         field.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -116,9 +109,9 @@ public class OptionsScreen extends AbstractScreen {
                 field.setText("?");
                 Subcriber<Integer> nextKey = new Subcriber<>() {
                     @Override
-                    public void receive(Integer key) {
-                        atomicInteger.set(key);
-                        field.setText(Input.Keys.toString(key));
+                    public void receive(Integer keyValue) {
+                        optionClientEntry.setValue(keyValue);
+                        field.setText(Input.Keys.toString(keyValue));
                         context.getInputManager().keysSignal.remove(this);
                         Gdx.input.setInputProcessor(uiStage);
                     }
@@ -128,14 +121,15 @@ public class OptionsScreen extends AbstractScreen {
         });
         return field;
     }
-    private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, AtomicInteger atomicIntegerOption) {
+
+    private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, OptionClientEntry<Integer> optionClientEntry) {
         SliderMenu slider = new SliderMenu(context, min, max, stepSize, vertical);
-        slider.setValue(atomicIntegerOption.get());
+        slider.setValue(optionClientEntry.getValue());
         final Label label = new Label(String.valueOf((int) slider.getValue()), skin);
         slider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                atomicIntegerOption.set((int) slider.getValue());
+                optionClientEntry.setValue((int) slider.getValue());
                 label.setText((int) slider.getValue());
             }
         });
@@ -143,40 +137,25 @@ public class OptionsScreen extends AbstractScreen {
         table.add(label).padLeft(10f).padBottom(10f).row();
     }
 
-    private void newSlider(Table table, int min, int max, int stepSize, boolean vertical, Skin skin, IntegerRun integerRun) {
-        SliderMenu slider = new SliderMenu(context, min, max, stepSize, vertical);
-        slider.setValue(integerRun.get());
-        final Label label = new Label(String.valueOf((int) slider.getValue()), skin);
-        slider.addListener(new ChangeListener() {
+    private Actor newTextFiledBind(OptionClientEntry<String> clientOptionEntryString) {
+        TextField textField = new TextField(clientOptionEntryString.getValue(), context.getSkin());
+        textField.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                integerRun.set((int) slider.getValue());
-                label.setText((int) slider.getValue());
+                clientOptionEntryString.setValue(((TextField) actor).getText());
             }
         });
-        table.add(slider).left();
-        table.add(label).padLeft(10f).padBottom(10f).row();
+
+        return textField;
     }
 
-    private void newBoolean(Table table, AtomicBoolean atomicBoolean) {
+    private void newBooleanRun(Table table, OptionClientEntry<Boolean> optionClientEntry) {
         CheckBoxMenu checkBox = new CheckBoxMenu(context, null);
-        checkBox.setChecked(atomicBoolean.get());
+        checkBox.setChecked(optionClientEntry.getValue());
         checkBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                atomicBoolean.set(checkBox.isChecked());
-            }
-        });
-        table.add(checkBox).padLeft(10f).padBottom(10f).row();
-    }
-
-    private void newBooleanRun(Table table, BooleanRun booleanRun) {
-        CheckBoxMenu checkBox = new CheckBoxMenu(context, null);
-        checkBox.setChecked(booleanRun.get());
-        checkBox.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                booleanRun.set(checkBox.isChecked(), context);
+                optionClientEntry.setValue(checkBox.isChecked());
             }
         });
         table.add(checkBox).padLeft(10f).padBottom(10f).row();

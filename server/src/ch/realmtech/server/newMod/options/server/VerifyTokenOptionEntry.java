@@ -14,6 +14,11 @@ public class VerifyTokenOptionEntry extends OptionServerEntry<Boolean> {
     }
 
     @Override
+    public void setValue(String value) {
+        optionLoader.setValueBoolean(this, value);
+    }
+
+    @Override
     public Boolean getDefaultValue() {
         return false;
     }

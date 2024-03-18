@@ -1,5 +1,10 @@
 package ch.realmtech.server.cli;
 
+import ch.realmtech.server.newMod.options.OptionLoader;
+import ch.realmtech.server.newRegistry.RegistryUtils;
+
+import java.util.Optional;
+
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
@@ -9,11 +14,27 @@ public class OptionsSaveCommand implements Runnable {
     OptionsCommand optionsCommand;
     @Override
     public void run() {
-        try {
-            optionsCommand.masterCommand.getOptionCtrl().save();
-            optionsCommand.masterCommand.output.println("Successfully save options to file");
-        } catch (Exception e) {
-            optionsCommand.masterCommand.output.println("Option file can not be save. " + e.getMessage());
+        Optional<OptionLoader> optionLoader = RegistryUtils.findEntry(optionsCommand.masterCommand.getRootRegistry(), OptionLoader.class);
+        if (optionLoader.isPresent()) {
+            optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
+                try {
+                    optionLoader.get().saveServerOptions();
+                    optionsCommand.masterCommand.output.println("Server option file saved.");
+                } catch (Exception e) {
+                    optionsCommand.masterCommand.output.println("Server option file can not be save. " + e.getMessage());
+                }
+            });
+
+            optionsCommand.masterCommand.getContext().getExecuteOnContext().onClientWorld((systemsAdminClientForClient, world) -> {
+                try {
+                    optionLoader.get().saveClientOption();
+                    optionsCommand.masterCommand.output.println("Client option file saved.");
+                } catch (Exception e) {
+                    optionsCommand.masterCommand.output.println("Client option file can not be save. " + e.getMessage());
+                }
+            });
+        } else {
+            optionsCommand.masterCommand.output.println("Option loader is not in the registry, strange, is normally parte of RealmTech option registry");
         }
     }
 }

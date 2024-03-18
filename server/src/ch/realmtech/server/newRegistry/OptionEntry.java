@@ -5,8 +5,8 @@ import ch.realmtech.server.newMod.options.OptionLoader;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract sealed class OptionEntry<T> extends NewEntry permits OptionClientEntry, OptionServerEntry {
-    private final AtomicReference<T> optionValue;
-    private OptionLoader optionLoader;
+    protected final AtomicReference<T> optionValue;
+    protected OptionLoader optionLoader;
 
     public OptionEntry(String name) {
         super(name);
@@ -16,13 +16,21 @@ public abstract sealed class OptionEntry<T> extends NewEntry permits OptionClien
     @Override
     public void evaluate(NewRegistry<?> rootRegistry) throws InvalideEvaluate {
         optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);
+        setValueFromProperties();
+    }
+
+    public void setValueFromProperties() {
         setValue(getPropertyValue(optionLoader));
     }
 
     protected abstract T getPropertyValue(OptionLoader optionLoader);
 
-    public void setValue(T value) {
-        optionValue.set(value);
+    public abstract void setValue(T value);
+
+    public abstract void setValue(String value);
+
+    public void resetValue() {
+        setValue(getDefaultValue());
     }
 
     public T getValue() {
@@ -31,15 +39,9 @@ public abstract sealed class OptionEntry<T> extends NewEntry permits OptionClien
 
     public abstract T getDefaultValue();
 
-    protected Integer getPropertyValueInt(OptionLoader optionLoader) {
-        return Integer.parseInt(optionLoader.getPropertiesServer().getProperty(getName(), Integer.toString((Integer) getDefaultValue())));
-    }
+    protected abstract Integer getPropertyValueInt(OptionLoader optionLoader);
 
-    protected String getPropertyValueString(OptionLoader optionLoader) {
-        return optionLoader.getPropertiesServer().getProperty(getName(), (String) getDefaultValue());
-    }
+    protected abstract String getPropertyValueString(OptionLoader optionLoader);
 
-    protected Boolean getPropertyValueBoolean(OptionLoader optionLoader) {
-        return Boolean.parseBoolean(optionLoader.getPropertiesServer().getProperty(getName(), getDefaultValue().toString()));
-    }
+    protected abstract Boolean getPropertyValueBoolean(OptionLoader optionLoader);
 }

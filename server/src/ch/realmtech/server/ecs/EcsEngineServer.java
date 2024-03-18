@@ -1,7 +1,6 @@
 package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
@@ -36,7 +35,6 @@ public final class EcsEngineServer implements GetWorld {
     private static long tickCount;
     private final SystemsAdminServer systemsAdminServer;
     private final SerializerController serializerController;
-    private final ExecuteOnContextServer executeOnContextServer;
 
     public EcsEngineServer(ServerContext serverContext) throws Exception {
         logger.trace("debut de l'initialisation du ecs");
@@ -46,7 +44,6 @@ public final class EcsEngineServer implements GetWorld {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         serializerController = new SerializerController();
-        executeOnContextServer = new ExecuteOnContextServer();
         systemsAdminServer = new SystemsAdminServer();
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
@@ -61,11 +58,10 @@ public final class EcsEngineServer implements GetWorld {
         worldConfiguration.register("itemManager", systemsAdminServer.itemManagerServer);
         worldConfiguration.register("systemsAdmin", systemsAdminServer);
         worldConfiguration.register(serializerController);
-        worldConfiguration.register("executeOnContext", executeOnContextServer);
+        worldConfiguration.register("executeOnContext", serverContext.getExecuteOnContextServer());
         worldConfiguration.register("rootRegistry", serverContext.getRootRegistry());
 
         this.world = new World(worldConfiguration);
-        executeOnContextServer.initialize(world);
         serializerController.initialize(world);
 
         logger.trace("fin de l'initialisation du ecs");

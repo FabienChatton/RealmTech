@@ -6,8 +6,10 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
 import ch.realmtech.server.level.cell.Cells;
+import ch.realmtech.server.newMod.options.server.RenderDistanceOptionEntry;
 import ch.realmtech.server.newRegistry.NewCellEntry;
 import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
@@ -60,7 +62,9 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     @Override
     protected void begin() {
-        renderDistance = serverContext.getOptionServer().renderDistance.get();
+        renderDistance = RegistryUtils.findEntry(serverContext.getRootRegistry(), RenderDistanceOptionEntry.class)
+                .orElseThrow(() -> new RuntimeException(RenderDistanceOptionEntry.class + " not found in root registry"))
+                .getValue();
     }
 
     @Override

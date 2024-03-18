@@ -1,9 +1,6 @@
 package ch.realmtech.server.newRegistry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 public class RegistryUtils {
@@ -81,6 +78,15 @@ public class RegistryUtils {
             return Optional.empty();
         } else {
             return Optional.of(entries.get(0));
+        }
+    }
+
+    public static <T extends NewEntry> T findEntryOrThrow(NewRegistry<?> registry, Class<T> entryClazz) {
+        List<T> entries = flatEntry(registry, entryClazz);
+        if (entries.isEmpty()) {
+            throw new NoSuchElementException("Can not find " + entryClazz + " entry.");
+        } else {
+            return entries.get(0);
         }
     }
 

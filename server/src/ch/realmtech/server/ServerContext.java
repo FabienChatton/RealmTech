@@ -4,14 +4,19 @@ import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.cli.CommandServerThread;
 import ch.realmtech.server.cli.CommandeServerExecute;
 import ch.realmtech.server.datactrl.DataCtrl;
-import ch.realmtech.server.datactrl.OptionServer;
+import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.EcsEngineServer;
+import ch.realmtech.server.ecs.ExecuteOnContext;
+import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.newMod.ModLoader;
+import ch.realmtech.server.newMod.options.OptionLoader;
+import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.*;
@@ -28,7 +33,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
 
-public class ServerContext implements Closeable {
+public class ServerContext implements Closeable, Context {
     private final static Logger logger = LoggerFactory.getLogger(ServerContext.class);
     public final static PacketMap PACKETS = new PacketMap();
     @Null
@@ -40,10 +45,11 @@ public class ServerContext implements Closeable {
     private final CommandServerThread commandServerThread;
     private final CommandeServerExecute commandeServerExecute;
     private final AuthRequest authRequest;
-    private OptionServer optionServer;
     private volatile boolean saveAndClose = false;
     private final NewRegistry<?> rootRegistry;
     private InternalConnexion clientRef;
+    private final ExecuteOnContextServer executeOnContextServer;
+    private final OptionLoader optionLoader;
 
     static {
         PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
@@ -92,17 +98,22 @@ public class ServerContext implements Closeable {
                 logger.error("Can not create file structure", e);
                 System.exit(1);
             }
+            executeOnContextServer = new ExecuteOnContextServer(this);
+
             if (connexionConfig.getRootRegistry() != null) {
                 rootRegistry = connexionConfig.getRootRegistry();
             } else {
                 rootRegistry = NewRegistry.createRoot();
-                ModLoader modLoader = new ModLoader(rootRegistry);
+                ModLoader modLoader = new ModLoader(this, rootRegistry);
                 modLoader.initializeCoreMod();
             }
 
-            reloadOption();
-            logger.info("Verify access token: {}", optionServer.verifyAccessToken.get());
-            optionServer.verifyAccessToken.set(connexionConfig.isVerifyAccessToken());
+            optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);
+
+            RegistryUtils.findEntry(rootRegistry, VerifyTokenOptionEntry.class)
+                    .orElseThrow(() -> new RuntimeException(VerifyTokenOptionEntry.class + " not found in root registry"))
+                    .setValue(connexionConfig.isVerifyAccessToken());
+            logger.info("Verify access token: {}", connexionConfig.isVerifyAccessToken());
             ecsEngineServer = new EcsEngineServer(this);
             serverExecuteContext = new ServerExecuteContext(this);
             if (connexionConfig.getClientExecute() == null) {
@@ -196,7 +207,7 @@ public class ServerContext implements Closeable {
 
     public void save() throws IOException {
         logger.info("Saving map...");
-        optionServer.save();
+        optionLoader.saveServerOptions();
         ecsEngineServer.saveMap();
         getSystem(PlayerManagerServer.class).savePlayers();
     }
@@ -232,16 +243,8 @@ public class ServerContext implements Closeable {
         return authRequest;
     }
 
-    public OptionServer getOptionServer() {
-        return optionServer;
-    }
-
     public ServerExecute getServerExecuteContext() {
         return serverExecuteContext;
-    }
-
-    public void reloadOption() throws IOException {
-        optionServer = OptionServer.getOptionFileAndLoadOrCreate();
     }
 
     public NewRegistry<?> getRootRegistry() {
@@ -254,5 +257,18 @@ public class ServerContext implements Closeable {
 
     public Optional<InternalConnexion> getClientInternalConnexion() {
         return Optional.ofNullable(clientRef);
+    }
+
+    public ExecuteOnContextServer getExecuteOnContextServer() {
+        return executeOnContextServer;
+    }
+
+    public boolean isInternalServer() {
+        return getClientInternalConnexion().isPresent();
+    }
+
+    @Override
+    public ExecuteOnContext getExecuteOnContext() {
+        return executeOnContextServer;
     }
 }

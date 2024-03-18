@@ -3,11 +3,12 @@ package ch.realmtech.core.input;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.listener.GameCameraListener;
 import ch.realmtech.core.observer.Observer;
+import ch.realmtech.server.newMod.options.client.*;
+import ch.realmtech.server.newRegistry.OptionEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 //TODO mettre la gestion des input dans l'ECS avec un composent singleton
 public final class InputMapper implements InputProcessor {
@@ -17,6 +18,7 @@ public final class InputMapper implements InputProcessor {
     public static KeysMapper moveRight;
     public static KeysMapper moveDown;
     public static KeysMapper openInventory;
+    public static KeysMapper openQuest;
     public static PointerMapper leftClick;
     public static PointerMapper rightClick;
     private final Array<KeysMapper> keysMappers;
@@ -32,11 +34,12 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveUp = new KeysMapper(context.getOption().keyMoveUp);
-        moveLeft = new KeysMapper(context.getOption().keyMoveLeft);
-        moveRight = new KeysMapper(context.getOption().keyMoveRight);
-        moveDown = new KeysMapper(context.getOption().keyMoveDown);
-        openInventory = new KeysMapper(context.getOption().openInventory);
+        moveUp = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveUpOptionEntry.class));
+        moveLeft = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveLeftOptionEntry.class));
+        moveRight = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveRightOptionEntry.class));
+        moveDown = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveDownOptionEntry.class));
+        openInventory = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), OpenInventoryOptionEntry.class));
+        openQuest = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyOpenQuestOptionEntry.class));
 
         keysMappers.add(moveUp);
         keysMappers.add(moveLeft);
@@ -74,9 +77,9 @@ public final class InputMapper implements InputProcessor {
         moveDown.isPressed = false;
     }
 
-    public boolean isKeyPressed(final int keycode) {
+    public boolean isKeyJustPressed(final int keycode) {
         for (KeysMapper keysMapper : keysMappers) {
-            if (keysMapper.key.get() == keycode) {
+            if (keysMapper.key.getValue() == keycode) {
                 return keysMapper.isPressed;
             }
         }
@@ -87,8 +90,10 @@ public final class InputMapper implements InputProcessor {
     public boolean keyDown(final int keycode) {
         boolean ret = false;
         for (KeysMapper keysMapper : keysMappers) {
-            if (keysMapper.key.get() == keycode) {
+            if (keysMapper.key.getValue() == keycode) {
                 keysMapper.isPressed = true;
+                keysMapper.isJustPressed = true;
+                context.nextFrame(() -> keysMapper.isJustPressed = false);
                 ret = true;
             }
         }
@@ -100,7 +105,7 @@ public final class InputMapper implements InputProcessor {
     public boolean keyUp(int keycode) {
         boolean ret = false;
         for (KeysMapper keysMapper : keysMappers) {
-            if (keysMapper.key.get() == keycode) {
+            if (keysMapper.key.getValue() == keycode) {
                 keysMapper.isPressed = false;
                 ret = true;
             }
@@ -162,12 +167,17 @@ public final class InputMapper implements InputProcessor {
     }
 
     public final static class KeysMapper {
-        private final AtomicInteger key;
+        private final OptionEntry<Integer> key;
         public boolean isPressed;
+        public boolean isJustPressed;
 
-        public KeysMapper(AtomicInteger key) {
-            this.key = key;
+        public KeysMapper(OptionEntry<Integer> keyEntry) {
+            this.key = keyEntry;
             this.isPressed = false;
+        }
+
+        public int getKey() {
+            return key.getValue();
         }
     }
 

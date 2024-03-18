@@ -2,7 +2,9 @@ package ch.realmtech.server.newMod.options.client;
 
 import ch.realmtech.server.newMod.options.OptionLoader;
 import ch.realmtech.server.newRegistry.OptionClientEntry;
+import ch.realmtech.server.options.OptionSlider;
 
+@OptionSlider(min = 0, max = 100, stepSize = 1)
 public class SoundOptionEntry extends OptionClientEntry<Integer> {
     public SoundOptionEntry() {
         super("Sound");
@@ -13,6 +15,18 @@ public class SoundOptionEntry extends OptionClientEntry<Integer> {
         return getPropertyValueInt(optionLoader);
     }
 
+    @Override
+    public void setValue(String value) {
+        Integer oldValue = getValue();
+        optionLoader.setValueInt(this, value);
+        if (getValue() > 100) {
+            optionValue.set(oldValue);
+            throw new IllegalArgumentException("Sound option can not be greater than 100");
+        } else if (getValue() < 0) {
+            optionValue.set(oldValue);
+            throw new IllegalArgumentException("Sound option can not be less than 0");
+        }
+    }
     @Override
     public Integer getDefaultValue() {
         return 100;
