@@ -10,7 +10,11 @@ import ch.realmtech.server.newMod.NewFurnaceCraftEntry.TinIngotCraftEntry;
 import ch.realmtech.server.newMod.NewQuest.*;
 import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
 import ch.realmtech.server.newMod.options.OptionLoader;
-import ch.realmtech.server.newMod.options.VerifyTokenOptionEntry;
+import ch.realmtech.server.newMod.options.client.*;
+import ch.realmtech.server.newMod.options.server.AuthServerBaseUrlServerOptionEntry;
+import ch.realmtech.server.newMod.options.server.RenderDistanceOptionEntry;
+import ch.realmtech.server.newMod.options.server.VerifyAccessTokenUrnOptionEntry;
+import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.newRegistry.*;
 
 public class NewRealmTechCoreMod implements ModInitializer {
@@ -122,9 +126,32 @@ public class NewRealmTechCoreMod implements ModInitializer {
         // option loader
         optionsRegistry.addEntry(new OptionLoader());
 
-        // custom options
-        NewRegistry<NewEntry> customOptionRegistry = NewRegistry.createRegistry(optionsRegistry, "customOptions", "customOptions");
-        customOptionRegistry.addEntry(new VerifyTokenOptionEntry());
+        // server options
+        NewRegistry<OptionServerEntry<?>> serverOptionRegistry = NewRegistry.createRegistry(optionsRegistry, "server", "customOptions", "serverOptions");
+        serverOptionRegistry.addEntry(new AuthServerBaseUrlServerOptionEntry());
+        serverOptionRegistry.addEntry(new RenderDistanceOptionEntry());
+        serverOptionRegistry.addEntry(new VerifyAccessTokenUrnOptionEntry());
+        serverOptionRegistry.addEntry(new VerifyTokenOptionEntry());
+
+        // client options
+        NewRegistry<OptionClientEntry<?>> clientOptionRegistry = NewRegistry.createRegistry(optionsRegistry, "client", "customOptions", "clientOptions");
+        clientOptionRegistry.addEntry(new AuthServerBaseUrlClientOptionEntry());
+        clientOptionRegistry.addEntry(new CreateAccessTokenUrnOptionEntry());
+        clientOptionRegistry.addEntry(new FpsOptionEntry());
+        clientOptionRegistry.addEntry(new FullScreenOptionEntry());
+        clientOptionRegistry.addEntry(new InventoryBlurOptionEntry());
+        clientOptionRegistry.addEntry(new KeyDropItemOptionEntry());
+        clientOptionRegistry.addEntry(new KeyMoveDownOptionEntry());
+        clientOptionRegistry.addEntry(new KeyMoveLeftOptionEntry());
+        clientOptionRegistry.addEntry(new KeyMoveRightOptionEntry());
+        clientOptionRegistry.addEntry(new KeyMoveUpOptionEntry());
+        clientOptionRegistry.addEntry(new KeyMoveUpOptionEntry());
+        clientOptionRegistry.addEntry(new OpenInventoryOptionEntry());
+        clientOptionRegistry.addEntry(new SoundOptionEntry());
+        clientOptionRegistry.addEntry(new TiledTextureOptionEntry());
+        clientOptionRegistry.addEntry(new VerifyLoginUrn());
+        clientOptionRegistry.addEntry(new VsyncOptionEntry());
+
 
     }
 }

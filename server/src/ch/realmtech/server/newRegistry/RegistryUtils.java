@@ -110,6 +110,10 @@ public class RegistryUtils {
         }
     }
 
+    public static <T extends NewEntry> T evaluateSafe(NewRegistry<?> registry, Class<T> entryClass) throws InvalideEvaluate {
+        return findEntry(registry, entryClass).orElseThrow(() -> new InvalideEvaluate("Can not find " + entryClass.toString() + " entry."));
+    }
+
     private static Optional<? extends NewEntry> searchFqrnEntry(NewRegistry<? extends NewEntry> registry, String fqrn) {
         String[] names = fqrn.split("\\.", 2);
         if (registry.getName().equals(names[0])) {
