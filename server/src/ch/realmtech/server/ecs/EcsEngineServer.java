@@ -44,7 +44,7 @@ public final class EcsEngineServer implements GetWorld {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         serializerController = new SerializerController();
-        systemsAdminServer = new SystemsAdminServer();
+        systemsAdminServer = new SystemsAdminServer(serverContext.getRootRegistry());
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemsAdminServer)

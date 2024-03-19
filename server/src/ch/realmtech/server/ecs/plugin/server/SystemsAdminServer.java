@@ -4,6 +4,7 @@ import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.ia.IaTestSystem;
+import ch.realmtech.server.newRegistry.NewRegistry;
 import com.artemis.WorldConfigurationBuilder;
 
 public class SystemsAdminServer extends SystemsAdminCommun {
@@ -33,7 +34,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final PlayerSubscriptionSystem playerSubscriptionSystem;
     public final PlayerMobContactSystem playerMobContactSystem;
 
-    public SystemsAdminServer() {
+    public SystemsAdminServer(NewRegistry<?> rootRegistry) {
+        super(rootRegistry);
         iaSystemServer = new IaSystemServer();
         itemManagerServer = new ItemManagerServer();
         playerMouvementSystemServer = new PlayerMouvementSystemServer();

@@ -1,6 +1,7 @@
 package ch.realmtech.server.ecs.plugin.commun;
 
 import ch.realmtech.server.ecs.system.*;
+import ch.realmtech.server.newRegistry.NewRegistry;
 import com.artemis.ArtemisPlugin;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
@@ -13,8 +14,10 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
     public final SaveInfManager saveInfManager;
     public final EnergyManager energyManager;
     public final CellPaddingManager cellPaddingManager;
+    public final NewRegistry<?> rootRegistry;
 
-    public SystemsAdminCommun() {
+    public SystemsAdminCommun(NewRegistry<?> rootRegistry) {
+        this.rootRegistry = rootRegistry;
         tagManager = new TagManager();
         uuidEntityManager = new UuidEntityManager();
         inventoryManager = new InventoryManager();

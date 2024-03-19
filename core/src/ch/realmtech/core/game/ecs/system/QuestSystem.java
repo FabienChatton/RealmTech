@@ -1,9 +1,9 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.registery.QuestEntry;
-import ch.realmtech.server.registery.RegistryEntry;
+import ch.realmtech.server.newRegistry.NewEntry;
+import ch.realmtech.server.newRegistry.NewQuestEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.rafaskoberg.gdx.typinglabel.TypingLabel;
 
+import java.util.List;
+
 public class QuestSystem extends BaseSystem {
     @Wire(name = "context")
     private RealmTech context;
@@ -19,7 +21,7 @@ public class QuestSystem extends BaseSystem {
     private Window questWindow;
     private ScrollPane questTitleScroll;
     private Table questContent;
-    private QuestEntry selectedQuestOld = null;
+    private NewQuestEntry selectedQuestOld = null;
 
     @Override
     protected void initialize() {
@@ -29,12 +31,14 @@ public class QuestSystem extends BaseSystem {
         questWindow.setFillParent(true);
 
         Table questTitleScrollTable = new Table(context.getSkin());
-        for (RegistryEntry<QuestEntry> questEntry : RealmTechCoreMod.QUESTS.getEnfants()) {
-            TextButton questTitleButton = new TextButton(questEntry.getEntry().getTitle(), context.getSkin());
+        List<? extends NewEntry> questEntries = RegistryUtils.findEntries(context.getRootRegistry(), "#quests");
+        for (NewEntry questEntry : questEntries) {
+            NewQuestEntry quest = (NewQuestEntry) questEntry;
+            TextButton questTitleButton = new TextButton(quest.getTitle(), context.getSkin());
             questTitleButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    setSelectedQuest(questEntry.getEntry());
+                    setSelectedQuest(quest);
                     return true;
                 }
             });
@@ -54,7 +58,7 @@ public class QuestSystem extends BaseSystem {
 
     }
 
-    public void setSelectedQuest(QuestEntry selectedQuest) {
+    public void setSelectedQuest(NewQuestEntry selectedQuest) {
         questContent.clear();
 
         if (selectedQuestOld == null || selectedQuestOld != selectedQuest) {

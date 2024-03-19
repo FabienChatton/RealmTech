@@ -6,6 +6,10 @@ import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.forclient.FurnaceIconSystemForClient;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.newMod.icons.ArrowIcon01Entry;
+import ch.realmtech.server.newMod.icons.FurnaceBurnIcon01Entry;
+import ch.realmtech.server.newRegistry.IconEntry;
+import ch.realmtech.server.newRegistry.RegistryUtils;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -14,6 +18,7 @@ import com.badlogic.gdx.graphics.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @All({FurnaceComponent.class, FurnaceIconsComponent.class, FurnaceExtraInfoComponent.class})
@@ -64,14 +69,14 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         ItemComponent iconProcessItemComponent = mItem.get(iconProcessId);
         String iconProcessTextureName = formatPourDix(ref, max, prefixTextureName);
 
-//        Optional<RegistryEntry<ItemRegisterEntry>> iconProcessTo = RealmTechCoreMod.ITEMS.getEnfants().stream()
-//                .filter((itemRegisterEntry) -> itemRegisterEntry.getEntry().getTextureRegionName().equals(iconProcessTextureName))
-//                .findFirst();
-//        if (iconProcessTo.isPresent()) {
-//            iconProcessItemComponent.itemRegisterEntry = iconProcessTo.get().getEntry();
-//        } else {
-//            logger.warn("Can not find icon, calculated texture: {}", iconProcessTextureName);
-//        }
+        Optional<IconEntry> iconProcessTo = RegistryUtils.flatEntry(systemsAdminClient.rootRegistry, IconEntry.class)
+                .stream().filter((icon) -> icon.getTextureRegionName().equals(iconProcessTextureName))
+                .findFirst();
+        if (iconProcessTo.isPresent()) {
+            iconProcessItemComponent.itemRegisterEntry = iconProcessTo.get();
+        } else {
+            logger.warn("Can not find icon, calculated texture: {}", iconProcessTextureName);
+        }
     }
 
     private String formatPourDix(int ref, int max, String prefixTextureName) {
@@ -91,12 +96,11 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, UUID.randomUUID(), new int[1][1], 1, 1);
         systemsAdminClient.inventoryManager.createInventoryUiIcon(iconProcessId, UUID.randomUUID(), new int[1][1], 1, 1);
 
-        // TODO remettre l'icon de la furnace
-//        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_TIME_TO_BURN_01, UUID.randomUUID());
-//        int iconProcessItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RealmTechCoreMod.ICON_FURNACE_ARROW_01, UUID.randomUUID());
+        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.rootRegistry, FurnaceBurnIcon01Entry.class), UUID.randomUUID());
+        int iconProcessItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.rootRegistry, ArrowIcon01Entry.class), UUID.randomUUID());
 
-//        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
-//        systemsAdminClient.inventoryManager.addItemToInventory(iconProcessId, iconProcessItemId);
+        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
+        systemsAdminClient.inventoryManager.addItemToInventory(iconProcessId, iconProcessItemId);
         world.edit(motherEntity).create(FurnaceIconsComponent.class).set(iconFireId, iconProcessId);
         world.edit(motherEntity).create(FurnaceExtraInfoComponent.class);
     }

@@ -28,4 +28,8 @@ public abstract class NewItemEntry extends NewEntry {
     public TextureRegion getTextureRegion(TextureAtlas textureAtlas) {
         return textureAtlas.findRegion(textureRegionName);
     }
+
+    public String getTextureRegionName() {
+        return textureRegionName;
+    }
 }

@@ -61,7 +61,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController();
-        systemAdminClient = new SystemsAdminClient();
+        systemAdminClient = new SystemsAdminClient(context.getRootRegistry());
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemAdminClient)

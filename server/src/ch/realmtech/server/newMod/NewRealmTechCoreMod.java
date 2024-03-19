@@ -10,6 +10,7 @@ import ch.realmtech.server.newMod.NewFurnaceCraftEntry.IronIngotCraftEntry;
 import ch.realmtech.server.newMod.NewFurnaceCraftEntry.TinIngotCraftEntry;
 import ch.realmtech.server.newMod.NewQuest.*;
 import ch.realmtech.server.newMod.entityEditFactory.EditEntityFactory;
+import ch.realmtech.server.newMod.icons.*;
 import ch.realmtech.server.newMod.options.OptionLoader;
 import ch.realmtech.server.newMod.options.client.*;
 import ch.realmtech.server.newMod.options.server.AuthServerBaseUrlServerOptionEntry;
@@ -77,6 +78,30 @@ public class NewRealmTechCoreMod implements ModInitializer {
         itemsRegistry.addEntry(new WoodenShovelItemEntry());
         itemsRegistry.addEntry(new WoodItemEntry());
         itemsRegistry.addEntry(new WrenchItemEntry());
+
+        // icons
+        NewRegistry<NewEntry> iconsRegistry = NewRegistry.createRegistry(modRegistry, "icons", "icons");
+        iconsRegistry.addEntry(new ArrowIcon01Entry());
+        iconsRegistry.addEntry(new ArrowIcon02Entry());
+        iconsRegistry.addEntry(new ArrowIcon03Entry());
+        iconsRegistry.addEntry(new ArrowIcon04Entry());
+        iconsRegistry.addEntry(new ArrowIcon05Entry());
+        iconsRegistry.addEntry(new ArrowIcon06Entry());
+        iconsRegistry.addEntry(new ArrowIcon07Entry());
+        iconsRegistry.addEntry(new ArrowIcon08Entry());
+        iconsRegistry.addEntry(new ArrowIcon09Entry());
+        iconsRegistry.addEntry(new ArrowIcon10Entry());
+
+        iconsRegistry.addEntry(new FurnaceBurnIcon01Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon02Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon03Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon04Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon05Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon06Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon07Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon08Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon09Entry());
+        iconsRegistry.addEntry(new FurnaceBurnIcon10Entry());
 
         // craft recipe
         NewRegistry<?> crafts = NewRegistry.createRegistry(modRegistry, "crafts");
