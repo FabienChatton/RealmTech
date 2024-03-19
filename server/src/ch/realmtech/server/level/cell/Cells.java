@@ -1,8 +1,6 @@
 package ch.realmtech.server.level.cell;
 
-import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.item.ItemType;
-import ch.realmtech.server.registery.ItemRegisterEntry;
 
 public class Cells {
     public enum Layer {

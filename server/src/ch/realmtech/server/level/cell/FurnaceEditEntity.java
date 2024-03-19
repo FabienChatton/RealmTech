@@ -4,8 +4,9 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
-import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.registry.CraftRecipeEntry;
+import ch.realmtech.server.registry.ItemEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 
 import java.util.List;
@@ -45,11 +46,15 @@ public class FurnaceEditEntity implements EditEntity {
         executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
     }
 
-    public static BiPredicate<SystemsAdminClientForClient, NewItemEntry> testValideItemForCraft() {
-        return (systemsAdminClient, itemRegisterEntry) -> systemsAdminClient.getCraftingManager().getCraftResult(RealmTechCoreMod.FURNACE_RECIPE, List.of()).isPresent();
+    @SuppressWarnings("unchecked")
+    public static BiPredicate<SystemsAdminClientForClient, ItemEntry> testValideItemForCraft() {
+        return (systemsAdminClient, itemRegisterEntry) -> {
+            List<CraftRecipeEntry> furnacesRecipes = (List<CraftRecipeEntry>) RegistryUtils.findEntries(systemsAdminClient.getRootRegistry(), "#furnaceRecipes");
+            return systemsAdminClient.getCraftingManager().getNewCraftResult(furnacesRecipes, List.of(itemRegisterEntry)).isPresent();
+        };
     }
 
-    public static BiPredicate<SystemsAdminClientForClient, NewItemEntry> testValideItemCarburant() {
+    public static BiPredicate<SystemsAdminClientForClient, ItemEntry> testValideItemCarburant() {
         return (systemsAdminClient, itemRegisterEntry) -> itemRegisterEntry.getItemBehavior().getTimeToBurn() > 0;
     }
 }

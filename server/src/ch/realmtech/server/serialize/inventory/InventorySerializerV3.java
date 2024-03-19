@@ -6,9 +6,9 @@ import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.registry.ItemEntry;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
@@ -25,7 +25,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
     @Wire(name = "systemsAdmin")
     private SystemsAdminCommun systemsAdminCommun;
     @Wire(name = "rootRegistry")
-    private NewRegistry<?> rootRegistry;
+    private Registry<?> rootRegistry;
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, InventoryComponent inventoryComponent) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(getBytesSize(world, serializerController, inventoryComponent));
@@ -71,7 +71,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
 
         int[] inventoryIndexs = new int[numberNotEmtpySlot];
         int[] numberItemsInStack = new int[numberNotEmtpySlot];
-        NewItemEntry[] itemsEntries = new NewItemEntry[numberNotEmtpySlot];
+        ItemEntry[] itemsEntries = new ItemEntry[numberNotEmtpySlot];
         UUID[] itemsUuid = new UUID[numberOfItems];
         int itemIndex = 0;
         // body
@@ -94,7 +94,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
             int uuidIndex = 0;
             int[][] inventory = new int[numberOfRow * numberOfSlotParRow][InventoryComponent.DEFAULT_STACK_LIMITE];
             for (int i = 0; i < numberNotEmtpySlot; i++) {
-                NewItemEntry itemEntry = itemsEntries[i];
+                ItemEntry itemEntry = itemsEntries[i];
                 for (int n = 0; n < numberItemsInStack[i]; n++) {
                     UUID uuid = itemsUuid[uuidIndex];
                     uuidIndex++;

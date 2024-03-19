@@ -6,13 +6,13 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
 import ch.realmtech.server.level.cell.Cells;
-import ch.realmtech.server.newMod.options.server.RenderDistanceOptionEntry;
-import ch.realmtech.server.newRegistry.NewCellEntry;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.server.RenderDistanceOptionEntry;
 import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
 import ch.realmtech.server.packet.clientPacket.ChunkADamnePacket;
 import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
+import ch.realmtech.server.registry.CellEntry;
+import ch.realmtech.server.registry.ItemEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
 import com.artemis.ComponentMapper;
@@ -249,7 +249,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     }
 
     @Override
-    public void breakCell(int worldPosX, int worldPosY, NewItemEntry itemDropRegisterEntry, int playerSrc) {
+    public void breakCell(int worldPosX, int worldPosY, ItemEntry itemDropRegisterEntry, int playerSrc) {
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
         int chunk = systemsAdminServer.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
         int topCell = systemsAdminServer.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
@@ -263,7 +263,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         int itemId = systemsAdminServer.uuidEntityManager.getEntityId(itemToPlaceUuid);
         if (!mItem.has(itemId)) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
-        NewCellEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getNewPlaceCellEntry();
+        CellEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getNewPlaceCellEntry();
         if (placeCell == null) return -1;
 
         int chunkPosX = MapManager.getChunkPos(worldPosX);

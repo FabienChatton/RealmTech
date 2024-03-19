@@ -1,9 +1,9 @@
 package ch.realmtech.server.cli;
 
-import ch.realmtech.server.newMod.options.OptionLoader;
-import ch.realmtech.server.newRegistry.NewEntry;
-import ch.realmtech.server.newRegistry.OptionServerEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.OptionLoader;
+import ch.realmtech.server.registry.Entry;
+import ch.realmtech.server.registry.OptionServerEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +31,7 @@ public class OptionsReloadCommand implements Runnable {
                 optionsCommand.masterCommand.output.println("Can not load server properties file.");
                 return;
             }
-            List<? extends NewEntry> serverOptions = RegistryUtils.findEntries(optionsCommand.masterCommand.getRootRegistry(), "#serverOptions");
+            List<? extends Entry> serverOptions = RegistryUtils.findEntries(optionsCommand.masterCommand.getRootRegistry(), "#serverOptions");
             serverOptions.forEach((serverOption) -> ((OptionServerEntry<?>) serverOption).setValueFromProperties());
             optionsCommand.masterCommand.output.println(String.format("(%d) server options reloaded", serverOptions.size()));
         });
@@ -43,7 +43,7 @@ public class OptionsReloadCommand implements Runnable {
                 optionsCommand.masterCommand.output.println("Can not load server properties file.");
                 return;
             }
-            List<? extends NewEntry> clientOptions = RegistryUtils.findEntries(optionsCommand.masterCommand.getRootRegistry(), "#clientOptions");
+            List<? extends Entry> clientOptions = RegistryUtils.findEntries(optionsCommand.masterCommand.getRootRegistry(), "#clientOptions");
             clientOptions.forEach((clientOption) -> ((OptionServerEntry<?>) clientOption).setValueFromProperties());
             optionsCommand.masterCommand.output.println(String.format("(%d) client options reloaded", clientOptions.size()));
         });

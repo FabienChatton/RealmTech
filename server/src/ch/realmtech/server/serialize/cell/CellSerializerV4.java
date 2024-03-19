@@ -5,8 +5,8 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.level.cell.EditEntityCreate;
-import ch.realmtech.server.newRegistry.NewRegistry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.AbstractSerializerController;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -21,7 +21,7 @@ import io.netty.buffer.Unpooled;
 
 public class CellSerializerV4 implements Serializer<Integer, CellArgs> {
     @Wire(name = "rootRegistry")
-    private NewRegistry<?> rootRegistry;
+    private Registry<?> rootRegistry;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<ChestComponent> mChest;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;

@@ -8,7 +8,6 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.item.ItemResultCraftPickEvent;
-import ch.realmtech.server.newCraft.NewCraftResult;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -20,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class OnNewCraftAvailable {
-    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onNewCraftAvailableCraftingTable() {
+    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftAvailableCraftingTable() {
         return (world, entityId) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
@@ -31,7 +30,7 @@ public final class OnNewCraftAvailable {
                         // remove result inventory because no craft is available
                         systemsAdminServer.inventoryManager.removeInventory(resultInventoryComponent.inventory);
                     } else {
-                        NewCraftResult craftResult = craftResultOpt.get();
+                        CraftResult craftResult = craftResultOpt.get();
                         // add result item to result inventory
                         for (int i = 0; i < craftResult.getResultNumber(); i++) {
                             int nouvelItemResult = world.getSystem(ItemManagerServer.class).newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
@@ -51,7 +50,7 @@ public final class OnNewCraftAvailable {
         };
     }
 
-    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<NewCraftResult>>>> onNewCraftAvailableFurnace() {
+    public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftAvailableFurnace() {
         return (world, entityId) -> (craftingTableComponent) -> (craftResultOpt) -> craftResultOpt.ifPresent((craftResult) -> {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);

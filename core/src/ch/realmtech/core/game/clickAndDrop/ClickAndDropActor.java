@@ -4,7 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.registry.ItemEntry;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -25,9 +25,9 @@ public class ClickAndDropActor extends Actor {
     @Null
     private final Table tableImage;
     private final RealmTech context;
-    private final BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate;
+    private final BiPredicate<SystemsAdminClientForClient, ItemEntry> dstRequirePredicate;
 
-    public ClickAndDropActor(RealmTech context, UUID inventoryUuid, Supplier<int[]> getStack, Table tableImage, BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate) {
+    public ClickAndDropActor(RealmTech context, UUID inventoryUuid, Supplier<int[]> getStack, Table tableImage, BiPredicate<SystemsAdminClientForClient, ItemEntry> dstRequirePredicate) {
         this.inventoryUuid = inventoryUuid;
         this.getStack = getStack;
         this.mItem = context.getWorld().getMapper(ItemComponent.class);
@@ -37,7 +37,7 @@ public class ClickAndDropActor extends Actor {
         this.dstRequirePredicate = dstRequirePredicate;
     }
 
-    public BiPredicate<SystemsAdminClientForClient, NewItemEntry> getDstRequirePredicate() {
+    public BiPredicate<SystemsAdminClientForClient, ItemEntry> getDstRequirePredicate() {
         return dstRequirePredicate;
     }
 
@@ -47,7 +47,7 @@ public class ClickAndDropActor extends Actor {
         int[] stack = getStack();
         if (mItem.has(stack[0])) {
             if (getWidth() == 0) {
-                final NewItemEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
+                final ItemEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
                 setWidth(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionWidth());
                 setHeight(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionHeight());
             }
@@ -65,7 +65,7 @@ public class ClickAndDropActor extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         int[] stack = getStack();
         if (mItem.has(stack[0])) {
-            final NewItemEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
+            final ItemEntry itemRegisterEntry = mItem.get(stack[0]).itemRegisterEntry;
             batch.draw(itemRegisterEntry.getTextureRegion(context.getTextureAtlas()), getX(), getY());
             if (!itemRegisterEntry.getItemBehavior().isIcon()) {
                 bitmapFont.draw(batch, Integer.toString(InventoryManager.tailleStack(stack)), getX(), getY() + itemRegisterEntry.getTextureRegion(context.getTextureAtlas()).getRegionHeight());

@@ -6,7 +6,7 @@ import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.CraftingManager;
 import ch.realmtech.server.ecs.system.UpdateBox2dWithPosition;
-import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.registry.Registry;
 import com.artemis.WorldConfigurationBuilder;
 
 public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdminClientForClient {
@@ -43,7 +43,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final QuestSystem questSystem;
 
 
-    public SystemsAdminClient(NewRegistry<?> rootRegistry) {
+    public SystemsAdminClient(Registry<?> rootRegistry) {
         super(rootRegistry);
         playerManagerClient = new PlayerManagerClient();
         itemManagerClient = new ItemManagerClient();

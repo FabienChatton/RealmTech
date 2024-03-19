@@ -5,7 +5,7 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.newRegistry.NewCraftRecipeEntry;
+import ch.realmtech.server.registry.CraftRecipeEntry;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.badlogic.gdx.utils.Null;
 
@@ -18,9 +18,9 @@ public class CraftingTableEditEntity implements EditEntity {
     private final int craftingNumberOfSlotParRow;
     private final int craftingNumberOfRow;
     private final UuidSupplierOrRandom craftingResultInventoryUuid;
-    private final List<NewCraftRecipeEntry> craftRecipes;
+    private final List<CraftRecipeEntry> craftRecipes;
 
-    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid, List<NewCraftRecipeEntry> craftRecipes) {
+    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid, List<CraftRecipeEntry> craftRecipes) {
         this.craftingInventoryUuid = craftingInventoryUuid;
         this.inventory = inventory;
         this.craftingNumberOfSlotParRow = craftingNumberOfSlotParRow;

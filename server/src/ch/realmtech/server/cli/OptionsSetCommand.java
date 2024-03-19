@@ -1,9 +1,9 @@
 package ch.realmtech.server.cli;
 
-import ch.realmtech.server.newRegistry.InvalideEvaluate;
-import ch.realmtech.server.newRegistry.OptionClientEntry;
-import ch.realmtech.server.newRegistry.OptionServerEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.registry.InvalideEvaluate;
+import ch.realmtech.server.registry.OptionClientEntry;
+import ch.realmtech.server.registry.OptionServerEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 
 import static picocli.CommandLine.*;
 

@@ -2,7 +2,7 @@ package ch.realmtech.server.level;
 
 import ch.realmtech.server.ecs.component.FaceComponent;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.mod.RealmTechCoreMod;
+import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.packet.serverPacket.RotateFaceCellRequestPacket;
 
 public final class WrenchRightClick {
@@ -27,11 +27,11 @@ public final class WrenchRightClick {
                     } else {
                         return;
                     }
-                    clientContext.sendRequest(new RotateFaceCellRequestPacket(worldPosX, worldPosY, RealmTechCoreMod.ENERGY_BATTERY.cellRegisterEntry().getCellBehavior().getLayer(), face));
+                    clientContext.sendRequest(new RotateFaceCellRequestPacket(worldPosX, worldPosY, Cells.Layer.BUILD_DECO.layer, face));
                 } else {
                     byte face = getFace(texture01coordinateX, faceComponent, texture01coordinateY);
                     if (face != -1) {
-                        clientContext.sendRequest(new RotateFaceCellRequestPacket(worldPosX, worldPosY, RealmTechCoreMod.ENERGY_BATTERY.cellRegisterEntry().getCellBehavior().getLayer(), face));
+                        clientContext.sendRequest(new RotateFaceCellRequestPacket(worldPosX, worldPosY, Cells.Layer.BUILD_DECO.layer, face));
                     }
                 }
             }

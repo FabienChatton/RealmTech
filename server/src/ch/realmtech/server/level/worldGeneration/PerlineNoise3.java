@@ -1,9 +1,9 @@
 package ch.realmtech.server.level.worldGeneration;
 
 
-import ch.realmtech.server.newRegistry.NewCellEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.registry.CellEntry;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.registry.RegistryUtils;
 
 import java.util.Random;
 
@@ -43,25 +43,25 @@ public class PerlineNoise3 implements GetNoise {
 
     }
 
-    public NewCellEntry getGroundDeco(PerlinNoise perlinNoise, int x, int y, NewRegistry<?> rootRegistry) {
-        NewCellEntry ret = null;
+    public CellEntry getGroundDeco(PerlinNoise perlinNoise, int x, int y, Registry<?> rootRegistry) {
+        CellEntry ret = null;
         if (perlinNoise.getNoise(this, x, y, simplexNoiseGold) > 0.999999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.GoldOre").get();
+            ret = (CellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.GoldOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseIron) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.IronOre").get();
+            ret = (CellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.IronOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCopper) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.CopperOre").get();
+            ret = (CellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.CopperOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseCoal) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.CoalOre").get();
+            ret = (CellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.CoalOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseStone) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.StoneOre").get();
+            ret = (CellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.StoneOre").get();
         }
         if (perlinNoise.getNoise(this, x, y, simplexNoiseTree) > 0.999f) {
-            ret = (NewCellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.Tree").get();
+            ret = (CellEntry) RegistryUtils.findEntry(rootRegistry, "realmtech.cells.Tree").get();
         }
         return ret;
     }

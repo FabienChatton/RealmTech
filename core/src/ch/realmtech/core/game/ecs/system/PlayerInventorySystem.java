@@ -15,11 +15,11 @@ import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
-import ch.realmtech.server.newMod.options.client.InventoryBlurOptionEntry;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.client.InventoryBlurOptionEntry;
 import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
 import ch.realmtech.server.packet.serverPacket.UnSubscribeToEntityPacket;
+import ch.realmtech.server.registry.ItemEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -275,7 +275,7 @@ public class PlayerInventorySystem extends BaseSystem {
         }
     }
 
-    public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, NewItemEntry> dstRequirePredicate) {
+    public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemEntry> dstRequirePredicate) {
         final Array<Table> tableImages = new Array<>();
         int inventoryOriginalId = systemsAdminClient.uuidEntityManager.getEntityId(inventoryUuid);
         InventoryComponent inventoryComponent = mInventory.get(inventoryOriginalId);

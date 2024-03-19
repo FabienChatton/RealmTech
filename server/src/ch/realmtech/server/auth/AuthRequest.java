@@ -1,10 +1,10 @@
 package ch.realmtech.server.auth;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.newMod.options.server.AuthServerBaseUrlServerOptionEntry;
-import ch.realmtech.server.newMod.options.server.VerifyAccessTokenUrnOptionEntry;
-import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.server.AuthServerBaseUrlServerOptionEntry;
+import ch.realmtech.server.mod.options.server.VerifyAccessTokenUrnOptionEntry;
+import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 
 import java.io.IOException;
 import java.net.URI;

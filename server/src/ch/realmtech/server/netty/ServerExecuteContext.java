@@ -4,11 +4,11 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.level.cell.BreakCell;
-import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.ServerExecute;
+import ch.realmtech.server.registry.ItemEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
@@ -106,7 +106,7 @@ public class ServerExecuteContext implements ServerExecute {
 
             InventoryComponent playerChestInventory = serverContext.getSystem(InventoryManager.class).getChestInventory(playerId);
             int itemUsedId = serverContext.getSystem(InventoryManager.class).getItemInInventoryByUuid(playerChestInventory, itemUsedUuid);
-            NewItemEntry itemUsed;
+            ItemEntry itemUsed;
             if (itemUsedId == -1) {
                 itemUsed = null;
             } else {

@@ -1,8 +1,8 @@
 package ch.realmtech.server.netty;
 
 import ch.realmtech.server.level.worldGeneration.SeedGenerator;
-import ch.realmtech.server.newRegistry.NewRegistry;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
+import ch.realmtech.server.registry.Registry;
 
 import java.util.Random;
 
@@ -14,9 +14,9 @@ public final class ConnexionConfig {
     private final long seed;
     private final String rootPath;
     private final ClientExecute clientExecute;
-    private final NewRegistry<?> rootRegistry;
+    private final Registry<?> rootRegistry;
 
-    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed, String rootPath, ClientExecute clientExecute, NewRegistry<?> rootRegistry) {
+    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed, String rootPath, ClientExecute clientExecute, Registry<?> rootRegistry) {
         this.host = host;
         this.port = port;
         this.saveName = saveName;
@@ -55,7 +55,7 @@ public final class ConnexionConfig {
         return clientExecute;
     }
 
-    public NewRegistry<?> getRootRegistry() {
+    public Registry<?> getRootRegistry() {
         return rootRegistry;
     }
 
@@ -71,7 +71,7 @@ public final class ConnexionConfig {
         private long seed = SeedGenerator.randomSeed();
         private String rootPath = "";
         private ClientExecute clientExecute = null;
-        private NewRegistry<?> rootRegistry = null;
+        private Registry<?> rootRegistry = null;
 
         public ConnexionConfigBuilder setHost(String host) {
             this.host = host;
@@ -117,7 +117,7 @@ public final class ConnexionConfig {
             return this;
         }
 
-        public ConnexionConfigBuilder setRootRegistry(NewRegistry<?> rootRegistry) {
+        public ConnexionConfigBuilder setRootRegistry(Registry<?> rootRegistry) {
             this.rootRegistry = rootRegistry;
             return this;
         }

@@ -1,7 +1,7 @@
 package ch.realmtech.server.cli;
 
-import ch.realmtech.server.newMod.options.OptionLoader;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.OptionLoader;
+import ch.realmtech.server.registry.RegistryUtils;
 
 import java.util.Optional;
 

@@ -1,12 +1,12 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.craft.CraftChangeFunctions;
 import ch.realmtech.server.craft.OnNewCraftAvailable;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.newCraft.NewCraftChangeFunctions;
-import ch.realmtech.server.newRegistry.*;
+import ch.realmtech.server.registry.*;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -26,7 +26,7 @@ public class InventoryManager extends Manager {
     @Wire(name = "systemsAdmin")
     private SystemsAdminCommun systemsAdminCommun;
     @Wire(name = "rootRegistry")
-    private NewRegistry<?> rootRegistry;
+    private Registry<?> rootRegistry;
     @Wire
     private ItemManager itemManager;
     public ComponentMapper<InventoryComponent> mInventory;
@@ -456,18 +456,19 @@ public class InventoryManager extends Manager {
     }
 
     /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
+    @SuppressWarnings("unchecked")
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
         String tagQuery = "#craftingTableRecipes";
-        List<? extends NewEntry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
-        List<NewCraftRecipeEntry> craftRecipes = (List<NewCraftRecipeEntry>) craftRecipeEntires;
+        List<? extends Entry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
+        List<CraftRecipeEntry> craftRecipes = (List<CraftRecipeEntry>) craftRecipeEntires;
         return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, craftRecipes);
     }
 
-    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid, List<NewCraftRecipeEntry> craftRecipes) {
+    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid, List<CraftRecipeEntry> craftRecipes) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftRecipes, NewCraftChangeFunctions.craftResultChangeCraftingTable(world), OnNewCraftAvailable.onNewCraftAvailableCraftingTable());
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, craftRecipes, CraftChangeFunctions.craftResultChangeCraftingTable(world), OnNewCraftAvailable.onCraftAvailableCraftingTable());
         systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getCraftingTableController());
         EntityEdit craftingInventoryEdit = world.edit(craftingInventoryId);
         systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(craftingInventoryUuid, craftingInventoryId);
@@ -488,7 +489,7 @@ public class InventoryManager extends Manager {
         createInventoryUi(carburantInventoryId, carburantInventoryUuid, carburantInventory, 1, 1);
 
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, null, NewCraftChangeFunctions.craftResultChangeCraftingTable(world), OnNewCraftAvailable.onNewCraftAvailableFurnace());
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, null, CraftChangeFunctions.craftResultChangeCraftingTable(world), OnNewCraftAvailable.onCraftAvailableFurnace());
         world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
         systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getFurnaceSerializerController());
 
@@ -559,7 +560,7 @@ public class InventoryManager extends Manager {
         return mInventory.get(craftingTableComponent.craftingResultInventory);
     }
 
-    public List<NewItemEntry> mapInventoryToItemRegistry(int inventoryId) {
+    public List<ItemEntry> mapInventoryToItemRegistry(int inventoryId) {
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         return Arrays.stream(inventoryComponent.inventory)
                 .map((stack) -> mItem.get(stack[0]))

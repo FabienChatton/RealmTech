@@ -11,16 +11,16 @@ import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.mod.InternalConnexion;
+import ch.realmtech.server.mod.ModLoader;
+import ch.realmtech.server.mod.options.OptionLoader;
+import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.netty.*;
-import ch.realmtech.server.newMod.ModLoader;
-import ch.realmtech.server.newMod.options.OptionLoader;
-import ch.realmtech.server.newMod.options.server.VerifyTokenOptionEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.*;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.tick.TickThread;
 import com.artemis.BaseSystem;
@@ -46,7 +46,7 @@ public class ServerContext implements Closeable, Context {
     private final CommandeServerExecute commandeServerExecute;
     private final AuthRequest authRequest;
     private volatile boolean saveAndClose = false;
-    private final NewRegistry<?> rootRegistry;
+    private final Registry<?> rootRegistry;
     private InternalConnexion clientRef;
     private final ExecuteOnContextServer executeOnContextServer;
     private final OptionLoader optionLoader;
@@ -103,7 +103,7 @@ public class ServerContext implements Closeable, Context {
             if (connexionConfig.getRootRegistry() != null) {
                 rootRegistry = connexionConfig.getRootRegistry();
             } else {
-                rootRegistry = NewRegistry.createRoot();
+                rootRegistry = Registry.createRoot();
                 ModLoader modLoader = new ModLoader(this, rootRegistry);
                 modLoader.initializeCoreMod();
             }
@@ -247,7 +247,7 @@ public class ServerContext implements Closeable, Context {
         return serverExecuteContext;
     }
 
-    public NewRegistry<?> getRootRegistry() {
+    public Registry<?> getRootRegistry() {
         return rootRegistry;
     }
 

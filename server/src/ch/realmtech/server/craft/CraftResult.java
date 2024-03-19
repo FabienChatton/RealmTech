@@ -1,24 +1,28 @@
 package ch.realmtech.server.craft;
 
-import ch.realmtech.server.registery.ItemRegisterEntry;
+import ch.realmtech.server.registry.ItemEntry;
 
 public class CraftResult {
-    private final ItemRegisterEntry itemRegisterEntry;
-    private final int nombreResult;
+    private final ItemEntry itemResult;
+    private final int resultNumber;
     private final int timeToProcess;
 
-    public CraftResult(ItemRegisterEntry itemRegisterEntry, int nombreResult, int timeToProcess) {
-        this.itemRegisterEntry = itemRegisterEntry;
-        this.nombreResult = nombreResult;
+    public CraftResult(ItemEntry itemResult, int resultNumber) {
+        this(itemResult, resultNumber, 0);
+    }
+
+    public CraftResult(ItemEntry itemResult, int resultNumber, int timeToProcess) {
+        this.itemResult = itemResult;
+        this.resultNumber = resultNumber;
         this.timeToProcess = timeToProcess;
     }
 
-    public ItemRegisterEntry getItemRegisterEntry() {
-        return itemRegisterEntry;
+    public ItemEntry getItemResult() {
+        return itemResult;
     }
 
-    public int getNombreResult() {
-        return nombreResult;
+    public int getResultNumber() {
+        return resultNumber;
     }
 
     public int getTimeToProcess() {

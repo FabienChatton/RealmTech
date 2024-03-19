@@ -1,7 +1,7 @@
 package ch.realmtech.server.item;
 
 import ch.realmtech.server.level.RightClickInteractionItemClient;
-import ch.realmtech.server.newRegistry.NewCellEntry;
+import ch.realmtech.server.registry.CellEntry;
 import com.badlogic.gdx.utils.Null;
 
 import java.util.Optional;
@@ -10,7 +10,7 @@ public class ItemBehavior {
     private int attackDommage;
     private ItemType itemType;
     private float speedEffect;
-    private NewCellEntry newPlaceCellEntry;
+    private CellEntry newPlaceCellEntry;
     @Null
     private String placeCellName;
     private int timeToBurn = 0;
@@ -38,7 +38,7 @@ public class ItemBehavior {
         return speedEffect;
     }
 
-    public NewCellEntry getNewPlaceCellEntry() {
+    public CellEntry getNewPlaceCellEntry() {
         return newPlaceCellEntry;
     }
 
@@ -58,8 +58,8 @@ public class ItemBehavior {
         return icon;
     }
 
-    public void setPlaceCell(NewCellEntry newCellEntry) {
-        this.newPlaceCellEntry = newCellEntry;
+    public void setPlaceCell(CellEntry cellEntry) {
+        this.newPlaceCellEntry = cellEntry;
     }
 
     public static class ItemBehaviorBuilder {

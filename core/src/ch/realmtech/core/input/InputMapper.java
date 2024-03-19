@@ -3,9 +3,9 @@ package ch.realmtech.core.input;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.listener.GameCameraListener;
 import ch.realmtech.core.observer.Observer;
-import ch.realmtech.server.newMod.options.client.*;
-import ch.realmtech.server.newRegistry.OptionEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.mod.options.client.KeyOpenQuestOptionEntry;
+import ch.realmtech.server.registry.OptionEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Array;
@@ -34,11 +34,11 @@ public final class InputMapper implements InputProcessor {
         keysMappers = new Array<>();
         pointerMappers = new Array<>();
         // keys
-        moveUp = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveUpOptionEntry.class));
-        moveLeft = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveLeftOptionEntry.class));
-        moveRight = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveRightOptionEntry.class));
-        moveDown = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyMoveDownOptionEntry.class));
-        openInventory = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), OpenInventoryOptionEntry.class));
+        moveUp = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), ch.realmtech.server.mod.options.client.KeyMoveUpOptionEntry.class));
+        moveLeft = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), ch.realmtech.server.mod.options.client.KeyMoveLeftOptionEntry.class));
+        moveRight = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), ch.realmtech.server.mod.options.client.KeyMoveRightOptionEntry.class));
+        moveDown = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), ch.realmtech.server.mod.options.client.KeyMoveDownOptionEntry.class));
+        openInventory = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), ch.realmtech.server.mod.options.client.OpenInventoryOptionEntry.class));
         openQuest = new KeysMapper(RegistryUtils.findEntryOrThrow(context.getRootRegistry(), KeyOpenQuestOptionEntry.class));
 
         keysMappers.add(moveUp);

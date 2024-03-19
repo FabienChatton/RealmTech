@@ -1,7 +1,7 @@
 package ch.realmtech.server.ecs.plugin.commun;
 
 import ch.realmtech.server.ecs.system.*;
-import ch.realmtech.server.newRegistry.NewRegistry;
+import ch.realmtech.server.registry.Registry;
 import com.artemis.ArtemisPlugin;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
@@ -14,9 +14,9 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
     public final SaveInfManager saveInfManager;
     public final EnergyManager energyManager;
     public final CellPaddingManager cellPaddingManager;
-    public final NewRegistry<?> rootRegistry;
+    public final Registry<?> rootRegistry;
 
-    public SystemsAdminCommun(NewRegistry<?> rootRegistry) {
+    public SystemsAdminCommun(Registry<?> rootRegistry) {
         this.rootRegistry = rootRegistry;
         tagManager = new TagManager();
         uuidEntityManager = new UuidEntityManager();
@@ -41,4 +41,8 @@ public abstract class SystemsAdminCommun implements ArtemisPlugin {
     }
 
     public abstract void onContextType(ContextType contextType, Runnable runnable);
+
+    public Registry<?> getRootRegistry() {
+        return rootRegistry;
+    }
 }

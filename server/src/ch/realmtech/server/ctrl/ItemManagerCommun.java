@@ -5,7 +5,7 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.newRegistry.NewItemEntry;
+import ch.realmtech.server.registry.ItemEntry;
 import com.artemis.Archetype;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -29,7 +29,7 @@ public class ItemManagerCommun {
         );
     }
 
-    public static int createNewItem(World world, NewItemEntry itemRegisterEntry, Archetype defaultItemGroundArchetype, UUID itemUuid) {
+    public static int createNewItem(World world, ItemEntry itemRegisterEntry, Archetype defaultItemGroundArchetype, UUID itemUuid) {
         int itemId;
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
         itemId = world.create(defaultItemGroundArchetype);

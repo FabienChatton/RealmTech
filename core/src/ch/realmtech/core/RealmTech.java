@@ -23,14 +23,14 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.InternalConnexion;
+import ch.realmtech.server.mod.ModLoader;
+import ch.realmtech.server.mod.options.OptionLoader;
+import ch.realmtech.server.mod.options.client.SoundOptionEntry;
 import ch.realmtech.server.netty.ConnexionConfig;
-import ch.realmtech.server.newMod.ModLoader;
-import ch.realmtech.server.newMod.options.OptionLoader;
-import ch.realmtech.server.newMod.options.client.SoundOptionEntry;
-import ch.realmtech.server.newRegistry.NewRegistry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.sound.SoundManager;
 import com.artemis.BaseSystem;
@@ -83,7 +83,7 @@ public final class RealmTech extends Game implements InternalConnexion {
     private boolean verifyAccessToken;
     private List<Consumer<GetWorld>> onEcsEngineInitializes;
     private ExecuteOnContextClient executeOnContextClient;
-    private NewRegistry<?> rootRegistry;
+    private Registry<?> rootRegistry;
     private OptionLoader optionLoader;
 
     @Override
@@ -105,7 +105,7 @@ public final class RealmTech extends Game implements InternalConnexion {
         }
         executeOnContextClient = new ExecuteOnContextClient(this);
 
-        rootRegistry = NewRegistry.createRoot();
+        rootRegistry = Registry.createRoot();
         ModLoader modLoader = new ModLoader(this, rootRegistry);
         modLoader.initializeCoreMod();
 
@@ -389,7 +389,7 @@ public final class RealmTech extends Game implements InternalConnexion {
     }
 
     @Override
-    public NewRegistry<?> getRootRegistry() {
+    public Registry<?> getRootRegistry() {
         return rootRegistry;
     }
 

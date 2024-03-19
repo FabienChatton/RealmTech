@@ -1,8 +1,8 @@
 package ch.realmtech.server.cli;
 
 
-import ch.realmtech.server.newRegistry.OptionEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.registry.OptionEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 
 import java.util.Optional;
 

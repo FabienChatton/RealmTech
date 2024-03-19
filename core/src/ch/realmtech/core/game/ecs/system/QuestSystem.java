@@ -1,9 +1,9 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.server.newRegistry.NewEntry;
-import ch.realmtech.server.newRegistry.NewQuestEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
+import ch.realmtech.server.registry.Entry;
+import ch.realmtech.server.registry.QuestEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
@@ -21,7 +21,7 @@ public class QuestSystem extends BaseSystem {
     private Window questWindow;
     private ScrollPane questTitleScroll;
     private Table questContent;
-    private NewQuestEntry selectedQuestOld = null;
+    private QuestEntry selectedQuestOld = null;
 
     @Override
     protected void initialize() {
@@ -31,9 +31,9 @@ public class QuestSystem extends BaseSystem {
         questWindow.setFillParent(true);
 
         Table questTitleScrollTable = new Table(context.getSkin());
-        List<? extends NewEntry> questEntries = RegistryUtils.findEntries(context.getRootRegistry(), "#quests");
-        for (NewEntry questEntry : questEntries) {
-            NewQuestEntry quest = (NewQuestEntry) questEntry;
+        List<? extends Entry> questEntries = RegistryUtils.findEntries(context.getRootRegistry(), "#quests");
+        for (Entry questEntry : questEntries) {
+            QuestEntry quest = (QuestEntry) questEntry;
             TextButton questTitleButton = new TextButton(quest.getTitle(), context.getSkin());
             questTitleButton.addListener(new ClickListener() {
                 @Override
@@ -58,7 +58,7 @@ public class QuestSystem extends BaseSystem {
 
     }
 
-    public void setSelectedQuest(NewQuestEntry selectedQuest) {
+    public void setSelectedQuest(QuestEntry selectedQuest) {
         questContent.clear();
 
         if (selectedQuestOld == null || selectedQuestOld != selectedQuest) {

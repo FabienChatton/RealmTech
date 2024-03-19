@@ -7,9 +7,9 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.ecs.system.PlayerManagerServer;
-import ch.realmtech.server.newRegistry.NewItemEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
+import ch.realmtech.server.registry.ItemEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 
@@ -36,7 +36,7 @@ public class GiveCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         SystemsAdminServer systemsAdminServer = masterCommand.serverContext.getSystemsAdmin();
-        Optional<NewItemEntry> itemRegisterEntry = RegistryUtils.findEntry(masterCommand.serverContext.getRootRegistry(), itemRegistryId);
+        Optional<ItemEntry> itemRegisterEntry = RegistryUtils.findEntry(masterCommand.serverContext.getRootRegistry(), itemRegistryId);
         if (itemRegisterEntry.isEmpty()) {
             masterCommand.output.println(String.format("This item registry id doesn't existe, %s", itemRegistryId));
             return 1;

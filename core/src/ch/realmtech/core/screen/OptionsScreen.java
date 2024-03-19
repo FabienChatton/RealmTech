@@ -7,10 +7,10 @@ import ch.realmtech.core.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.observer.Subcriber;
-import ch.realmtech.server.newRegistry.NewEntry;
-import ch.realmtech.server.newRegistry.OptionClientEntry;
-import ch.realmtech.server.newRegistry.RegistryUtils;
 import ch.realmtech.server.options.OptionSlider;
+import ch.realmtech.server.registry.Entry;
+import ch.realmtech.server.registry.OptionClientEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -44,7 +44,7 @@ public class OptionsScreen extends AbstractScreen {
             InputMapper.reset();
         }));
         TextButtonMenu resetOptionButton = new TextButtonMenu(context, "reset options", new OnClick((event, x, y) -> {
-            List<? extends NewEntry> clientOptions = RegistryUtils.findEntries(context.getRootRegistry(), "#clientOptions");
+            List<? extends Entry> clientOptions = RegistryUtils.findEntries(context.getRootRegistry(), "#clientOptions");
             clientOptions.forEach((clientOption) -> ((OptionClientEntry<?>) clientOption).resetValue());
 
             hide();
@@ -52,7 +52,7 @@ public class OptionsScreen extends AbstractScreen {
         }));
         resetOptionButton.setDefaultColor(Color.RED);
 
-        List<? extends NewEntry> clientOptions = RegistryUtils.findEntries(context.getRootRegistry(), "#clientOptions");
+        List<? extends Entry> clientOptions = RegistryUtils.findEntries(context.getRootRegistry(), "#clientOptions");
 
         clientOptions.forEach((clientOption) -> {
             OptionClientEntry<?> clientOptionEntry = (OptionClientEntry<?>) clientOption;
