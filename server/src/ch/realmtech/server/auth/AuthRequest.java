@@ -32,7 +32,7 @@ public class AuthRequest {
 
         if (!verifyToken.getValue()) return UUID.randomUUID().toString();
         HttpRequest verifyCodeRequest = HttpRequest.newBuilder()
-                .uri(URI.create(authServerBaseUrlServerOptionEntry.getValue() + "/" + verifyAccessTokenUrnOptionEntry))
+                .uri(URI.create(authServerBaseUrlServerOptionEntry.getValue() + "/" + verifyAccessTokenUrnOptionEntry.getValue()))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "username" + "=" + username

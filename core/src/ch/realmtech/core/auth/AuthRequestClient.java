@@ -15,18 +15,18 @@ import java.net.http.HttpResponse;
 
 public class AuthRequestClient {
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final String authServerBaseUrl;
-    private final String createAccessTokenUrn;
-    private final String verifyLoginUrn;
+    private final AuthServerBaseUrlClientOptionEntry authServerBaseUrl;
+    private final CreateAccessTokenUrnOptionEntry createAccessTokenUrn;
+    private final VerifyLoginUrn verifyLoginUrn;
     public AuthRequestClient(RealmTech context) {
-        authServerBaseUrl = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), AuthServerBaseUrlClientOptionEntry.class).getValue();
-        createAccessTokenUrn = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), CreateAccessTokenUrnOptionEntry.class).getValue();
-        verifyLoginUrn = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), VerifyLoginUrn.class).getValue();
+        authServerBaseUrl = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), AuthServerBaseUrlClientOptionEntry.class);
+        createAccessTokenUrn = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), CreateAccessTokenUrnOptionEntry.class);
+        verifyLoginUrn = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), VerifyLoginUrn.class);
     }
 
     public void createAccessToken(String username, String password) throws IOException, InterruptedException, FailedRequest {
         HttpRequest hashPasswordRequest = HttpRequest.newBuilder()
-                .uri(URI.create(authServerBaseUrl + "/" + createAccessTokenUrn))
+                .uri(URI.create(authServerBaseUrl.getValue() + "/" + createAccessTokenUrn.getValue()))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "password" + "=" + password + "&" +
@@ -39,7 +39,7 @@ public class AuthRequestClient {
 
     public void verifyLogin(String username, String password) throws FailedRequest, IOException, InterruptedException {
         HttpRequest hashPasswordRequest = HttpRequest.newBuilder()
-                .uri(URI.create(authServerBaseUrl + "/" + verifyLoginUrn))
+                .uri(URI.create(authServerBaseUrl.getValue() + "/" + verifyLoginUrn.getValue()))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "password" + "=" + password + "&" +
