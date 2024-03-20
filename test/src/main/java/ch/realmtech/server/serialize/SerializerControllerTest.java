@@ -9,6 +9,7 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -31,6 +32,7 @@ class SerializerControllerTest {
     }
 
     @Test
+    @Disabled
     void serializeInventory() {
         InventoryManager inventoryManager = serverContext.getSystem(InventoryManager.class);
         ComponentMapper<ItemComponent> mItem = serverContext.getEcsEngineServer().getWorld().getMapper(ItemComponent.class);

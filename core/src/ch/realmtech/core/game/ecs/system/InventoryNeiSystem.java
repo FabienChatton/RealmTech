@@ -4,6 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.strategy.OnPlayerInventoryOpenGetInputProcessor;
 import ch.realmtech.core.helper.ButtonsMenu;
 import ch.realmtech.core.helper.OnClick;
+import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.ItemEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
@@ -80,7 +81,7 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
     }
 
     private ArrayList<Table> addActorItemToNeiTable() {
-        List<ItemEntry> items = RegistryUtils.flatEntry(context.getRootRegistry(), ItemEntry.class);
+        List<? extends Entry> items = RegistryUtils.findEntries(context.getRootRegistry(), "items");
         int itemPerRow = 4;
         int itemPerColum = 16;
         int itemPerPageMax = itemPerRow * itemPerColum;
@@ -91,7 +92,7 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
             Table page = new Table(context.getSkin());
             pages.add(page);
             for (int itemPerPage = 0; itemIndex < items.size() && itemPerPage < itemPerPageMax; itemIndex++, itemPerPage++) {
-                ItemEntry item = items.get(itemIndex);
+                ItemEntry item = (ItemEntry) items.get(itemIndex);
                 Actor actorImage = new NeiTableActor(context, item);
                 actorImage.setSize(32, 32);
                 if (itemIndex % itemPerRow == 0) {

@@ -23,9 +23,9 @@ public class CraftingManager extends Manager {
         return getNewCraftResult(craftingTableRecipes, systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
     }
 
-    public Optional<CraftResult> getNewCraftResult(List<CraftRecipeEntry> craftEntries, List<ItemEntry> itemInventoryRegistry) {
+    public Optional<CraftResult> getNewCraftResult(List<? extends CraftRecipeEntry> craftEntries, List<List<ItemEntry>> items) {
         return craftEntries.stream()
-                .map((craftEntry) -> craftEntry.craft(itemInventoryRegistry))
+                .map((craftRecipe) -> craftRecipe.craft(items))
                 .filter(Optional::isPresent)
                 .findFirst()
                 .flatMap(Function.identity());

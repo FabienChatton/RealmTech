@@ -49,7 +49,7 @@ public class RealmTechCoreMod implements ModInitializer {
         cellsRegistry.addEntry(new WaterCellEntry());
 
         // items
-        Registry<ItemEntry> itemsRegistry = Registry.createRegistry(modRegistry, "items");
+        Registry<ItemEntry> itemsRegistry = Registry.createRegistry(modRegistry, "items", "items");
         itemsRegistry.addEntry(new ChestItemEntry());
         itemsRegistry.addEntry(new CoalItemEntry());
         itemsRegistry.addEntry(new CoalOreItemEntry());

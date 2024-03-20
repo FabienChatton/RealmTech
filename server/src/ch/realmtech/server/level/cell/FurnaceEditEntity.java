@@ -50,7 +50,7 @@ public class FurnaceEditEntity implements EditEntity {
     public static BiPredicate<SystemsAdminClientForClient, ItemEntry> testValideItemForCraft() {
         return (systemsAdminClient, itemRegisterEntry) -> {
             List<CraftRecipeEntry> furnacesRecipes = (List<CraftRecipeEntry>) RegistryUtils.findEntries(systemsAdminClient.getRootRegistry(), "#furnaceRecipes");
-            return systemsAdminClient.getCraftingManager().getNewCraftResult(furnacesRecipes, List.of(itemRegisterEntry)).isPresent();
+            return systemsAdminClient.getCraftingManager().getNewCraftResult(furnacesRecipes, List.of(List.of(itemRegisterEntry))).isPresent();
         };
     }
 

@@ -17,6 +17,7 @@ import com.artemis.utils.IntBag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -560,11 +561,20 @@ public class InventoryManager extends Manager {
         return mInventory.get(craftingTableComponent.craftingResultInventory);
     }
 
-    public List<ItemEntry> mapInventoryToItemRegistry(int inventoryId) {
+    public List<List<ItemEntry>> mapInventoryToItemRegistry(int inventoryId) {
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-        return Arrays.stream(inventoryComponent.inventory)
-                .map((stack) -> mItem.get(stack[0]))
-                .map((itemComponent) -> itemComponent != null ? itemComponent.itemRegisterEntry : null)
-                .toList();
+        List<List<ItemEntry>> items = new ArrayList<>(inventoryComponent.numberOfRow);
+        for (int i = 0; i < inventoryComponent.numberOfRow; i++) {
+            items.add(i, new ArrayList<>(inventoryComponent.numberOfSlotParRow));
+            for (int j = 0; j < inventoryComponent.numberOfSlotParRow; j++) {
+                ItemComponent itemComponent = mItem.get(inventoryComponent.inventory[(i * inventoryComponent.numberOfRow) + j][0]);
+                if (itemComponent != null) {
+                    items.get(i).add(j, itemComponent.itemRegisterEntry);
+                } else {
+                    items.get(i).add(j, null);
+                }
+            }
+        }
+        return items;
     }
 }

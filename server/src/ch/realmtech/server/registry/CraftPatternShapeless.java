@@ -3,11 +3,11 @@ package ch.realmtech.server.registry;
 import ch.realmtech.server.craft.CraftResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-public class CraftPatternShapeless extends CraftRecipeEntry {
+public abstract class CraftPatternShapeless extends CraftRecipeEntry {
     private final String itemResultName;
     private final String[] itemsRequireName;
     private ItemEntry itemResult;
@@ -28,8 +28,17 @@ public class CraftPatternShapeless extends CraftRecipeEntry {
     }
 
     @Override
-    public Optional<CraftResult> craft(List<ItemEntry> items) {
-        return craftNonNull(items.stream().filter(Objects::nonNull).toList());
+    public Optional<CraftResult> craft(List<List<ItemEntry>> items) {
+        if (items.stream().flatMap(Collection::stream).toList().equals(itemsRequires)) {
+            return Optional.of(new CraftResult(itemResult, resultNumber));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<List<ItemEntry>> getRequireItems() {
+        return List.of(itemsRequires);
     }
 
     @Override

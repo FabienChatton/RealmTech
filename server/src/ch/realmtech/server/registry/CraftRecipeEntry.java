@@ -10,5 +10,7 @@ public abstract class CraftRecipeEntry extends Entry {
         super(name);
     }
 
-    public abstract Optional<CraftResult> craft(List<ItemEntry> items);
+    public abstract Optional<CraftResult> craft(List<List<ItemEntry>> items);
+
+    public abstract List<List<ItemEntry>> getRequireItems();
 }

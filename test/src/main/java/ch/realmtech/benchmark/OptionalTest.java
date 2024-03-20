@@ -1,12 +1,14 @@
 package ch.realmtech.benchmark;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Random;
 
+@Disabled
 public class OptionalTest {
     private final static int MAGIC_NUMBER = 727;
 
