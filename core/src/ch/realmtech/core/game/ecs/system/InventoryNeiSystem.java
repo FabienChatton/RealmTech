@@ -81,7 +81,7 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
     }
 
     private ArrayList<Table> addActorItemToNeiTable() {
-        List<? extends Entry> items = RegistryUtils.findEntries(context.getRootRegistry(), "items");
+        List<? extends Entry> items = RegistryUtils.findEntries(context.getRootRegistry(), "#items");
         int itemPerRow = 4;
         int itemPerColum = 16;
         int itemPerPageMax = itemPerRow * itemPerColum;
