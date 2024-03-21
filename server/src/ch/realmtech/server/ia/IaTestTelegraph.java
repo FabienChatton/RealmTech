@@ -5,7 +5,7 @@ import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 
 public class IaTestTelegraph implements Telegraph {
-    private IaTestStateMachine stateMachine;
+    private final IaTestStateMachine stateMachine;
     private final int id;
     private final ServerContext serverContext;
 

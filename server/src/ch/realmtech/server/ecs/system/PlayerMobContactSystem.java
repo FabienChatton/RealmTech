@@ -4,11 +4,13 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ia.IaComponent;
+import ch.realmtech.server.ia.IaTestState;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 public class PlayerMobContactSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<IaComponent> mIa;
     @Override
     protected void process(int entityId) {
         IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(IaComponent.class, PositionComponent.class, Box2dComponent.class)).getEntities();
@@ -28,6 +31,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
 
         for (int i = 0; i < ias.size(); i++) {
             int ia = ias.get(i);
+            IaComponent iaComponent = mIa.get(ia);
             PositionComponent iaPositionComponent = mPos.get(ia);
             Box2dComponent iaBox2dComponent = mBox2d.get(ia);
             Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
@@ -40,6 +44,8 @@ public class PlayerMobContactSystem extends IteratingSystem {
                 Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().scl(50f);
 
                 playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
+
+                MessageManager.getInstance().dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.SLEEP_MESSAGE);
             }
         }
     }

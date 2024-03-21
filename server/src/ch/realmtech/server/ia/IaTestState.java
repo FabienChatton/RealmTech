@@ -8,9 +8,10 @@ import com.badlogic.gdx.ai.steer.behaviors.Seek;
 
 public enum IaTestState implements State<IaTestTelegraph> {
 
-    FOCUS_PLAYER() {
+    FOCUS_PLAYER(1) {
         @Override
         public void exit(IaTestTelegraph entity) {
+            super.exit(entity);
             ComponentMapper<IaComponent> mIa = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(IaComponent.class);
             IaComponent iaComponent = mIa.get(entity.getId());
             iaComponent.getIaTestSteerable().setSteeringBehavior(null);
@@ -18,7 +19,6 @@ public enum IaTestState implements State<IaTestTelegraph> {
 
         @Override
         public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
-            if (entity.getStateMachine().getCurrentState() == FOCUS_PLAYER) return false;
             int playerId = (int) telegram.extraInfo;
             if (playerId == -1) return false;
 
@@ -32,10 +32,9 @@ public enum IaTestState implements State<IaTestTelegraph> {
             return true;
         }
     },
-    SLEEP() {
+    SLEEP(0) {
         @Override
         public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
-            if (entity.getStateMachine().getCurrentState() == SLEEP) return false;
             entity.getStateMachine().changeState(SLEEP);
             return true;
         }
@@ -43,6 +42,11 @@ public enum IaTestState implements State<IaTestTelegraph> {
     ;
     public final static int SLEEP_MESSAGE = 0;
     public final static int FOCUS_PLAYER_MESSAGE = 1;
+    public final int messageId;
+
+    IaTestState(int messageId) {
+        this.messageId = messageId;
+    }
 
     @Override
     public void enter(IaTestTelegraph entity) {
@@ -57,14 +61,5 @@ public enum IaTestState implements State<IaTestTelegraph> {
     @Override
     public void exit(IaTestTelegraph entity) {
         System.out.println("exit");
-    }
-
-    @Override
-    public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
-        return switch (telegram.message) {
-            case SLEEP_MESSAGE -> SLEEP.onMessage(entity, telegram);
-            case FOCUS_PLAYER_MESSAGE -> FOCUS_PLAYER.onMessage(entity, telegram);
-            default -> false;
-        };
     }
 }

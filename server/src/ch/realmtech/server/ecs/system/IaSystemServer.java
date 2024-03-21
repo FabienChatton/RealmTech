@@ -5,8 +5,8 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ia.Box2dLocation;
 import ch.realmtech.server.ia.IaComponent;
+import ch.realmtech.server.ia.IaTestState;
 import ch.realmtech.server.ia.IaTestSteerable;
 import ch.realmtech.server.ia.IaTestTelegraph;
 import com.artemis.Aspect;
@@ -15,7 +15,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
-import com.badlogic.gdx.ai.steer.behaviors.Seek;
 import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.UUID;
@@ -36,12 +35,18 @@ public class IaSystemServer extends BaseSystem {
     private final MessageManager messageManager = MessageManager.getInstance();
 
     @Override
+    protected void initialize() {
+        super.initialize();
+        messageManager.setDebugEnabled(true);
+    }
+
+    @Override
     protected void processSystem() {
         naturalSpawnIa();
         messageManager.update();
     }
 
-    public int createIaTest(float x, float y, Body target) {
+    public int createIaTest(float x, float y, int playerId) {
         int iaTestId = world.create();
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
@@ -58,7 +63,8 @@ public class IaSystemServer extends BaseSystem {
 
         playerShape.dispose();
         IaComponent iaComponent = world.edit(iaTestId).create(IaComponent.class).set(new IaTestTelegraph(iaTestId, serverContext), new IaTestSteerable(bodyIaTest, 4));
-        iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
+        messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.FOCUS_PLAYER_MESSAGE, playerId);
+        //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
         world.edit(iaTestId).create(Box2dComponent.class).set(1, 1, bodyIaTest);
         PositionComponent positionComponent = world.edit(iaTestId).create(PositionComponent.class);
         serverContext.getSystemsAdmin().uuidEntityManager.registerEntityIdWithUuid(UUID.randomUUID(), iaTestId);
@@ -73,10 +79,9 @@ public class IaSystemServer extends BaseSystem {
         if (iaEntities.isEmpty()) {
             for (int i = 0; i < players.size(); i++) {
                 int playerId = players.get(i);
-                Box2dComponent playerBox2d = mBox2d.get(playerId);
                 PositionComponent playerPosition = mPos.get(playerId);
 
-                createIaTest(playerPosition.x + 5, playerPosition.y, playerBox2d.body);
+                createIaTest(playerPosition.x + 5, playerPosition.y, playerId);
             }
         }
     }
