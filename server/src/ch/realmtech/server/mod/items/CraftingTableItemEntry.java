@@ -9,9 +9,4 @@ public class CraftingTableItemEntry extends ItemEntry {
                 .placeCell("realmtech.cells.CraftingTable")
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return 129156771;
-    }
 }

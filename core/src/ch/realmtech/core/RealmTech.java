@@ -96,7 +96,7 @@ public final class RealmTech extends Game implements InternalConnexion {
                 rootPath = System.getenv("AppData");
             } else {
                 // linux
-                rootPath = System.getProperty("user.home");
+                rootPath = System.getProperty("user.home") + "/.local";
             }
             DataCtrl.creerHiearchieRealmTechData(rootPath);
         } catch (IOException e) {

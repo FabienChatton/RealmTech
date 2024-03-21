@@ -9,9 +9,4 @@ public class ChestItemEntry extends ItemEntry {
                 .placeCell("realmtech.cells.Chest")
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return 1379107192;
-    }
 }

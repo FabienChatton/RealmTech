@@ -9,9 +9,4 @@ public class EnergyBatteryItemEntry extends ItemEntry {
                 .placeCell("realmtech.cells.EnergyBattery")
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return 1670110684;
-    }
 }

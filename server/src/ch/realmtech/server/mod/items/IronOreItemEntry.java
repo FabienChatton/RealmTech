@@ -9,8 +9,4 @@ public class IronOreItemEntry extends ItemEntry {
                 .build());
     }
 
-    @Override
-    public int getId() {
-        return -497482319;
-    }
 }

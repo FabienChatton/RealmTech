@@ -8,9 +8,4 @@ public class GoldOreItemEntry extends ItemEntry {
         super("GoldOre", "gold-ore-01", ItemBehavior.builder()
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return 1933521689;
-    }
 }

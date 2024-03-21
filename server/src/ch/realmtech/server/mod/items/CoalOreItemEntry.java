@@ -8,9 +8,4 @@ public class CoalOreItemEntry extends ItemEntry {
         super("CoalOre", "coal-ore-01", ItemBehavior.builder()
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return -1626413438;
-    }
 }

@@ -8,9 +8,4 @@ public class CopperOreItemEntry extends ItemEntry {
         super("CopperOre", "copper-ore-03", ItemBehavior.builder()
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return 947251712;
-    }
 }

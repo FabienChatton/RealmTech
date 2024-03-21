@@ -15,8 +15,4 @@ public class EnergyCableCellEntry extends CellEntry {
                 .build());
     }
 
-    @Override
-    public int getId() {
-        return 235045836;
-    }
 }

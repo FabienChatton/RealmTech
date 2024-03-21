@@ -9,9 +9,4 @@ public class FurnaceItemEntry extends ItemEntry {
                 .placeCell("realmtech.cells.Furnace")
                 .build());
     }
-
-    @Override
-    public int getId() {
-        return 1223648783;
-    }
 }

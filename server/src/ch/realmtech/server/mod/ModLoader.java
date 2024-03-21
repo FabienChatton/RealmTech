@@ -10,6 +10,8 @@ import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -176,6 +178,25 @@ public class ModLoader {
                 );
 
         if (invalideTagName) {
+            isFail = true;
+        }
+
+        HashMap<Integer, List<Entry>> duplicatedEntries = new HashMap<>();
+        RegistryUtils.flatEntry(rootRegistry)
+                .forEach((entry) -> RegistryUtils.flatEntry(rootRegistry).stream()
+                        .filter((entry1) -> entry != entry1 && entry.getId() == entry1.getId())
+                        .forEach((invalideEntry) -> {
+                            int duplicatedId = invalideEntry.getId();
+                            List<Entry> entries = duplicatedEntries.get(duplicatedId);
+                            if (entries == null) {
+                                duplicatedEntries.put(duplicatedId, new ArrayList<>(List.of(invalideEntry)));
+                            } else {
+                                entries.add(invalideEntry);
+                            }
+                        }));
+        duplicatedEntries.forEach((duplicatedId, entries) -> logger.warn("Duplicated id for {}, id {}", entries, duplicatedId));
+
+        if (!duplicatedEntries.isEmpty()) {
             isFail = true;
         }
     }
