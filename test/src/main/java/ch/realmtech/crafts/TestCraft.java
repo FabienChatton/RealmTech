@@ -3,8 +3,10 @@ package ch.realmtech.crafts;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.mod.crafts.craftingtable.PlankCraftEntry;
 import ch.realmtech.server.mod.items.CopperOreItemEntry;
 import ch.realmtech.server.mod.items.PlankItemEntry;
+import ch.realmtech.server.mod.items.WoodItemEntry;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.registry.CraftRecipeEntry;
 import ch.realmtech.server.registry.FurnaceCraftShapeless;
@@ -92,7 +94,7 @@ public class TestCraft {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void getCraftResultChest() {
+    public void getCraftResultShape() {
         int motherChest = serverContext.getEcsEngineServer().getWorld().create();
         ItemEntry plankItem = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), PlankItemEntry.class);
         serverContext.getSystemsAdmin().inventoryManager.createChest(motherChest, UUID.randomUUID(), 3, 3);
@@ -117,6 +119,42 @@ public class TestCraft {
         Optional<CraftResult> newCraftResult = serverContext.getSystemsAdmin().craftingManager.getNewCraftResult(craftingTableRecipes, mapToItems);
 
         assertTrue(newCraftResult.isPresent());
+    }
+
+    @Test
+    public void getCraftResultShapelessTrue() {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        WoodItemEntry woodItem = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), WoodItemEntry.class);
+        serverContext.getSystemsAdmin().inventoryManager.createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdmin().inventoryManager.getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdmin().inventoryManager.getChestInventory(motherChest);
+
+        serverContext.getSystemsAdmin().inventoryManager.addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdmin().itemManagerServer.newItemInventory(woodItem, UUID.randomUUID()));
+
+        PlankCraftEntry plankCraftEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), PlankCraftEntry.class);
+        PlankItemEntry plankItem = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), PlankItemEntry.class);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdmin().inventoryManager.mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdmin().craftingManager.getNewCraftResult(List.of(plankCraftEntry), mapToItems);
+
+        assertEquals(plankItem, newCraftResult.orElseThrow().getItemResult());
+    }
+
+    @Test
+    public void getCraftResultShapelessFalse() {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        WoodItemEntry woodItem = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), WoodItemEntry.class);
+        serverContext.getSystemsAdmin().inventoryManager.createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdmin().inventoryManager.getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdmin().inventoryManager.getChestInventory(motherChest);
+
+        serverContext.getSystemsAdmin().inventoryManager.addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdmin().itemManagerServer.newItemInventory(woodItem, UUID.randomUUID()));
+        serverContext.getSystemsAdmin().inventoryManager.addItemToStack(chestInventory.inventory[1], serverContext.getSystemsAdmin().itemManagerServer.newItemInventory(woodItem, UUID.randomUUID()));
+
+        PlankCraftEntry plankCraftEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), PlankCraftEntry.class);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdmin().inventoryManager.mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdmin().craftingManager.getNewCraftResult(List.of(plankCraftEntry), mapToItems);
+
+        assertTrue(newCraftResult.isEmpty());
     }
 
     @Test
