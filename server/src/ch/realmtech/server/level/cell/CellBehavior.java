@@ -20,7 +20,7 @@ public class CellBehavior {
     private int breakStepNeed = 20;
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
-    private EditEntity editEntityOnCreate;
+    private EditEntity editEntity;
     private RightClickInteraction interagieClickDroit;
     private int tiledTextureX;
     private int tiledTextureY;
@@ -63,7 +63,7 @@ public class CellBehavior {
     }
 
     public Optional<EditEntity> getEditEntity() {
-        return Optional.ofNullable(editEntityOnCreate);
+        return Optional.ofNullable(editEntity);
     }
 
     public CreatePhysiqueBody getCreateBody() {
@@ -142,7 +142,7 @@ public class CellBehavior {
         }
 
         public CellBehaviorBuilder editEntity(EditEntity... editEntity) {
-            cellBehavior.editEntityOnCreate = new EditEntity() {
+            cellBehavior.editEntity = new EditEntity() {
                 @Override
                 public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
                     for (EditEntity entity : editEntity) {

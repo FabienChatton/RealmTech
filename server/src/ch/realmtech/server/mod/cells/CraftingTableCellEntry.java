@@ -36,7 +36,6 @@ public class CraftingTableCellEntry extends CellEntry {
         super("CraftingTable", "table-craft-01", CellBehavior.builder(Cells.Layer.BUILD_DECO)
                 .breakWith(ItemType.HAND, "realmtech.items.CraftingTable")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
-                //.editEntity(CraftingTableEditEntity.createCraftingTable(3, 3))
                 .canPlaceCellOnTop(false)
                 .interagieClickDroit(CraftingTableCellEntry::rightClickInteraction)
                 .build());
@@ -50,7 +49,7 @@ public class CraftingTableCellEntry extends CellEntry {
     }
 
     @Override
-    public Optional<EditEntity> getEditEntityOnCreate() {
+    public Optional<EditEntity> getEditEntity() {
         return Optional.of(editEntityCreateCraftingTable.createCraftingTable(3, 3));
     }
 

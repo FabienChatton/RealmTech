@@ -249,6 +249,7 @@ public class MapManager extends Manager {
         world.edit(cellId).create(CellComponent.class).set(innerX, innerY, cellRegisterEntry, chunkId);
         cellArgs.getEditEntityArgs()
                 .or(() -> cellRegisterEntry.getCellBehavior().getEditEntity())
+                .or(cellRegisterEntry::getEditEntity)
                 .ifPresent((editEntityArg) -> editEntityArg.createEntity(world.getRegistered("executeOnContext"), cellId));
         if (cellRegisterEntry.getCellBehavior().getCreateBody() != null) {
             CreatePhysiqueBody.CreatePhysiqueBodyReturn physiqueBody = cellRegisterEntry
@@ -302,6 +303,7 @@ public class MapManager extends Manager {
             cellComponent.cellRegisterEntry.getCellBehavior().getDeleteBody().accept(physicWorld, body);
         }
         cellComponent.cellRegisterEntry.getCellBehavior().getEditEntity()
+                .or(() -> cellComponent.cellRegisterEntry.getEditEntity())
                 .ifPresent((editEntity) -> {
                     ExecuteOnContext executeOnContext = world.getRegistered("executeOnContext");
                     editEntity.deleteEntity(executeOnContext, cellId);

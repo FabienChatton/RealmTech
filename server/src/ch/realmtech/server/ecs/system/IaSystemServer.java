@@ -37,7 +37,7 @@ public class IaSystemServer extends BaseSystem {
     @Override
     protected void initialize() {
         super.initialize();
-        messageManager.setDebugEnabled(true);
+        messageManager.setDebugEnabled(false);
     }
 
     @Override

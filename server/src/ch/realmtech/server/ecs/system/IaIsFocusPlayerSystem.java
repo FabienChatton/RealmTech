@@ -9,7 +9,6 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
-import com.badlogic.gdx.math.Vector2;
 
 @All({IaComponent.class, PositionComponent.class})
 public class IaIsFocusPlayerSystem extends IteratingSystem {
@@ -27,11 +26,11 @@ public class IaIsFocusPlayerSystem extends IteratingSystem {
             int playerId = playerData[i];
             PositionComponent playerPositionComponent = mPos.get(playerId);
             IaComponent iaComponent = mIa.get(entityId);
-            if (Vector2.dst2(iaPositionComponent.x, iaPositionComponent.y, playerPositionComponent.x, playerPositionComponent.y) < 1) {
-                messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), 1, playerId, false);
-            } else {
-                messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), 0);
-            }
+//            if (Vector2.dst2(iaPositionComponent.x, iaPositionComponent.y, playerPositionComponent.x, playerPositionComponent.y) < 1) {
+//                messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), 1, playerId, false);
+//            } else {
+//                messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), 0);
+//            }
         }
     }
 }

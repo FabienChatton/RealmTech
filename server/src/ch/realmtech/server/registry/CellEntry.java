@@ -39,7 +39,7 @@ public abstract class CellEntry extends Entry {
         return textureAtlas.findRegion(textureRegionName);
     }
 
-    public Optional<EditEntity> getEditEntityOnCreate() {
+    public Optional<EditEntity> getEditEntity() {
         return Optional.empty();
     }
 }
