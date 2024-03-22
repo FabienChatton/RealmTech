@@ -18,6 +18,7 @@ import ch.realmtech.core.screen.AbstractScreen;
 import ch.realmtech.core.screen.AuthenticateScreen;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.GetWorld;
@@ -64,6 +65,7 @@ public final class RealmTech extends Game implements InternalConnexion {
     public final static int SCREEN_HEIGHT = DataCtrl.SCREEN_HEIGHT;
     public final static float PPM = SCREEN_WIDTH / WORLD_WIDTH;
     public final static float UNITE_SCALE = 1 / 32f;
+    public final static String REALMTECH_VERSION = ServerContext.REALMTECH_VERSION;
     private final static Logger logger = LoggerFactory.getLogger(RealmTech.class);
     private InputMapper inputMapper;
     private AssetManager assetManager;

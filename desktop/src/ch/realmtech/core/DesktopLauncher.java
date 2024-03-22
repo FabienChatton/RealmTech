@@ -12,6 +12,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setWindowedMode(RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
 		config.setWindowIcon(Files.FileType.Internal, "logo/logo-RealmTech-icon.png");
+		config.setTitle("RealmTech " + RealmTech.REALMTECH_VERSION);
 		new Lwjgl3Application(new RealmTech(), config);
 	}
 }

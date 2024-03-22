@@ -36,6 +36,7 @@ public class GameScreen extends AbstractScreen {
     private final Label reciveDataSize;
     private final Label sendDataSize;
     private final Label topCellId;
+    private final Label versionLabel;
     private ConsoleUi consoleUi;
 
     public GameScreen(RealmTech context) throws IOException {
@@ -51,9 +52,11 @@ public class GameScreen extends AbstractScreen {
         reciveDataSize = new Label(null, skin);
         sendDataSize = new Label(null, skin);
         topCellId = new Label(null, skin);
+        versionLabel = new Label("Version : " + RealmTech.REALMTECH_VERSION, skin);
         consoleUi = new ConsoleUi(skin, context);
 
         debugTable.add(fpsLabel).left().row();
+        debugTable.add(versionLabel).left().row();
         debugTable.add(gameCoo).left().row();
         debugTable.add(pointerGameCoo).left().row();
         debugTable.add(chunkPos).left().row();

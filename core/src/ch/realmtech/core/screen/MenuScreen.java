@@ -4,11 +4,13 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.helper.ButtonsMenu.TextButtonMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.helper.Popup;
+import ch.realmtech.server.ServerContext;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 public class MenuScreen extends AbstractScreen {
@@ -27,6 +29,7 @@ public class MenuScreen extends AbstractScreen {
         uiTable.add(options).width(250).padBottom(10f).row();
         uiTable.add(reLogin).width(250).padBottom(10f).row();
         uiTable.add(quit).width(250).padBottom(10f).row();
+        uiTable.add(new Label("Version : " + ServerContext.REALMTECH_VERSION, context.getSkin())).center();
     }
 
     private Image createAnimatedLogo() {
