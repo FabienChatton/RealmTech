@@ -44,11 +44,25 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
 
     @Override
     public Optional<CraftResult> craft(List<List<ItemEntry>> items) {
-        if (items.equals(craftPattern2d)) {
-            return Optional.of(new CraftResult(itemResult, resultNumber));
-        } else {
-            return Optional.empty();
+        if (items.size() < craftPattern2d.size()) return Optional.empty();
+        for (int testI = 0; testI < items.size(); testI++) {
+            if (items.get(testI).size() < craftPattern2d.size()) return Optional.empty();
+
+            testItems:
+            for (int testJ = 0; testJ < items.get(testI).size(); testJ++) {
+                for (int expectedI = 0; expectedI < craftPattern2d.size(); expectedI++) {
+                    if (expectedI + testI >= items.get(expectedI).size()) continue testItems;
+                    for (int expectedJ = 0; expectedJ < craftPattern2d.get(expectedI).size(); expectedJ++) {
+                        if (expectedJ + testJ >= items.get(expectedI).size()) continue testItems;
+                        if (craftPattern2d.get(expectedI).get(expectedJ) != items.get(expectedI + testI).get(expectedJ + testJ)) {
+                            continue testItems;
+                        }
+                    }
+                }
+                return Optional.of(new CraftResult(itemResult, resultNumber));
+            }
         }
+        return Optional.empty();
     }
 
     @Override
