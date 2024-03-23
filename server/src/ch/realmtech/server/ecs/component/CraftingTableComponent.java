@@ -22,9 +22,9 @@ public class CraftingTableComponent extends Component {
     private CraftChange isCraftResultChange;
     private BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange;
 
-    private List<CraftRecipeEntry> craftRecipes;
+    private List<? extends CraftRecipeEntry> craftRecipes;
 
-    public void set(int craftingInventory, int craftingResultInventory, List<CraftRecipeEntry> craftRecipes, CraftChange canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange) {
+    public void set(int craftingInventory, int craftingResultInventory, List<? extends CraftRecipeEntry> craftRecipes, CraftChange canProcessCraftCraftingTable, BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftResultChange) {
         this.craftingInventory = craftingInventory;
         this.craftingResultInventory = craftingResultInventory;
         this.craftRecipes = craftRecipes;
@@ -36,7 +36,7 @@ public class CraftingTableComponent extends Component {
         return isCraftResultChange;
     }
 
-    public List<CraftRecipeEntry> getCraftRecipes() {
+    public List<? extends CraftRecipeEntry> getCraftRecipes() {
         return craftRecipes;
     }
 

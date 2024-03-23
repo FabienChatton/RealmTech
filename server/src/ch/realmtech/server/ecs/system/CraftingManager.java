@@ -5,7 +5,6 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.registry.CraftRecipeEntry;
 import ch.realmtech.server.registry.ItemEntry;
-import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 
@@ -17,10 +16,8 @@ public class CraftingManager extends Manager {
     @Wire(name = "systemsAdmin")
     private SystemsAdminCommun systemsAdminCommun;
 
-    @SuppressWarnings("unchecked")
     public Optional<CraftResult> getNewCraftResult(CraftingTableComponent craftingTableComponent) {
-        List<CraftRecipeEntry> craftingTableRecipes = (List<CraftRecipeEntry>) RegistryUtils.findEntries(systemsAdminCommun.rootRegistry, "#craftingTableRecipes");
-        return getNewCraftResult(craftingTableRecipes, systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
+        return getNewCraftResult(craftingTableComponent.getCraftRecipes(), systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
     }
 
     public Optional<CraftResult> getNewCraftResult(List<? extends CraftRecipeEntry> craftEntries, List<List<ItemEntry>> items) {

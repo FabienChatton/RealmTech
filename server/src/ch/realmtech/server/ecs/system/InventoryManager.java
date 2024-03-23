@@ -480,6 +480,7 @@ public class InventoryManager extends Manager {
         return new int[]{craftingInventoryId, craftingResultInventoryId};
     }
 
+    @SuppressWarnings("unchecked")
     public int[] createFurnace(int motherEntity, UUID furnaceUuid, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventoryUuid, int[][] carburantInventory, UUID craftingResultInventoryUuid, int[][] craftingResultInventory) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
@@ -490,7 +491,8 @@ public class InventoryManager extends Manager {
         createInventoryUi(carburantInventoryId, carburantInventoryUuid, carburantInventory, 1, 1);
 
 
-        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, null, CraftChangeFunctions.craftResultChangeCraftingTable(world), OnNewCraftAvailable.onCraftAvailableFurnace());
+        List<FurnaceCraftShapeless> furnaceRecipes = (List<FurnaceCraftShapeless>) RegistryUtils.findEntries(systemsAdminCommun.getRootRegistry(), "#furnaceRecipes");
+        world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, furnaceRecipes, CraftChangeFunctions.craftResultChangeFurnace(world), OnNewCraftAvailable.onCraftAvailableFurnace());
         world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
         systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getFurnaceSerializerController());
 

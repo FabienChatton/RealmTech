@@ -1,10 +1,13 @@
 package ch.realmtech.server.craft;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
+import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.CraftingManager;
+import ch.realmtech.server.packet.clientPacket.FurnaceExtraInfoPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 
@@ -39,6 +42,49 @@ public class CraftChangeFunctions {
             } else {
                 return Optional.empty();
             }
+        };
+    }
+
+    public static CraftChange craftResultChangeFurnace(World world) {
+        return (furnaceId) -> {
+            SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
+            ComponentMapper<CraftingTableComponent> mCraftingTable = world.getMapper(CraftingTableComponent.class);
+            ComponentMapper<FurnaceComponent> mFurnace = world.getMapper(FurnaceComponent.class);
+            ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
+            ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
+
+            CraftingTableComponent craftingTableComponent = mCraftingTable.get(furnaceId);
+            FurnaceComponent furnaceComponent = mFurnace.get(furnaceId);
+            InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
+            InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
+
+            Optional<CraftResult> craftResultOpt = world.getSystem(CraftingManager.class).getNewCraftResult(craftingTableComponent);
+
+            if (craftResultOpt.isPresent()) {
+                CraftResult craftResult = craftResultOpt.get();
+                if (furnaceComponent.tickProcess >= craftResult.getTimeToProcess()) {
+                    furnaceComponent.tickProcess = 0;
+                    return Optional.of(craftResultOpt);
+                } else {
+                    if (furnaceComponent.remainingTickToBurn > 0) {
+                        furnaceComponent.tickProcess++;
+
+                        // sync to player for icon
+                        if (furnaceComponent.tickProcess == 1) {
+                            ServerContext serverContext = world.getRegistered("serverContext");
+                            serverContext.getServerConnexion().sendPacketToSubscriberForEntity(new FurnaceExtraInfoPacket(
+                                            systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceId),
+                                            -1,
+                                            craftResult.getTimeToProcess())
+                                    , systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceId));
+                        }
+                    }
+                }
+            } else {
+                furnaceComponent.tickProcess = 0;
+            }
+
+            return Optional.empty();
         };
     }
 }
