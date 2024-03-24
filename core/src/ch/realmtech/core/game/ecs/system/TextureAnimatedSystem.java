@@ -55,7 +55,7 @@ public class TextureAnimatedSystem extends IteratingSystem {
         } else if (isInputKeysLeft(mouvementComponent.lastDirection)) {
             textureRegion = getTextureRegion(textureAnimation.animationLeft, textureAnimation);
         } else if (isInputKeysDown(mouvementComponent.lastDirection)) {
-            textureRegion = getTextureRegion(textureAnimation.animationLeft, textureAnimation);
+            textureRegion = getTextureRegion(textureAnimation.animationFront, textureAnimation);
         } else if (isInputKeysRight(mouvementComponent.lastDirection)) {
             textureRegion = getTextureRegion(textureAnimation.animationRight, textureAnimation);
 
