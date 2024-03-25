@@ -2,6 +2,8 @@ package ch.realmtech.core;
 
 import ch.realmtech.core.auth.AuthControllerClient;
 import ch.realmtech.core.auth.AuthRequestClient;
+import ch.realmtech.core.desktop.DesktopArgsCommand;
+import ch.realmtech.core.desktop.DesktopConfig;
 import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
 import ch.realmtech.core.game.ecs.plugin.ExecuteOnContextClient;
@@ -24,6 +26,7 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.InternalConnexion;
+import ch.realmtech.server.mod.ModInitializer;
 import ch.realmtech.server.mod.ModLoader;
 import ch.realmtech.server.mod.options.OptionLoader;
 import ch.realmtech.server.mod.options.client.SoundOptionEntry;
@@ -51,6 +54,7 @@ import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,6 +78,8 @@ public final class RealmTech extends Game implements InternalConnexion {
     private Skin skin;
     private volatile ECSEngine ecsEngine;
     private Discord discord;
+    private DesktopConfig desktopConfig;
+    private ModInitializer modInitializerTest;
 
     private TextureAtlas textureAtlas;
     private SoundManager soundManager;
@@ -87,18 +93,36 @@ public final class RealmTech extends Game implements InternalConnexion {
     private ExecuteOnContextClient executeOnContextClient;
     private Registry<?> rootRegistry;
     private OptionLoader optionLoader;
+    private List<Consumer<TextureAtlas>> onTextureAtlasLoaded;
+
+    public RealmTech(ModInitializer modInitializerTest, String... args) throws Exception {
+        this(args);
+        this.modInitializerTest = modInitializerTest;
+    }
+
+    public RealmTech(String... args) throws Exception {
+        DesktopArgsCommand desktopArgsCommand = new DesktopArgsCommand();
+        CommandLine commandLine = new CommandLine(desktopArgsCommand);
+        commandLine.parseArgs(args);
+
+        desktopConfig = desktopArgsCommand.call();
+    }
 
     @Override
     public void create() {
         onEcsEngineInitializes = new ArrayList<>();
         try {
-            String os = (System.getProperty("os.name")).toUpperCase();
             String rootPath;
-            if (os.contains("WIN")) {
-                rootPath = System.getenv("AppData");
+            if (desktopConfig.rootPath() == null) {
+                String os = (System.getProperty("os.name")).toUpperCase();
+                if (os.contains("WIN")) {
+                    rootPath = System.getenv("AppData");
+                } else {
+                    // linux
+                    rootPath = System.getProperty("user.home") + "/.local";
+                }
             } else {
-                // linux
-                rootPath = System.getProperty("user.home") + "/.local";
+                rootPath = desktopConfig.rootPath();
             }
             DataCtrl.creerHiearchieRealmTechData(rootPath);
         } catch (IOException e) {
@@ -107,8 +131,9 @@ public final class RealmTech extends Game implements InternalConnexion {
         }
         executeOnContextClient = new ExecuteOnContextClient(this);
 
+        onTextureAtlasLoaded = new ArrayList<>();
         rootRegistry = Registry.createRoot();
-        ModLoader modLoader = new ModLoader(this, rootRegistry);
+        ModLoader modLoader = new ModLoader(this, rootRegistry, modInitializerTest);
         modLoader.initializeCoreMod();
 
         try {
@@ -262,11 +287,17 @@ public final class RealmTech extends Game implements InternalConnexion {
         closeEcs();
     }
 
+    @Override
     public TextureAtlas getTextureAtlas() {
         if (textureAtlas == null) {
             textureAtlas = assetManager.get("texture/atlas/texture.atlas");
         }
         return textureAtlas;
+    }
+
+    @Override
+    public void onTextureAtlasLoaded(Consumer<TextureAtlas> textureAtlasConsumer) {
+        onTextureAtlasLoaded.add(textureAtlasConsumer);
     }
 
     public void drawGameScreen() {
@@ -423,5 +454,12 @@ public final class RealmTech extends Game implements InternalConnexion {
     @Override
     public ExecuteOnContext getExecuteOnContext() {
         return executeOnContextClient;
+    }
+
+    public void textureAtlasLoaded() {
+        onTextureAtlasLoaded.forEach(textureAtlasConsumer -> textureAtlasConsumer.accept(getTextureAtlas()));
+        onTextureAtlasLoaded = null;
+        TextureAtlas.AtlasRegion lain = getTextureAtlas().findRegion("lain");
+        System.out.println(lain);
     }
 }

@@ -17,6 +17,7 @@ public class DataCtrl {
     private final static String OPTIONS_FILE = "options.cfg";
     private final static String ROOT_PATH_SAVES = "saves";
     private final static String OPTIONS_SERVER_FILE = "optionsServer.cfg";
+    private final static String MOD_PATH = "mods";
     public final static int SCREEN_WIDTH = 1024;
     public final static int SCREEN_HEIGHT = 576;
 
@@ -48,6 +49,10 @@ public class DataCtrl {
         if (!optionServer.exists()) {
             Files.createFile(optionServer.toPath());
         }
+        File modDir = getModDir();
+        if (!modDir.exists()) {
+            Files.createDirectory(modDir.toPath());
+        }
     }
 
     public static String getRootPath() {
@@ -68,5 +73,9 @@ public class DataCtrl {
 
     public static Path getLocalPathSaveRoot() throws IOException {
         return Path.of(String.format("%s/%s/%s", rootPath, ROOT_DATA, ROOT_PATH_SAVES));
+    }
+
+    public static File getModDir() {
+        return Path.of(String.format("%s/%s/%s", rootPath, ROOT_DATA, MOD_PATH)).toFile();
     }
 }

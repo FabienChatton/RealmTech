@@ -31,7 +31,7 @@ public class FullScreenOptionEntry extends OptionClientEntry<Boolean> {
 
     @Override
     public void onValueChange(Boolean oldValue, Boolean newValue) {
-        context.getExecuteOnContext().onClientContext(() -> {
+        context.getExecuteOnContext().onClientContext((clientContext) -> {
             if (newValue) {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             } else {

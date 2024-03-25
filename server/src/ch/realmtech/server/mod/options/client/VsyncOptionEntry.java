@@ -29,6 +29,6 @@ public class VsyncOptionEntry extends OptionClientEntry<Boolean> {
 
     @Override
     public void onValueChange(Boolean oldValue, Boolean newValue) {
-        context.getExecuteOnContext().onClientContext(() -> Gdx.graphics.setVSync(newValue));
+        context.getExecuteOnContext().onClientContext((clientContext) -> Gdx.graphics.setVSync(newValue));
     }
 }

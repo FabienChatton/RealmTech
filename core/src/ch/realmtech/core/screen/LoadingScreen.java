@@ -19,6 +19,7 @@ public class LoadingScreen extends AbstractScreen {
     public void update(float delta) {
         super.update(delta);
         if (context.getAssetManager().update()) {
+            context.textureAtlasLoaded();
             context.loadingFinish();
         }
     }

@@ -107,7 +107,7 @@ public class ServerContext implements Closeable, Context {
                 rootRegistry = connexionConfig.getRootRegistry();
             } else {
                 rootRegistry = Registry.createRoot();
-                ModLoader modLoader = new ModLoader(this, rootRegistry);
+                ModLoader modLoader = new ModLoader(this, rootRegistry, null);
                 modLoader.initializeCoreMod();
             }
 

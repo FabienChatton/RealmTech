@@ -32,6 +32,6 @@ public class FpsOptionEntry extends OptionClientEntry<Integer> {
 
     @Override
     public void onValueChange(Integer oldValue, Integer newValue) {
-        context.getExecuteOnContext().onClientContext(() -> Gdx.graphics.setForegroundFPS(newValue));
+        context.getExecuteOnContext().onClientContext((clientContext) -> Gdx.graphics.setForegroundFPS(newValue));
     }
 }

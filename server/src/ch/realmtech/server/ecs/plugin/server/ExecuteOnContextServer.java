@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.plugin.server;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
+import ch.realmtech.server.mod.ClientContext;
 import com.artemis.World;
 
 import java.util.function.BiConsumer;
@@ -22,7 +23,7 @@ public class ExecuteOnContextServer implements ExecuteOnContext {
     }
 
     @Override
-    public boolean onClientContext(Runnable onClientRun) {
+    public boolean onClientContext(Consumer<ClientContext> onClientRun) {
         return false;
     }
 

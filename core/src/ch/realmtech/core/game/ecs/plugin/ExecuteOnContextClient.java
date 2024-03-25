@@ -26,8 +26,8 @@ public class ExecuteOnContextClient implements ExecuteOnContext {
     }
 
     @Override
-    public boolean onClientContext(Runnable onClientRun) {
-        onClientRun.run();
+    public boolean onClientContext(Consumer<ClientContext> onClientRun) {
+        onClientRun.accept(clientContext);
         return true;
     }
 
