@@ -33,6 +33,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     public final DirtyCellSystem dirtyCellSystem;
     public final PlayerSubscriptionSystem playerSubscriptionSystem;
     public final PlayerMobContactSystem playerMobContactSystem;
+    public final WeaponRayManager weaponRayManager;
 
     public SystemsAdminServer(Registry<?> rootRegistry) {
         super(rootRegistry);
@@ -48,6 +49,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         energyBatterySystem = new EnergyBatterySystem();
         energyGeneratorSystem = new EnergyGeneratorSystem();
         playerMobContactSystem = new PlayerMobContactSystem();
+        weaponRayManager = new WeaponRayManager();
 
         craftingSystem = new CraftingSystem();
         craftingManager = new CraftingManager();
@@ -81,6 +83,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
                 energyBatterySystem,
                 energyGeneratorSystem,
                 playerMobContactSystem,
+                weaponRayManager,
 
                 craftingSystem,
                 craftingManager,

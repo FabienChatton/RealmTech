@@ -88,6 +88,8 @@ public class ServerContext implements Closeable, Context {
                 .put(PlayerOutOfRange.class, PlayerOutOfRange::new)
                 .put(SubscribeToEntityPacket.class, SubscribeToEntityPacket::new)
                 .put(UnSubscribeToEntityPacket.class, UnSubscribeToEntityPacket::new)
+                .put(MobDeletePacket.class, MobDeletePacket::new)
+                .put(PlayerWeaponShotPacket.class, PlayerWeaponShotPacket::new)
         ;
     }
 

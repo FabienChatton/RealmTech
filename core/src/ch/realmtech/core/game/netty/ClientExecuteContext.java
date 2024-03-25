@@ -259,4 +259,12 @@ public class ClientExecuteContext implements ClientExecute {
             context.getSoundManager().playItemPickUp();
         });
     }
+
+    @Override
+    public void mobDelete(UUID mobUuid) {
+        context.nextFrame(() -> {
+            int mobId = context.getSystemsAdminClient().uuidEntityManager.getEntityId(mobUuid);
+            context.getSystemsAdminClient().mobManager.destroyMob(mobId);
+        });
+    }
 }

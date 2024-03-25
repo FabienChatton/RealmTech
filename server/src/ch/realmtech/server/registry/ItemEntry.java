@@ -1,6 +1,7 @@
 package ch.realmtech.server.registry;
 
 import ch.realmtech.server.item.ItemBehavior;
+import ch.realmtech.server.level.ClickInteractionItemClient;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -31,5 +32,13 @@ public abstract class ItemEntry extends Entry {
 
     public String getTextureRegionName() {
         return textureRegionName;
+    }
+
+    public ClickInteractionItemClient getRightClickInteraction() {
+        return null;
+    }
+
+    public ClickInteractionItemClient getLeftClickInteraction() {
+        return null;
     }
 }

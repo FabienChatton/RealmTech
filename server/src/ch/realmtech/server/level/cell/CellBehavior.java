@@ -2,7 +2,7 @@ package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.item.ItemType;
-import ch.realmtech.server.level.RightClickInteraction;
+import ch.realmtech.server.level.ClickInteraction;
 import ch.realmtech.server.mod.PlayerFootStepSound;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -21,7 +21,7 @@ public class CellBehavior {
     private CreatePhysiqueBody createBody;
     private BiConsumer<com.badlogic.gdx.physics.box2d.World, Body> deleteBody;
     private EditEntity editEntity;
-    private RightClickInteraction interagieClickDroit;
+    private ClickInteraction interagieClickDroit;
     private int tiledTextureX;
     private int tiledTextureY;
     private boolean canPlaceCellOnTop = true;
@@ -74,7 +74,7 @@ public class CellBehavior {
         return deleteBody;
     }
 
-    public Optional<RightClickInteraction> getInteragieClickDroit() {
+    public Optional<ClickInteraction> getInteragieClickDroit() {
         return Optional.ofNullable(interagieClickDroit);
     }
 
@@ -175,7 +175,7 @@ public class CellBehavior {
             return this;
         }
 
-        public CellBehaviorBuilder interagieClickDroit(RightClickInteraction interagieClickDroit) {
+        public CellBehaviorBuilder interagieClickDroit(ClickInteraction interagieClickDroit) {
             cellBehavior.interagieClickDroit = interagieClickDroit;
             return this;
         }

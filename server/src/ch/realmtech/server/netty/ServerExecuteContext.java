@@ -12,6 +12,7 @@ import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,6 +240,17 @@ public class ServerExecuteContext implements ServerExecute {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChannel);
             serverContext.getSystemsAdmin().playerSubscriptionSystem.removeEntitySubscriptionToPlayer(playerId, entityUuid);
+        });
+    }
+
+    @Override
+    public void playerWeaponShot(Channel clientChannel, Vector2 vectorEnd) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            int playerId = serverContext.getSystemsAdmin().playerManagerServer.getPlayerByChannel(clientChannel);
+            UUID mobHitUuid = serverContext.getSystemsAdmin().weaponRayManager.playerWeaponShot(playerId, vectorEnd);
+            if (mobHitUuid != null) {
+                serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(mobHitUuid), clientChannel);
+            }
         });
     }
 }

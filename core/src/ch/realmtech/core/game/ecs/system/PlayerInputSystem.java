@@ -6,8 +6,8 @@ import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.level.RightClickEventClient;
-import ch.realmtech.server.level.RightClickInteraction;
+import ch.realmtech.server.level.ClickEventClient;
+import ch.realmtech.server.level.ClickInteraction;
 import ch.realmtech.server.packet.serverPacket.ItemToCellPlaceRequestPacket;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -41,22 +41,33 @@ public class PlayerInputSystem extends BaseSystem {
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCell = systemsAdminClient.mapManager.getTopCell(chunk, innerChunkX, innerChunkY);
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            systemsAdminClient.mapManager.addCellBeingMine(topCell);
+            int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
+            Optional<ClickInteraction> leftClickInteractionItemSelected = Optional.empty();
+            if (mItem.has(selectItem)) {
+                leftClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickInteraction())
+                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell));
+            }
+
+            // item right click first, or mine top cell
+            leftClickInteractionItemSelected.ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell), () -> {
+                systemsAdminClient.mapManager.addCellBeingMine(topCell);
+            });
+
         } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
-            Optional<RightClickInteraction> rightClickInteractionItemSelected = Optional.empty();
+            Optional<ClickInteraction> rightClickInteractionItemSelected = Optional.empty();
             CellComponent cellComponent = mCell.get(topCell);
-            Optional<RightClickInteraction> rightClickInteractionCell = cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit();
+            Optional<ClickInteraction> rightClickInteractionCell = cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit();
 
             if (mItem.has(selectItem)) {
-                rightClickInteractionItemSelected = mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getInteragieClickDroit()
-                        .map((rightClickInteractionItemClient) -> rightClickInteractionItemClient.toRightClickInteraction(new RightClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell));
+                rightClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickInteraction())
+                        .map((rightClickInteractionItemClient) -> rightClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell));
             }
 
             // item interaction first, and if not, cell interaction
             rightClickInteractionItemSelected
                     .or(() -> rightClickInteractionCell)
-                    .ifPresentOrElse((rightClickInteraction) -> rightClickInteraction.accept(context, topCell), () -> {
+                    .ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell), () -> {
                         if (selectItem != 0) {
                             // place bloc if no interaction
                             UUID itemUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(selectItem);

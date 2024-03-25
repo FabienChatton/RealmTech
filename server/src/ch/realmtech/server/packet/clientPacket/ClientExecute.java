@@ -62,4 +62,6 @@ public interface ClientExecute {
     void energyGeneratorSetInfo(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn);
 
     void playerPickUpItem(UUID playerUuid);
+
+    void mobDelete(UUID mobUuid);
 }

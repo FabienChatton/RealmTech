@@ -1,5 +1,6 @@
 package ch.realmtech.server.packet.serverPacket;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Null;
 import io.netty.channel.Channel;
 
@@ -31,4 +32,6 @@ public interface ServerExecute {
     void subscribeToEntity(Channel clientChannel, UUID entityUuid);
 
     void unSubscribeToEntity(Channel clientChannel, UUID entityUuid);
+
+    void playerWeaponShot(Channel clientChannel, Vector2 vector2);
 }

@@ -42,7 +42,6 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private final PlayerFootStepSystem playerFootStepSystem;
     private final QuestSystem questSystem;
 
-
     public SystemsAdminClient(Registry<?> rootRegistry) {
         super(rootRegistry);
         playerManagerClient = new PlayerManagerClient();
