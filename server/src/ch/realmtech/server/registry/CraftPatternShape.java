@@ -5,6 +5,41 @@ import ch.realmtech.server.craft.PatternArgs;
 
 import java.util.*;
 
+/**
+ * Shape pattern are valide craft when the shape is meet this the defined items. <br />
+ * For exemple:
+ * <pre>
+ * +------------+
+ * | +-------+  |
+ * | | plank |  |
+ * | +-------+  |
+ * | | plank |  |
+ * | +-------+  |
+ * |  => stick  |
+ * +------------+
+ * </pre>
+ * <pre>
+ * +--------------------------------+
+ * | +-------+-------+              |
+ * | | plank |       |              |
+ * | +-------+-------+   valide     |
+ * | | plank |       |              |
+ * | +-------+-------+              |
+ * |                                |
+ * | +-------+-------+              |
+ * | |       | plank |              |
+ * | +-------+-------+   valide     |
+ * | |       | plank |              |
+ * | +-------+-------+              |
+ * |                                |
+ * | +-------+-------+              |
+ * | |       | plank |              |
+ * | +-------+-------+   invalide,  |
+ * | | plank | plank |   shape      |
+ * | +-------+-------+   mismatch   |
+ * +--------------------------------+
+ * </pre>
+ */
 public abstract class CraftPatternShape extends CraftRecipeEntry {
     private final String itemResultName;
     private ItemEntry itemResult;

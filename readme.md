@@ -264,33 +264,26 @@ Le layer est utilisé pour poser la cellule sur le plateau
 ### Registre
 Les registres permettent de stocker tout le contenu que le jeu va utiliser.
 Ainsi, il est plus facile d'ajouter du contenu.
-```mermaid
-classDiagram
-    direction BT
-    class InfRegistry~T extends InfEntry~ {
-        -InfRegistry~T~ parent
-        -List~InfRegistry~T~~ enfants
-        -String name
-        +getId()
-        +getEnfants()
-        +add(T entry)
-    }
-    
-    class InfRegistryEntry~T extends InfEntry~ {
-        T entry
-    }
-    
-    class InfEntry {
-        <<interface>>
-    }
-    class InfCellEntry {
-        
-    }
-    
-    InfCellEntry --|> InfEntry
-    InfRegistryEntry --|> InfRegistry
-    InfRegistry --* InfRegistry
-    InfRegistryEntry --* InfEntry
+L'organisation du contenu est inspiré du dns avec les fqdn. Ici, on appelle
+le chemin pour trouver une entrée, un fqrn "Fully Qualified Registry name".
+Un registre peut contenir des registres, et un registre peut contenir des entrées.
+Les entrées sont le contenu du jeu.
+Les registres comme les entrées ont un nom. Le nom d'un registre doit commencer par une minuscule,
+le nom d'une entrée doit commencer par une majuscule.
+Chaque entry doit être évaluée. L'évaluation permet de récupérer les
+dépendances de l'entrée au démarrage du jeu.
+Un registre peut avoir un ou plusieurs tags. Les tags permettent de retrouver
+des entrées plus facilement.
+Une
+
+```text
+                   .
+                    \
+               realmtech
+            /             \
+        items             cells
+       /      \         /       \
+   Wrench     Chest  Grass     Chest
 ```
 
 ## Inventaire

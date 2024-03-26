@@ -4,6 +4,31 @@ import ch.realmtech.server.craft.CraftResult;
 
 import java.util.*;
 
+/**
+ * Shapeless pattern are valide craft when require item are present in the inventory. <br />
+ * For exemple: 1 wood log => 4 planks
+ * <pre>
+ * +----------------------------+
+ * | +-----+-----+              |
+ * | | log |     |              |
+ * | +-----+-----+   valide     |
+ * | |     |     |              |
+ * | +-----+-----+              |
+ * |                            |
+ * | +-----+-----+              |
+ * | |     |     |              |
+ * | +-----+-----+   valide     |
+ * | |     | log |              |
+ * | +-----+-----+              |
+ * |                            |
+ * | +-----+-----+              |
+ * | |     | log |              |
+ * | +-----+-----+   invalide   |
+ * | |     | log |   only 1 log |
+ * | +-----+-----+   is defined |
+ * +----------------------------+
+ * </pre>
+ */
 public abstract class CraftPatternShapeless extends CraftRecipeEntry {
     private final String itemResultName;
     private final String[] itemsRequireName;
