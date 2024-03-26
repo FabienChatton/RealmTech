@@ -14,7 +14,7 @@ public class ItemInfoHelper {
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
         ComponentMapper<PositionComponent> mPos = world.getMapper(PositionComponent.class);
         ItemComponent itemComponent = mItem.get(itemId);
-        UUID uuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(itemId);
+        UUID uuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(itemId);
 
         if (mPos.has(itemId)) {
             PositionComponent positionComponent = mPos.get(itemId);

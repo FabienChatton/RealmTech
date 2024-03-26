@@ -27,14 +27,14 @@ public class PlayerSyncSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     @Override
     protected void process(int entityId) {
-        UUID playerUuid = serverContext.getSystemsAdmin().uuidEntityManager.getEntityUuid(entityId);
+        UUID playerUuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(entityId);
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(entityId);
         PositionComponent positionComponent = mPos.get(entityId);
         SerializedApplicationBytes playerEncode = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(entityId).writeInventory(false));
         int chunkPosX = MapManager.getChunkPos((int) positionComponent.x);
         int chunkPosY = MapManager.getChunkPos((int) positionComponent.y);
 
-        ImmutableIntBag<?> playersInRange = systemsAdminServer.playerSubscriptionSystem.getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
+        ImmutableIntBag<?> playersInRange = systemsAdminServer.getPlayerSubscriptionSystem().getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
         for (int i = 0; i < playersInRange.size(); i++) {
             int playerId = playersInRange.get(i);
             if (!playerConnexionComponent.playerInRange.contains(playerId)) {

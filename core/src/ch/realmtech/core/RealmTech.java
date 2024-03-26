@@ -8,8 +8,6 @@ import ch.realmtech.core.discord.Discord;
 import ch.realmtech.core.game.ecs.ECSEngine;
 import ch.realmtech.core.game.ecs.plugin.ExecuteOnContextClient;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
-import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
-import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.game.netty.ClientConnexion;
 import ch.realmtech.core.game.netty.ClientConnexionExtern;
 import ch.realmtech.core.game.netty.ClientConnexionIntern;
@@ -33,11 +31,11 @@ import ch.realmtech.server.mod.options.client.SoundOptionEntry;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
+import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.Registry;
 import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.sound.SoundManager;
-import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -236,12 +234,12 @@ public final class RealmTech extends Game implements InternalConnexion {
 
     @Override
     public int getPlayerId() {
-        return getSystem(PlayerManagerClient.class).getMainPlayer();
+        return getSystemsAdminClient().getPlayerManagerClient().getMainPlayer();
     }
 
     @Override
     public void openPlayerInventory(Supplier<AddAndDisplayInventoryArgs> openPlayerInventorySupplier) {
-        getSystem(PlayerInventorySystem.class).openPlayerInventory(openPlayerInventorySupplier);
+        getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(openPlayerInventorySupplier);
     }
 
     public Skin getSkin() {
@@ -395,10 +393,6 @@ public final class RealmTech extends Game implements InternalConnexion {
     public SoundManager getSoundManager() {
         return soundManager;
     }
-
-    public <T extends BaseSystem> T getSystem(Class<T> type) {
-        return ecsEngine.getSystem(type);
-    }
     public SystemsAdminClient getSystemsAdminClient() {
         return ecsEngine.getSystemsAdminClient();
     }
@@ -454,6 +448,11 @@ public final class RealmTech extends Game implements InternalConnexion {
     @Override
     public ExecuteOnContext getExecuteOnContext() {
         return executeOnContextClient;
+    }
+
+    @Override
+    public Entry getDefaultSystemAdminClientEntry() {
+        return new SystemsAdminClient();
     }
 
     public void textureAtlasLoaded() {

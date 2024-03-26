@@ -51,7 +51,7 @@ public class PickerGroundItemContactSystem extends IteratingSystem {
                 mItemPickable.remove(itemId);
                 mItemBeingPick.remove(itemId);
                 if (mPlayerConnexion.has(entityId)) {
-                    UUID playerUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(entityId);
+                    UUID playerUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId);
                     serverContext.getServerConnexion().broadCastPacket(new PlayerPickUpItem(playerUuid));
                 }
             }

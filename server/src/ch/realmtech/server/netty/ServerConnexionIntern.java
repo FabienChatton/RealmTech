@@ -26,7 +26,7 @@ public class ServerConnexionIntern implements ServerConnexion {
 
     @Override
     public void sendPacketToSubscriberForEntity(ClientPacket packet, UUID entitySubscription) {
-        ImmutableIntBag<?> players = serverContext.getSystemsAdmin().playerSubscriptionSystem.getPlayerForEntityIdSubscription(entitySubscription);
+        ImmutableIntBag<?> players = serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().getPlayerForEntityIdSubscription(entitySubscription);
         for (int i = 0; i < players.size(); i++) {
             packet.executeOnClient(clientExecute);
         }
@@ -34,7 +34,7 @@ public class ServerConnexionIntern implements ServerConnexion {
 
     @Override
     public void sendPacketToSubscriberForChunkPos(ClientPacket packet, int chunkPosX, int chunkPosY) {
-        ImmutableIntBag<?> players = serverContext.getSystemsAdmin().playerSubscriptionSystem.getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
+        ImmutableIntBag<?> players = serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
         for (int i = 0; i < players.size(); i++) {
             packet.executeOnClient(clientExecute);
         }

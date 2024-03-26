@@ -3,25 +3,26 @@ package ch.realmtech.server.serialize.chest;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.util.UUID;
 
 public class ChestSerializerV1 implements Serializer<Integer, ChestEditEntity> {
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer motherChestToSerializer) {
-        SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-        int chestInventoryId = world.getSystem(InventoryManager.class).getChestInventoryId(motherChestToSerializer);
-        InventoryComponent inventoryComponent = world.getSystem(InventoryManager.class).getChestInventory(motherChestToSerializer);
-        UUID uuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(chestInventoryId);
+        int chestInventoryId = systemsAdminCommun.getInventoryManager().getChestInventoryId(motherChestToSerializer);
+        InventoryComponent inventoryComponent = systemsAdminCommun.getInventoryManager().getChestInventory(motherChestToSerializer);
+        UUID uuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(chestInventoryId);
 
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, motherChestToSerializer));
 
@@ -43,10 +44,9 @@ public class ChestSerializerV1 implements Serializer<Integer, ChestEditEntity> {
 
     @Override
     public int getBytesSize(World world, SerializerController serializerController, Integer motherChestToSerializer) {
-        SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-        int inventoryId = world.getSystem(InventoryManager.class).getChestInventoryId(motherChestToSerializer);
-        InventoryComponent inventoryComponent = world.getSystem(InventoryManager.class).getChestInventory(motherChestToSerializer);
-        UUID uuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryId);
+        int inventoryId = systemsAdminCommun.getInventoryManager().getChestInventoryId(motherChestToSerializer);
+        InventoryComponent inventoryComponent = systemsAdminCommun.getInventoryManager().getChestInventory(motherChestToSerializer);
+        UUID uuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryId);
 
         int uuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), uuid);
         int inventoryLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), inventoryComponent);

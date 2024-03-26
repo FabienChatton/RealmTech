@@ -49,7 +49,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
                     int numberOfItem = InventoryManager.tailleStack(stack);
                     byteBuffer.putInt(numberOfItem);
                     for (int n = 0; n < numberOfItem; n++) {
-                        UUID itemUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(stack[stackItemIndex]);
+                        UUID itemUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(stack[stackItemIndex]);
                         stackItemIndex++;
                         ByteBufferHelper.writeUUID(byteBuffer, itemUuid);
                     }
@@ -99,7 +99,7 @@ public class InventorySerializerV3 implements Serializer<InventoryComponent, Fun
                     UUID uuid = itemsUuid[uuidIndex];
                     uuidIndex++;
                     int newItem = itemManager.newItemInventory(itemEntry, uuid);
-                    world.getSystem(InventoryManager.class).addItemToStack(inventory[inventoryIndexs[i]], newItem);
+                    systemsAdminCommun.getInventoryManager().addItemToStack(inventory[inventoryIndexs[i]], newItem);
                 }
             }
             return new InventoryArgs(inventory, numberOfRow, numberOfSlotParRow);

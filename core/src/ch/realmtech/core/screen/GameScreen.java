@@ -1,10 +1,6 @@
 package ch.realmtech.core.screen;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.core.game.ecs.system.ItemBarSystem;
-import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
-import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
-import ch.realmtech.core.game.ecs.system.QuestSystem;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
@@ -77,7 +73,7 @@ public class GameScreen extends AbstractScreen {
     public void update(float delta) {
         super.update(delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
+            context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
             context.setScreen(ScreenType.GAME_PAUSE);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
@@ -93,16 +89,16 @@ public class GameScreen extends AbstractScreen {
         }
         // open inventory
         if (Gdx.input.isKeyJustPressed(InputMapper.openInventory.getKey()) && consoleUi.getConsoleWindow().getParent() == null) {
-            if (!context.getSystem(PlayerInventorySystem.class).isEnabled()) {
+            if (!context.getSystemsAdminClient().getPlayerInventorySystem().isEnabled()) {
                 context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
-                context.getSystem(PlayerInventorySystem.class).openPlayerInventory(context.getSystem(PlayerInventorySystem.class).getDisplayInventoryPlayer());
+                context.getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(context.getSystemsAdminClient().getPlayerInventorySystem().getDisplayInventoryPlayer());
             } else {
-                context.getSystem(PlayerInventorySystem.class).closePlayerInventory();
+                context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
             }
         }
 
         if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey()) && consoleUi.getConsoleWindow().getParent() == null) {
-            if (!context.getSystem(QuestSystem.class).isEnabled()) {
+            if (!context.getSystemsAdminClient().getQuestSystem().isEnabled()) {
                 context.getSystemsAdminClient().getQuestManager().openQuest();
             } else {
                 context.getSystemsAdminClient().getQuestManager().closeQuest();
@@ -126,43 +122,45 @@ public class GameScreen extends AbstractScreen {
 //        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 0);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 0);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 1);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 1);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 2);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 2);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 3);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 3);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 4);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 4);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 5);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 5);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 6);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 6);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 7);
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 7);
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9))
-            context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).setSlotSelected((byte) 8);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedUp();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) context.getEcsEngine().getWorld().getSystem(ItemBarSystem.class).slotSelectedDown();
+            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 8);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP))
+            context.getSystemsAdminClient().getItemBarSystem().slotSelectedUp();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN))
+            context.getSystemsAdminClient().getItemBarSystem().slotSelectedDown();
 
         context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {
-                PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(context.getSystem(PlayerManagerClient.class).getMainPlayer());
+                PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer());
                 Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
                 Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
                 int worldPosX = MapManager.getWorldPos(positionComponent.x);
                 int worldPosY = MapManager.getWorldPos(positionComponent.y);
                 int worldPosXPointer = MapManager.getWorldPos(pointerGameCoordinate.x);
                 int worldPosYPointer = MapManager.getWorldPos(pointerGameCoordinate.y);
-                int chunkId = context.getSystemsAdminClient().mapManager.getChunkByWorldPos(worldPosX, worldPosY, context.getSystemsAdminClient().mapManager.getInfMap().infChunks);
+                int chunkId = context.getSystemsAdminClient().getMapManager().getChunkByWorldPos(worldPosX, worldPosY, context.getSystemsAdminClient().getMapManager().getInfMap().infChunks);
                 fpsLabel.setText(String.format("FPS : %d", Gdx.graphics.getFramesPerSecond()));
                 gameCoo.setText(String.format("WorldPosX : %d\nWorldPosY : %d", worldPosX, worldPosY));
                 pointerGameCoo.setText(String.format("PointerGameX: %f\nPointerGameY: %f", pointerGameCoordinate.x, pointerGameCoordinate.y));
                 chunkPos.setText(String.format("Chunk Pos X : %d\nChunk Pos Y : %d", MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY)));
                 innerChunk.setText(String.format("Inner X : %d\nInner Y : %d", MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY)));
                 tps.setText(String.format("TPS : %d ", context.getEcsEngine().serverTickBeatMonitoring.getTickBeatPerSeconde()));
-                topCellId.setText(String.format("Cell Id: %d", chunkId != -1 ? context.getSystemsAdminClient().mapManager.getTopCell(chunkId, MapManager.getInnerChunk(worldPosXPointer), MapManager.getInnerChunk(worldPosYPointer)) : -1));
+                topCellId.setText(String.format("Cell Id: %d", chunkId != -1 ? context.getSystemsAdminClient().getMapManager().getTopCell(chunkId, MapManager.getInnerChunk(worldPosXPointer), MapManager.getInnerChunk(worldPosYPointer)) : -1));
                 reciveDataSize.setText(String.format("RDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataReciveSizePerSeconde()));
                 sendDataSize.setText(String.format("SDS(o) : %d", context.getEcsEngine().serverTickBeatMonitoring.getPacketDataSendPerSeconde()));
             } catch (Exception e) {

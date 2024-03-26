@@ -1,7 +1,6 @@
 package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import com.artemis.ComponentMapper;
 
 import java.util.UUID;
@@ -12,7 +11,7 @@ import static picocli.CommandLine.*;
 @Command(name = "teleport-player", aliases = "tp", description = "teleport a player to specified coordinate")
 public class TeleportPlayerCommand implements Callable<Integer> {
     @ParentCommand
-    CommunMasterCommand masterCommand;
+    MasterServerCommand masterCommand;
 
     @Parameters(index = "0", description = "The uuid of the player")
     private String playerUuid;
@@ -35,7 +34,7 @@ public class TeleportPlayerCommand implements Callable<Integer> {
         }
 
         ComponentMapper<Box2dComponent> mBox2d = masterCommand.getWorld().getMapper(Box2dComponent.class);
-        int playerId = masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUuid(uuid);
+        int playerId = masterCommand.serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUuid(uuid);
         if (playerId == -1) {
             masterCommand.output.println("uuid mismatch, player not found");
             return -1;

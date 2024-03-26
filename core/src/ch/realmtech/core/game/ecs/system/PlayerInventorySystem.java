@@ -209,11 +209,11 @@ public class PlayerInventorySystem extends BaseSystem {
                 window.add(playerInventory);
             };
 
-            int playerId = context.getSystem(PlayerManagerClient.class).getMainPlayer();
+            int playerId = context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer();
 
-            UUID playerInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(systemsAdminClient.inventoryManager.getChestInventoryId(playerId));
-            UUID playerCraftingInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory);
-            UUID playerCraftingResultUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory);
+            UUID playerInventoryUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(systemsAdminClient.getInventoryManager().getChestInventoryId(playerId));
+            UUID playerCraftingInventoryUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingInventory);
+            UUID playerCraftingResultUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(mCraftingTable.get(systemsAdminClient.getPlayerManagerClient().getMainPlayer()).craftingResultInventory);
 
             // subscribe
             context.sendRequest(new SubscribeToEntityPacket(playerCraftingInventoryUuid));
@@ -264,7 +264,7 @@ public class PlayerInventorySystem extends BaseSystem {
     }
 
     public void displayInventory(DisplayInventoryArgs displayInventoryArgs) {
-        int inventoryId = systemsAdminClient.uuidEntityManager.getEntityId(displayInventoryArgs.inventoryUuid());
+        int inventoryId = systemsAdminClient.getUuidEntityManager().getEntityId(displayInventoryArgs.inventoryUuid());
         InventoryComponent inventoryComponent = mInventory.get(inventoryId);
         Array<Table> tableImages = createItemSlotsToDisplay(displayInventoryArgs.inventoryUuid(), inventoryStage, displayInventoryArgs.isClickAndDropSrc(), displayInventoryArgs.isClickAndDropDst(), displayInventoryArgs.getDstRequirePredicate());
         for (int i = 0; i < tableImages.size; i++) {
@@ -277,14 +277,14 @@ public class PlayerInventorySystem extends BaseSystem {
 
     public Array<Table> createItemSlotsToDisplay(UUID inventoryUuid, Stage stage, boolean clickAndDropSrc, boolean clickAndDropDst, BiPredicate<SystemsAdminClientForClient, ItemEntry> dstRequirePredicate) {
         final Array<Table> tableImages = new Array<>();
-        int inventoryOriginalId = systemsAdminClient.uuidEntityManager.getEntityId(inventoryUuid);
+        int inventoryOriginalId = systemsAdminClient.getUuidEntityManager().getEntityId(inventoryUuid);
         InventoryComponent inventoryComponent = mInventory.get(inventoryOriginalId);
         InventoryUiComponent inventoryUiComponent = mInventoryUi.get(inventoryOriginalId);
         int[][] inventory = inventoryComponent.inventory;
         for (int i = 0; i < inventory.length; i++) {
             int finalI = i;
             Supplier<int[]> getStack = () -> {
-                int inventoryId = systemsAdminClient.uuidEntityManager.getEntityId(inventoryUuid);
+                int inventoryId = systemsAdminClient.getUuidEntityManager().getEntityId(inventoryUuid);
                 if (inventoryId == -1) {
                     System.out.println(inventoryUuid);
                     return new int[1];
@@ -328,11 +328,11 @@ public class PlayerInventorySystem extends BaseSystem {
 
     private void deleteInventoriesToClearItemsOnClose() {
         for (UUID inventoryToClearItem : currentInventoriesToClearItemOnClose) {
-            int inventoryId = systemsAdminClient.inventoryManager.getInventoryByUUID(inventoryToClearItem);
+            int inventoryId = systemsAdminClient.getInventoryManager().getInventoryByUUID(inventoryToClearItem);
             if (inventoryId != -1) {
                 InventoryComponent inventoryComponent = mInventory.get(inventoryId);
                 for (int[] stack : inventoryComponent.inventory) {
-                    systemsAdminClient.inventoryManager.deleteStack(stack);
+                    systemsAdminClient.getInventoryManager().deleteStack(stack);
                 }
             }
         }

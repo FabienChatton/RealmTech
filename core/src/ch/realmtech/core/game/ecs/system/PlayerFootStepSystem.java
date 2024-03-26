@@ -43,9 +43,9 @@ public class PlayerFootStepSystem extends IteratingSystem {
             int worldPosX = MapManager.getWorldPos(positionComponent.x);
             int worldPosY = MapManager.getWorldPos(positionComponent.y);
 
-            int chunk = systemsAdminClient.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), systemsAdminClient.mapManager.getInfMap().infChunks);
+            int chunk = systemsAdminClient.getMapManager().getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), systemsAdminClient.getMapManager().getInfMap().infChunks);
             if (chunk == -1) return;
-            int cellId = systemsAdminClient.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+            int cellId = systemsAdminClient.getMapManager().getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
 
             CellComponent cellComponent = mCell.get(cellId);
             byte layer = cellComponent.cellRegisterEntry.getCellBehavior().getLayer();
@@ -63,7 +63,7 @@ public class PlayerFootStepSystem extends IteratingSystem {
                         return;
                     }
                     byte layer1 = --layer;
-                    int cell = systemsAdminClient.mapManager.getCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY), layer1);
+                    int cell = systemsAdminClient.getMapManager().getCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY), layer1);
                     if (cell == -1) {
                         continue;
                     }

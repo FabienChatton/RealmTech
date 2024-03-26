@@ -39,10 +39,10 @@ public class EnergyGeneratorClientSystem extends IteratingSystem implements Ener
         int iconFireId = world.create();
         EnergyGeneratorComponent energyGeneratorComponent = mEnergyGenerator.get(motherId);
 
-        systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, iconInventoryUuid, new int[1][1], 1, 1);
+        systemsAdminClient.getInventoryManager().createInventoryUiIcon(iconFireId, iconInventoryUuid, new int[1][1], 1, 1);
 
-        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.rootRegistry, FurnaceBurnIcon01Entry.class), UUID.randomUUID());
-        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
+        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.getRootRegistry(), FurnaceBurnIcon01Entry.class), UUID.randomUUID());
+        systemsAdminClient.getInventoryManager().addItemToInventory(iconFireId, iconFireItemId);
 
         mEnergyGeneratorIcon.create(motherId).set(iconFireId);
         EnergyGeneratorExtraInfoComponent energyGeneratorExtraInfoComponent = mEnergyGeneratorExtraInfo.create(motherId).set(0);
@@ -54,7 +54,7 @@ public class EnergyGeneratorClientSystem extends IteratingSystem implements Ener
         EnergyGeneratorIconComponent energyGeneratorIconComponent = mEnergyGeneratorIcon.get(entityId);
         InventoryComponent inventoryIconFireComponent = mInventory.get(energyGeneratorIconComponent.getIconFireId());
 
-        systemsAdminClient.inventoryManager.removeInventoryUi(energyGeneratorIconComponent.getIconFireId());
+        systemsAdminClient.getInventoryManager().removeInventoryUi(energyGeneratorIconComponent.getIconFireId());
         world.delete(energyGeneratorIconComponent.getIconFireId());
     }
 

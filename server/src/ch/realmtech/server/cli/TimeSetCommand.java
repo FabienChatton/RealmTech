@@ -16,14 +16,14 @@ public class TimeSetCommand implements Runnable {
     private String time;
     @Override
     public void run() {
-        TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdmin().timeSystem;
+        TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdminServer().getTimeSystem();
         ServerConnexion serverHandler = timeCommand.masterServerCommand.serverContext.getServerConnexion();
         float parseDelta;
         try {
             // set absolute time
              parseDelta = Float.parseFloat(time);
         } catch (NumberFormatException e) {
-            float actualDelta = timeCommand.masterServerCommand.serverContext.getSystemsAdmin().timeSystem.getAccumulatedDelta();
+            float actualDelta = timeCommand.masterServerCommand.serverContext.getSystemsAdminServer().getTimeSystem().getAccumulatedDelta();
             if (time.equals("day")) {
                 float maxAlpha = 0;
                 float futureDelta = actualDelta;

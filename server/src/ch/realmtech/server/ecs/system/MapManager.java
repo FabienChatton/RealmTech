@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.level.map.WorldMap;
@@ -14,7 +15,6 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -35,6 +35,8 @@ public class MapManager extends Manager {
     private FixtureDef fixtureDef;
     @Wire
     private SerializerController serializerController;
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<SaveMetadataComponent> mMetaDonnees;
     private ComponentMapper<InfChunkComponent> mChunk;
@@ -319,14 +321,14 @@ public class MapManager extends Manager {
     }
 
     public InfMapComponent getInfMap() {
-        return mInfMap.get(world.getSystem(TagManager.class).getEntityId("infMap"));
+        return mInfMap.get(systemsAdminCommun.getTagManager().getEntityId("infMap"));
     }
 
     public void supprimeChunk(int chunkId) {
         world.delete(chunkId);
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         for (int i = 0; i < infChunkComponent.infCellsId.length; i++) {
-            world.getSystem(MapManager.class).deleteCell(infChunkComponent.infCellsId[i]);
+            deleteCell(infChunkComponent.infCellsId[i]);
         }
     }
 
@@ -383,7 +385,7 @@ public class MapManager extends Manager {
     public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
         int chunkId = serializerController.getChunkSerializerController().decode(applicationChunkBytes);
         InfMapComponent infMapComponent = getInfMap();
-        infMapComponent.infChunks = world.getSystem(MapManager.class).ajouterChunkAMap(infMapComponent.infChunks, chunkId);
+        infMapComponent.infChunks = ajouterChunkAMap(infMapComponent.infChunks, chunkId);
     }
 
     public int[] supprimerChunkAMap(int[] infChunks, int chunkId) {

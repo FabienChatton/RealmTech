@@ -30,7 +30,7 @@ public class PhysicEntitySerializerV1 implements Serializer<Integer, PhysicEntit
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, physicEntityToSerialize));
 
         PositionComponent positionComponent = mPos.get(physicEntityToSerialize);
-        UUID uuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(physicEntityToSerialize);
+        UUID uuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(physicEntityToSerialize);
         byte flag;
         if (mPlayerConnexion.has(physicEntityToSerialize)) {
             flag = PLAYER_FLAG;

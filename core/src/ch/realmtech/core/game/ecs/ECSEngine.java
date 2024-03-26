@@ -13,9 +13,9 @@ import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.ClientConnexion;
 import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.*;
-import com.artemis.managers.TagManager;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -61,7 +61,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController();
-        systemAdminClient = new SystemsAdminClient(context.getRootRegistry());
+        systemAdminClient = RegistryUtils.evaluateSafe(context.getRootRegistry(), SystemsAdminClient.class);
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemAdminClient)
@@ -149,12 +149,8 @@ public final class ECSEngine implements Disposable, GetWorld {
         return world;
     }
 
-    public int getMapId() {
-        return world.getSystem(TagManager.class).getEntityId("infMap");
-    }
-
     public Entity getMapEntity() {
-        return world.getSystem(TagManager.class).getEntity("infMap");
+        return getSystemsAdminClient().getTagManager().getEntity("infMap");
     }
 
 
@@ -167,10 +163,6 @@ public final class ECSEngine implements Disposable, GetWorld {
 //            context.getSoundManager().playItemDrop();
 //        }
 //    }
-
-    public <T extends BaseSystem> T getSystem(Class<T> type) {
-        return world.getSystem(type);
-    }
 
     public InGameSystemOnInventoryOpen getSystemDisableOnPlayerInventoryOpen() {
         return systemDisableOnPlayerInventoryOpen;

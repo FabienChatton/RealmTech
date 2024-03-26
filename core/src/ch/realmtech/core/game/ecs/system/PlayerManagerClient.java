@@ -43,12 +43,12 @@ public class PlayerManagerClient extends Manager {
     public int createPlayerClient(UUID uuid) {
         logger.info("Creating player for client side: {} ", uuid);
         int playerId = world.create();
-        if (!systemsAdminClient.tagManager.isRegistered(MAIN_PLAYER_TAG)) {
-            systemsAdminClient.tagManager.register(MAIN_PLAYER_TAG, playerId);
+        if (!systemsAdminClient.getTagManager().isRegistered(MAIN_PLAYER_TAG)) {
+            systemsAdminClient.getTagManager().register(MAIN_PLAYER_TAG, playerId);
             int mapId = world.create();
             InfMapComponent infMapComponent = world.edit(mapId).create(InfMapComponent.class);
             infMapComponent.infChunks = new int[0];
-            systemsAdminClient.tagManager.register("infMap", mapId);
+            systemsAdminClient.getTagManager().register("infMap", mapId);
             world.edit(playerId).create(MainPlayerComponent.class);
         }
 
@@ -57,7 +57,7 @@ public class PlayerManagerClient extends Manager {
 
         // player connexion
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
-        systemsAdminClient.uuidEntityManager.registerEntityIdWithUuid(uuid, playerId);
+        systemsAdminClient.getUuidEntityManager().registerEntityIdWithUuid(uuid, playerId);
 
         // movement component
         PlayerMovementComponent playerMovementComponent = world.edit(playerId).create(PlayerMovementComponent.class);
@@ -152,6 +152,6 @@ public class PlayerManagerClient extends Manager {
     }
 
     public int getMainPlayer() {
-        return systemsAdminClient.tagManager.getEntityId(MAIN_PLAYER_TAG);
+        return systemsAdminClient.getTagManager().getEntityId(MAIN_PLAYER_TAG);
     }
 }

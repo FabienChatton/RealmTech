@@ -39,8 +39,8 @@ public class CellBeingMineSystem extends IteratingSystem {
         int worldPosX = MapManager.getWorldPos(gameCoordinate.x);
         int worldPosY = MapManager.getWorldPos(gameCoordinate.y);
 
-        int chunk = systemsAdminClient.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
-        int topCell = systemsAdminClient.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        int chunk = systemsAdminClient.getMapManager().getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infChunks);
+        int topCell = systemsAdminClient.getMapManager().getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         InfChunkComponent infChunkComponent = mChunk.get(chunk);
         CellComponent cellComponent = mCell.get(topCell);
 
@@ -52,7 +52,7 @@ public class CellBeingMineSystem extends IteratingSystem {
                 UUID itemUsedUuid;
                 int selectItem = systemsAdminClient.getItemBarManager().getSelectItemOrNoting();
                 if (selectItem != -1) {
-                    itemUsedUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(selectItem);
+                    itemUsedUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(selectItem);
                 } else {
                     itemUsedUuid = null;
                 }

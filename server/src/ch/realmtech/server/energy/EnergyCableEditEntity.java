@@ -22,7 +22,7 @@ public class EnergyCableEditEntity implements EditEntity {
             faceComponent.setBaseTextures("energy-cable-01");
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
             world.edit(entityId).create(EnergyTransporterComponent.class).set();
-            systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyCableSerializerController());
+            systemsAdminCommun.getCellPaddingManager().addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyCableSerializerController());
         });
     }
 

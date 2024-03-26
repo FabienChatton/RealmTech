@@ -4,8 +4,6 @@ import ch.realmtech.server.ecs.component.ChestComponent;
 import ch.realmtech.server.ecs.component.EnergyGeneratorIconComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.UuidEntityManager;
 import ch.realmtech.server.energy.EnergyGeneratorEditEntity;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
@@ -50,24 +48,25 @@ public class EnergyGeneratorCellEntry extends CellEntry {
                             window.add(energyGeneratorInventory).padBottom(10f).row();
                             window.add(playerInventory);
                         };
-
-                        int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
-                        int fireIconId = energyGeneratorIconComponent.getIconFireId();
                         SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
+
+                        int inventoryPlayerId = systemsAdminCommun.getInventoryManager().getChestInventoryId(clientContext.getPlayerId());
+                        int fireIconId = energyGeneratorIconComponent.getIconFireId();
+
                         // subscription
-                        UUID energyGeneratorUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(cellId);
+                        UUID energyGeneratorUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(cellId);
                         clientContext.sendRequest(new SubscribeToEntityPacket(energyGeneratorUuid));
 
                         // inventory get
-                        UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
-                        UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(carburantInventoryId);
+                        UUID inventoryPlayerUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryPlayerId);
+                        UUID inventoryChestUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(carburantInventoryId);
                         clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
                         clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
 
                         return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                                DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
-                                DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(carburantInventoryId), energyGeneratorInventory).build(),
-                                DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(fireIconId), iconFire).icon().build()
+                                DisplayInventoryArgs.builder(systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                                DisplayInventoryArgs.builder(systemsAdminCommun.getUuidEntityManager().getEntityUuid(carburantInventoryId), energyGeneratorInventory).build(),
+                                DisplayInventoryArgs.builder(systemsAdminCommun.getUuidEntityManager().getEntityUuid(fireIconId), iconFire).icon().build()
                         }, new UUID[]{inventoryChestUuid}, () -> {
                             clientContext.sendRequest(new UnSubscribeToEntityPacket(energyGeneratorUuid));
                         });

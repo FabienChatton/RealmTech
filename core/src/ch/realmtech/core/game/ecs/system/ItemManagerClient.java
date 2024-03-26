@@ -66,7 +66,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     public void supprimeItemOnGround(UUID itemUuid) {
-        int item = systemsAdminClient.uuidEntityManager.getEntityId(itemUuid);
+        int item = systemsAdminClient.getUuidEntityManager().getEntityId(itemUuid);
         if (item == -1) return;
         if (mItem.has(item)) {
             Box2dComponent box2dComponent = mBox2d.get(item);
@@ -76,7 +76,7 @@ public class ItemManagerClient extends ItemManager {
     }
 
     public void setItemOnGroundPos(UUID uuid, int itemRegisterEntryHash, float worldPosX, float worldPosY) {
-        int itemId = systemsAdminClient.uuidEntityManager.getEntityId(uuid);
+        int itemId = systemsAdminClient.getUuidEntityManager().getEntityId(uuid);
         if (itemId == -1) {
             Optional<ItemEntry> itemEntry = RegistryUtils.findEntry(context.getRootRegistry(), itemRegisterEntryHash);
             if (itemEntry.isPresent()) {

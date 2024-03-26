@@ -1,9 +1,6 @@
 package ch.realmtech.core.game.netty;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.core.game.ecs.system.ItemManagerClient;
-import ch.realmtech.core.game.ecs.system.PlayerInventorySystem;
-import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
@@ -11,7 +8,6 @@ import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.ClientPacket;
@@ -49,7 +45,7 @@ public class ClientExecuteContext implements ClientExecute {
     public void connexionJoueurReussit(ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg) {
         Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
         context.nextFrame(() -> {
-            int playerId = context.getEcsEngine().getSystem(PlayerManagerClient.class).createPlayerClient(connexionJoueurReussitArg.playerUuid());
+            int playerId = context.getSystemsAdminClient().getPlayerManagerClient().createPlayerClient(connexionJoueurReussitArg.playerUuid());
             context.getSystemsAdminClient().getPlayerManagerClient().playerInRange(connexionJoueurReussitArg.x(), connexionJoueurReussitArg.y(), connexionJoueurReussitArg.playerUuid());
             PlayerConnexionComponent playerConnexionComponent = context.getEcsEngine().getWorld().getMapper(PlayerConnexionComponent.class).get(playerId);
 
@@ -57,34 +53,34 @@ public class ClientExecuteContext implements ClientExecute {
             Function<ItemManager, InventoryArgs> inventoryGet = context.getSerializerController().getInventorySerializerManager().decode(connexionJoueurReussitArg.applicationInventoryBytes());
             // inventory chest
             InventoryArgs inventoryArgs = inventoryGet.apply(context.getWorld().getRegistered("itemManager"));
-            context.getSystem(InventoryManager.class).createChest(playerId, inventoryArgs.inventory(), connexionJoueurReussitArg.inventoryUuid(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
+            context.getSystemsAdminClient().getInventoryManager().createChest(playerId, inventoryArgs.inventory(), connexionJoueurReussitArg.inventoryUuid(), inventoryArgs.numberOfSlotParRow(), inventoryArgs.numberOfRow());
             // crafting table
-            context.getSystem(InventoryManager.class).createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
+            context.getSystemsAdminClient().getInventoryManager().createCraftingTable(playerId, connexionJoueurReussitArg.inventoryCraftUuid(), 2, 2, connexionJoueurReussitArg.inventoryCraftResultUuid());
             // inventory cursor
-            context.getSystem(InventoryManager.class).createCursorInventory(playerId, connexionJoueurReussitArg.inventoryCursorUuid(), 1, 1);
+            context.getSystemsAdminClient().getInventoryManager().createCursorInventory(playerId, connexionJoueurReussitArg.inventoryCursorUuid(), 1, 1);
 
-            context.getSystem(PlayerInventorySystem.class).createClickAndDrop(playerId);
+            context.getSystemsAdminClient().getPlayerInventorySystem().createClickAndDrop(playerId);
         });
     }
 
     @Override
     public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
-        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkAMounter(applicationChunkBytes));
+        context.nextFrame(() -> context.getSystemsAdminClient().getMapManager().chunkAMounter(applicationChunkBytes));
     }
 
     @Override
     public void chunkADamner(int chunkPosX, int chunkPosY) {
-        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).damneChunkClient(chunkPosX, chunkPosY));
+        context.nextFrame(() -> context.getSystemsAdminClient().getMapManager().damneChunkClient(chunkPosX, chunkPosY));
     }
 
     @Override
     public void chunkARemplacer(int chunkPosX, int chunkPosY, SerializedApplicationBytes chunkApplicationBytes, int oldChunkPosX, int oldChunkPosY) {
-        context.nextFrame(() -> context.getEcsEngine().getSystem(MapManager.class).chunkARemplacer(chunkPosX, chunkPosY, chunkApplicationBytes, oldChunkPosX, oldChunkPosY));
+        context.nextFrame(() -> context.getSystemsAdminClient().getMapManager().chunkARemplacer(chunkPosX, chunkPosY, chunkApplicationBytes, oldChunkPosX, oldChunkPosY));
     }
 
     @Override
     public void deconnectionJoueur(UUID uuid) {
-        context.nextFrame(() -> context.getEcsEngine().getSystem(PlayerManagerClient.class).removePlayer(uuid));
+        context.nextFrame(() -> context.getSystemsAdminClient().getPlayerManagerClient().removePlayer(uuid));
     }
 
     @Override
@@ -108,9 +104,9 @@ public class ClientExecuteContext implements ClientExecute {
             int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
             int chunkPosX = MapManager.getChunkPos(worldPosX);
             int chunkPosY = MapManager.getChunkPos(worldPosY);
-            int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
-            int cellId = context.getSystem(MapManager.class).getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
-            context.getSystem(MapManager.class).damneCell(chunkId, cellId);
+            int chunkId = context.getSystemsAdminClient().getMapManager().getChunk(chunkPosX, chunkPosY, infChunks);
+            int cellId = context.getSystemsAdminClient().getMapManager().getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+            context.getSystemsAdminClient().getMapManager().damneCell(chunkId, cellId);
         });
     }
 
@@ -121,8 +117,8 @@ public class ClientExecuteContext implements ClientExecute {
             CellArgs cellArgs = context.getSerializerController().getCellSerializerController().decode(cellApplicationBytes);
             int chunkPosX = MapManager.getChunkPos(worldPosX);
             int chunkPosY = MapManager.getChunkPos(worldPosY);
-            int chunkId = context.getSystem(MapManager.class).getChunk(chunkPosX, chunkPosY, infChunks);
-            context.getSystem(MapManager.class).newCellInChunk(chunkId, cellArgs);
+            int chunkId = context.getSystemsAdminClient().getMapManager().getChunk(chunkPosX, chunkPosY, infChunks);
+            context.getSystemsAdminClient().getMapManager().newCellInChunk(chunkId, cellArgs);
         });
     }
 
@@ -130,7 +126,7 @@ public class ClientExecuteContext implements ClientExecute {
     public void cellSet(int worldPosX, int worldPosY, byte layer, SerializedApplicationBytes cellApplicationBytes) {
         context.nextFrame(() -> {
             CellArgs cellArgs = context.getSerializerController().getCellSerializerController().decode(cellApplicationBytes);
-            context.getSystemsAdminClient().mapManager.setCell(worldPosX, worldPosY, layer, cellArgs);
+            context.getSystemsAdminClient().getMapManager().setCell(worldPosX, worldPosY, layer, cellArgs);
         });
     }
 
@@ -152,11 +148,11 @@ public class ClientExecuteContext implements ClientExecute {
         context.nextFrame(() -> {
             World world = context.getEcsEngine().getWorld();
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
-            int inventoryId = context.getSystem(InventoryManager.class).getInventoryByUUID(inventoryUUID);
+            int inventoryId = context.getSystemsAdminClient().getInventoryManager().getInventoryByUUID(inventoryUUID);
             if (inventoryId == -1) return;
             int[][] inventory = mInventory.get(inventoryId).inventory;
-            context.getSystem(InventoryManager.class).removeInventory(inventory);
-            InventoryArgs inventoryArgs = context.getSerializerController().getInventorySerializerManager().decode(applicationInventoryBytes).apply(context.getSystem(ItemManagerClient.class));
+            context.getSystemsAdminClient().getInventoryManager().removeInventory(inventory);
+            InventoryArgs inventoryArgs = context.getSerializerController().getInventorySerializerManager().decode(applicationInventoryBytes).apply(context.getSystemsAdminClient().getItemManagerClient());
             int[][] newInventory = inventoryArgs.inventory();
             for (int i = 0; i < inventory.length; i++) {
                 System.arraycopy(newInventory[i], 0, inventory[i], 0, newInventory[i].length);
@@ -166,12 +162,12 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void setItemOnGroundPos(UUID uuid, int itemRegisterEntryHash, float worldPosX, float worldPosY) {
-        context.nextFrame(() -> context.getSystem(ItemManagerClient.class).setItemOnGroundPos(uuid, itemRegisterEntryHash, worldPosX, worldPosY));
+        context.nextFrame(() -> context.getSystemsAdminClient().getItemManagerClient().setItemOnGroundPos(uuid, itemRegisterEntryHash, worldPosX, worldPosY));
     }
 
     @Override
     public void supprimeItemOnGround(UUID itemUuid) {
-        context.nextFrame(() -> context.getSystem(ItemManagerClient.class).supprimeItemOnGround(itemUuid));
+        context.nextFrame(() -> context.getSystemsAdminClient().getItemManagerClient().supprimeItemOnGround(itemUuid));
     }
 
     @Override
@@ -208,11 +204,11 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid) {
         context.nextFrame(() -> {
-            int playerId = context.getEcsEngine().getSystemsAdminClient().uuidEntityManager.getEntityId(playerUuid);
+            int playerId = context.getEcsEngine().getSystemsAdminClient().getUuidEntityManager().getEntityId(playerUuid);
             if (playerId == -1) return;
             setPlayerConsumer.accept(playerId);
             PositionComponent positionComponent = context.getEcsEngine().getWorld().getMapper(PositionComponent.class).get(playerId);
-            context.getEcsEngine().getSystem(PlayerManagerClient.class).setPlayerPos(positionComponent.x, positionComponent.y, playerUuid);
+            context.getSystemsAdminClient().getPlayerManagerClient().setPlayerPos(positionComponent.x, positionComponent.y, playerUuid);
         });
     }
 
@@ -240,7 +236,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void energyBatterySetEnergy(UUID energyBatteryUuid, long stored) {
         context.nextFrame(() -> {
-            int energyBatteryId = context.getSystemsAdminClient().uuidEntityManager.getEntityId(energyBatteryUuid);
+            int energyBatteryId = context.getSystemsAdminClient().getUuidEntityManager().getEntityId(energyBatteryUuid);
             context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergy(energyBatteryId, stored);
         });
     }
@@ -248,7 +244,7 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void energyGeneratorSetInfo(UUID energyGeneratorUuid, int remainingTickToBurn, int lastRemainingTickToBurn) {
         context.nextFrame(() -> {
-            int energyGeneratorId = context.getSystemsAdminClient().uuidEntityManager.getEntityId(energyGeneratorUuid);
+            int energyGeneratorId = context.getSystemsAdminClient().getUuidEntityManager().getEntityId(energyGeneratorUuid);
             context.getSystemsAdminClient().getEnergyBatteryIconSystem().setEnergyGeneratorInfo(energyGeneratorId, remainingTickToBurn, lastRemainingTickToBurn);
         });
     }
@@ -263,8 +259,8 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void mobDelete(UUID mobUuid) {
         context.nextFrame(() -> {
-            int mobId = context.getSystemsAdminClient().uuidEntityManager.getEntityId(mobUuid);
-            context.getSystemsAdminClient().mobManager.destroyMob(mobId);
+            int mobId = context.getSystemsAdminClient().getUuidEntityManager().getEntityId(mobUuid);
+            context.getSystemsAdminClient().getMobManager().destroyMob(mobId);
         });
     }
 }

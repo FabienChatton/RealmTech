@@ -4,6 +4,7 @@ package ch.realmtech.core.game.console;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.cli.CommunMasterCommand;
 import ch.realmtech.server.ecs.Context;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.registry.Registry;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.World;
@@ -48,5 +49,10 @@ public class MasterClientCommand extends CommunMasterCommand implements Callable
     @Override
     public Context getContext() {
         return context;
+    }
+
+    @Override
+    public SystemsAdminCommun getSystemAdmin() {
+        return context.getSystemsAdminClient();
     }
 }

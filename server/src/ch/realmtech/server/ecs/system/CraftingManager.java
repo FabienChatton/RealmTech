@@ -17,7 +17,7 @@ public class CraftingManager extends Manager {
     private SystemsAdminCommun systemsAdminCommun;
 
     public Optional<CraftResult> getNewCraftResult(CraftingTableComponent craftingTableComponent) {
-        return getNewCraftResult(craftingTableComponent.getCraftRecipes(), systemsAdminCommun.inventoryManager.mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
+        return getNewCraftResult(craftingTableComponent.getCraftRecipes(), systemsAdminCommun.getInventoryManager().mapInventoryToItemRegistry(craftingTableComponent.craftingInventory));
     }
 
     public Optional<CraftResult> getNewCraftResult(List<? extends CraftRecipeEntry> craftEntries, List<List<ItemEntry>> items) {

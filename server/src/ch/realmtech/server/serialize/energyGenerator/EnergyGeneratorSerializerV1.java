@@ -26,7 +26,7 @@ public class EnergyGeneratorSerializerV1 implements Serializer<Integer, EnergyGe
         EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyGeneratorToSerialize);
         EnergyGeneratorComponent energyGeneratorComponent = mEnergyGenerator.get(energyGeneratorToSerialize);
         SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-        UUID energyGeneratorUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(energyGeneratorToSerialize);
+        UUID energyGeneratorUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(energyGeneratorToSerialize);
 
         ByteBufferHelper.writeUUID(buffer, energyGeneratorUuid);
         buffer.writeInt(energyGeneratorComponent.getRemainingTickToBurn());

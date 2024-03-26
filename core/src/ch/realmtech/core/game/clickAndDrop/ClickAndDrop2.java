@@ -35,9 +35,9 @@ public class ClickAndDrop2 {
         this.context = context;
         this.playerId = playerId;
         this.systemsAdminClient = systemsAdminClient;
-        int cursorInventoryId = world.getSystem(InventoryManager.class).getCursorInventoryId(playerId);
+        int cursorInventoryId = context.getSystemsAdminClient().getInventoryManager().getCursorInventoryId(playerId);
         InventoryComponent inventoryCursorComponent = world.getMapper(InventoryComponent.class).get(cursorInventoryId);
-        UUID cursorInventoryUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(cursorInventoryId);
+        UUID cursorInventoryUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(cursorInventoryId);
         clickAndDropActor = new ClickAndDropActor(context, cursorInventoryUuid, () -> inventoryCursorComponent.inventory[0], null, null) {
             @Override
             public void act(float delta) {
@@ -111,8 +111,8 @@ public class ClickAndDrop2 {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (event.isStopped()) return false;
                 if (clickAndDropActorDst.getDstRequirePredicate() != null) {
-                    InventoryComponent cursorItem = world.getSystem(InventoryManager.class).getCursorInventory(playerId);
-                    ItemComponent cursorTopItem = mItem.get(world.getSystem(InventoryManager.class).getTopItem(cursorItem.inventory[0]));
+                    InventoryComponent cursorItem = context.getSystemsAdminClient().getInventoryManager().getCursorInventory(playerId);
+                    ItemComponent cursorTopItem = mItem.get(context.getSystemsAdminClient().getInventoryManager().getTopItem(cursorItem.inventory[0]));
                     // stop if clickAndDropActorDst is not true
                     if (!clickAndDropActorDst.getDstRequirePredicate().test(ClickAndDrop2.this.systemsAdminClient, cursorTopItem.itemRegisterEntry)) {
                         return false;
@@ -153,8 +153,8 @@ public class ClickAndDrop2 {
         ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
         ComponentMapper<ItemComponent> mItem = world.getMapper(ItemComponent.class);
 
-        int srcInventoryId = systemsAdminClient.uuidEntityManager.getEntityId(srcActor.getInventoryUuid());
-        int dstInventoryId = systemsAdminClient.uuidEntityManager.getEntityId(dstActor.getInventoryUuid());
+        int srcInventoryId = systemsAdminClient.getUuidEntityManager().getEntityId(srcActor.getInventoryUuid());
+        int dstInventoryId = systemsAdminClient.getUuidEntityManager().getEntityId(dstActor.getInventoryUuid());
         UUID[] srcItemsUuid = new UUID[number];
 
         if (srcInventoryId == -1) {
@@ -170,7 +170,7 @@ public class ClickAndDrop2 {
         InventoryComponent dstInventoryComponent = mInventory.get(dstInventoryId);
 
         for (int i = 0; i < srcItemsUuid.length; i++) {
-            srcItemsUuid[i] = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(srcActor.getStack()[i]);
+            srcItemsUuid[i] = context.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(srcActor.getStack()[i]);
         }
         int dstIndex = -1;
         for (int i = 0; i < dstInventoryComponent.inventory.length; i++) {
@@ -179,8 +179,8 @@ public class ClickAndDrop2 {
             }
         }
 
-        UUID srcInventoryUuid = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(srcInventoryId);
-        UUID dstInventoryUuid = context.getSystemsAdminClient().uuidEntityManager.getEntityUuid(dstInventoryId);
+        UUID srcInventoryUuid = context.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(srcInventoryId);
+        UUID dstInventoryUuid = context.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(dstInventoryId);
 
         context.getClientConnexion().sendAndFlushPacketToServer(
                 new MoveStackToStackPacket(srcInventoryUuid, dstInventoryUuid, srcItemsUuid, dstIndex)

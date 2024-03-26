@@ -65,11 +65,11 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
     }
 
     public void setIcon(int iconInventoryId, String prefixTextureName, int ref, int max) {
-        int iconProcessId = systemsAdminClient.inventoryManager.getTopItem(mInventory.get(iconInventoryId).inventory[0]);
+        int iconProcessId = systemsAdminClient.getInventoryManager().getTopItem(mInventory.get(iconInventoryId).inventory[0]);
         ItemComponent iconProcessItemComponent = mItem.get(iconProcessId);
         String iconProcessTextureName = formatPourDix(ref, max, prefixTextureName);
 
-        Optional<IconEntry> iconProcessTo = RegistryUtils.flatEntry(systemsAdminClient.rootRegistry, IconEntry.class)
+        Optional<IconEntry> iconProcessTo = RegistryUtils.flatEntry(systemsAdminClient.getRootRegistry(), IconEntry.class)
                 .stream().filter((icon) -> icon.getTextureRegionName().equals(iconProcessTextureName))
                 .findFirst();
         if (iconProcessTo.isPresent()) {
@@ -93,14 +93,14 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
         int iconFireId = world.create();
         int iconProcessId = world.create();
 
-        systemsAdminClient.inventoryManager.createInventoryUiIcon(iconFireId, UUID.randomUUID(), new int[1][1], 1, 1);
-        systemsAdminClient.inventoryManager.createInventoryUiIcon(iconProcessId, UUID.randomUUID(), new int[1][1], 1, 1);
+        systemsAdminClient.getInventoryManager().createInventoryUiIcon(iconFireId, UUID.randomUUID(), new int[1][1], 1, 1);
+        systemsAdminClient.getInventoryManager().createInventoryUiIcon(iconProcessId, UUID.randomUUID(), new int[1][1], 1, 1);
 
-        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.rootRegistry, FurnaceBurnIcon01Entry.class), UUID.randomUUID());
-        int iconProcessItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.rootRegistry, ArrowIcon01Entry.class), UUID.randomUUID());
+        int iconFireItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.getRootRegistry(), FurnaceBurnIcon01Entry.class), UUID.randomUUID());
+        int iconProcessItemId = systemsAdminClient.getItemManagerClient().newItemInventory(RegistryUtils.findEntryOrThrow(systemsAdminClient.getRootRegistry(), ArrowIcon01Entry.class), UUID.randomUUID());
 
-        systemsAdminClient.inventoryManager.addItemToInventory(iconFireId, iconFireItemId);
-        systemsAdminClient.inventoryManager.addItemToInventory(iconProcessId, iconProcessItemId);
+        systemsAdminClient.getInventoryManager().addItemToInventory(iconFireId, iconFireItemId);
+        systemsAdminClient.getInventoryManager().addItemToInventory(iconProcessId, iconProcessItemId);
         world.edit(motherEntity).create(FurnaceIconsComponent.class).set(iconFireId, iconProcessId);
         world.edit(motherEntity).create(FurnaceExtraInfoComponent.class);
     }
@@ -108,15 +108,15 @@ public class FurnaceIconSystem extends IteratingSystem implements FurnaceIconSys
     @Override
     public void deleteIconFurnace(int entityId) {
         FurnaceIconsComponent furnaceIconsComponent = mFurnaceIcons.get(entityId);
-        systemsAdminClient.inventoryManager.removeInventory(mInventory.get(furnaceIconsComponent.getIconFire()).inventory);
-        systemsAdminClient.inventoryManager.removeInventory(mInventory.get(furnaceIconsComponent.getIconProcess()).inventory);
+        systemsAdminClient.getInventoryManager().removeInventory(mInventory.get(furnaceIconsComponent.getIconFire()).inventory);
+        systemsAdminClient.getInventoryManager().removeInventory(mInventory.get(furnaceIconsComponent.getIconProcess()).inventory);
         if (mLight.has(entityId)) {
             systemsAdminClient.getLightManager().disposeLight(entityId);
         }
     }
 
     public void setFurnaceExtraInfo(UUID furnaceUuid, int lastRemainingTickToBurnFull, int lastTickProcessFull) {
-        int furnaceId = systemsAdminClient.uuidEntityManager.getEntityId(furnaceUuid);
+        int furnaceId = systemsAdminClient.getUuidEntityManager().getEntityId(furnaceUuid);
         FurnaceComponent furnaceComponent = mFurnace.get(furnaceId);
         FurnaceExtraInfoComponent furnaceExtraInfoComponent = mFurnaceExtraInfo.get(furnaceId);
         if (lastRemainingTickToBurnFull != -1) {

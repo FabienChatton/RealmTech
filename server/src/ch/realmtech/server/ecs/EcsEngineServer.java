@@ -2,17 +2,16 @@ package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ecs.system.SaveInfManager;
 import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.netty.ServerHandler;
 import ch.realmtech.server.packet.clientPacket.TickBeatPacket;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -44,7 +43,7 @@ public final class EcsEngineServer implements GetWorld {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         serializerController = new SerializerController();
-        systemsAdminServer = new SystemsAdminServer(serverContext.getRootRegistry());
+        systemsAdminServer = RegistryUtils.evaluateSafe(serverContext.getRootRegistry(), SystemsAdminServer.class);
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
                 .dependsOn(RealmTechCorePlugin.class)
                 .with(systemsAdminServer)
@@ -55,7 +54,7 @@ public final class EcsEngineServer implements GetWorld {
         worldConfiguration.register(bodyDef);
         worldConfiguration.register(fixtureDef);
         worldConfiguration.register(systemsAdminServer);
-        worldConfiguration.register("itemManager", systemsAdminServer.itemManagerServer);
+        worldConfiguration.register("itemManager", systemsAdminServer.getItemManagerServer());
         worldConfiguration.register("systemsAdmin", systemsAdminServer);
         worldConfiguration.register(serializerController);
         worldConfiguration.register("executeOnContext", serverContext.getExecuteOnContextServer());
@@ -103,16 +102,16 @@ public final class EcsEngineServer implements GetWorld {
 
     public void prepareSaveToLoad(ConnexionConfig connexionConfig) throws IOException {
         logger.info("Loading map \"{}\"", connexionConfig.getSaveName());
-        int mapId = world.getSystem(SaveInfManager.class).generateOrLoadSave(connexionConfig);
-        world.getSystem(TagManager.class).register("infMap", mapId);
-        systemsAdminServer.mapSystemServer.initMap();
+        int mapId = systemsAdminServer.getSaveInfManager().generateOrLoadSave(connexionConfig);
+        systemsAdminServer.getTagManager().register("infMap", mapId);
+        systemsAdminServer.getMapSystemServer().initMap();
         serverContext.save();
         logger.info("Map \"{}\" has successfully load", connexionConfig.getSaveName());
     }
 
     public void saveMap() throws IOException {
-        int infMap = world.getSystem(TagManager.class).getEntityId("infMap");
-        world.getSystem(SaveInfManager.class).saveInfMap(infMap);
+        int infMap = systemsAdminServer.getTagManager().getEntityId("infMap");
+        systemsAdminServer.getSaveInfManager().saveInfMap(infMap);
         logger.info("Map saved");
     }
 
@@ -143,7 +142,7 @@ public final class EcsEngineServer implements GetWorld {
     }
 
     public Entity getMapEntity() {
-        return world.getSystem(TagManager.class).getEntity("infMap");
+        return systemsAdminServer.getTagManager().getEntity("infMap");
     }
 
     public SystemsAdminServer getSystemsAdminServer() {

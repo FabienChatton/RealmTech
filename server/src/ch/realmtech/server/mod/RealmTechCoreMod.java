@@ -1,6 +1,7 @@
 package ch.realmtech.server.mod;
 
 import ch.realmtech.server.ecs.Context;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.cells.*;
 import ch.realmtech.server.mod.crafts.craftingtable.*;
 import ch.realmtech.server.mod.crafts.furnace.CopperIngotCraftEntry;
@@ -27,6 +28,14 @@ public class RealmTechCoreMod implements ModInitializer {
 
     @Override
     public void initializeModRegistry(Registry<?> modRegistry, Context context) {
+        // systems admin
+        Registry<Entry> systemsAdminsRegistry = Registry.createRegistry(modRegistry, "systemsAdmins", "systems");
+        Entry defaultSystemAdminClientEntry = context.getDefaultSystemAdminClientEntry();
+        if (defaultSystemAdminClientEntry != null) {
+            systemsAdminsRegistry.addEntry(defaultSystemAdminClientEntry);
+        }
+        systemsAdminsRegistry.addEntry(new SystemsAdminServer());
+
         // cells
         Registry<CellEntry> cellsRegistry = Registry.createRegistry(modRegistry, "cells");
         cellsRegistry.addEntry(new ChestCellEntry());

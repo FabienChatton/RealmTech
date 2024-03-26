@@ -2,8 +2,8 @@ package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
-import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.registry.CraftRecipeEntry;
 import ch.realmtech.server.registry.ItemEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -37,7 +37,7 @@ public class FurnaceEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> world.getSystem(InventoryManager.class).createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory));
+        executeOnContext.onCommun((world) -> ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory));
         executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
     }
 

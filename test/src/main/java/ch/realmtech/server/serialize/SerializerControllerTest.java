@@ -34,12 +34,12 @@ class SerializerControllerTest {
     @Test
     @Disabled
     void serializeInventory() {
-        InventoryManager inventoryManager = serverContext.getSystem(InventoryManager.class);
+        InventoryManager inventoryManager = serverContext.getSystemsAdminServer().getInventoryManager();
         ComponentMapper<ItemComponent> mItem = serverContext.getEcsEngineServer().getWorld().getMapper(ItemComponent.class);
         ComponentMapper<ChestComponent> mChest = serverContext.getEcsEngineServer().getWorld().getMapper(ChestComponent.class);
         ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
         int expectedChestId = serverContext.getEcsEngineServer().getWorld().create();
-        int expectedInventoryId = serverContext.getEcsEngineServer().getSystemsAdminServer().inventoryManager.createChest(expectedChestId, UUID.randomUUID(), 3, 9);
+        int expectedInventoryId = serverContext.getEcsEngineServer().getSystemsAdminServer().getInventoryManager().createChest(expectedChestId, UUID.randomUUID(), 3, 9);
         InventoryComponent expectedChestInventory = inventoryManager.getChestInventory(expectedChestId);
         for (int i = 0; i < 100; i++) {
             // int newItemId = serverContext.getSystem(ItemManagerServer.class).newItemInventory(RealmTechCoreMod.PIOCHE_BOIS_ITEM, UUID.randomUUID());
@@ -50,8 +50,8 @@ class SerializerControllerTest {
 
         int chestMother = serverContext.getEcsEngineServer().getWorld().create();
         ChestEditEntity chestEditEntityArg = serializerController.getChestSerializerController().decode(serializedApplicationBytes);
-        serverContext.getEcsEngineServer().getWorld().getSystem(InventoryManager.class).createChest(chestMother, chestEditEntityArg.getInventory(), chestEditEntityArg.getUuid(), chestEditEntityArg.getNumberOfSlotParRow(), chestEditEntityArg.getNumberOfRow());
-        int chestInventoryId = serverContext.getSystem(InventoryManager.class).getChestInventoryId(chestMother);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(chestMother, chestEditEntityArg.getInventory(), chestEditEntityArg.getUuid(), chestEditEntityArg.getNumberOfSlotParRow(), chestEditEntityArg.getNumberOfRow());
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(chestMother);
         InventoryComponent actualChestInventory = mInventory.get(chestInventoryId);
 
         assertEquals(expectedChestInventory.numberOfRow, actualChestInventory.numberOfRow);
@@ -66,15 +66,15 @@ class SerializerControllerTest {
                     ItemComponent actualItemComponent = mItem.get(actualItemId);
                     assertSame(expectedItemComponent.itemRegisterEntry, actualItemComponent.itemRegisterEntry);
 
-                    UUID expectedUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(expectedItemId);
-                    UUID actualUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(actualItemId);
+                    UUID expectedUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().getUuidEntityManager().getEntityUuid(expectedItemId);
+                    UUID actualUuidComponent = serverContext.getEcsEngineServer().getSystemsAdminServer().getUuidEntityManager().getEntityUuid(actualItemId);
                     assertEquals(expectedUuidComponent, actualUuidComponent);
                 }
             }
         }
 
-        UUID expectedUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(expectedInventoryId);
-        UUID actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().uuidEntityManager.getEntityUuid(chestInventoryId);
+        UUID expectedUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().getUuidEntityManager().getEntityUuid(expectedInventoryId);
+        UUID actualUuid = serverContext.getEcsEngineServer().getSystemsAdminServer().getUuidEntityManager().getEntityUuid(chestInventoryId);
 
         assertEquals(expectedUuid, actualUuid);
     }
@@ -84,7 +84,7 @@ class SerializerControllerTest {
         ComponentMapper<InfChunkComponent> mChunk = serverContext.getEcsEngineServer().getWorld().getMapper(InfChunkComponent.class);
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
         SaveMetadataComponent metaDonnesComponent = infMapComponent.getMetaDonnesComponent(serverContext.getEcsEngineServer().getWorld());
-        int chunkId = serverContext.getEcsEngineServer().getSystemsAdminServer().mapManager.generateNewChunk(metaDonnesComponent, 0, 0);
+        int chunkId = serverContext.getEcsEngineServer().getSystemsAdminServer().getMapManager().generateNewChunk(metaDonnesComponent, 0, 0);
         InfChunkComponent expectedInfChunkComponent = mChunk.get(chunkId);
 
         SerializedApplicationBytes expectedChunkEncoded = serializerController.getChunkSerializerController().encode(expectedInfChunkComponent);

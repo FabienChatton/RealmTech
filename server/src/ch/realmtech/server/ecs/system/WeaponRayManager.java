@@ -60,8 +60,8 @@ public class WeaponRayManager extends Manager {
     public UUID playerWeaponShot(int playerId, Vector2 vectorEnd) {
         int mobHit = getMobHit(playerId, vectorEnd);
         if (mobHit != -1) {
-            UUID mobUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(mobHit);
-            systemsAdminServer.mobManager.destroyMob(mobHit);
+            UUID mobUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobHit);
+            systemsAdminServer.getMobManager().destroyMob(mobHit);
             return mobUuid;
         } else {
             return null;

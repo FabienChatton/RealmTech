@@ -67,14 +67,14 @@ public class IaSystemServer extends BaseSystem {
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
         world.edit(iaTestId).create(Box2dComponent.class).set(1, 1, bodyIaTest);
         PositionComponent positionComponent = world.edit(iaTestId).create(PositionComponent.class);
-        serverContext.getSystemsAdmin().uuidEntityManager.registerEntityIdWithUuid(UUID.randomUUID(), iaTestId);
+        serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), iaTestId);
         positionComponent.set(x, y);
         return iaTestId;
     }
 
     private void naturalSpawnIa() {
         IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(IaComponent.class)).getEntities();
-        IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
+        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
 
         if (iaEntities.isEmpty()) {
             for (int i = 0; i < players.size(); i++) {

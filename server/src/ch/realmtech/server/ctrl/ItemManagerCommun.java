@@ -35,7 +35,7 @@ public class ItemManagerCommun {
         itemId = world.create(defaultItemGroundArchetype);
         mItem.get(itemId).set(itemRegisterEntry);
         SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-        systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(itemUuid, itemId);
+        systemsAdminCommun.getUuidEntityManager().registerEntityIdWithUuid(itemUuid, itemId);
         return itemId;
     }
 

@@ -9,7 +9,6 @@ import ch.realmtech.server.ecs.EcsEngineServer;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ecs.system.PlayerManagerServer;
 import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.mod.ModLoader;
 import ch.realmtech.server.mod.options.OptionLoader;
@@ -19,11 +18,11 @@ import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.*;
+import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.Registry;
 import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.tick.TickThread;
-import com.artemis.BaseSystem;
 import com.badlogic.gdx.utils.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,7 +211,7 @@ public class ServerContext implements Closeable, Context {
         logger.info("Saving map...");
         optionLoader.saveServerOptions();
         ecsEngineServer.saveMap();
-        getSystem(PlayerManagerServer.class).savePlayers();
+        getSystemsAdminServer().getPlayerManagerServer().savePlayers();
     }
 
     public ServerNetty getServerNetty() {
@@ -227,11 +226,7 @@ public class ServerContext implements Closeable, Context {
         return serverConnexion;
     }
 
-    public <T extends BaseSystem> T getSystem(Class<T> systemClass) {
-        return ecsEngineServer.getWorld().getSystem(systemClass);
-    }
-
-    public SystemsAdminServer getSystemsAdmin() {
+    public SystemsAdminServer getSystemsAdminServer() {
         return ecsEngineServer.getSystemsAdminServer();
     }
     public CommandeServerExecute getCommandeExecute() {
@@ -273,5 +268,10 @@ public class ServerContext implements Closeable, Context {
     @Override
     public ExecuteOnContext getExecuteOnContext() {
         return executeOnContextServer;
+    }
+
+    @Override
+    public Entry getDefaultSystemAdminClientEntry() {
+        return null;
     }
 }

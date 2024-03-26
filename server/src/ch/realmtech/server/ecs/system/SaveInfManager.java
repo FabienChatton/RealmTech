@@ -11,7 +11,6 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
-import com.artemis.managers.TagManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,7 +207,7 @@ public class SaveInfManager extends Manager {
     }
 
     public String getSaveName() {
-        int infMap = world.getSystem(TagManager.class).getEntityId("infMap");
+        int infMap = systemsAdminCommun.getTagManager().getEntityId("infMap");
         InfMapComponent infMapComponent = mInfMap.get(infMap);
         SaveMetadataComponent metaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
         return metaDonnesComponent.saveName;

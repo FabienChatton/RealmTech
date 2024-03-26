@@ -32,7 +32,7 @@ public class DumpInventoryCommand implements Callable<Integer> {
         for (int i = 0; i < inventoryEntities.size(); i++) {
             int inventoryId = inventoryData[i];
             InventoryComponent inventoryComponent = mInventory.get(inventoryId);
-            UUID entityUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryId);
+            UUID entityUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryId);
             dumpCommand.printlnVerbose(1, String.format("%s, %s", entityUuid, inventoryComponent));
             StringBuilder stringBuilder = new StringBuilder();
             for (int s = 0; s < inventoryComponent.inventory.length; s++) {

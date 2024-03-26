@@ -5,8 +5,6 @@ import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemResultCraftComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.ItemManagerServer;
 import ch.realmtech.server.item.ItemResultCraftPickEvent;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import com.artemis.ComponentMapper;
@@ -28,22 +26,22 @@ public final class OnNewCraftAvailable {
                     InventoryComponent resultInventoryComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
                     if (craftResultOpt.isEmpty()) {
                         // remove result inventory because no craft is available
-                        systemsAdminServer.inventoryManager.removeInventory(resultInventoryComponent.inventory);
+                        systemsAdminServer.getInventoryManager().removeInventory(resultInventoryComponent.inventory);
                     } else {
                         CraftResult craftResult = craftResultOpt.get();
                         // add result item to result inventory
                         for (int i = 0; i < craftResult.getResultNumber(); i++) {
-                            int nouvelItemResult = world.getSystem(ItemManagerServer.class).newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
+                            int nouvelItemResult = systemsAdminServer.getItemManagerServer().newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
                             world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(craftingTableComponent.craftingInventory));
-                            world.getSystem(InventoryManager.class).addItemToStack(resultInventoryComponent.inventory[0], nouvelItemResult);
+                            systemsAdminServer.getInventoryManager().addItemToStack(resultInventoryComponent.inventory[0], nouvelItemResult);
                         }
                     }
                     ServerContext serverContext = world.getRegistered("serverContext");
-                    UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
+                    UUID craftingResultUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(craftingTableComponent.craftingResultInventory);
 
                     serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                             new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))),
-                            systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingInventory)
+                            systemsAdminServer.getUuidEntityManager().getEntityUuid(craftingTableComponent.craftingInventory)
                     );
                 };
             };
@@ -55,22 +53,22 @@ public final class OnNewCraftAvailable {
             SystemsAdminServer systemsAdminServer = world.getRegistered(SystemsAdminServer.class);
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
 
-            systemsAdminServer.inventoryManager.deleteOneItem(systemsAdminServer.inventoryManager.mInventory.get(craftingTableComponent.craftingInventory).inventory[0]);
+            systemsAdminServer.getInventoryManager().deleteOneItem(systemsAdminServer.getInventoryManager().mInventory.get(craftingTableComponent.craftingInventory).inventory[0]);
             for (int i = 0; i < craftResult.getResultNumber(); i++) {
-                int craftResultItemId = systemsAdminServer.itemManagerServer.newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
-                systemsAdminServer.inventoryManager.addItemToInventory(craftingTableComponent.craftingResultInventory, craftResultItemId);
+                int craftResultItemId = systemsAdminServer.getItemManagerServer().newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
+                systemsAdminServer.getInventoryManager().addItemToInventory(craftingTableComponent.craftingResultInventory, craftResultItemId);
             }
             ServerContext serverContext = world.getRegistered("serverContext");
-            UUID craftingInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingInventory);
-            UUID craftingResultUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(craftingTableComponent.craftingResultInventory);
+            UUID craftingInventoryUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(craftingTableComponent.craftingInventory);
+            UUID craftingResultUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(craftingTableComponent.craftingResultInventory);
 
             serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                     new InventorySetPacket(craftingInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingInventory))),
-                    systemsAdminServer.uuidEntityManager.getEntityUuid(entityId)
+                    systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId)
             );
             serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                     new InventorySetPacket(craftingResultUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(mInventory.get(craftingTableComponent.craftingResultInventory))),
-                    systemsAdminServer.uuidEntityManager.getEntityUuid(entityId)
+                    systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId)
             );
         });
     }

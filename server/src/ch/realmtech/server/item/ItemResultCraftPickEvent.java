@@ -1,7 +1,7 @@
 package ch.realmtech.server.item;
 
 import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 
@@ -17,7 +17,7 @@ public interface ItemResultCraftPickEvent {
         return (world) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
             InventoryComponent inventoryToRemoveComponent = mInventory.get(inventoryToRemove);
-            world.getSystem(InventoryManager.class).deleteAllOneItem(inventoryToRemoveComponent.inventory);
+            ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().deleteAllOneItem(inventoryToRemoveComponent.inventory);
             return new int[]{inventoryToRemove};
         };
     }

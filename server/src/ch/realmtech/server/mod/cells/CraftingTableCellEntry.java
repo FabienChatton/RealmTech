@@ -3,8 +3,6 @@ package ch.realmtech.server.mod.cells;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.UuidEntityManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemType;
@@ -67,12 +65,13 @@ public class CraftingTableCellEntry extends CellEntry {
                 window.add(craftingTable).row();
                 window.add(playerInventory);
             };
-            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
+            int inventoryPlayerId = systemsAdminCommun.getInventoryManager().getChestInventoryId(clientContext.getPlayerId());
             int inventoryCraftId = craftingTableComponent.craftingInventory;
             int inventoryResultId = craftingTableComponent.craftingResultInventory;
-            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
-            UUID inventoryCraftUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryCraftId);
-            UUID inventoryResultUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryResultId);
+            UUID inventoryPlayerUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryPlayerId);
+            UUID inventoryCraftUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryCraftId);
+            UUID inventoryResultUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryResultId);
 
             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));
@@ -80,12 +79,12 @@ public class CraftingTableCellEntry extends CellEntry {
 
             // subscribe
             clientContext.sendRequest(new SubscribeToEntityPacket(inventoryCraftUuid));
-            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
+
 
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
-                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId), craftingInventory).build(),
-                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build()
+                    DisplayInventoryArgs.builder(systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                    DisplayInventoryArgs.builder(systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryCraftId), craftingInventory).build(),
+                    DisplayInventoryArgs.builder(systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryResultId), craftingResultInventory).notClickAndDropDst().build()
             }, new UUID[]{inventoryCraftUuid, inventoryResultUuid}, () -> {
                 clientContext.sendRequest(new UnSubscribeToEntityPacket(inventoryCraftUuid));
             });

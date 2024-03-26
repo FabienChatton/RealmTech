@@ -30,7 +30,7 @@ public class DumpPlayersCommand implements Callable<Integer> {
             int playerId = data[i];
             PositionComponent positionComponent = mPos.get(playerId);
             PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
-            UuidEntityManager uuidEntityManager = dumpCommand.masterCommand.getWorld().getSystem(UuidEntityManager.class);
+            UuidEntityManager uuidEntityManager = dumpCommand.masterCommand.getSystemAdmin().getUuidEntityManager();
             if (playerConnexionComponent.channel != null) {
                 // sur le serveur
                 dumpCommand.printlnVerbose(1,

@@ -1,9 +1,6 @@
 package ch.realmtech.server.mod.cells;
 
 import ch.realmtech.server.ecs.component.ChestComponent;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.UuidEntityManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemType;
@@ -44,20 +41,18 @@ public class ChestCellEntry extends CellEntry {
                 window.add(playerInventory);
             };
 
-            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+            int inventoryPlayerId = clientContext.getSystemsAdminClient().getInventoryManager().getChestInventoryId(clientContext.getPlayerId());
             int inventoryChestId = chestComponent.getInventoryId();
 
-            UUID inventoryPlayerUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryPlayerId);
-            UUID inventoryChestUuid = clientContext.getWorld().getSystem(UuidEntityManager.class).getEntityUuid(inventoryChestId);
+            UUID inventoryPlayerUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(inventoryPlayerId);
+            UUID inventoryChestUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(inventoryChestId);
 
             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
             clientContext.sendRequest(new InventoryGetPacket(inventoryChestUuid));
 
-            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
-
             return new AddAndDisplayInventoryArgs(addTable, new DisplayInventoryArgs[]{
-                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId), playerInventory).build(),
-                    DisplayInventoryArgs.builder(systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryChestId), inventory).build()
+                    DisplayInventoryArgs.builder(clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(inventoryPlayerId), playerInventory).build(),
+                    DisplayInventoryArgs.builder(clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(inventoryChestId), inventory).build()
             }, new UUID[]{inventoryChestUuid}, null);
         });
     }

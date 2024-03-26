@@ -6,80 +6,86 @@ import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.CraftingManager;
 import ch.realmtech.server.ecs.system.UpdateBox2dWithPosition;
+import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
 import com.artemis.WorldConfigurationBuilder;
 
 public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdminClientForClient {
 
-    private final PlayerManagerClient playerManagerClient;
-    private final ItemManagerClient itemManagerClient;
-    private final PlayerInputSystem playerInputSystem;
-    private final MouvementSystem mouvementSystem;
-    private final PlayerMouvementSystem playerMouvementSystem;
-    private final TextureAnimatedSystem textureAnimatedSystem;
-    private final IaManagerClient iaManagerClient;
-    private final UpdateBox2dWithPosition updateBox2dWithPosition;
-    private final CameraFollowPlayerSystem cameraFollowPlayerSystem;
-    private final MapRendererSystem mapRendererSystem;
-    private final CellBeingMineRenderSystem cellBeingMineRenderSystem;
-    private final CellHoverSystem cellHoverSystem;
-    private final WailaSystem wailaSystem;
-    private final TextureRenderer textureRenderer;
-    private final PlayerInventorySystem playerInventorySystem;
-    private final ItemBarSystem itemBarSystem;
-    private final CellBeingMineSystem cellBeingMineSystem;
-    private final LightCycleSystem lightCycleSystem;
-    private final TimeSystemSimulation timeSystemSimulation;
-    private final LightManager lightManager;
-    private final FurnaceIconSystem furnaceIconSystem;
-    private final FurnaceSimulationSystem furnaceSimulationSystem;
-    private final CraftingManager craftingManager;
-    private final EnergyGeneratorClientSystem energyBatteryIconSystem;
-    private final InventoryNeiSystem inventoryNeiSystem;
-    private final GameStageBatchBeginSystem gameStageBatchBeginSystem;
-    private final GameStageBatchEndSystem gameStageBatchEndSystem;
-    private final TiledTextureSystem tiledTextureSystem;
-    private final PlayerFootStepSystem playerFootStepSystem;
-    private final QuestSystem questSystem;
+    private PlayerManagerClient playerManagerClient;
+    private ItemManagerClient itemManagerClient;
+    private PlayerInputSystem playerInputSystem;
+    private MouvementSystem mouvementSystem;
+    private PlayerMouvementSystem playerMouvementSystem;
+    private TextureAnimatedSystem textureAnimatedSystem;
+    private IaManagerClient iaManagerClient;
+    private UpdateBox2dWithPosition updateBox2dWithPosition;
+    private CameraFollowPlayerSystem cameraFollowPlayerSystem;
+    private MapRendererSystem mapRendererSystem;
+    private CellBeingMineRenderSystem cellBeingMineRenderSystem;
+    private CellHoverSystem cellHoverSystem;
+    private WailaSystem wailaSystem;
+    private TextureRenderer textureRenderer;
+    private PlayerInventorySystem playerInventorySystem;
+    private ItemBarSystem itemBarSystem;
+    private CellBeingMineSystem cellBeingMineSystem;
+    private LightCycleSystem lightCycleSystem;
+    private TimeSystemSimulation timeSystemSimulation;
+    private LightManager lightManager;
+    private FurnaceIconSystem furnaceIconSystem;
+    private FurnaceSimulationSystem furnaceSimulationSystem;
+    private CraftingManager craftingManager;
+    private EnergyGeneratorClientSystem energyBatteryIconSystem;
+    private InventoryNeiSystem inventoryNeiSystem;
+    private GameStageBatchBeginSystem gameStageBatchBeginSystem;
+    private GameStageBatchEndSystem gameStageBatchEndSystem;
+    private TiledTextureSystem tiledTextureSystem;
+    private PlayerFootStepSystem playerFootStepSystem;
+    private QuestSystem questSystem;
 
-    public SystemsAdminClient(Registry<?> rootRegistry) {
-        super(rootRegistry);
-        playerManagerClient = new PlayerManagerClient();
-        itemManagerClient = new ItemManagerClient();
-        playerInputSystem = new PlayerInputSystem();
-        mouvementSystem = new MouvementSystem();
-        playerMouvementSystem = new PlayerMouvementSystem();
-        textureAnimatedSystem = new TextureAnimatedSystem();
-        iaManagerClient = new IaManagerClient();
-        updateBox2dWithPosition = new UpdateBox2dWithPosition();
-        timeSystemSimulation = new TimeSystemSimulation();
-        cellHoverSystem = new CellHoverSystem();
-        lightManager = new LightManager();
-        furnaceIconSystem = new FurnaceIconSystem();
-        furnaceSimulationSystem = new FurnaceSimulationSystem();
-        craftingManager = new CraftingManager();
-        energyBatteryIconSystem = new EnergyGeneratorClientSystem();
-        tiledTextureSystem = new TiledTextureSystem();
-        playerFootStepSystem = new PlayerFootStepSystem();
+    public SystemsAdminClient() {
+        super("SystemsAdminClient");
+    }
+
+    @Override
+    public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
+        super.evaluate(rootRegistry);
+        setPlayerManagerClient(new PlayerManagerClient());
+        setItemManagerClient(new ItemManagerClient());
+        setPlayerInputSystem(new PlayerInputSystem());
+        setMouvementSystem(new MouvementSystem());
+        setPlayerMouvementSystem(new PlayerMouvementSystem());
+        setTextureAnimatedSystem(new TextureAnimatedSystem());
+        setIaManagerClient(new IaManagerClient());
+        setUpdateBox2dWithPosition(new UpdateBox2dWithPosition());
+        setTimeSystemSimulation(new TimeSystemSimulation());
+        setCellHoverSystem(new CellHoverSystem());
+        setLightManager(new LightManager());
+        setFurnaceIconSystem(new FurnaceIconSystem());
+        setFurnaceSimulationSystem(new FurnaceSimulationSystem());
+        setCraftingManager(new CraftingManager());
+        setEnergyBatteryIconSystem(new EnergyGeneratorClientSystem());
+        setTiledTextureSystem(new TiledTextureSystem());
+        setPlayerFootStepSystem(new PlayerFootStepSystem());
         // render
-        gameStageBatchBeginSystem = new GameStageBatchBeginSystem();
-        cameraFollowPlayerSystem = new CameraFollowPlayerSystem();
-        mapRendererSystem = new MapRendererSystem();
-        cellBeingMineRenderSystem = new CellBeingMineRenderSystem();
-        wailaSystem = new WailaSystem();
-        textureRenderer = new TextureRenderer();
-        inventoryNeiSystem = new InventoryNeiSystem();
-        gameStageBatchEndSystem = new GameStageBatchEndSystem();
+        setGameStageBatchBeginSystem(new GameStageBatchBeginSystem());
+        setCameraFollowPlayerSystem(new CameraFollowPlayerSystem());
+        setMapRendererSystem(new MapRendererSystem());
+        setCellBeingMineRenderSystem(new CellBeingMineRenderSystem());
+        setWailaSystem(new WailaSystem());
+        setTextureRenderer(new TextureRenderer());
+        setInventoryNeiSystem(new InventoryNeiSystem());
+        setGameStageBatchEndSystem(new GameStageBatchEndSystem());
 
-        playerInventorySystem = new PlayerInventorySystem();
-        itemBarSystem = new ItemBarSystem();
-        questSystem = new QuestSystem();
+        setPlayerInventorySystem(new PlayerInventorySystem());
+        setItemBarSystem(new ItemBarSystem());
+        setQuestSystem(new QuestSystem());
 
-        lightCycleSystem = new LightCycleSystem();
+        setLightCycleSystem(new LightCycleSystem());
 
 
         // tick simulation
-        cellBeingMineSystem = new CellBeingMineSystem();
+        setCellBeingMineSystem(new CellBeingMineSystem());
 //        physiqueWorldStepSystem = new PhysiqueWorldStepSystem();
     }
 
@@ -87,40 +93,40 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     public void setup(WorldConfigurationBuilder b) {
         super.setup(b);
         b.with(
-                playerManagerClient,
-                itemManagerClient,
-                playerInputSystem,
-                timeSystemSimulation,
-                iaManagerClient,
-                lightManager,
-                furnaceIconSystem,
-                furnaceSimulationSystem,
-                craftingManager,
-                energyBatteryIconSystem,
-                mouvementSystem,
-                playerMouvementSystem,
-                textureAnimatedSystem,
-                updateBox2dWithPosition,
-                cameraFollowPlayerSystem,
-                tiledTextureSystem,
-                playerFootStepSystem,
+                getPlayerManagerClient(),
+                getItemManagerClient(),
+                getPlayerInputSystem(),
+                getTimeSystemSimulation(),
+                getIaManagerClient(),
+                getLightManager(),
+                getFurnaceIconSystem(),
+                getFurnaceSimulationSystem(),
+                getCraftingManager(),
+                getEnergyBatteryIconSystem(),
+                getMouvementSystem(),
+                getPlayerMouvementSystem(),
+                getTextureAnimatedSystem(),
+                getUpdateBox2dWithPosition(),
+                getCameraFollowPlayerSystem(),
+                getTiledTextureSystem(),
+                getPlayerFootStepSystem(),
 
                 // render
-                gameStageBatchBeginSystem,
-                mapRendererSystem,
-                cellHoverSystem,
-                textureRenderer,
-                cellBeingMineRenderSystem,
-                gameStageBatchEndSystem,
-                lightCycleSystem,
+                getGameStageBatchBeginSystem(),
+                getMapRendererSystem(),
+                getCellHoverSystem(),
+                getTextureRenderer(),
+                getCellBeingMineRenderSystem(),
+                getGameStageBatchEndSystem(),
+                getLightCycleSystem(),
 
                 // ui
-                wailaSystem,
-                questSystem,
-                playerInventorySystem,
-                inventoryNeiSystem,
-                itemBarSystem,
-                cellBeingMineSystem
+                getWailaSystem(),
+                getQuestSystem(),
+                getPlayerInventorySystem(),
+                getInventoryNeiSystem(),
+                getItemBarSystem(),
+                getCellBeingMineSystem()
         );
     }
 
@@ -137,7 +143,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     public MouvementSystem getPlayerMouvementTextureSystem() {
-        return mouvementSystem;
+        return getMouvementSystem();
     }
 
     public PlayerMouvementSystem getPlayerMouvementSystem() {
@@ -145,7 +151,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     public TextureAnimatedSystem getPlayerTextureAnimated() {
-        return textureAnimatedSystem;
+        return getTextureAnimatedSystem();
     }
 
     public IaManagerClient getIaManagerClient() {
@@ -169,7 +175,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     public WailaSystem getCellHoverEtWailaSystem() {
-        return wailaSystem;
+        return getWailaSystem();
     }
 
     public TextureRenderer getTextureRenderer() {
@@ -181,7 +187,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     public ItemBarSystem getItemBarManager() {
-        return itemBarSystem;
+        return getItemBarSystem();
     }
 
     public CellBeingMineSystem getCellBeingMineSystem() {
@@ -220,7 +226,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     public QuestSystem getQuestManager() {
-        return questSystem;
+        return getQuestSystem();
     }
 
     @Override
@@ -228,5 +234,169 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         if (contextType == ContextType.CLIENT) {
             runnable.run();
         }
+    }
+
+    public void setPlayerManagerClient(PlayerManagerClient playerManagerClient) {
+        this.playerManagerClient = playerManagerClient;
+    }
+
+    public void setItemManagerClient(ItemManagerClient itemManagerClient) {
+        this.itemManagerClient = itemManagerClient;
+    }
+
+    public void setPlayerInputSystem(PlayerInputSystem playerInputSystem) {
+        this.playerInputSystem = playerInputSystem;
+    }
+
+    public MouvementSystem getMouvementSystem() {
+        return mouvementSystem;
+    }
+
+    public void setMouvementSystem(MouvementSystem mouvementSystem) {
+        this.mouvementSystem = mouvementSystem;
+    }
+
+    public void setPlayerMouvementSystem(PlayerMouvementSystem playerMouvementSystem) {
+        this.playerMouvementSystem = playerMouvementSystem;
+    }
+
+    public TextureAnimatedSystem getTextureAnimatedSystem() {
+        return textureAnimatedSystem;
+    }
+
+    public void setTextureAnimatedSystem(TextureAnimatedSystem textureAnimatedSystem) {
+        this.textureAnimatedSystem = textureAnimatedSystem;
+    }
+
+    public void setIaManagerClient(IaManagerClient iaManagerClient) {
+        this.iaManagerClient = iaManagerClient;
+    }
+
+    public void setUpdateBox2dWithPosition(UpdateBox2dWithPosition updateBox2dWithPosition) {
+        this.updateBox2dWithPosition = updateBox2dWithPosition;
+    }
+
+    public void setCameraFollowPlayerSystem(CameraFollowPlayerSystem cameraFollowPlayerSystem) {
+        this.cameraFollowPlayerSystem = cameraFollowPlayerSystem;
+    }
+
+    public void setMapRendererSystem(MapRendererSystem mapRendererSystem) {
+        this.mapRendererSystem = mapRendererSystem;
+    }
+
+    public void setCellBeingMineRenderSystem(CellBeingMineRenderSystem cellBeingMineRenderSystem) {
+        this.cellBeingMineRenderSystem = cellBeingMineRenderSystem;
+    }
+
+    public CellHoverSystem getCellHoverSystem() {
+        return cellHoverSystem;
+    }
+
+    public void setCellHoverSystem(CellHoverSystem cellHoverSystem) {
+        this.cellHoverSystem = cellHoverSystem;
+    }
+
+    public WailaSystem getWailaSystem() {
+        return wailaSystem;
+    }
+
+    public void setWailaSystem(WailaSystem wailaSystem) {
+        this.wailaSystem = wailaSystem;
+    }
+
+    public void setTextureRenderer(TextureRenderer textureRenderer) {
+        this.textureRenderer = textureRenderer;
+    }
+
+    public void setPlayerInventorySystem(PlayerInventorySystem playerInventorySystem) {
+        this.playerInventorySystem = playerInventorySystem;
+    }
+
+    public ItemBarSystem getItemBarSystem() {
+        return itemBarSystem;
+    }
+
+    public void setItemBarSystem(ItemBarSystem itemBarSystem) {
+        this.itemBarSystem = itemBarSystem;
+    }
+
+    public void setCellBeingMineSystem(CellBeingMineSystem cellBeingMineSystem) {
+        this.cellBeingMineSystem = cellBeingMineSystem;
+    }
+
+    public void setLightCycleSystem(LightCycleSystem lightCycleSystem) {
+        this.lightCycleSystem = lightCycleSystem;
+    }
+
+    public void setTimeSystemSimulation(TimeSystemSimulation timeSystemSimulation) {
+        this.timeSystemSimulation = timeSystemSimulation;
+    }
+
+    public void setLightManager(LightManager lightManager) {
+        this.lightManager = lightManager;
+    }
+
+    public void setFurnaceIconSystem(FurnaceIconSystem furnaceIconSystem) {
+        this.furnaceIconSystem = furnaceIconSystem;
+    }
+
+    public FurnaceSimulationSystem getFurnaceSimulationSystem() {
+        return furnaceSimulationSystem;
+    }
+
+    public void setFurnaceSimulationSystem(FurnaceSimulationSystem furnaceSimulationSystem) {
+        this.furnaceSimulationSystem = furnaceSimulationSystem;
+    }
+
+    public void setCraftingManager(CraftingManager craftingManager) {
+        this.craftingManager = craftingManager;
+    }
+
+    public void setEnergyBatteryIconSystem(EnergyGeneratorClientSystem energyBatteryIconSystem) {
+        this.energyBatteryIconSystem = energyBatteryIconSystem;
+    }
+
+    public InventoryNeiSystem getInventoryNeiSystem() {
+        return inventoryNeiSystem;
+    }
+
+    public void setInventoryNeiSystem(InventoryNeiSystem inventoryNeiSystem) {
+        this.inventoryNeiSystem = inventoryNeiSystem;
+    }
+
+    public GameStageBatchBeginSystem getGameStageBatchBeginSystem() {
+        return gameStageBatchBeginSystem;
+    }
+
+    public void setGameStageBatchBeginSystem(GameStageBatchBeginSystem gameStageBatchBeginSystem) {
+        this.gameStageBatchBeginSystem = gameStageBatchBeginSystem;
+    }
+
+    public GameStageBatchEndSystem getGameStageBatchEndSystem() {
+        return gameStageBatchEndSystem;
+    }
+
+    public void setGameStageBatchEndSystem(GameStageBatchEndSystem gameStageBatchEndSystem) {
+        this.gameStageBatchEndSystem = gameStageBatchEndSystem;
+    }
+
+    public void setTiledTextureSystem(TiledTextureSystem tiledTextureSystem) {
+        this.tiledTextureSystem = tiledTextureSystem;
+    }
+
+    public PlayerFootStepSystem getPlayerFootStepSystem() {
+        return playerFootStepSystem;
+    }
+
+    public void setPlayerFootStepSystem(PlayerFootStepSystem playerFootStepSystem) {
+        this.playerFootStepSystem = playerFootStepSystem;
+    }
+
+    public QuestSystem getQuestSystem() {
+        return questSystem;
+    }
+
+    public void setQuestSystem(QuestSystem questSystem) {
+        this.questSystem = questSystem;
     }
 }

@@ -11,7 +11,6 @@ public class CraftingTableController extends AbstractSerializerController<Intege
     public CraftingTableController(SerializerController serializerController) {
         super(serializerController, (byte) 17, new HashMap<>() {
             {
-                put((byte) 1, new CraftingTableSerializerV1());
                 put((byte) 2, new CraftingTableSerializerV2());
             }
         }, (byte) 2);

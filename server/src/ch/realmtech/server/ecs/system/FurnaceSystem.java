@@ -44,27 +44,27 @@ public class FurnaceSystem extends IteratingSystem {
         // met à jour le carburant
         if (furnaceComponent.remainingTickToBurn <= 0) {
             int[] carburantStack = carburantInventoryComponent.inventory[0];
-            int carburantItemId = systemsAdminServer.inventoryManager.getTopItem(carburantStack);
+            int carburantItemId = systemsAdminServer.getInventoryManager().getTopItem(carburantStack);
 
             ItemComponent carburantItemComponent = mItem.get(carburantItemId);
-            Optional<CraftResult> craftResult = systemsAdminServer.craftingManager.getNewCraftResult(craftingTableComponent);
+            Optional<CraftResult> craftResult = systemsAdminServer.getCraftingManager().getNewCraftResult(craftingTableComponent);
             if (carburantItemComponent != null && craftResult.isPresent()) {
                 if (carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn() > 0) {
                     furnaceComponent.remainingTickToBurn = carburantItemComponent.itemRegisterEntry.getItemBehavior().getTimeToBurn();
-                    systemsAdminServer.inventoryManager.deleteItemInStack(carburantStack, carburantItemId);
+                    systemsAdminServer.getInventoryManager().deleteItemInStack(carburantStack, carburantItemId);
 
-                    UUID carburantInventoryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(furnaceComponent.inventoryCarburant);
+                    UUID carburantInventoryUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(furnaceComponent.inventoryCarburant);
                     serverContext.getServerConnexion().sendPacketToSubscriberForEntity(
                             new InventorySetPacket(carburantInventoryUuid, serverContext.getSerializerController().getInventorySerializerManager().encode(carburantInventoryComponent)),
-                            systemsAdminServer.uuidEntityManager.getEntityUuid(entityId)
+                            systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId)
                     );
 
 
                     serverContext.getServerConnexion().sendPacketToSubscriberForEntity(new FurnaceExtraInfoPacket(
-                            systemsAdminServer.uuidEntityManager.getEntityUuid(entityId),
+                            systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId),
                             furnaceComponent.remainingTickToBurn,
                             -1
-                    ), systemsAdminServer.uuidEntityManager.getEntityUuid(entityId));
+                    ), systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId));
                 }
             }
         }

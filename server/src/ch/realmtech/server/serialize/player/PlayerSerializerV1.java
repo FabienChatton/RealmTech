@@ -2,7 +2,7 @@ package ch.realmtech.server.serialize.player;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ecs.system.UuidEntityManager;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.ChestEditEntity;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
@@ -10,6 +10,7 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -19,6 +20,8 @@ import java.util.function.Consumer;
 public class PlayerSerializerV1 implements Serializer<PlayerSerializerConfig, Consumer<Integer>> {
 
     private ComponentMapper<PositionComponent> mPos;
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     @Override
     public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, PlayerSerializerConfig playerToSerializeConfig) {
         int playerToSerialize = playerToSerializeConfig.getPlayerId();
@@ -53,7 +56,7 @@ public class PlayerSerializerV1 implements Serializer<PlayerSerializerConfig, Co
     @Override
     public int getBytesSize(World world, SerializerController serializerController, PlayerSerializerConfig playerToSerializeConfig) {
         int playerToSerialize = playerToSerializeConfig.getPlayerId();
-        UUID playerUuid = world.getSystem(UuidEntityManager.class).getEntityUuid(playerToSerialize);
+        UUID playerUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(playerToSerialize);
 
         int chestInventoryLength = serializerController.getApplicationBytesLength(serializerController.getChestSerializerController(), playerToSerialize);
         int playerUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), playerUuid);

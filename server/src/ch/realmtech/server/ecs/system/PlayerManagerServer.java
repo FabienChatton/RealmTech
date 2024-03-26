@@ -60,7 +60,7 @@ public class PlayerManagerServer extends Manager {
         // player connexion component
         PlayerConnexionComponent playerConnexionComponent = world.edit(playerId).create(PlayerConnexionComponent.class);
         playerConnexionComponent.set(channel);
-        systemsAdminServer.uuidEntityManager.registerEntityIdWithUuid(playerUuid, playerId);
+        systemsAdminServer.getUuidEntityManager().registerEntityIdWithUuid(playerUuid, playerId);
 
         boolean hasPlayerSaveSuccess = false;
         float posX;
@@ -80,7 +80,7 @@ public class PlayerManagerServer extends Manager {
             posX = mPosition.get(playerId).x;
             posY = mPosition.get(playerId).y;
 
-            chestId = systemsAdminServer.inventoryManager.getChestInventoryId(playerId);
+            chestId = systemsAdminServer.getInventoryManager().getChestInventoryId(playerId);
 
             // player serializer v2
             if (mLife.has(playerId)) {
@@ -95,7 +95,7 @@ public class PlayerManagerServer extends Manager {
             positionComponent.set(posX, posY);
 
             // default inventory
-            chestId = systemsAdminServer.inventoryManager.createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
+            chestId = systemsAdminServer.getInventoryManager().createChest(playerId, UUID.randomUUID(), InventoryComponent.DEFAULT_NUMBER_OF_SLOT_PAR_ROW, InventoryComponent.DEFAULT_NUMBER_OF_ROW);
         }
 
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
@@ -121,7 +121,7 @@ public class PlayerManagerServer extends Manager {
         InventoryComponent chestInventoryComponent = mInventory.get(chestId);
 
         // inventory cursor
-        int inventoryCursorId = systemsAdminServer.inventoryManager.createCursorInventory(playerId, UUID.randomUUID(), 1, 1);
+        int inventoryCursorId = systemsAdminServer.getInventoryManager().createCursorInventory(playerId, UUID.randomUUID(), 1, 1);
 
         // movement component
         PlayerMovementComponent playerMovementComponent = world.edit(playerId).create(PlayerMovementComponent.class);
@@ -129,7 +129,7 @@ public class PlayerManagerServer extends Manager {
 
 
         // default crafting table
-        int[] craftingInventories = systemsAdminServer.inventoryManager.createCraftingTable(playerId, UUID.randomUUID(), 2,2, UUID.randomUUID());
+        int[] craftingInventories = systemsAdminServer.getInventoryManager().createCraftingTable(playerId, UUID.randomUUID(), 2, 2, UUID.randomUUID());
 
         // pick up item component
         PickerGroundItemComponent pickerGroundItemComponent = world.edit(playerId).create(PickerGroundItemComponent.class);
@@ -143,10 +143,10 @@ public class PlayerManagerServer extends Manager {
 
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(posX, posY, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),
-                systemsAdminServer.uuidEntityManager.getEntityUuid(chestId),
-                systemsAdminServer.uuidEntityManager.getEntityUuid(craftingInventories[0]),
-                systemsAdminServer.uuidEntityManager.getEntityUuid(craftingInventories[1]),
-                systemsAdminServer.uuidEntityManager.getEntityUuid(inventoryCursorId)
+                systemsAdminServer.getUuidEntityManager().getEntityUuid(chestId),
+                systemsAdminServer.getUuidEntityManager().getEntityUuid(craftingInventories[0]),
+                systemsAdminServer.getUuidEntityManager().getEntityUuid(craftingInventories[1]),
+                systemsAdminServer.getUuidEntityManager().getEntityUuid(inventoryCursorId)
         );
     }
 
@@ -209,7 +209,7 @@ public class PlayerManagerServer extends Manager {
     }
 
     private Path getPlayerDir(String playerUsername) {
-        return Path.of(DataCtrl.getPlayersDir(systemsAdminServer.saveInfManager.getSaveName()).toPath().toString(), playerUsername);
+        return Path.of(DataCtrl.getPlayersDir(systemsAdminServer.getSaveInfManager().getSaveName()).toPath().toString(), playerUsername);
     }
 
     public int getPlayerByUsername(String username) {
@@ -238,7 +238,7 @@ public class PlayerManagerServer extends Manager {
         int[] playersData = players.getData();
         for (int i = 0; i < players.size(); i++) {
             int playerId = playersData[i];
-            if (systemsAdminServer.uuidEntityManager.getEntityUuid(playerId).equals(uuid)) {
+            if (systemsAdminServer.getUuidEntityManager().getEntityUuid(playerId).equals(uuid)) {
                 return playerId;
             }
         }
@@ -268,7 +268,7 @@ public class PlayerManagerServer extends Manager {
             playerId = getPlayerByUuid(playerUuid);
         } catch (IllegalArgumentException e) {
             // uuid not valid
-            playerId = systemsAdminServer.playerManagerServer.getPlayerByUsername(playerIdentifier);
+            playerId = systemsAdminServer.getPlayerManagerServer().getPlayerByUsername(playerIdentifier);
         }
         return playerId;
     }

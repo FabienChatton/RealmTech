@@ -20,7 +20,7 @@ public class IaIsFocusPlayerSystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         PositionComponent iaPositionComponent = mPos.get(entityId);
-        IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
+        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
         int[] playerData = players.getData();
         for (int i = 0; i < players.size(); i++) {
             int playerId = playerData[i];

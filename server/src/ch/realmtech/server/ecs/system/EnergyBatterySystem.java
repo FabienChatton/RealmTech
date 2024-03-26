@@ -31,7 +31,7 @@ public class EnergyBatterySystem extends IteratingSystem {
     protected void process(int entityId) {
         EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(entityId);
         if (energyBatteryComponent.isEnergyBatteryReceiver()) {
-            EnergyTransportStatus energyTransportStatus = systemsAdminServer.energyManager.findEnergyToFeed(entityId);
+            EnergyTransportStatus energyTransportStatus = systemsAdminServer.getEnergyManager().findEnergyToFeed(entityId);
             if (energyTransportStatus != null) {
                 int batteryEmitterId = energyTransportStatus.batteryEmitterId();
                 EnergyBatteryComponent energyBatteryComponentEmitter = mEnergyBattery.get(batteryEmitterId);
@@ -50,7 +50,7 @@ public class EnergyBatterySystem extends IteratingSystem {
             IntSet.IntSetIterator intSetIterator = dirtyEnergyBattery.iterator();
             while (intSetIterator.hasNext) {
                 int energyBatteryId = intSetIterator.next();
-                UUID energyBatteryUuid = systemsAdminServer.uuidEntityManager.getEntityUuid(energyBatteryId);
+                UUID energyBatteryUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(energyBatteryId);
 
                 EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyBatteryId);
                 CellComponent cellComponent = mCell.get(energyBatteryId);

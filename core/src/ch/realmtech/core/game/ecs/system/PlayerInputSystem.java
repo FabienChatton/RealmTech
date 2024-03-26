@@ -35,11 +35,11 @@ public class PlayerInputSystem extends BaseSystem {
         int worldPosY = MapManager.getWorldPos(gameCoordinate.y);
 
         InfMapComponent infMapComponent = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class);
-        int chunk = systemsAdminClient.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
+        int chunk = systemsAdminClient.getMapManager().getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
         if (chunk == -1) return;
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
-        int topCell = systemsAdminClient.mapManager.getTopCell(chunk, innerChunkX, innerChunkY);
+        int topCell = systemsAdminClient.getMapManager().getTopCell(chunk, innerChunkX, innerChunkY);
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
             Optional<ClickInteraction> leftClickInteractionItemSelected = Optional.empty();
@@ -50,7 +50,7 @@ public class PlayerInputSystem extends BaseSystem {
 
             // item right click first, or mine top cell
             leftClickInteractionItemSelected.ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell), () -> {
-                systemsAdminClient.mapManager.addCellBeingMine(topCell);
+                systemsAdminClient.getMapManager().addCellBeingMine(topCell);
             });
 
         } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
@@ -70,7 +70,7 @@ public class PlayerInputSystem extends BaseSystem {
                     .ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell), () -> {
                         if (selectItem != 0) {
                             // place bloc if no interaction
-                            UUID itemUuid = systemsAdminClient.uuidEntityManager.getEntityUuid(selectItem);
+                            UUID itemUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(selectItem);
                             context.getClientConnexion().sendAndFlushPacketToServer(new ItemToCellPlaceRequestPacket(itemUuid, worldPosX, worldPosY));
                         }
                     });

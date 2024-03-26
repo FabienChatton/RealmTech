@@ -36,18 +36,18 @@ public class PlayerMouvementSystemServer extends IteratingSystem {
     }
 
     public void playerMove(Channel clientChannel, byte inputKeys) {
-        int playerId = systemsAdminServer.playerManagerServer.getPlayerByChannel(clientChannel);
+        int playerId = systemsAdminServer.getPlayerManagerServer().getPlayerByChannel(clientChannel);
         PlayerMovementComponent playerMovementComponent = mMovement.get(playerId);
         Box2dComponent box2dComponent = mBox2d.get(playerId);
         PositionComponent positionComponent = mPos.get(playerId);
-        InfMapComponent infMapComponent = systemsAdminServer.tagManager.getEntity("infMap").getComponent(InfMapComponent.class);
+        InfMapComponent infMapComponent = systemsAdminServer.getTagManager().getEntity("infMap").getComponent(InfMapComponent.class);
         int worldPosX = MapManager.getWorldPos(positionComponent.x);
         int worldPosY = MapManager.getWorldPos(positionComponent.y);
 
-        int chunkId = systemsAdminServer.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY) ,infMapComponent.infChunks);
+        int chunkId = systemsAdminServer.getMapManager().getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
-        int topCellId = systemsAdminServer.mapManager.getTopCell(chunkId, innerChunkX, innerChunkY);
+        int topCellId = systemsAdminServer.getMapManager().getTopCell(chunkId, innerChunkX, innerChunkY);
         if (topCellId == -1) return;
         CellComponent cellComponent = mCell.get(topCellId);
         float cellSpeedEffect = cellComponent.cellRegisterEntry.getCellBehavior().getSpeedEffect();

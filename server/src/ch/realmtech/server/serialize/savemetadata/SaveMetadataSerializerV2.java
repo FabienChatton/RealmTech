@@ -2,7 +2,7 @@ package ch.realmtech.server.serialize.savemetadata;
 
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.SaveMetadataComponent;
-import ch.realmtech.server.ecs.system.TimeSystem;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
@@ -18,7 +18,7 @@ public class SaveMetadataSerializerV2 implements Serializer<Integer, Integer> {
         SaveMetadataComponent saveMetadataComponent = mMetaData.get(metadataToSerialize);
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, metadataToSerialize));
 
-        float accumulatedDelta = world.getSystem(TimeSystem.class).getAccumulatedDelta();
+        float accumulatedDelta = world.getRegistered(SystemsAdminServer.class).getTimeSystem().getAccumulatedDelta();
 
         ByteBufferHelper.writeString(buffer, saveMetadataComponent.saveName);
         buffer.writeLong(saveMetadataComponent.seed);
@@ -35,7 +35,7 @@ public class SaveMetadataSerializerV2 implements Serializer<Integer, Integer> {
 
         int saveMetadataId = world.create();
         world.edit(saveMetadataId).create(SaveMetadataComponent.class).set(seed, saveName, world);
-        world.getSystem(TimeSystem.class).setAccumulatedDelta(accumulatedDelta);
+        world.getRegistered(SystemsAdminServer.class).getTimeSystem().setAccumulatedDelta(accumulatedDelta);
 
         return saveMetadataId;
     }

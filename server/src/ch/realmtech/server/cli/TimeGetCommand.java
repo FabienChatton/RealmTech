@@ -11,7 +11,7 @@ public class TimeGetCommand implements Runnable {
     TimeCommand timeCommand;
     @Override
     public void run() {
-        TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdmin().timeSystem;
+        TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdminServer().getTimeSystem();
         timeCommand.masterServerCommand.output.println(timeSystem.getAccumulatedDelta());
     }
 }

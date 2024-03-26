@@ -57,7 +57,7 @@ public class IaManagerClient extends Manager {
         box2dComponent.set(1, 1, bodyIaTest);
         box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
         world.edit(iaTestId).create(PositionComponent.class);
-        systemsAdminClient.uuidEntityManager.registerEntityIdWithUuid(uuid, iaTestId);
+        systemsAdminClient.getUuidEntityManager().registerEntityIdWithUuid(uuid, iaTestId);
         TextureComponent textureComponent = world.edit(iaTestId).create(TextureComponent.class);
         textureComponent.scale = 1.6f;
         TextureAnimationComponent textureAnimationComponent = world.edit(iaTestId).create(TextureAnimationComponent.class);

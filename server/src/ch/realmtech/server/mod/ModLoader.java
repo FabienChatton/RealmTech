@@ -222,7 +222,7 @@ public class ModLoader {
         if (isTagQuery(evaluateQuery)) {
             entries = RegistryUtils.findEntries(rootRegistry, evaluateQuery);
         } else {
-            entries = List.of(RegistryUtils.findEntry(rootRegistry, evaluateQuery).orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateQuery + "entry")));
+            entries = List.of(RegistryUtils.findEntry(rootRegistry, evaluateQuery).orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateQuery + " entry")));
         }
         return entries;
     }

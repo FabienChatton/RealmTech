@@ -4,8 +4,7 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.system.InventoryManager;
-import ch.realmtech.server.ecs.system.UuidEntityManager;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.CraftingTableEditEntity;
 import ch.realmtech.server.mod.factory.EditEntityFactory;
 import ch.realmtech.server.registry.Registry;
@@ -26,6 +25,8 @@ import java.util.UUID;
 public class CraftingTableSerializerV2 implements Serializer<Integer, CraftingTableEditEntity> {
     @Wire(name = "rootRegistry")
     private Registry<?> rootRegistry;
+    @Wire(name = "systemsAdmin")
+    private SystemsAdminCommun systemsAdminCommun;
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
 
     @Override
@@ -33,10 +34,10 @@ public class CraftingTableSerializerV2 implements Serializer<Integer, CraftingTa
         CraftingTableComponent craftingTableToSerialize = mCraftingTable.get(craftingTableToSerializeId);
 
         ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, craftingTableToSerializeId));
-        UUID craftingInventoryUuid = world.getSystem(UuidEntityManager.class).getEntityUuid(craftingTableToSerialize.craftingInventory);
-        InventoryComponent craftingInventory = world.getSystem(InventoryManager.class).getCraftingInventory(craftingTableToSerialize);
+        UUID craftingInventoryUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(craftingTableToSerialize.craftingInventory);
+        InventoryComponent craftingInventory = systemsAdminCommun.getInventoryManager().getCraftingInventory(craftingTableToSerialize);
 
-        UUID craftingResultInventoryUuid = world.getSystem(UuidEntityManager.class).getEntityUuid(craftingTableToSerialize.craftingResultInventory);
+        UUID craftingResultInventoryUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(craftingTableToSerialize.craftingResultInventory);
 
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getUuidSerializerController(), craftingInventoryUuid);
         ByteBufferHelper.encodeSerializedApplicationBytes(buffer, serializerController.getInventorySerializerManager(), craftingInventory);
@@ -62,9 +63,9 @@ public class CraftingTableSerializerV2 implements Serializer<Integer, CraftingTa
     @Override
     public int getBytesSize(World world, SerializerController serializerController, Integer craftingTableToSerializeId) {
         CraftingTableComponent craftingTableToSerialize = mCraftingTable.get(craftingTableToSerializeId);
-        UUID craftingInventoryUuid = world.getSystem(UuidEntityManager.class).getEntityUuid(craftingTableToSerialize.craftingInventory);
-        InventoryComponent craftingInventory = world.getSystem(InventoryManager.class).getCraftingInventory(craftingTableToSerialize);
-        UUID craftingResultInventoryUuid = world.getSystem(UuidEntityManager.class).getEntityUuid(craftingTableToSerialize.craftingResultInventory);
+        UUID craftingInventoryUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(craftingTableToSerialize.craftingInventory);
+        InventoryComponent craftingInventory = systemsAdminCommun.getInventoryManager().getCraftingInventory(craftingTableToSerialize);
+        UUID craftingResultInventoryUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(craftingTableToSerialize.craftingResultInventory);
 
         int craftingInventoryUuidLength = serializerController.getApplicationBytesLength(serializerController.getUuidSerializerController(), craftingInventoryUuid);
         int craftingInventoryLength = serializerController.getApplicationBytesLength(serializerController.getInventorySerializerManager(), craftingInventory);

@@ -29,7 +29,7 @@ public class CellBeingMineRenderSystem extends IteratingSystem {
         CellBeingMineComponent cellBeingMineComponent = mCellBeingMine.get(entityId);
         CellComponent cellComponent = mCell.get(entityId);
         int[] infChunks = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class).infChunks;
-        int chunkId = systemsAdminClient.mapManager.findChunk(infChunks, entityId);
+        int chunkId = systemsAdminClient.getMapManager().findChunk(infChunks, entityId);
         InfChunkComponent infChunkComponent = mChunk.get(chunkId);
         int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
         int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());

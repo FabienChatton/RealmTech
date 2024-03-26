@@ -26,7 +26,7 @@ public class PlayerSubscriptionSystem extends Manager {
     }
 
     public ImmutableIntBag<?> getPlayersInRangeForChunkPos(Position chunkPos) {
-        IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
+        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
         int[] playersData = players.getData();
         IntBag playersSubscription = new IntBag(Math.min(players.size(), 64));
 
@@ -42,7 +42,7 @@ public class PlayerSubscriptionSystem extends Manager {
     }
 
     public ImmutableIntBag<?> getPlayerForEntityIdSubscription(UUID entityIdSubscription) {
-        IntBag players = systemsAdminServer.playerManagerServer.getPlayers();
+        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
         int[] playersData = players.getData();
         IntBag playersSubscription = new IntBag(Math.min(players.size(), 64));
 

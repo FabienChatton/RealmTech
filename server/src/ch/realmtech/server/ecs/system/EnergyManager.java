@@ -87,13 +87,13 @@ public class EnergyManager extends Manager {
                     continue;
                 }
 
-                int[] infChunks = systemsAdminCommun.mapManager.getInfMap().infChunks;
-                int chunkId = systemsAdminCommun.mapManager.getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
+                int[] infChunks = systemsAdminCommun.getMapManager().getInfMap().infChunks;
+                int chunkId = systemsAdminCommun.getMapManager().getChunkByWorldPos(worldPosXFind, worldPosYFind, infChunks);
                 if (chunkId == -1) {
                     continue;
                 }
 
-                int nextCellId = systemsAdminCommun.mapManager.getCell(chunkId, worldPosXFind, worldPosYFind, layer);
+                int nextCellId = systemsAdminCommun.getMapManager().getCell(chunkId, worldPosXFind, worldPosYFind, layer);
                 if (nextCellId == -1) {
                     continue;
                 }

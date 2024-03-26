@@ -5,7 +5,6 @@ import ch.realmtech.server.ecs.component.FurnaceComponent;
 import ch.realmtech.server.ecs.component.FurnaceIconsComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.inventory.DisplayInventoryArgs;
 import ch.realmtech.server.item.ItemType;
@@ -70,26 +69,26 @@ public class FurnaceCellEntry extends CellEntry {
                 window.add(craftingTable).row();
                 window.add(playerInventory);
             };
-            int inventoryPlayerId = clientContext.getWorld().getSystem(InventoryManager.class).getChestInventoryId(clientContext.getPlayerId());
+            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
+            int inventoryPlayerId = systemsAdminCommun.getInventoryManager().getChestInventoryId(clientContext.getPlayerId());
             int inventoryCraftId = craftingTableComponent.craftingInventory;
             int inventoryResultId = craftingTableComponent.craftingResultInventory;
             int inventoryCarburantId = furnaceComponent.inventoryCarburant;
             int iconFireId = furnaceIconsComponent.getIconFire();
             int iconProcessId = furnaceIconsComponent.getIconProcess();
-            SystemsAdminCommun systemsAdminCommun = clientContext.getWorld().getRegistered("systemsAdmin");
 
             // subscription
-            UUID furnaceUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(cellId);
+            UUID furnaceUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(cellId);
             clientContext.sendRequest(new SubscribeToEntityPacket(furnaceUuid));
 
             // get inventory
-            UUID inventoryPlayerUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryPlayerId);
-            UUID inventoryCraftUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCraftId);
-            UUID inventoryResultUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryResultId);
-            UUID inventoryCarburantUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(inventoryCarburantId);
+            UUID inventoryPlayerUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryPlayerId);
+            UUID inventoryCraftUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryCraftId);
+            UUID inventoryResultUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryResultId);
+            UUID inventoryCarburantUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(inventoryCarburantId);
 
-            UUID iconFireUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(iconFireId);
-            UUID iconProcessUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(iconProcessId);
+            UUID iconFireUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(iconFireId);
+            UUID iconProcessUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(iconProcessId);
 
             clientContext.sendRequest(new InventoryGetPacket(inventoryPlayerUuid));
             clientContext.sendRequest(new InventoryGetPacket(inventoryCraftUuid));

@@ -50,7 +50,7 @@ public class DumpEntities implements Runnable {
             int[] entitiesData = entities.getData();
             for (int i = 0; i < entities.size(); i++) {
                 int entityId = entitiesData[i];
-                UUID entityUuid = systemsAdminCommun.uuidEntityManager.getEntityUuid(entityId);
+                UUID entityUuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(entityId);
                 if (entityUuid != null && entityUuid.toString().equals(uuidFilter)) {
                     entitiesBag.add(entityId);
                 }

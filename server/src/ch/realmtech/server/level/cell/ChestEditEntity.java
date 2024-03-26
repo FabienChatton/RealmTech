@@ -3,7 +3,6 @@ package ch.realmtech.server.level.cell;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.InventoryManager;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.badlogic.gdx.utils.Null;
 
@@ -33,7 +32,7 @@ public class ChestEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int motherEntityId) {
-        executeOnContext.onCommun((world -> world.getSystem(InventoryManager.class).createChest(motherEntityId, inventory != null ? inventory : new int[numberOfSlotParRow * numberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], getUuid(), getNumberOfSlotParRow(), getNumberOfRow())));
+        executeOnContext.onCommun((world -> ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().createChest(motherEntityId, inventory != null ? inventory : new int[numberOfSlotParRow * numberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], getUuid(), getNumberOfSlotParRow(), getNumberOfRow())));
     }
 
     @Override
@@ -41,8 +40,8 @@ public class ChestEditEntity implements EditEntity {
         // executeOnContext.onServer((world) -> world.getSystem(MapSystemServer.class).deleteChestDropItemServer(entityId));
         executeOnContext.onCommun((world) -> {
             SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
-            int chestInventoryId = systemsAdmin.inventoryManager.getChestInventoryId(entityId);
-            world.getSystem(InventoryManager.class).removeInventoryUi(chestInventoryId);
+            int chestInventoryId = systemsAdmin.getInventoryManager().getChestInventoryId(entityId);
+            ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().removeInventoryUi(chestInventoryId);
         });
     }
 

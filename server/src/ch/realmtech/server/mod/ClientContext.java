@@ -2,6 +2,7 @@ package ch.realmtech.server.mod;
 
 import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.GetWorld;
+import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.registry.Registry;
@@ -25,4 +26,6 @@ public interface ClientContext extends GetWorld, Context {
     TextureAtlas getTextureAtlas();
 
     void onTextureAtlasLoaded(Consumer<TextureAtlas> textureAtlasConsumer);
+
+    SystemsAdminClientForClient getSystemsAdminClient();
 }

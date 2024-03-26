@@ -3,8 +3,6 @@ package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
-import ch.realmtech.server.ecs.system.PlayerManagerServer;
-import ch.realmtech.server.ecs.system.PlayerSubscriptionSystem;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,14 +22,16 @@ public class DumpSubscription implements Runnable {
         SystemsAdminCommun systemsAdminCommun = dumpCommand.masterCommand.getWorld().getRegistered("systemsAdmin");
         systemsAdminCommun.onContextType(ContextType.CLIENT, () -> dumpCommand.printlnVerbose(0, "Sorry only available on server"));
         systemsAdminCommun.onContextType(ContextType.SERVER, () -> {
-            int playerId = dumpCommand.masterCommand.getWorld().getSystem(PlayerManagerServer.class).getPlayerByUsernameOrUuid(playerIdentifieur);
-            if (playerId == -1) {
-                dumpCommand.printlnVerbose(0, "Invalide player username or uuid: " + playerIdentifieur);
-                return;
-            }
+            dumpCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
+                int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUsernameOrUuid(playerIdentifieur);
+                if (playerId == -1) {
+                    dumpCommand.printlnVerbose(0, "Invalide player username or uuid: " + playerIdentifieur);
+                    return;
+                }
 
-            List<UUID> subscriptionForPlayer = dumpCommand.masterCommand.getWorld().getSystem(PlayerSubscriptionSystem.class).getSubscriptionForPlayer(playerId);
-            dumpCommand.printlnVerbose(0, subscriptionForPlayer.toString());
+                List<UUID> subscriptionForPlayer = serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().getSubscriptionForPlayer(playerId);
+                dumpCommand.printlnVerbose(0, subscriptionForPlayer.toString());
+            });
         });
     }
 }

@@ -28,7 +28,7 @@ public class EnergyBatterySerializerV1 implements Serializer<Integer, EnergyBatt
         EnergyBatteryComponent energyBatteryComponent = mEnergyBattery.get(energyBatteryToSerialize);
         FaceComponent faceComponent = mFace.get(energyBatteryToSerialize);
 
-        ByteBufferHelper.writeUUID(buffer, systemsAdminCommun.uuidEntityManager.getEntityUuid(energyBatteryToSerialize));
+        ByteBufferHelper.writeUUID(buffer, systemsAdminCommun.getUuidEntityManager().getEntityUuid(energyBatteryToSerialize));
         buffer.writeLong(energyBatteryComponent.getStored());
         buffer.writeLong(energyBatteryComponent.getCapacity());
 

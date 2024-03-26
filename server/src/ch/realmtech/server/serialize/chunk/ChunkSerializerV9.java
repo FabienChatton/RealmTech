@@ -3,7 +3,7 @@ package ch.realmtech.server.serialize.chunk;
 import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
-import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.cell.CellArgs;
@@ -33,6 +33,7 @@ public class ChunkSerializerV9 implements Serializer<InfChunkComponent, Integer>
     @Override
     public Integer fromBytes(World world, SerializerController serializerController, SerializedRawBytes rawBytes) {
         ByteBuf buffer = Unpooled.wrappedBuffer(rawBytes.rawBytes());
+        SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
 
         int chunkId = world.create();
 
@@ -46,7 +47,7 @@ public class ChunkSerializerV9 implements Serializer<InfChunkComponent, Integer>
         for (int i = 0; i < cells.length; i++) {
             CellArgs cellArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getCellSerializerController());
 
-            int cellId = world.getSystem(MapManager.class).newCell(chunkId, chunkPosX, chunkPosY, cellArgs);
+            int cellId = systemsAdminCommun.getMapManager().newCell(chunkId, chunkPosX, chunkPosY, cellArgs);
             cells[i] = cellId;
         }
         return chunkId;

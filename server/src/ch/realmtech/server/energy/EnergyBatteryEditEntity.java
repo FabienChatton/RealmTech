@@ -37,12 +37,12 @@ public class EnergyBatteryEditEntity implements EditEntity {
         executeOnContext.onCommun((world) -> {
             world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_RECEIVER);
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-            systemsAdminCommun.cellPaddingManager.addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyBatterySerializerController());
+            systemsAdminCommun.getCellPaddingManager().addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyBatterySerializerController());
             FaceComponent faceComponent = world.edit(entityId).create(FaceComponent.class);
             faceComponent.setMultiFace(false);
             faceComponent.setFace(face);
             faceComponent.setBaseTextures("energy-battery-01");
-            systemsAdminCommun.uuidEntityManager.registerEntityIdWithUuid(energyBatteryUuid.get(), entityId);
+            systemsAdminCommun.getUuidEntityManager().registerEntityIdWithUuid(energyBatteryUuid.get(), entityId);
         });
     }
 
@@ -50,7 +50,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
         executeOnContext.onCommun((world) -> {
             SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-            systemsAdminCommun.uuidEntityManager.deleteRegisteredEntity(entityId);
+            systemsAdminCommun.getUuidEntityManager().deleteRegisteredEntity(entityId);
         });
     }
 

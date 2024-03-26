@@ -51,7 +51,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     private Map<Integer, List<Position>> chunkAGarders;
     private boolean isInit = false;
     public void initMap() {
-        infMapComponent = mInfMap.get(systemsAdminServer.tagManager.getEntityId("infMap"));
+        infMapComponent = mInfMap.get(systemsAdminServer.getTagManager().getEntityId("infMap"));
         infMetaDonnesComponent = infMapComponent.getMetaDonnesComponent(world);
 
         chunkADamner = new HashMap<>();
@@ -116,7 +116,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         int[] oldChunks = new int[tousChunkADamnerSansGarder.size()];
         for (int i = 0; i < tousChunkADamnerSansGarder.size(); i++) {
             Position chunkADamnerPoss = tousChunkADamnerSansGarder.get(i);
-            int chunkId = systemsAdminServer.mapManager.getChunk(chunkADamnerPoss.x(), chunkADamnerPoss.y(), infMapComponent.infChunks);
+            int chunkId = systemsAdminServer.getMapManager().getChunk(chunkADamnerPoss.x(), chunkADamnerPoss.y(), infMapComponent.infChunks);
             oldChunks[i] = chunkId;
             damneChunkServerDirty(chunkId, infMetaDonnesComponent);
         }
@@ -127,7 +127,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
             newChunks[i] = getCacheOrGenerateChunk(infMapComponent, infMetaDonnesComponent, chunkAObtenirPoss.x(), chunkAObtenirPoss.y());
         }
 
-        infMapComponent.infChunks = systemsAdminServer.mapManager.ajouterChunkAMap(infMapComponent.infChunks, newChunks, oldChunks);
+        infMapComponent.infChunks = systemsAdminServer.getMapManager().ajouterChunkAMap(infMapComponent.infChunks, newChunks, oldChunks);
 
 
         this.chunkADamner.forEach((playerId, chunkPoss) -> {
@@ -141,7 +141,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         this.chunkAObtenir.forEach((playerId, chunkPoss) -> {
             PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
             chunkPoss.forEach(chunkPos -> {
-                int chunkId = systemsAdminServer.mapManager.getChunk(chunkPos.x(), chunkPos.y(), infMapComponent.infChunks);
+                int chunkId = systemsAdminServer.getMapManager().getChunk(chunkPos.x(), chunkPos.y(), infMapComponent.infChunks);
                 InfChunkComponent infChunkComponent = mChunk.get(chunkId);
                 serverContext.getServerConnexion().sendPacketTo(new ChunkAMonterPacket(serverContext.getSerializerController().getChunkSerializerController().encode(infChunkComponent)), playerConnexionComponent.channel);
                 playerConnexionComponent.chunkPoss.add(new Position(chunkPos.x(), chunkPos.y()));
@@ -194,8 +194,8 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     public void damneChunkServerDirty(int chunkId, SaveMetadataComponent saveMetadataComponent) {
         try {
-            systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
-            systemsAdminServer.mapManager.supprimeChunk(chunkId);
+            systemsAdminServer.getSaveInfManager().saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
+            systemsAdminServer.getMapManager().supprimeChunk(chunkId);
         } catch (IOException e) {
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
             logger.error("Chunk {},{} has not been saved: {}", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY, e.getMessage());
@@ -204,13 +204,13 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     public int[] damneChunkServer(int[] infChunks, int chunkId, SaveMetadataComponent saveMetadataComponent) {
         try {
-            systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
-            systemsAdminServer.mapManager.supprimeChunk(chunkId);
+            systemsAdminServer.getSaveInfManager().saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
+            systemsAdminServer.getMapManager().supprimeChunk(chunkId);
         } catch (IOException e) {
             InfChunkComponent infChunkComponent = mChunk.get(chunkId);
             logger.error("Le chunk {},{} n'a pas été sauvegardé correctement", infChunkComponent.chunkPosX, infChunkComponent.chunkPosY);
         }
-        return systemsAdminServer.mapManager.supprimerChunkAMap(infChunks, chunkId);
+        return systemsAdminServer.getMapManager().supprimerChunkAMap(infChunks, chunkId);
     }
 
     public boolean chunkEstDansLaRenderDistance(Position position, int posX, int posY, int renderDistance) {
@@ -221,22 +221,22 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     private int getCacheOrGenerateChunk(InfMapComponent infMapComponent, SaveMetadataComponent saveMetadataComponent, int chunkX, int chunkY) {
         // regarde si le chunk est déjà present dans la map
-        int chunkId = systemsAdminServer.mapManager.getChunk(chunkX, chunkY, infMapComponent.infChunks);
+        int chunkId = systemsAdminServer.getMapManager().getChunk(chunkX, chunkY, infMapComponent.infChunks);
         if (chunkId != -1) {
             return chunkId;
         }
 
         try {
-            chunkId = systemsAdminServer.saveInfManager.readSavedInfChunk(chunkX, chunkY, saveMetadataComponent.saveName);
+            chunkId = systemsAdminServer.getSaveInfManager().readSavedInfChunk(chunkX, chunkY, saveMetadataComponent.saveName);
         } catch (FileNotFoundException | BufferUnderflowException | IllegalMagicNumbers | ZipException | EOFException e) {
             if (e instanceof BufferUnderflowException || e instanceof EOFException) logger.error("The chunk {},{} was corrupted", chunkX, chunkY);
             if (e instanceof IllegalMagicNumbers) logger.error("The chunk {},{} was not recognise has a chunk file. Maybe the chunk version is < 9", chunkX, chunkY);
             if (e instanceof ZipException) logger.error("The chunk {},{} was not compressed", chunkX, chunkY);
             logger.info("Generating the chunk {},{}", chunkX, chunkY);
 
-            chunkId = systemsAdminServer.mapManager.generateNewChunk(saveMetadataComponent, chunkX, chunkY);
+            chunkId = systemsAdminServer.getMapManager().generateNewChunk(saveMetadataComponent, chunkX, chunkY);
             try {
-                systemsAdminServer.saveInfManager.saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
+                systemsAdminServer.getSaveInfManager().saveInfChunk(chunkId, SaveInfManager.getSavePath(saveMetadataComponent.saveName));
             } catch (IOException ex) {
                 logger.error(e.getMessage(), ex);
                 throw new RuntimeException(ex);
@@ -251,16 +251,16 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     @Override
     public void breakCell(int worldPosX, int worldPosY, ItemEntry itemDropRegisterEntry, int playerSrc) {
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
-        int chunk = systemsAdminServer.mapManager.getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
-        int topCell = systemsAdminServer.mapManager.getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        int chunk = systemsAdminServer.getMapManager().getChunk(MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY), infMapComponent.infChunks);
+        int topCell = systemsAdminServer.getMapManager().getTopCell(chunk, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         if (topCell == -1) return;
-        systemsAdminServer.mapManager.damneCell(chunk, topCell);
-        systemsAdminServer.itemManagerServer.newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
+        systemsAdminServer.getMapManager().damneCell(chunk, topCell);
+        systemsAdminServer.getItemManagerServer().newItemOnGround(worldPosX, worldPosY, itemDropRegisterEntry, UUID.randomUUID());
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new CellBreakPacket(worldPosX, worldPosY), MapManager.getChunkPos(worldPosX), MapManager.getChunkPos(worldPosY));
     }
 
     public int placeItemToCell(UUID itemToPlaceUuid, int worldPosX, int worldPosY) {
-        int itemId = systemsAdminServer.uuidEntityManager.getEntityId(itemToPlaceUuid);
+        int itemId = systemsAdminServer.getUuidEntityManager().getEntityId(itemToPlaceUuid);
         if (!mItem.has(itemId)) return -1;
         ItemComponent itemComponent = mItem.get(itemId);
         CellEntry placeCell = itemComponent.itemRegisterEntry.getItemBehavior().getNewPlaceCellEntry();
@@ -270,14 +270,14 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         int chunkPosY = MapManager.getChunkPos(worldPosY);
 
         InfMapComponent infMapComponent = serverContext.getEcsEngineServer().getMapEntity().getComponent(InfMapComponent.class);
-        int chunkId = systemsAdminServer.mapManager.getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
+        int chunkId = systemsAdminServer.getMapManager().getChunk(chunkPosX, chunkPosY, infMapComponent.infChunks);
 
         // can only place on item per layer
-        if (systemsAdminServer.mapManager.getCell(chunkId, worldPosX, worldPosY, placeCell.getCellBehavior().getLayer()) != -1) {
+        if (systemsAdminServer.getMapManager().getCell(chunkId, worldPosX, worldPosY, placeCell.getCellBehavior().getLayer()) != -1) {
             return -1;
         }
 
-        int topCellId = systemsAdminServer.mapManager.getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
+        int topCellId = systemsAdminServer.getMapManager().getTopCell(chunkId, MapManager.getInnerChunk(worldPosX), MapManager.getInnerChunk(worldPosY));
         CellComponent topCellComponent = mCell.get(topCellId);
         // can not place cell on top
         if (!topCellComponent.cellRegisterEntry.getCellBehavior().isCanPlaceCellOnTop()) {
@@ -287,19 +287,19 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         byte innerChunkX = MapManager.getInnerChunk(worldPosX);
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         mItem.remove(itemId);
-        return systemsAdminServer.mapManager.newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
+        return systemsAdminServer.getMapManager().newCellInChunk(chunkId, new CellArgs(placeCell, Cells.getInnerChunkPos(innerChunkX, innerChunkY)));
     }
 
 
     public void deleteChestDropItemServer(int motherId) {
-        InventoryComponent chestInventory = systemsAdminServer.inventoryManager.getChestInventory(motherId);
+        InventoryComponent chestInventory = systemsAdminServer.getInventoryManager().getChestInventory(motherId);
         CellComponent cellComponent = mCell.get(motherId);
         InfChunkComponent infChunkComponent = mChunk.get(cellComponent.chunkId);
         int worldPosX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
         int worldPosY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
         for (int i = 0; i < chestInventory.inventory.length; i++) {
             for (int j = 0; j < InventoryManager.tailleStack(chestInventory.inventory[i]); j++) {
-                systemsAdminServer.itemManagerServer.dropItem(chestInventory.inventory[i][j], worldPosX, worldPosY);
+                systemsAdminServer.getItemManagerServer().dropItem(chestInventory.inventory[i][j], worldPosX, worldPosY);
             }
         }
     }
