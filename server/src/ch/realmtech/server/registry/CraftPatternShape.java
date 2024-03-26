@@ -3,9 +3,7 @@ package ch.realmtech.server.registry;
 import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.craft.PatternArgs;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class CraftPatternShape extends CraftRecipeEntry {
     private final String itemResultName;
@@ -44,14 +42,15 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
 
     @Override
     public Optional<CraftResult> craft(List<List<ItemEntry>> items) {
+        if (items.stream().flatMap(Collection::stream).filter(Objects::nonNull).count() != craftPattern2d.stream().flatMap(Collection::stream).filter(Objects::nonNull).count())
+            return Optional.empty();
         if (items.size() < craftPattern2d.size()) return Optional.empty();
         for (int testI = 0; testI < items.size(); testI++) {
-            if (items.get(testI).size() < craftPattern2d.size()) return Optional.empty();
 
             testItems:
             for (int testJ = 0; testJ < items.get(testI).size(); testJ++) {
                 for (int expectedI = 0; expectedI < craftPattern2d.size(); expectedI++) {
-                    if (expectedI + testI >= items.get(expectedI).size()) continue testItems;
+                    if (expectedI + testI > items.get(expectedI).size()) continue testItems;
                     for (int expectedJ = 0; expectedJ < craftPattern2d.get(expectedI).size(); expectedJ++) {
                         if (expectedJ + testJ >= items.get(expectedI).size()) continue testItems;
                         if (craftPattern2d.get(expectedI).get(expectedJ) != items.get(expectedI + testI).get(expectedJ + testJ)) {
