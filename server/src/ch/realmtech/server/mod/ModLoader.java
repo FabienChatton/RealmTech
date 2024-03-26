@@ -60,7 +60,6 @@ public class ModLoader {
         for (Entry entry : entrySort) {
             try {
                 entry.evaluate(rootRegistry);
-                entry.setEvaluated(true);
             } catch (InvalideEvaluate e) {
                 logger.warn("Invalide evaluation for {} entry. Error: {}", entry, e.getMessage());
                 isFail = true;
@@ -164,7 +163,7 @@ public class ModLoader {
                 EvaluateAfter evaluateAfter = entry.getClass().getMethod("evaluate", Registry.class).getAnnotation(EvaluateAfter.class);
                 if (evaluateAfter != null) {
                     for (String evaluateAfterQuery : evaluateAfter.value()) {
-                        List<Entry> entriesDependent = processEvaluateAnnotation(rootRegistry, evaluateAfterQuery);
+                        List<? extends Entry> entriesDependent = processEvaluateAnnotation(rootRegistry, evaluateAfterQuery);
                         for (Entry entryDependent : entriesDependent) {
                             try {
                                 graph.addEdge(entryDependent, entry);
@@ -186,7 +185,7 @@ public class ModLoader {
                 EvaluateBefore evaluateBefore = entry.getClass().getMethod("evaluate", Registry.class).getAnnotation(EvaluateBefore.class);
                 if (evaluateBefore != null) {
                     for (String evaluateBeforeQuery : evaluateBefore.value()) {
-                        List<Entry> entriesDependent = processEvaluateAnnotation(rootRegistry, evaluateBeforeQuery);
+                        List<? extends Entry> entriesDependent = processEvaluateAnnotation(rootRegistry, evaluateBeforeQuery);
                         for (Entry entryDependent : entriesDependent) {
                             try {
                                 graph.addEdge(entry, entryDependent);
@@ -218,12 +217,18 @@ public class ModLoader {
         return StreamSupport.stream(graph.spliterator(), false).toList();
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Entry> processEvaluateAnnotation(Registry<?> rootRegistry, String evaluateQuery) throws InvalideEvaluate {
-        return RegistryUtils.findRegistry(rootRegistry, evaluateQuery)
-                .map((registry) -> (List<Entry>) registry.getEntries())
-                .or(() -> RegistryUtils.findEntry(rootRegistry, evaluateQuery).map(List::of))
-                .orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateQuery + " registry or entry"));
+    private List<? extends Entry> processEvaluateAnnotation(Registry<?> rootRegistry, String evaluateQuery) throws InvalideEvaluate {
+        List<? extends Entry> entries;
+        if (isTagQuery(evaluateQuery)) {
+            entries = RegistryUtils.findEntries(rootRegistry, evaluateQuery);
+        } else {
+            entries = List.of(RegistryUtils.findEntry(rootRegistry, evaluateQuery).orElseThrow(() -> new InvalideEvaluate("Can not find " + evaluateQuery + "entry")));
+        }
+        return entries;
+    }
+
+    private boolean isTagQuery(String query) {
+        return query.startsWith("#");
     }
 
     private void checkName(Registry<?> rootRegistry) {

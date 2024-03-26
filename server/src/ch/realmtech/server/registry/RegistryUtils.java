@@ -15,6 +15,10 @@ public class RegistryUtils {
         }
     }
 
+    public static List<Registry<?>> getParentsRegistry(Entry entry) {
+        return getParentsRegistry(entry.parentRegistry);
+    }
+
     @SuppressWarnings("unchecked")
     public static <T extends Entry> Optional<T> findEntry(Registry<?> registry, String query) {
         Optional<T> newEntry;
@@ -37,8 +41,8 @@ public class RegistryUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Entry> Optional<T> findEntry(Registry<?> registry, int entryHash) {
-        return (Optional<T>) flatEntry(registry).stream().filter((entry) -> entry.getId() == entryHash).findFirst();
+    public static <T extends Entry> Optional<T> findEntry(Registry<?> registry, int id) {
+        return (Optional<T>) flatEntry(registry).stream().filter((entry) -> entry.getId() == id).findFirst();
     }
 
     @SuppressWarnings("unchecked")
@@ -64,7 +68,9 @@ public class RegistryUtils {
 
 
     public static List<? extends Entry> findEntries(Registry<?> rootRegistry, String tag) {
-        return flatEntry(rootRegistry).stream().filter((entry) -> entry.parentRegistry.getTags().contains(tag.substring(1))).toList();
+        return flatEntry(rootRegistry).stream()
+                .filter((entry) -> RegistryUtils.getParentsRegistry(entry).stream().map(Registry::getTags).flatMap(Collection::stream).toList().contains(Optional.of(tag)
+                        .map(s -> s.startsWith("#") ? s.substring(1) : s).get())).toList();
     }
 
     @SuppressWarnings("unchecked")

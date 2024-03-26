@@ -11,7 +11,10 @@ import ch.realmtech.server.mod.EvaluateBefore;
 public abstract class Entry {
     private final String name;
     protected Registry<?> parentRegistry;
-    private boolean isEvaluated;
+
+    public Entry(String name) {
+        this.name = name;
+    }
 
     void setParentRegistry(final Registry<?> parentRegistry) {
         this.parentRegistry = parentRegistry;
@@ -62,14 +65,11 @@ public abstract class Entry {
         return toFqrn().hashCode();
     }
 
-    public boolean isEvaluated() {
-        return isEvaluated;
-    }
-
-    public void setEvaluated(boolean evaluated) {
-        isEvaluated = evaluated;
-    }
-
+    /**
+     * Replaced by to fqrn.
+     *
+     * @return The fqrn or name entry if the entry don't have parent registry.
+     */
     @Override
     public String toString() {
         return parentRegistry != null ? toFqrn() : name;
