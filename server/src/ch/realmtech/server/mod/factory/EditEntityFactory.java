@@ -2,7 +2,6 @@ package ch.realmtech.server.mod.factory;
 
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.level.cell.CraftingTableEditEntity;
-import ch.realmtech.server.mod.EvaluateAfter;
 import ch.realmtech.server.registry.*;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 
@@ -10,18 +9,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class EditEntityFactory extends Entry {
-    private List<CraftRecipeEntry> craftRecipes;
+    private List<? extends CraftRecipeEntry> craftRecipes;
 
     public EditEntityFactory() {
         super("Factory");
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    @EvaluateAfter("#craftingTableRecipes")
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
-        String tagQuery = "#craftingTableRecipes";
-        craftRecipes = (List<CraftRecipeEntry>) RegistryUtils.findEntries(rootRegistry, tagQuery);
+        craftRecipes = RegistryUtils.findEntries(rootRegistry, "#craftingTableRecipes");
     }
 
     public CraftingTableEditEntity createCraftingTable(int craftingNumberOfSlotParRow, int craftingNumberOfRow) {

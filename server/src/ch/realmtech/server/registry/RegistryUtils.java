@@ -66,9 +66,9 @@ public class RegistryUtils {
         registry.childRegistries.forEach((childRegistry) -> flatEntry(childRegistry, entries));
     }
 
-
-    public static List<? extends Entry> findEntries(Registry<?> rootRegistry, String tag) {
-        return flatEntry(rootRegistry).stream()
+    @SuppressWarnings("unchecked")
+    public static <T extends Entry> List<? extends T> findEntries(Registry<?> rootRegistry, String tag) {
+        return (List<? extends T>) flatEntry(rootRegistry).stream()
                 .filter((entry) -> RegistryUtils.getParentsRegistry(entry).stream().map(Registry::getTags).flatMap(Collection::stream).toList().contains(Optional.of(tag)
                         .map(s -> s.startsWith("#") ? s.substring(1) : s).get())).toList();
     }

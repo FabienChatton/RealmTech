@@ -46,10 +46,9 @@ public class FurnaceEditEntity implements EditEntity {
         executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
     }
 
-    @SuppressWarnings("unchecked")
     public static BiPredicate<SystemsAdminClientForClient, ItemEntry> testValideItemForCraft() {
         return (systemsAdminClient, itemRegisterEntry) -> {
-            List<CraftRecipeEntry> furnacesRecipes = (List<CraftRecipeEntry>) RegistryUtils.findEntries(systemsAdminClient.getRootRegistry(), "#furnaceRecipes");
+            List<? extends CraftRecipeEntry> furnacesRecipes = RegistryUtils.findEntries(systemsAdminClient.getRootRegistry(), "#furnaceRecipes");
             return systemsAdminClient.getCraftingManager().getNewCraftResult(furnacesRecipes, List.of(List.of(itemRegisterEntry))).isPresent();
         };
     }

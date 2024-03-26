@@ -47,14 +47,24 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
     private final String[][] craftPattern2dName;
     private List<List<ItemEntry>> craftPattern2d;
 
-    public CraftPatternShape(String name, String itemResultName, int resultNumber, char[][] pattern, PatternArgs newPatternArg, PatternArgs... newPatternArgs) {
+    /**
+     * Create a pattern shape.
+     *
+     * @param name           Name of the entry.
+     * @param itemResultFqrn Item result fqrn.
+     * @param resultNumber   Number of result items.
+     * @param pattern        The pattern of the craft. {@link PatternArgs more info about pattern}
+     * @param patternArg     Pattern arg. One pattern arg require.
+     * @param patternArgs    More pattern arg.
+     */
+    public CraftPatternShape(String name, String itemResultFqrn, int resultNumber, char[][] pattern, PatternArgs patternArg, PatternArgs... patternArgs) {
         super(name);
-        this.itemResultName = itemResultName;
+        this.itemResultName = itemResultFqrn;
         this.resultNumber = resultNumber;
-        PatternArgs[] patternArgs = new PatternArgs[1 + newPatternArgs.length];
-        patternArgs[0] = newPatternArg;
-        System.arraycopy(newPatternArgs, 0, patternArgs, 1, newPatternArgs.length);
-        this.craftPattern2dName = getCraftPattern2dName(pattern, patternArgs);
+        PatternArgs[] args = new PatternArgs[1 + patternArgs.length];
+        args[0] = patternArg;
+        System.arraycopy(args, 0, args, 1, patternArgs.length);
+        this.craftPattern2dName = getCraftPattern2dName(pattern, args);
     }
 
     @Override
@@ -117,8 +127,8 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
 
     private String getItemName(char symbol, PatternArgs[] patternArgs) {
         for (PatternArgs patternArg : patternArgs) {
-            if (symbol == patternArg.getSymbol()) {
-                return patternArg.getItemName();
+            if (symbol == patternArg.symbol()) {
+                return patternArg.itemFqrn();
             }
         }
         return null;

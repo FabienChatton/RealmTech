@@ -457,15 +457,13 @@ public class InventoryManager extends Manager {
     }
 
     /** @return a table with the first index of crafting inventoryId and the seconde index of crafting result inventoryId */
-    @SuppressWarnings("unchecked")
     public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid) {
         String tagQuery = "#craftingTableRecipes";
-        List<? extends Entry> craftRecipeEntires = RegistryUtils.findEntries(rootRegistry, tagQuery);
-        List<CraftRecipeEntry> craftRecipes = (List<CraftRecipeEntry>) craftRecipeEntires;
+        List<? extends CraftRecipeEntry> craftRecipes = RegistryUtils.findEntries(rootRegistry, tagQuery);
         return createCraftingTable(motherEntity, craftingInventoryUuid, new int[craftingNumberOfSlotParRow * craftingNumberOfRow][InventoryComponent.DEFAULT_STACK_LIMITE], craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid, craftRecipes);
     }
 
-    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid, List<CraftRecipeEntry> craftRecipes) {
+    public int[] createCraftingTable(int motherEntity, UUID craftingInventoryUuid, int[][] craftingInventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UUID craftingResultInventoryUuid, List<? extends CraftRecipeEntry> craftRecipes) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
 
@@ -480,7 +478,6 @@ public class InventoryManager extends Manager {
         return new int[]{craftingInventoryId, craftingResultInventoryId};
     }
 
-    @SuppressWarnings("unchecked")
     public int[] createFurnace(int motherEntity, UUID furnaceUuid, UUID craftingInventoryUuid, int[][] craftingInventory, UUID carburantInventoryUuid, int[][] carburantInventory, UUID craftingResultInventoryUuid, int[][] craftingResultInventory) {
         int craftingInventoryId = world.create();
         int craftingResultInventoryId = world.create();
@@ -491,7 +488,7 @@ public class InventoryManager extends Manager {
         createInventoryUi(carburantInventoryId, carburantInventoryUuid, carburantInventory, 1, 1);
 
 
-        List<FurnaceCraftShapeless> furnaceRecipes = (List<FurnaceCraftShapeless>) RegistryUtils.findEntries(systemsAdminCommun.getRootRegistry(), "#furnaceRecipes");
+        List<? extends FurnaceCraftShapeless> furnaceRecipes = RegistryUtils.findEntries(systemsAdminCommun.getRootRegistry(), "#furnaceRecipes");
         world.edit(motherEntity).create(CraftingTableComponent.class).set(craftingInventoryId, craftingResultInventoryId, furnaceRecipes, CraftChangeFunctions.craftResultChangeFurnace(world), OnNewCraftAvailable.onCraftAvailableFurnace());
         world.edit(motherEntity).create(FurnaceComponent.class).set(carburantInventoryId);
         systemsAdminCommun.cellPaddingManager.addOrCreate(motherEntity, world.getRegistered(SerializerController.class).getFurnaceSerializerController());

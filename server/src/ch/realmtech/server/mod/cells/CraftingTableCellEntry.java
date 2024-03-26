@@ -13,7 +13,6 @@ import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.level.cell.CreatePhysiqueBody;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.mod.ClientContext;
-import ch.realmtech.server.mod.EvaluateAfter;
 import ch.realmtech.server.mod.factory.EditEntityFactory;
 import ch.realmtech.server.packet.serverPacket.InventoryGetPacket;
 import ch.realmtech.server.packet.serverPacket.SubscribeToEntityPacket;
@@ -42,7 +41,6 @@ public class CraftingTableCellEntry extends CellEntry {
     }
 
     @Override
-    @EvaluateAfter(classes = {EditEntityFactory.class})
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
         editEntityCreateCraftingTable = RegistryUtils.evaluateSafe(rootRegistry, "realmtech.editEntity.Factory", EditEntityFactory.class);

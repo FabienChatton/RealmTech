@@ -18,9 +18,9 @@ public class CraftingTableEditEntity implements EditEntity {
     private final int craftingNumberOfSlotParRow;
     private final int craftingNumberOfRow;
     private final UuidSupplierOrRandom craftingResultInventoryUuid;
-    private final List<CraftRecipeEntry> craftRecipes;
+    private final List<? extends CraftRecipeEntry> craftRecipes;
 
-    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid, List<CraftRecipeEntry> craftRecipes) {
+    public CraftingTableEditEntity(UuidSupplierOrRandom craftingInventoryUuid, int[][] inventory, int craftingNumberOfSlotParRow, int craftingNumberOfRow, UuidSupplierOrRandom craftingResultInventoryUuid, List<? extends CraftRecipeEntry> craftRecipes) {
         this.craftingInventoryUuid = craftingInventoryUuid;
         this.inventory = inventory;
         this.craftingNumberOfSlotParRow = craftingNumberOfSlotParRow;
