@@ -1,0 +1,28 @@
+name: Maven Publish
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+
+      - name: Build with gradle
+        run: ./gradlew desktop:dist
+
+      - name: Publish to GitHub Maven Repository
+        run: mvn deploy:deploy-file -Dfile=./desktop/build/libs/desktop-1.0.jar -DgroupId=ch.realmtech -DartifactId=desktop -Dversion=latest -Dpackaging=jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/antoniofo/realmtech --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
