@@ -26,7 +26,7 @@ public class IaTestSteerable implements Steerable<Vector2> {
         tagged = false;
         maxAngularAcceleration = 10.0f;
         maxLinearAcceleration = 10.0f;
-        maxLinearSpeed = 20f;
+        maxLinearSpeed = 1;
         maxAngularSpeed = 10.0f;
 
         Box2dLocation box2dLocation = new Box2dLocation(body);

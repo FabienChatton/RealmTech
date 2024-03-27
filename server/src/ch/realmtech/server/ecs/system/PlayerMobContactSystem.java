@@ -15,6 +15,7 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.MassData;
 
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
     private ComponentMapper<IaComponent> mIa;
     @Override
     protected void process(int entityId) {
-        IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(IaComponent.class, PositionComponent.class, Box2dComponent.class)).getEntities();
+        IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(IaComponent.class, PositionComponent.class, Box2dComponent.class).exclude(MobAttackCooldownComponent.class)).getEntities();
         if (ias.isEmpty()) return;
 
         PositionComponent playerPositionComponent = mPos.get(entityId);
@@ -44,11 +45,15 @@ public class PlayerMobContactSystem extends IteratingSystem {
             Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
 
             if (Rectangle.tmp.overlaps(Rectangle.tmp2)) {
+                MassData normalMassData = iaBox2dComponent.body.getMassData();
+                MassData imobileMassData = new MassData();
+                imobileMassData.mass = 100f;
+                iaBox2dComponent.body.setMassData(imobileMassData);
                 MessageManager.getInstance().dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.ATTACK_COOLDOWN_MESSAGE);
                 UUID mobId = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(ia);
-                serverContext.getServerConnexion().broadCastPacket(new MobAttackCoolDownPacket(mobId, 60));
+                serverContext.getServerConnexion().broadCastPacket(new MobAttackCoolDownPacket(mobId, 15));
 
-                world.edit(ia).create(MobAttackCooldownComponent.class).set(60, () -> {
+                world.edit(ia).create(MobAttackCooldownComponent.class).set(15, () -> {
                     Rectangle.tmp.set(playerPositionComponent.x - grow / 2f, playerPositionComponent.y - grow / 2f, playerBox2dComponent.widthWorld + grow, playerBox2dComponent.heightWorld + grow);
                     Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
 
@@ -57,11 +62,12 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         Vector2 iaRectangleCenter = new Vector2();
                         Rectangle.tmp.getCenter(playerRectangleCenter);
                         Rectangle.tmp2.getCenter(iaRectangleCenter);
-                        Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().scl(50f);
+                        Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(100);
 
                         playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
 
-                        MessageManager.getInstance().dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.SLEEP_MESSAGE);
+                        MessageManager.getInstance().dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.FOCUS_PLAYER_MESSAGE, entityId);
+                        iaBox2dComponent.body.setMassData(normalMassData);
                     }
                 });
             }

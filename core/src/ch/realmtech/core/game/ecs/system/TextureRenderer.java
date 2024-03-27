@@ -33,6 +33,7 @@ public class TextureRenderer extends IteratingSystem {
                     textureRegion = textureImportant;
                 } else {
                     textureRegion = textureComponent.texture;
+                    mTextureImportant.remove(entityId);
                 }
             } else {
                 textureRegion = textureComponent.texture;

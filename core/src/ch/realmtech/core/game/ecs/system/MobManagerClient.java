@@ -18,7 +18,7 @@ public class MobManagerClient extends Manager {
 
     public void mobAttackCoolDown(UUID mobUuid, int cooldown) {
         int mobId = systemsAdminClient.getUuidEntityManager().getEntityId(mobUuid);
-        TextureAtlas.AtlasRegion texture = context.getTextureAtlas().findRegion("no-texture");
+        TextureAtlas.AtlasRegion texture = context.getTextureAtlas().findRegion("zombie-0");
         world.edit(mobId).create(TextureImportant.class).set(new TextureRegion[]{texture}, cooldown, cooldown);
     }
 }
