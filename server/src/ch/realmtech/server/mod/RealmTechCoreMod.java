@@ -29,7 +29,7 @@ public class RealmTechCoreMod implements ModInitializer {
     @Override
     public void initializeModRegistry(Registry<?> modRegistry, Context context) {
         // systems admin
-        Registry<Entry> systemsAdminsRegistry = Registry.createRegistry(modRegistry, "systemsAdmins", "systems");
+        Registry<Entry> systemsAdminsRegistry = Registry.createRegistry(modRegistry, "systemsAdmin", "systems");
         Entry defaultSystemAdminClientEntry = context.getDefaultSystemAdminClientEntry();
         if (defaultSystemAdminClientEntry != null) {
             systemsAdminsRegistry.addEntry(defaultSystemAdminClientEntry);

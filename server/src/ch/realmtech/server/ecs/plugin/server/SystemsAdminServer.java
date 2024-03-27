@@ -6,7 +6,6 @@ import ch.realmtech.server.ecs.system.*;
 import ch.realmtech.server.ia.IaTestSystem;
 import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
-import com.artemis.WorldConfigurationBuilder;
 
 public class SystemsAdminServer extends SystemsAdminCommun {
     private IaSystemServer iaSystemServer;
@@ -43,68 +42,34 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        setIaSystemServer(new IaSystemServer());
-        setItemManagerServer(new ItemManagerServer());
-        setPlayerMouvementSystemServer(new PlayerMouvementSystemServer());
-        setMapSystemServer(new MapSystemServer());
-        setIaTestSystem(new IaTestSystem());
-        setPhysicEntitySystem(new PhysicEntityIaTestSystem());
-        setPlayerSyncSystem(new PlayerSyncSystem());
-        setIaIsFocusPlayerSystem(new IaIsFocusPlayerSystem());
-        setFurnaceSystem(new FurnaceSystem());
-        setEnergyBatterySystem(new EnergyBatterySystem());
-        setEnergyGeneratorSystem(new EnergyGeneratorSystem());
-        setPlayerMobContactSystem(new PlayerMobContactSystem());
-        setWeaponRayManager(new WeaponRayManager());
+        setIaSystemServer(putCustomSystem(new IaSystemServer()));
+        setItemManagerServer(putCustomSystem(new ItemManagerServer()));
+        setPlayerMouvementSystemServer(putCustomSystem(new PlayerMouvementSystemServer()));
+        setMapSystemServer(putCustomSystem(new MapSystemServer()));
+        setIaTestSystem(putCustomSystem(new IaTestSystem()));
+        setPhysicEntitySystem(putCustomSystem(new PhysicEntityIaTestSystem()));
+        setPlayerSyncSystem(putCustomSystem(new PlayerSyncSystem()));
+        setIaIsFocusPlayerSystem(putCustomSystem(new IaIsFocusPlayerSystem()));
+        setFurnaceSystem(putCustomSystem(new FurnaceSystem()));
+        setEnergyBatterySystem(putCustomSystem(new EnergyBatterySystem()));
+        setEnergyGeneratorSystem(putCustomSystem(new EnergyGeneratorSystem()));
+        setPlayerMobContactSystem(putCustomSystem(new PlayerMobContactSystem()));
+        setWeaponRayManager(putCustomSystem(new WeaponRayManager()));
 
-        setCraftingSystem(new CraftingSystem());
-        setCraftingManager(new CraftingManager());
-        setPickUpOnGroundItemSystem(new PickUpOnGroundItemSystem());
+        setCraftingSystem(putCustomSystem(new CraftingSystem()));
+        setCraftingManager(putCustomSystem(new CraftingManager()));
+        setPickUpOnGroundItemSystem(putCustomSystem(new PickUpOnGroundItemSystem()));
 
-        setTimeSystem(new TimeSystem());
-        setBox2dFrotementSystem(new Box2dFrotementSystem());
-        setItemOnGroundPosSyncSystem(new ItemOnGroundPosSyncSystem());
-        setUpdateBox2dWithPosition(new UpdateBox2dWithPosition());
-        setItemBeingPickAnimationSystem(new ItemBeingPickAnimationSystem());
-        setPhysiqueWorldStepSystem(new PhysiqueWorldStepSystem());
-        setPickerGroundItemContactSystem(new PickerGroundItemContactSystem());
-        setPlayerManagerServer(new PlayerManagerServer());
-        setDirtyCellSystem(new DirtyCellSystem());
-        setPlayerSubscriptionSystem(new PlayerSubscriptionSystem());
-    }
-
-    public void setup(WorldConfigurationBuilder b) {
-        super.setup(b);
-        b.with(
-                getIaSystemServer(),
-                getItemManagerServer(),
-                getPlayerMouvementSystemServer(),
-                getMapSystemServer(),
-                getIaTestSystem(),
-                getPhysicEntitySystem(),
-                getPlayerSyncSystem(),
-                getIaIsFocusPlayerSystem(),
-                getFurnaceSystem(),
-                getEnergyBatterySystem(),
-                getEnergyGeneratorSystem(),
-                getPlayerMobContactSystem(),
-                getWeaponRayManager(),
-
-                getCraftingSystem(),
-                getCraftingManager(),
-                getPickUpOnGroundItemSystem(),
-
-                getTimeSystem(),
-                getBox2dFrotementSystem(),
-                getItemOnGroundPosSyncSystem(),
-                getUpdateBox2dWithPosition(),
-                getItemBeingPickAnimationSystem(),
-                getPhysiqueWorldStepSystem(),
-                getPickerGroundItemContactSystem(),
-                getPlayerManagerServer(),
-                getDirtyCellSystem(),
-                getPlayerSubscriptionSystem()
-        );
+        setTimeSystem(putCustomSystem(new TimeSystem()));
+        setBox2dFrotementSystem(putCustomSystem(new Box2dFrotementSystem()));
+        setItemOnGroundPosSyncSystem(putCustomSystem(new ItemOnGroundPosSyncSystem()));
+        setUpdateBox2dWithPosition(putCustomSystem(new UpdateBox2dWithPosition()));
+        setItemBeingPickAnimationSystem(putCustomSystem(new ItemBeingPickAnimationSystem()));
+        setPhysiqueWorldStepSystem(putCustomSystem(new PhysiqueWorldStepSystem()));
+        setPickerGroundItemContactSystem(putCustomSystem(new PickerGroundItemContactSystem()));
+        setPlayerManagerServer(putCustomSystem(new PlayerManagerServer()));
+        setDirtyCellSystem(putCustomSystem(new DirtyCellSystem()));
+        setPlayerSubscriptionSystem(putCustomSystem(new PlayerSubscriptionSystem()));
     }
 
     @Override

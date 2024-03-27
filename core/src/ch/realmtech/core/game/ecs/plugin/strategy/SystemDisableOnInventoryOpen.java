@@ -1,5 +1,6 @@
 package ch.realmtech.core.game.ecs.plugin.strategy;
 
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import com.artemis.BaseSystem;
 import com.artemis.World;
 
@@ -14,17 +15,17 @@ public class SystemDisableOnInventoryOpen implements InGameSystemOnInventoryOpen
 
     @Override
     public void onInventoryOpen(World world) {
+        SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
         for (Class<? extends BaseSystem> inGameSystem : inGameSystem) {
-            BaseSystem system = world.getSystem(inGameSystem);
-            system.setEnabled(false);
+            systemsAdmin.getCustomSystem(inGameSystem).setEnabled(false);
         }
     }
 
     @Override
     public void onInventoryClose(World world) {
+        SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
         for (Class<? extends BaseSystem> inGameSystem : inGameSystem) {
-            BaseSystem system = world.getSystem(inGameSystem);
-            system.setEnabled(true);
+            systemsAdmin.getCustomSystem(inGameSystem).setEnabled(true);
         }
     }
 }

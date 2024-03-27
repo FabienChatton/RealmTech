@@ -78,8 +78,8 @@ public class ModLoader {
 
     private void initializeMod(ModInitializer modInitializer) {
         String modId = modInitializer.getModId();
-        Registry<?> coreModRegistry = Registry.createRegistry(rootRegistry, modId);
-        modInitializer.initializeModRegistry(coreModRegistry, context);
+        Registry<?> modRegistry = Registry.createRegistry(rootRegistry, modId);
+        modInitializer.initializeModRegistry(modRegistry, context);
         context.getExecuteOnContext().onClientContext((clientContext) -> {
             if (modInitializer.getClass().isAnnotationPresent(AssetsProvider.class)) {
                 try {
