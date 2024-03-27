@@ -31,6 +31,7 @@ task debug(dependsOn: classes, type: JavaExec) {
 
 task dist(type: Jar) {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    archivesBaseName = 'RealmTech'
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
