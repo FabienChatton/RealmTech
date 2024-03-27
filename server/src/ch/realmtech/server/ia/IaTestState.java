@@ -39,9 +39,16 @@ public enum IaTestState implements State<IaTestTelegraph> {
             return true;
         }
     },
+    ATTACK_COOLDOWN(2) {
+        @Override
+        public boolean onMessage(IaTestTelegraph entity, Telegram telegram) {
+            return true;
+        }
+    }
     ;
     public final static int SLEEP_MESSAGE = 0;
     public final static int FOCUS_PLAYER_MESSAGE = 1;
+    public static final int ATTACK_COOLDOWN_MESSAGE = 2;
     public final int messageId;
 
     IaTestState(int messageId) {

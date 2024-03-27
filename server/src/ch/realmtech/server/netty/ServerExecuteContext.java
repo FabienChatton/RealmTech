@@ -247,13 +247,7 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void playerWeaponShot(Channel clientChannel, Vector2 vectorEnd) {
-        serverContext.getEcsEngineServer().nextTick(() -> {
-            int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChannel);
-            UUID mobHitUuid = serverContext.getSystemsAdminServer().getWeaponRayManager().playerWeaponShot(playerId, vectorEnd);
-            if (mobHitUuid != null) {
-                serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(mobHitUuid), clientChannel);
-            }
-        });
+    public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick) {
+        serverContext.getEcsEngineServer().nextTick(() -> serverContext.getSystemsAdminServer().getWeaponRayManager().playerWeaponShot(clientChannel, vectorClick));
     }
 }

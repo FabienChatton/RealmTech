@@ -8,7 +8,7 @@ import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
 
 public class SystemsAdminServer extends SystemsAdminCommun {
-    private IaSystemServer iaSystemServer;
+    private MobSystemServer mobSystemServer;
     private ItemManagerServer itemManagerServer;
     private PlayerMouvementSystemServer playerMouvementSystemServer;
     private MapSystemServer mapSystemServer;
@@ -26,7 +26,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     private TimeSystem timeSystem;
     private PhysicEntityIaTestSystem physicEntitySystem;
     private PlayerSyncSystem playerSyncSystem;
-    private IaIsFocusPlayerSystem iaIsFocusPlayerSystem;
+    private MobFocusPlayerSystem mobFocusPlayerSystem;
     private FurnaceSystem furnaceSystem;
     private EnergyBatterySystem energyBatterySystem;
     private EnergyGeneratorSystem energyGeneratorSystem;
@@ -34,6 +34,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     private PlayerSubscriptionSystem playerSubscriptionSystem;
     private PlayerMobContactSystem playerMobContactSystem;
     private WeaponRayManager weaponRayManager;
+    private InvincibilitySystem invincibilitySystem;
+    private MobAttackCooldownSystem mobAttackCooldownSystem;
 
     public SystemsAdminServer() {
         super("SystemsAdminServer");
@@ -42,19 +44,21 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        setIaSystemServer(putCustomSystem(10, new IaSystemServer()));
+        setIaSystemServer(putCustomSystem(10, new MobSystemServer()));
         setItemManagerServer(putCustomSystem(10, new ItemManagerServer()));
         setPlayerMouvementSystemServer(putCustomSystem(10, new PlayerMouvementSystemServer()));
         setMapSystemServer(putCustomSystem(10, new MapSystemServer()));
         setIaTestSystem(putCustomSystem(10, new IaTestSystem()));
         setPhysicEntitySystem(putCustomSystem(10, new PhysicEntityIaTestSystem()));
         setPlayerSyncSystem(putCustomSystem(10, new PlayerSyncSystem()));
-        setIaIsFocusPlayerSystem(putCustomSystem(10, new IaIsFocusPlayerSystem()));
+        setMobIsFocusPlayerSystem(putCustomSystem(10, new MobFocusPlayerSystem()));
         setFurnaceSystem(putCustomSystem(10, new FurnaceSystem()));
         setEnergyBatterySystem(putCustomSystem(10, new EnergyBatterySystem()));
         setEnergyGeneratorSystem(putCustomSystem(10, new EnergyGeneratorSystem()));
         setPlayerMobContactSystem(putCustomSystem(10, new PlayerMobContactSystem()));
         setWeaponRayManager(putCustomSystem(10, new WeaponRayManager()));
+        setRayIgnoreSystem(putCustomSystem(10, new InvincibilitySystem()));
+        setMobAttackCooldownSystem(putCustomSystem(10, new MobAttackCooldownSystem()));
 
         setCraftingSystem(putCustomSystem(10, new CraftingSystem()));
         setCraftingManager(putCustomSystem(10, new CraftingManager()));
@@ -79,12 +83,12 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         }
     }
 
-    public IaSystemServer getIaSystemServer() {
-        return iaSystemServer;
+    public MobSystemServer getIaSystemServer() {
+        return mobSystemServer;
     }
 
-    public void setIaSystemServer(IaSystemServer iaSystemServer) {
-        this.iaSystemServer = iaSystemServer;
+    public void setIaSystemServer(MobSystemServer mobSystemServer) {
+        this.mobSystemServer = mobSystemServer;
     }
 
     public ItemManagerServer getItemManagerServer() {
@@ -223,12 +227,12 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         this.playerSyncSystem = playerSyncSystem;
     }
 
-    public IaIsFocusPlayerSystem getIaIsFocusPlayerSystem() {
-        return iaIsFocusPlayerSystem;
+    public MobFocusPlayerSystem getIaMobFocusPlayerSystem() {
+        return mobFocusPlayerSystem;
     }
 
-    public void setIaIsFocusPlayerSystem(IaIsFocusPlayerSystem iaIsFocusPlayerSystem) {
-        this.iaIsFocusPlayerSystem = iaIsFocusPlayerSystem;
+    public void setMobIsFocusPlayerSystem(MobFocusPlayerSystem mobFocusPlayerSystem) {
+        this.mobFocusPlayerSystem = mobFocusPlayerSystem;
     }
 
     public FurnaceSystem getFurnaceSystem() {
@@ -285,5 +289,29 @@ public class SystemsAdminServer extends SystemsAdminCommun {
 
     public void setWeaponRayManager(WeaponRayManager weaponRayManager) {
         this.weaponRayManager = weaponRayManager;
+    }
+
+    public MobSystemServer getMobSystemServer() {
+        return mobSystemServer;
+    }
+
+    public void setMobSystemServer(MobSystemServer mobSystemServer) {
+        this.mobSystemServer = mobSystemServer;
+    }
+
+    public InvincibilitySystem getRayIgnoreSystem() {
+        return invincibilitySystem;
+    }
+
+    public void setRayIgnoreSystem(InvincibilitySystem invincibilitySystem) {
+        this.invincibilitySystem = invincibilitySystem;
+    }
+
+    public MobAttackCooldownSystem getMobAttackCooldownSystem() {
+        return mobAttackCooldownSystem;
+    }
+
+    public void setMobAttackCooldownSystem(MobAttackCooldownSystem mobAttackCooldownSystem) {
+        this.mobAttackCooldownSystem = mobAttackCooldownSystem;
     }
 }

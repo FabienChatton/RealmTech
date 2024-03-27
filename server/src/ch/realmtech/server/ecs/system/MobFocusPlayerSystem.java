@@ -11,7 +11,7 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
 
 @All({IaComponent.class, PositionComponent.class})
-public class IaIsFocusPlayerSystem extends IteratingSystem {
+public class MobFocusPlayerSystem extends IteratingSystem {
     private final MessageManager messageManager = MessageManager.getInstance();
     @Wire
     private SystemsAdminServer systemsAdminServer;

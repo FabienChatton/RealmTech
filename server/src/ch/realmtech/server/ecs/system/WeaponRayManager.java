@@ -1,9 +1,13 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
+import ch.realmtech.server.ecs.component.InvincibilityComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ia.IaComponent;
+import ch.realmtech.server.packet.clientPacket.MobDeletePacket;
+import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -13,11 +17,13 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import io.netty.channel.Channel;
 
 import java.util.UUID;
 
 public class WeaponRayManager extends Manager {
-
+    @Wire(name = "serverContext")
+    private ServerContext serverContext;
     @Wire
     private SystemsAdminServer systemsAdminServer;
     @Wire(name = "physicWorld")
@@ -27,7 +33,7 @@ public class WeaponRayManager extends Manager {
     private ComponentMapper<PositionComponent> mPos;
 
     private IntBag rayCast(Vector2 vectorStart, Vector2 vectorEnd, Aspect.Builder aspectBuilder, BodyHitsCallback callback) {
-        IntBag entities = world.getAspectSubscriptionManager().get(aspectBuilder).getEntities();
+        IntBag entities = world.getAspectSubscriptionManager().get(aspectBuilder.all(Box2dComponent.class).exclude(InvincibilityComponent.class)).getEntities();
 
         Bag<Body> bodyHits = new Bag<>();
         physicWorld.rayCast((fixture, point, normal, fraction) -> callback.reportRayFixture(bodyHits, fixture, point, normal, fraction), vectorStart, vectorEnd);
@@ -45,10 +51,12 @@ public class WeaponRayManager extends Manager {
         return entityHits;
     }
 
-    public int getMobHit(int playerId, Vector2 vectorEnd) {
+    public int getMobHit(int playerId, Vector2 vectorClick) {
         PositionComponent playerPos = mPos.get(playerId);
 
-        IntBag mobs = rayCast(new Vector2(playerPos.x, playerPos.y), vectorEnd, Aspect.all(IaComponent.class), getFirstHit());
+        Vector2 vectorStart = new Vector2(playerPos.x, playerPos.y);
+        Vector2 vectorEnd = vectorClick.sub(vectorStart).setLength(100);
+        IntBag mobs = rayCast(vectorStart, vectorEnd, Aspect.all(IaComponent.class), getFirstHit());
 
         if (!mobs.isEmpty()) {
             return mobs.get(0);
@@ -57,14 +65,21 @@ public class WeaponRayManager extends Manager {
         }
     }
 
-    public UUID playerWeaponShot(int playerId, Vector2 vectorEnd) {
-        int mobHit = getMobHit(playerId, vectorEnd);
-        if (mobHit != -1) {
-            UUID mobUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobHit);
-            systemsAdminServer.getMobManager().destroyMob(mobHit);
-            return mobUuid;
-        } else {
-            return null;
+    public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick) {
+        int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChannel);
+        int mobId = getMobHit(playerId, vectorClick);
+        if (mobId != -1) {
+            PositionComponent mobPosition = mPos.get(mobId);
+            UUID mobUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobId);
+            serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, mobPosition.toVector2()), clientChannel);
+
+            if (systemsAdminServer.getMobManager().attackMob(mobId, 5)) {
+                systemsAdminServer.getMobManager().destroyMob(mobId);
+                serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(mobUuid), clientChannel);
+            } else {
+                systemsAdminServer.getMobManager().knockBackMob(mobId, new Vector2(100, 0));
+                world.edit(mobId).create(InvincibilityComponent.class).set(60);
+            }
         }
     }
 

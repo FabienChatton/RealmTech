@@ -12,5 +12,7 @@ public interface SystemsAdminClientForClient extends SystemsAdminCommunItf {
 
     EnergyIconSystemForClient getEnergyBatteryIconSystem();
 
+    ParticleEffectForClient getParticleEffectsSystem();
+
     Registry<?> getRootRegistry();
 }

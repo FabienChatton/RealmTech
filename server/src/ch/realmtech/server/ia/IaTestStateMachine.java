@@ -20,6 +20,7 @@ public class IaTestStateMachine extends DefaultStateMachine<IaTestTelegraph, IaT
         return switch (telegram.message) {
             case SLEEP_MESSAGE -> SLEEP.onMessage(entity, telegram);
             case FOCUS_PLAYER_MESSAGE -> FOCUS_PLAYER.onMessage(entity, telegram);
+            case ATTACK_COOLDOWN_MESSAGE -> ATTACK_COOLDOWN.onMessage(entity, telegram);
             default -> false;
         };
     }

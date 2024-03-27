@@ -41,6 +41,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private TiledTextureSystem tiledTextureSystem;
     private PlayerFootStepSystem playerFootStepSystem;
     private QuestSystem questSystem;
+    private ParticleEffectsSystem particleEffectsSystem;
+    private MobManagerClient mobManagerClient;
 
     /*
     0-100       update game
@@ -72,6 +74,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         setCameraFollowPlayerSystem(putCustomSystem(25, new CameraFollowPlayerSystem()));
         setTiledTextureSystem(putCustomSystem(26, new TiledTextureSystem()));
         setPlayerFootStepSystem(putCustomSystem(27, new PlayerFootStepSystem()));
+        setMobManagerClient(putCustomSystem(28, new MobManagerClient()));
 
         // render
         setGameStageBatchBeginSystem(putCustomSystem(101, new GameStageBatchBeginSystem()));
@@ -79,6 +82,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         setCellHoverSystem(putCustomSystem(120, new CellHoverSystem()));
         setTextureRenderer(putCustomSystem(130, new TextureRenderer()));
         setCellBeingMineRenderSystem(putCustomSystem(140, new CellBeingMineRenderSystem()));
+        setParticleEffectsSystem(putCustomSystem(150, new ParticleEffectsSystem()));
         setGameStageBatchEndSystem(putCustomSystem(200, new GameStageBatchEndSystem()));
 
 
@@ -360,5 +364,21 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
     public void setQuestSystem(QuestSystem questSystem) {
         this.questSystem = questSystem;
+    }
+
+    public ParticleEffectsSystem getParticleEffectsSystem() {
+        return particleEffectsSystem;
+    }
+
+    public void setParticleEffectsSystem(ParticleEffectsSystem particleEffectsSystem) {
+        this.particleEffectsSystem = particleEffectsSystem;
+    }
+
+    public MobManagerClient getMobManagerClient() {
+        return mobManagerClient;
+    }
+
+    public void setMobManagerClient(MobManagerClient mobManagerClient) {
+        this.mobManagerClient = mobManagerClient;
     }
 }

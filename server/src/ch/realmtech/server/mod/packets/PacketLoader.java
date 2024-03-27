@@ -63,6 +63,8 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(UnSubscribeToEntityPacket.class, UnSubscribeToEntityPacket::new));
         packets.add(new SimpleEntry<>(MobDeletePacket.class, MobDeletePacket::new));
         packets.add(new SimpleEntry<>(PlayerWeaponShotPacket.class, PlayerWeaponShotPacket::new));
+        packets.add(new SimpleEntry<>(ParticleAddPacket.class, ParticleAddPacket::new));
+        packets.add(new SimpleEntry<>(MobAttackCoolDownPacket.class, MobAttackCoolDownPacket::new));
     }
 
     public List<Map.Entry<Class<? extends Packet>, Function<ByteBuf, ? extends Packet>>> getPackets() {

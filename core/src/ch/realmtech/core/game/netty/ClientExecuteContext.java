@@ -12,6 +12,7 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
@@ -20,6 +21,7 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,6 +257,22 @@ public class ClientExecuteContext implements ClientExecute {
         context.nextFrame(() -> {
             int mobId = context.getSystemsAdminClient().getUuidEntityManager().getEntityId(mobUuid);
             context.getSystemsAdminClient().getMobManager().destroyMob(mobId);
+        });
+    }
+
+    @Override
+    public void addParticle(ParticleAddPacket.Particles particle, Vector2 gameCoordinate) {
+        context.nextFrame(() -> {
+            if (particle == ParticleAddPacket.Particles.HIT) {
+                context.getSystemsAdminClient().getParticleEffectsSystem().createHitEffect(gameCoordinate);
+            }
+        });
+    }
+
+    @Override
+    public void mobAttackCoolDown(UUID mobUuid, int cooldown) {
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getMobManagerClient().mobAttackCoolDown(mobUuid, cooldown);
         });
     }
 }

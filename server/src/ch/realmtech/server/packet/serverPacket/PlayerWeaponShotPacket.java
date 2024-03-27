@@ -6,26 +6,26 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 public class PlayerWeaponShotPacket implements ServerPacket {
-    private final Vector2 dst;
+    private final Vector2 vectorClick;
 
     public PlayerWeaponShotPacket(float dstX, float dstY) {
-        dst = new Vector2(dstX, dstY);
+        vectorClick = new Vector2(dstX, dstY);
     }
 
-    public PlayerWeaponShotPacket(Vector2 dst) {
-        this.dst = dst;
+    public PlayerWeaponShotPacket(Vector2 vectorClick) {
+        this.vectorClick = vectorClick;
     }
 
     public PlayerWeaponShotPacket(ByteBuf byteBuf) {
         float dstX = byteBuf.readFloat();
         float dstY = byteBuf.readFloat();
-        dst = new Vector2(dstX, dstY);
+        vectorClick = new Vector2(dstX, dstY);
     }
 
     @Override
     public void write(ByteBuf byteBuf) {
-        byteBuf.writeFloat(dst.x);
-        byteBuf.writeFloat(dst.y);
+        byteBuf.writeFloat(vectorClick.x);
+        byteBuf.writeFloat(vectorClick.y);
     }
 
     @Override
@@ -35,6 +35,6 @@ public class PlayerWeaponShotPacket implements ServerPacket {
 
     @Override
     public void executeOnServer(Channel clientChannel, ServerExecute serverExecute) {
-        serverExecute.playerWeaponShot(clientChannel, new Vector2(dst.x, dst.y));
+        serverExecute.playerWeaponShot(clientChannel, new Vector2(vectorClick.x, vectorClick.y));
     }
 }

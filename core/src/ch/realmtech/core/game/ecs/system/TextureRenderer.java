@@ -7,6 +7,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 @All({PositionComponent.class, TextureComponent.class})
@@ -15,6 +16,7 @@ public class TextureRenderer extends IteratingSystem {
     private Stage gameStage;
 
     private ComponentMapper<TextureComponent> mTexture;
+    private ComponentMapper<TextureImportant> mTextureImportant;
     private ComponentMapper<PositionComponent> mPosition;
 
     @Override
@@ -23,8 +25,21 @@ public class TextureRenderer extends IteratingSystem {
         if (textureComponent.texture != null) {
             PositionComponent positionComponent = mPosition.create(entityId);
 
+            TextureRegion textureRegion;
+            if (mTextureImportant.has(entityId)) {
+                TextureImportant textureImportantComponent = mTextureImportant.get(entityId);
+                TextureRegion textureImportant = textureImportantComponent.getTexture();
+                if (textureImportant != null) {
+                    textureRegion = textureImportant;
+                } else {
+                    textureRegion = textureComponent.texture;
+                }
+            } else {
+                textureRegion = textureComponent.texture;
+            }
+
             gameStage.getBatch().draw(
-                    textureComponent.texture,
+                    textureRegion,
                     positionComponent.x,
                     positionComponent.y,
                     textureComponent.texture.getRegionWidth() * RealmTech.UNITE_SCALE * textureComponent.scale,
