@@ -3,6 +3,7 @@ package ch.realmtech.crafts;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.mod.crafts.craftingtable.EnergyBatteryCraftEntry;
 import ch.realmtech.server.mod.crafts.craftingtable.PlankCraftEntry;
 import ch.realmtech.server.mod.items.*;
 import ch.realmtech.server.netty.ConnexionConfig;
@@ -256,6 +257,36 @@ public class TestCraft {
         Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
 
         assertFalse(newCraftResult.isPresent());
+    }
+
+    @Test
+    public void craftPatternFill() {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        CopperIngotItemEntry copperIngot = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), CopperIngotItemEntry.class);
+        EnergyCableItemEntry energyCable = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), EnergyCableItemEntry.class);
+        EnergyBatteryItemEntry energyBattery = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), EnergyBatteryItemEntry.class);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventory(motherChest);
+
+        // 0, 1, 2
+        // 3, 4, 5
+        // 6, 7, 8
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(copperIngot, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[1], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(energyCable, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[2], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(copperIngot, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[3], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(copperIngot, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[4], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(energyCable, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[5], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(copperIngot, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[6], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(copperIngot, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[7], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(energyCable, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[8], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(copperIngot, UUID.randomUUID()));
+
+        EnergyBatteryCraftEntry energyBatteryCraftEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), EnergyBatteryCraftEntry.class);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(List.of(energyBatteryCraftEntry), mapToItems);
+
+        assertSame(newCraftResult.orElseThrow().getItemResult(), energyBattery);
     }
 
     @Test

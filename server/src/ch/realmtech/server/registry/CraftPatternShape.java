@@ -63,7 +63,7 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
         this.resultNumber = resultNumber;
         PatternArgs[] args = new PatternArgs[1 + patternArgs.length];
         args[0] = patternArg;
-        System.arraycopy(args, 0, args, 1, patternArgs.length);
+        System.arraycopy(patternArgs, 0, args, 1, patternArgs.length);
         this.craftPattern2dName = getCraftPattern2dName(pattern, args);
     }
 
