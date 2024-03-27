@@ -17,6 +17,7 @@ import ch.realmtech.server.mod.options.server.AuthServerBaseUrlServerOptionEntry
 import ch.realmtech.server.mod.options.server.RenderDistanceOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyAccessTokenUrnOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.mod.packets.PacketLoader;
 import ch.realmtech.server.mod.quests.*;
 import ch.realmtech.server.registry.*;
 
@@ -35,6 +36,8 @@ public class RealmTechCoreMod implements ModInitializer {
             systemsAdminsRegistry.addEntry(defaultSystemAdminClientEntry);
         }
         systemsAdminsRegistry.addEntry(new SystemsAdminServer());
+        // with packets
+        systemsAdminsRegistry.addEntry(new PacketLoader());
 
         // cells
         Registry<CellEntry> cellsRegistry = Registry.createRegistry(modRegistry, "cells");

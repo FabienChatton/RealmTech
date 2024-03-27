@@ -3,7 +3,7 @@ package ch.realmtech.server.level.cell;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.ClickInteraction;
-import ch.realmtech.server.mod.PlayerFootStepSound;
+import ch.realmtech.server.sound.PlayerFootStepSound;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 

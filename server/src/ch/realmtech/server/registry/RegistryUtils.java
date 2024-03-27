@@ -88,11 +88,10 @@ public class RegistryUtils {
     }
 
     public static <T extends Entry> T findEntryOrThrow(Registry<?> registry, Class<T> entryClazz) {
-        List<T> entries = flatEntry(registry, entryClazz);
-        if (entries.isEmpty()) {
-            throw new NoSuchElementException("Can not find " + entryClazz + " entry.");
-        } else {
-            return entries.get(0);
+        try {
+            return evaluateSafe(registry, entryClazz);
+        } catch (InvalideEvaluate e) {
+            throw new NoSuchElementException(e);
         }
     }
 

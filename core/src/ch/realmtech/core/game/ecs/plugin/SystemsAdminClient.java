@@ -42,6 +42,12 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     private PlayerFootStepSystem playerFootStepSystem;
     private QuestSystem questSystem;
 
+    /*
+    0-100       update game
+    101         batch begin
+    102-199     render game
+    200         batch end
+     */
     public SystemsAdminClient() {
         super("SystemsAdminClient");
     }
@@ -49,43 +55,41 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        setPlayerManagerClient(putCustomSystem(new PlayerManagerClient()));
-        setItemManagerClient(putCustomSystem(new ItemManagerClient()));
-        setPlayerInputSystem(putCustomSystem(new PlayerInputSystem()));
-        setMouvementSystem(putCustomSystem(new MouvementSystem()));
-        setPlayerMouvementSystem(putCustomSystem(new PlayerMouvementSystem()));
-        setTextureAnimatedSystem(putCustomSystem(new TextureAnimatedSystem()));
-        setIaManagerClient(putCustomSystem(new IaManagerClient()));
-        setUpdateBox2dWithPosition(putCustomSystem(new UpdateBox2dWithPosition()));
-        setTimeSystemSimulation(putCustomSystem(new TimeSystemSimulation()));
-        setCellHoverSystem(putCustomSystem(new CellHoverSystem()));
-        setLightManager(putCustomSystem(new LightManager()));
-        setFurnaceIconSystem(putCustomSystem(new FurnaceIconSystem()));
-        setFurnaceSimulationSystem(putCustomSystem(new FurnaceSimulationSystem()));
-        setCraftingManager(putCustomSystem(new CraftingManager()));
-        setEnergyBatteryIconSystem(putCustomSystem(new EnergyGeneratorClientSystem()));
-        setTiledTextureSystem(putCustomSystem(new TiledTextureSystem()));
-        setPlayerFootStepSystem(putCustomSystem(new PlayerFootStepSystem()));
+        setPlayerManagerClient(putCustomSystem(11, new PlayerManagerClient()));
+        setItemManagerClient(putCustomSystem(12, new ItemManagerClient()));
+        setPlayerInputSystem(putCustomSystem(13, new PlayerInputSystem()));
+        setTimeSystemSimulation(putCustomSystem(14, new TimeSystemSimulation()));
+        setIaManagerClient(putCustomSystem(15, new IaManagerClient()));
+        setLightManager(putCustomSystem(16, new LightManager()));
+        setFurnaceIconSystem(putCustomSystem(17, new FurnaceIconSystem()));
+        setFurnaceSimulationSystem(putCustomSystem(18, new FurnaceSimulationSystem()));
+        setCraftingManager(putCustomSystem(19, new CraftingManager()));
+        setEnergyBatteryIconSystem(putCustomSystem(20, new EnergyGeneratorClientSystem()));
+        setMouvementSystem(putCustomSystem(21, new MouvementSystem()));
+        setPlayerMouvementSystem(putCustomSystem(22, new PlayerMouvementSystem()));
+        setTextureAnimatedSystem(putCustomSystem(23, new TextureAnimatedSystem()));
+        setUpdateBox2dWithPosition(putCustomSystem(24, new UpdateBox2dWithPosition()));
+        setCameraFollowPlayerSystem(putCustomSystem(25, new CameraFollowPlayerSystem()));
+        setTiledTextureSystem(putCustomSystem(26, new TiledTextureSystem()));
+        setPlayerFootStepSystem(putCustomSystem(27, new PlayerFootStepSystem()));
+
         // render
-        setGameStageBatchBeginSystem(putCustomSystem(new GameStageBatchBeginSystem()));
-        setCameraFollowPlayerSystem(putCustomSystem(new CameraFollowPlayerSystem()));
-        setMapRendererSystem(putCustomSystem(new MapRendererSystem()));
-        setCellBeingMineRenderSystem(putCustomSystem(new CellBeingMineRenderSystem()));
-        setWailaSystem(putCustomSystem(new WailaSystem()));
-        setTextureRenderer(putCustomSystem(new TextureRenderer()));
-        setInventoryNeiSystem(putCustomSystem(new InventoryNeiSystem()));
-        setGameStageBatchEndSystem(putCustomSystem(new GameStageBatchEndSystem()));
-
-        setPlayerInventorySystem(putCustomSystem(new PlayerInventorySystem()));
-        setItemBarSystem(putCustomSystem(new ItemBarSystem()));
-        setQuestSystem(putCustomSystem(new QuestSystem()));
-
-        setLightCycleSystem(putCustomSystem(new LightCycleSystem()));
+        setGameStageBatchBeginSystem(putCustomSystem(101, new GameStageBatchBeginSystem()));
+        setMapRendererSystem(putCustomSystem(110, new MapRendererSystem()));
+        setCellHoverSystem(putCustomSystem(120, new CellHoverSystem()));
+        setTextureRenderer(putCustomSystem(130, new TextureRenderer()));
+        setCellBeingMineRenderSystem(putCustomSystem(140, new CellBeingMineRenderSystem()));
+        setGameStageBatchEndSystem(putCustomSystem(200, new GameStageBatchEndSystem()));
 
 
-        // tick simulation
-        setCellBeingMineSystem(putCustomSystem(new CellBeingMineSystem()));
-//        physiqueWorldStepSystem = new PhysiqueWorldStepSystem();
+        setLightCycleSystem(putCustomSystem(300, new LightCycleSystem()));
+        setWailaSystem(putCustomSystem(310, new WailaSystem()));
+        setQuestSystem(putCustomSystem(320, new QuestSystem()));
+        setPlayerInventorySystem(putCustomSystem(340, new PlayerInventorySystem()));
+        setInventoryNeiSystem(putCustomSystem(350, new InventoryNeiSystem()));
+        setItemBarSystem(putCustomSystem(360, new ItemBarSystem()));
+        setCellBeingMineSystem(putCustomSystem(360, new CellBeingMineSystem()));
+
     }
 
     public PlayerManagerClient getPlayerManagerClient() {

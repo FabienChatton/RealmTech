@@ -42,34 +42,34 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        setIaSystemServer(putCustomSystem(new IaSystemServer()));
-        setItemManagerServer(putCustomSystem(new ItemManagerServer()));
-        setPlayerMouvementSystemServer(putCustomSystem(new PlayerMouvementSystemServer()));
-        setMapSystemServer(putCustomSystem(new MapSystemServer()));
-        setIaTestSystem(putCustomSystem(new IaTestSystem()));
-        setPhysicEntitySystem(putCustomSystem(new PhysicEntityIaTestSystem()));
-        setPlayerSyncSystem(putCustomSystem(new PlayerSyncSystem()));
-        setIaIsFocusPlayerSystem(putCustomSystem(new IaIsFocusPlayerSystem()));
-        setFurnaceSystem(putCustomSystem(new FurnaceSystem()));
-        setEnergyBatterySystem(putCustomSystem(new EnergyBatterySystem()));
-        setEnergyGeneratorSystem(putCustomSystem(new EnergyGeneratorSystem()));
-        setPlayerMobContactSystem(putCustomSystem(new PlayerMobContactSystem()));
-        setWeaponRayManager(putCustomSystem(new WeaponRayManager()));
+        setIaSystemServer(putCustomSystem(10, new IaSystemServer()));
+        setItemManagerServer(putCustomSystem(10, new ItemManagerServer()));
+        setPlayerMouvementSystemServer(putCustomSystem(10, new PlayerMouvementSystemServer()));
+        setMapSystemServer(putCustomSystem(10, new MapSystemServer()));
+        setIaTestSystem(putCustomSystem(10, new IaTestSystem()));
+        setPhysicEntitySystem(putCustomSystem(10, new PhysicEntityIaTestSystem()));
+        setPlayerSyncSystem(putCustomSystem(10, new PlayerSyncSystem()));
+        setIaIsFocusPlayerSystem(putCustomSystem(10, new IaIsFocusPlayerSystem()));
+        setFurnaceSystem(putCustomSystem(10, new FurnaceSystem()));
+        setEnergyBatterySystem(putCustomSystem(10, new EnergyBatterySystem()));
+        setEnergyGeneratorSystem(putCustomSystem(10, new EnergyGeneratorSystem()));
+        setPlayerMobContactSystem(putCustomSystem(10, new PlayerMobContactSystem()));
+        setWeaponRayManager(putCustomSystem(10, new WeaponRayManager()));
 
-        setCraftingSystem(putCustomSystem(new CraftingSystem()));
-        setCraftingManager(putCustomSystem(new CraftingManager()));
-        setPickUpOnGroundItemSystem(putCustomSystem(new PickUpOnGroundItemSystem()));
+        setCraftingSystem(putCustomSystem(10, new CraftingSystem()));
+        setCraftingManager(putCustomSystem(10, new CraftingManager()));
+        setPickUpOnGroundItemSystem(putCustomSystem(10, new PickUpOnGroundItemSystem()));
 
-        setTimeSystem(putCustomSystem(new TimeSystem()));
-        setBox2dFrotementSystem(putCustomSystem(new Box2dFrotementSystem()));
-        setItemOnGroundPosSyncSystem(putCustomSystem(new ItemOnGroundPosSyncSystem()));
-        setUpdateBox2dWithPosition(putCustomSystem(new UpdateBox2dWithPosition()));
-        setItemBeingPickAnimationSystem(putCustomSystem(new ItemBeingPickAnimationSystem()));
-        setPhysiqueWorldStepSystem(putCustomSystem(new PhysiqueWorldStepSystem()));
-        setPickerGroundItemContactSystem(putCustomSystem(new PickerGroundItemContactSystem()));
-        setPlayerManagerServer(putCustomSystem(new PlayerManagerServer()));
-        setDirtyCellSystem(putCustomSystem(new DirtyCellSystem()));
-        setPlayerSubscriptionSystem(putCustomSystem(new PlayerSubscriptionSystem()));
+        setTimeSystem(putCustomSystem(10, new TimeSystem()));
+        setBox2dFrotementSystem(putCustomSystem(10, new Box2dFrotementSystem()));
+        setItemOnGroundPosSyncSystem(putCustomSystem(10, new ItemOnGroundPosSyncSystem()));
+        setUpdateBox2dWithPosition(putCustomSystem(10, new UpdateBox2dWithPosition()));
+        setItemBeingPickAnimationSystem(putCustomSystem(10, new ItemBeingPickAnimationSystem()));
+        setPhysiqueWorldStepSystem(putCustomSystem(10, new PhysiqueWorldStepSystem()));
+        setPickerGroundItemContactSystem(putCustomSystem(10, new PickerGroundItemContactSystem()));
+        setPlayerManagerServer(putCustomSystem(10, new PlayerManagerServer()));
+        setDirtyCellSystem(putCustomSystem(10, new DirtyCellSystem()));
+        setPlayerSubscriptionSystem(putCustomSystem(10, new PlayerSubscriptionSystem()));
     }
 
     @Override

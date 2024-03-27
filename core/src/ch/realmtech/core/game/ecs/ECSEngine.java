@@ -12,7 +12,6 @@ import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.core.game.monitoring.ServerTickBeatMonitoring;
 import ch.realmtech.core.game.netty.ClientConnexion;
 import ch.realmtech.server.ecs.GetWorld;
-import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.SerializerController;
 import com.artemis.*;
@@ -63,7 +62,6 @@ public final class ECSEngine implements Disposable, GetWorld {
         serializerController = new SerializerController();
         systemAdminClient = RegistryUtils.evaluateSafe(context.getRootRegistry(), SystemsAdminClient.class);
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
-                .dependsOn(RealmTechCorePlugin.class)
                 .with(systemAdminClient)
 
                 // server

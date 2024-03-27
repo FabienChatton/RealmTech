@@ -39,7 +39,7 @@ public class ModLoader {
         this.modInitializerTest = modInitializerTest;
     }
 
-    public void initializeCoreMod() {
+    public void initializeCoreMod() throws ModLoaderFail {
         long t1 = System.currentTimeMillis();
         initializeMod(new RealmTechCoreMod());
 
@@ -70,7 +70,7 @@ public class ModLoader {
         }
 
         if (isFail) {
-            throw new RuntimeException("Can not launch game if mods are not loaded correctly");
+            throw new ModLoaderFail("Can not launch game if mods are not loaded correctly");
         }
 
         logger.info("All mods are initialized in {}s", (System.currentTimeMillis() - t1) / 1000f);

@@ -11,13 +11,14 @@ import ch.realmtech.server.ecs.plugin.server.ExecuteOnContextServer;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.mod.ModLoader;
+import ch.realmtech.server.mod.ModLoaderFail;
 import ch.realmtech.server.mod.options.OptionLoader;
 import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.mod.packets.PacketLoader;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerConnexion;
-import ch.realmtech.server.packet.clientPacket.*;
-import ch.realmtech.server.packet.serverPacket.*;
+import ch.realmtech.server.packet.serverPacket.ServerExecute;
 import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.Registry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -51,47 +52,6 @@ public class ServerContext implements Closeable, Context {
     private final ExecuteOnContextServer executeOnContextServer;
     private final OptionLoader optionLoader;
 
-    static {
-        PACKETS.put(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new)
-                .put(DemandeDeConnexionJoueurPacket.class, DemandeDeConnexionJoueurPacket::new)
-                .put(PlayerMovePacket.class, PlayerMovePacket::new)
-                .put(ChunkAMonterPacket.class, ChunkAMonterPacket::new)
-                .put(ChunkADamnePacket.class, ChunkADamnePacket::new)
-                .put(ChunkAReplacePacket.class, ChunkAReplacePacket::new)
-                .put(DeconnectionJoueurPacket.class, DeconnectionJoueurPacket::new)
-                .put(CellBreakRequestPacket.class, CellBreakRequestPacket::new)
-                .put(CellBreakPacket.class, CellBreakPacket::new)
-                .put(TickBeatPacket.class, TickBeatPacket::new)
-                .put(GetPlayerInventorySessionPacket.class, GetPlayerInventorySessionPacket::new)
-                .put(ItemOnGroundPacket.class, ItemOnGroundPacket::new)
-                .put(ItemOnGroundSupprimerPacket.class, ItemOnGroundSupprimerPacket::new)
-                .put(ConsoleCommandeRequestPacket.class, ConsoleCommandeRequestPacket::new)
-                .put(WriteToConsolePacket.class, WriteToConsolePacket::new)
-                .put(MoveStackToStackPacket.class, MoveStackToStackPacket::new)
-                .put(InventorySetPacket.class, InventorySetPacket::new)
-                .put(InventoryGetPacket.class, InventoryGetPacket::new)
-                .put(ItemToCellPlaceRequestPacket.class, ItemToCellPlaceRequestPacket::new)
-                .put(CellAddPacket.class, CellAddPacket::new)
-                .put(DisconnectMessagePacket.class, DisconnectMessagePacket::new)
-                .put(TimeGetRequestPacket.class, TimeGetRequestPacket::new)
-                .put(TimeSetPacket.class, TimeSetPacket::new)
-                .put(PhysicEntitySetPacket.class, PhysicEntitySetPacket::new)
-                .put(PlayerSyncPacket.class, PlayerSyncPacket::new)
-                .put(PlayerCreateConnexion.class, PlayerCreateConnexion::new)
-                .put(FurnaceExtraInfoPacket.class, FurnaceExtraInfoPacket::new)
-                .put(RotateFaceCellRequestPacket.class, RotateFaceCellRequestPacket::new)
-                .put(CellSetPacket.class, CellSetPacket::new)
-                .put(EnergyBatterySetEnergyPacket.class, EnergyBatterySetEnergyPacket::new)
-                .put(EnergyGeneratorInfoPacket.class, EnergyGeneratorInfoPacket::new)
-                .put(PlayerPickUpItem.class, PlayerPickUpItem::new)
-                .put(PlayerOutOfRange.class, PlayerOutOfRange::new)
-                .put(SubscribeToEntityPacket.class, SubscribeToEntityPacket::new)
-                .put(UnSubscribeToEntityPacket.class, UnSubscribeToEntityPacket::new)
-                .put(MobDeletePacket.class, MobDeletePacket::new)
-                .put(PlayerWeaponShotPacket.class, PlayerWeaponShotPacket::new)
-        ;
-    }
-
     public ServerContext(ConnexionConfig connexionConfig) throws Exception {
         try {
             try {
@@ -107,15 +67,18 @@ public class ServerContext implements Closeable, Context {
             } else {
                 rootRegistry = Registry.createRoot();
                 ModLoader modLoader = new ModLoader(this, rootRegistry, null);
-                modLoader.initializeCoreMod();
+                try {
+                    modLoader.initializeCoreMod();
+                } catch (ModLoaderFail e) {
+                    System.exit(1);
+                }
             }
 
             optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);
 
-            RegistryUtils.findEntry(rootRegistry, VerifyTokenOptionEntry.class)
-                    .orElseThrow(() -> new RuntimeException(VerifyTokenOptionEntry.class + " not found in root registry"))
-                    .setValue(connexionConfig.isVerifyAccessToken());
+            RegistryUtils.findEntryOrThrow(rootRegistry, VerifyTokenOptionEntry.class).setValue(connexionConfig.isVerifyAccessToken());
             logger.info("Verify access token: {}", connexionConfig.isVerifyAccessToken());
+            RegistryUtils.findEntryOrThrow(rootRegistry, PacketLoader.class).getPackets().forEach((packet) -> PACKETS.put(packet.getKey(), packet.getValue()));
             ecsEngineServer = new EcsEngineServer(this);
             serverExecuteContext = new ServerExecuteContext(this);
             if (connexionConfig.getClientExecute() == null) {

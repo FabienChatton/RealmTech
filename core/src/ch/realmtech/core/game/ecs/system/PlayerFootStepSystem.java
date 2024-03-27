@@ -6,7 +6,7 @@ import ch.realmtech.server.ecs.component.MouvementComponent;
 import ch.realmtech.server.ecs.component.PlayerComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.mod.PlayerFootStepSound;
+import ch.realmtech.server.sound.PlayerFootStepSound;
 import ch.realmtech.server.sound.SoundManager;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;

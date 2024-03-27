@@ -9,7 +9,9 @@ import com.artemis.BaseSystem;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin, SystemsAdminCommunItf {
     private TagManager tagManager;
@@ -21,7 +23,7 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
     private CellPaddingManager cellPaddingManager;
     private MobManager mobManager;
     private Registry<?> rootRegistry;
-    private final HashMap<Class<? extends BaseSystem>, BaseSystem> customSystems;
+    private final HashMap<Class<? extends BaseSystem>, Map.Entry<Integer, BaseSystem>> customSystems;
 
     public SystemsAdminCommun(String name) {
         super(name);
@@ -32,20 +34,20 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         this.rootRegistry = rootRegistry;
 
-        setTagManager(putCustomSystem(new TagManager()));
-        setUuidEntityManager(putCustomSystem(new UuidEntityManager()));
-        setInventoryManager(putCustomSystem(new InventoryManager()));
-        setMapManager(putCustomSystem(new MapManager()));
-        setSaveInfManager(putCustomSystem(new SaveInfManager()));
-        setEnergyManager(putCustomSystem(new EnergyManager()));
-        setCellPaddingManager(putCustomSystem(new CellPaddingManager()));
-        setMobManager(putCustomSystem(new MobManager()));
+        setTagManager(putCustomSystem(10, new TagManager()));
+        setUuidEntityManager(putCustomSystem(10, new UuidEntityManager()));
+        setInventoryManager(putCustomSystem(10, new InventoryManager()));
+        setMapManager(putCustomSystem(10, new MapManager()));
+        setSaveInfManager(putCustomSystem(10, new SaveInfManager()));
+        setEnergyManager(putCustomSystem(10, new EnergyManager()));
+        setCellPaddingManager(putCustomSystem(10, new CellPaddingManager()));
+        setMobManager(putCustomSystem(10, new MobManager()));
     }
 
     @Override
     public void setup(WorldConfigurationBuilder b) {
-        for (BaseSystem customSystem : customSystems.values()) {
-            b.with(customSystem);
+        for (Map.Entry<Integer, BaseSystem> customSystem : customSystems.values()) {
+            b.with(Integer.MAX_VALUE - customSystem.getKey(), customSystem.getValue());
         }
     }
 
@@ -127,7 +129,7 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
         this.mobManager = mobManager;
     }
 
-    public <T extends BaseSystem> T putCustomSystem(T customSystem) {
+    public <T extends BaseSystem> T putCustomSystem(int order, T customSystem) {
         BaseSystem alreadyPresentSystem = null;
         for (Class<? extends BaseSystem> customSystemClazz : customSystems.keySet()) {
             if (customSystemClazz.isInstance(customSystem)) {
@@ -137,14 +139,14 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
         if (alreadyPresentSystem != null) {
             customSystems.remove(alreadyPresentSystem.getClass());
         }
-        customSystems.put(customSystem.getClass(), customSystem);
+        customSystems.put(customSystem.getClass(), new AbstractMap.SimpleEntry<>(order, customSystem));
         return customSystem;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends BaseSystem> T getCustomSystem(Class<T> customSystemClazz) {
         for (Class<? extends BaseSystem> inCustomSystemClazz : customSystems.keySet()) {
-            BaseSystem inCustomSystem = customSystems.get(inCustomSystemClazz);
+            BaseSystem inCustomSystem = customSystems.get(inCustomSystemClazz).getValue();
             if (customSystemClazz.isInstance(inCustomSystem)) {
                 return (T) inCustomSystem;
             }

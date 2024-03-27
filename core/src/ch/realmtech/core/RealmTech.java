@@ -26,6 +26,7 @@ import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.mod.InternalConnexion;
 import ch.realmtech.server.mod.ModInitializer;
 import ch.realmtech.server.mod.ModLoader;
+import ch.realmtech.server.mod.ModLoaderFail;
 import ch.realmtech.server.mod.options.OptionLoader;
 import ch.realmtech.server.mod.options.client.SoundOptionEntry;
 import ch.realmtech.server.netty.ConnexionConfig;
@@ -132,7 +133,11 @@ public final class RealmTech extends Game implements InternalConnexion {
         onTextureAtlasLoaded = new ArrayList<>();
         rootRegistry = Registry.createRoot();
         ModLoader modLoader = new ModLoader(this, rootRegistry, modInitializerTest);
-        modLoader.initializeCoreMod();
+        try {
+            modLoader.initializeCoreMod();
+        } catch (ModLoaderFail e) {
+            Gdx.app.exit();
+        }
 
         try {
             optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);

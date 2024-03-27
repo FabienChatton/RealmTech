@@ -1,7 +1,6 @@
 package ch.realmtech.server.sound;
 
 import ch.realmtech.server.ecs.component.PlayerComponent;
-import ch.realmtech.server.mod.PlayerFootStepSound;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;

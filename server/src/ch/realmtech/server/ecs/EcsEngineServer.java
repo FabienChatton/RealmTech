@@ -2,7 +2,6 @@ package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.mod.RealmTechCorePlugin;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.netty.ServerHandler;
 import ch.realmtech.server.packet.clientPacket.TickBeatPacket;
@@ -45,7 +44,6 @@ public final class EcsEngineServer implements GetWorld {
         serializerController = new SerializerController();
         systemsAdminServer = RegistryUtils.evaluateSafe(serverContext.getRootRegistry(), SystemsAdminServer.class);
         WorldConfiguration worldConfiguration = new WorldConfigurationBuilder()
-                .dependsOn(RealmTechCorePlugin.class)
                 .with(systemsAdminServer)
                 .build();
 
