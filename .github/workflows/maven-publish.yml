@@ -19,10 +19,13 @@ jobs:
         with:
           java-version: '17'
 
+      - name: Get release tag name
+        id: get_tag
+        run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
+
       - name: Build with gradle
         run: ./gradlew desktop:dist
 
       - name: Publish to GitHub Maven Repository
-        run: mvn deploy:deploy-file -Dfile=./desktop/build/libs/desktop-1.0.jar -DgroupId=ch.realmtech -DartifactId=desktop -Dversion=latest -Dpackaging=jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/antoniofo/realmtech --settings .github/settings.xml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            curl -u ${{secrets.USERNAME}}:${{secrets.TOKEN}} -X PUT -F "file=@./desktop/build/libs/desktop-1.0.jar" https://maven.pkg.github.com/antoniofo/realmtech/ch/realmtech/desktop/${{ steps.get_tag.outputs.tag }}/desktop-${{ steps.get_tag.outputs.tag }}.jar
