@@ -1,6 +1,7 @@
 package ch.realmtech.server.ecs.plugin.commun;
 
 import ch.realmtech.server.ecs.system.*;
+import com.artemis.BaseSystem;
 import com.artemis.managers.TagManager;
 
 public interface SystemsAdminCommunItf {
@@ -19,4 +20,6 @@ public interface SystemsAdminCommunItf {
     CellPaddingManager getCellPaddingManager();
 
     MobManager getMobManager();
+
+    <T extends BaseSystem> T getCustomSystem(Class<T> customSystemClazz);
 }

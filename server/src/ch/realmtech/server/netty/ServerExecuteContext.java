@@ -26,13 +26,16 @@ import java.util.UUID;
 public class ServerExecuteContext implements ServerExecute {
     private final static Logger logger = LoggerFactory.getLogger(ServerExecuteContext.class);
     private final ServerContext serverContext;
-    private final Boolean verifyToken;
+    private final VerifyTokenOptionEntry verifyToken;
 
     public ServerExecuteContext(ServerContext serverContext) {
         this.serverContext = serverContext;
-        verifyToken = RegistryUtils.findEntry(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class)
-                .orElseThrow(() -> new RuntimeException(VerifyTokenOptionEntry.class + " not found in root registry"))
-                .getValue();
+        verifyToken = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class);
+    }
+
+    @Override
+    public ServerContext getContext() {
+        return serverContext;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class ServerExecuteContext implements ServerExecute {
                 if (serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUsername(username) != -1)
                     throw new IllegalArgumentException("A Player with this username already existe on the server");
                 playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
-                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel, verifyToken);
+                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel, verifyToken.getValue());
                 if (serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUuid(playerUuid) != -1) {
                     throw new IllegalArgumentException("A player with the same uuid already existe on the server");
                 }

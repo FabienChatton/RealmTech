@@ -1,7 +1,6 @@
 package ch.realmtech.server.packet.clientPacket;
 
 import ch.realmtech.server.mod.ClientContext;
-import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -33,8 +32,6 @@ public interface ClientExecute {
     void cellSet(int worldPosX, int worldPosY, byte layer, SerializedApplicationBytes cellApplicationBytes);
 
     void tickBeat(float tickElapseTime, float deltaTime);
-
-    <T extends ClientPacket> void packetReciveMonitoring(T packet);
 
     void setItemOnGroundPos(UUID uuid, int itemRegisterEntryHash, float posX, float posY);
 

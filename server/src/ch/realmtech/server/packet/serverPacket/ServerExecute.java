@@ -1,5 +1,6 @@
 package ch.realmtech.server.packet.serverPacket;
 
+import ch.realmtech.server.ServerContext;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Null;
 import io.netty.channel.Channel;
@@ -7,6 +8,7 @@ import io.netty.channel.Channel;
 import java.util.UUID;
 
 public interface ServerExecute {
+    ServerContext getContext();
     void connexionPlayerRequest(Channel clientChanel, String username);
 
     void removePlayer(Channel channel);

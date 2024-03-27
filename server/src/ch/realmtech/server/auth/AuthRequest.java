@@ -16,19 +16,19 @@ import java.util.UUID;
 public class AuthRequest {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ServerContext serverContext;
+    private final VerifyTokenOptionEntry verifyToken;
+    private final AuthServerBaseUrlServerOptionEntry authServerBaseUrlServerOptionEntry;
+    private final VerifyAccessTokenUrnOptionEntry verifyAccessTokenUrnOptionEntry;
+
     public AuthRequest(ServerContext serverContext) {
         this.serverContext = serverContext;
+        verifyToken = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class);
+        authServerBaseUrlServerOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), AuthServerBaseUrlServerOptionEntry.class);
+        verifyAccessTokenUrnOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), VerifyAccessTokenUrnOptionEntry.class);
     }
 
     public String verifyAccessToken(String username) throws IOException, InterruptedException, FailedRequest {
-        VerifyTokenOptionEntry verifyToken = RegistryUtils.findEntry(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class)
-                .orElseThrow(() -> new RuntimeException(VerifyTokenOptionEntry.class + " not found in root registry"));
 
-        AuthServerBaseUrlServerOptionEntry authServerBaseUrlServerOptionEntry = RegistryUtils.findEntry(serverContext.getRootRegistry(), AuthServerBaseUrlServerOptionEntry.class)
-                .orElseThrow(() -> new RuntimeException(AuthServerBaseUrlServerOptionEntry.class + " not found in root registry"));
-
-        VerifyAccessTokenUrnOptionEntry verifyAccessTokenUrnOptionEntry = RegistryUtils.findEntry(serverContext.getRootRegistry(), VerifyAccessTokenUrnOptionEntry.class)
-                .orElseThrow(() -> new RuntimeException(VerifyAccessTokenUrnOptionEntry.class + " not found in root registry"));
 
         if (!verifyToken.getValue()) return UUID.randomUUID().toString();
         HttpRequest verifyCodeRequest = HttpRequest.newBuilder()

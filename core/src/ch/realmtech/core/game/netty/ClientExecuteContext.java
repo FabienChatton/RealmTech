@@ -10,7 +10,6 @@ import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
-import ch.realmtech.server.packet.ClientPacket;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.serialize.cell.CellArgs;
@@ -136,11 +135,6 @@ public class ClientExecuteContext implements ClientExecute {
             context.getEcsEngine().serverTickBeatMonitoring.addTickElapseTime(tickElapseTime);
             context.getEcsEngine().getTickEmulationInvocationStrategy().addTickBeatDeltaTime(deltaTime);
         });
-    }
-
-    @Override
-    public <T extends ClientPacket> void packetReciveMonitoring(T packet) {
-        context.nextFrame(() -> context.getEcsEngine().serverTickBeatMonitoring.addPacketResive(packet));
     }
 
     @Override
