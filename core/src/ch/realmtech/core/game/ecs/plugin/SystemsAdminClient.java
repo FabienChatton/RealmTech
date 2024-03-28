@@ -28,7 +28,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         putCustomSystem(12, ItemManagerClient.class, ItemManagerClient::new);
         putCustomSystem(13, PlayerInputSystem.class, PlayerInputSystem::new);
         putCustomSystem(14, TimeSystemSimulation.class, TimeSystemSimulation::new);
-        putCustomSystem(15, IaManagerClient.class, IaManagerClient::new);
+        putCustomSystem(15, EnemyManagerClient.class, EnemyManagerClient::new);
         putCustomSystem(16, LightManager.class, LightManager::new);
         putCustomSystem(17, FurnaceIconSystem.class, FurnaceIconSystem::new);
         putCustomSystem(18, FurnaceSimulationSystem.class, FurnaceSimulationSystem::new);
@@ -94,8 +94,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return getCustomSystem(TextureAnimatedSystem.class);
     }
 
-    public IaManagerClient getIaManagerClient() {
-        return getCustomSystem(IaManagerClient.class);
+    public EnemyManagerClient getIaManagerClient() {
+        return getCustomSystem(EnemyManagerClient.class);
     }
 
     public UpdateBox2dWithPosition getUpdateBox2dWithPosition() {

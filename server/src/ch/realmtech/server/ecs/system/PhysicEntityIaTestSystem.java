@@ -2,7 +2,7 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.PositionComponent;
-import ch.realmtech.server.ia.IaComponent;
+import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.packet.clientPacket.PhysicEntitySetPacket;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
@@ -12,7 +12,7 @@ import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.Bag;
 
-@All({PositionComponent.class, IaComponent.class})
+@All({PositionComponent.class, EnemyComponent.class})
 public class PhysicEntityIaTestSystem extends IteratingSystem {
     @Wire(name = "serverContext")
     private ServerContext serverContext;

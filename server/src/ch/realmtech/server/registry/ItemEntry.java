@@ -34,11 +34,19 @@ public abstract class ItemEntry extends Entry {
         return textureRegionName;
     }
 
-    public ClickInteractionItemClient getRightClickInteraction() {
+    public ClickInteractionItemClient getRightClickOnPressed() {
         return null;
     }
 
-    public ClickInteractionItemClient getLeftClickInteraction() {
+    public ClickInteractionItemClient getRightClickOnJustPressed() {
+        return null;
+    }
+
+    public ClickInteractionItemClient getLeftClickOnPressed() {
+        return null;
+    }
+
+    public ClickInteractionItemClient getLeftClickOnJustPressed() {
         return null;
     }
 }

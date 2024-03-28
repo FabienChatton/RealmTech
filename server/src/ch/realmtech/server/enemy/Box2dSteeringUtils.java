@@ -1,4 +1,4 @@
-package ch.realmtech.server.ia;
+package ch.realmtech.server.enemy;
 
 import com.badlogic.gdx.math.Vector2;
 

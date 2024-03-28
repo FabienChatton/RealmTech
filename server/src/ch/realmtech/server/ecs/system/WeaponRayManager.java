@@ -5,7 +5,7 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.InvincibilityComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ia.IaComponent;
+import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.packet.clientPacket.MobDeletePacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import com.artemis.Aspect;
@@ -56,7 +56,7 @@ public class WeaponRayManager extends Manager {
 
         Vector2 vectorStart = new Vector2(playerPos.x, playerPos.y);
         Vector2 vectorEnd = vectorClick.sub(vectorStart).setLength(100);
-        IntBag mobs = rayCast(vectorStart, vectorEnd, Aspect.all(IaComponent.class), getFirstHit());
+        IntBag mobs = rayCast(vectorStart, vectorEnd, Aspect.all(EnemyComponent.class), getFirstHit());
 
         if (!mobs.isEmpty()) {
             return mobs.get(0);
@@ -77,7 +77,9 @@ public class WeaponRayManager extends Manager {
                 systemsAdminServer.getMobManager().destroyMob(mobId);
                 serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(mobUuid), clientChannel);
             } else {
-                systemsAdminServer.getMobManager().knockBackMob(mobId, new Vector2(100, 0));
+                PositionComponent playerPosition = mPos.get(playerId);
+                Vector2 knowBack = mobPosition.toVector2().sub(playerPosition.toVector2()).setLength(100);
+                systemsAdminServer.getMobManager().knockBackMob(mobId, knowBack);
                 world.edit(mobId).create(InvincibilityComponent.class).set(60);
             }
         }

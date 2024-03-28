@@ -2,8 +2,8 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ia.IaComponent;
-import ch.realmtech.server.ia.IaTestState;
+import ch.realmtech.server.enemy.EnemyComponent;
+import ch.realmtech.server.enemy.EnemyState;
 import ch.realmtech.server.packet.clientPacket.MobAttackCoolDownPacket;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -26,10 +26,10 @@ public class PlayerMobContactSystem extends IteratingSystem {
     private ServerContext serverContext;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
-    private ComponentMapper<IaComponent> mIa;
+    private ComponentMapper<EnemyComponent> mEnemy;
     @Override
     protected void process(int entityId) {
-        IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(IaComponent.class, PositionComponent.class, Box2dComponent.class).exclude(MobAttackCooldownComponent.class)).getEntities();
+        IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class, PositionComponent.class, Box2dComponent.class).exclude(MobAttackCooldownComponent.class)).getEntities();
         if (ias.isEmpty()) return;
 
         PositionComponent playerPositionComponent = mPos.get(entityId);
@@ -39,7 +39,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
 
         for (int i = 0; i < ias.size(); i++) {
             int ia = ias.get(i);
-            IaComponent iaComponent = mIa.get(ia);
+            EnemyComponent enemyComponent = mEnemy.get(ia);
             PositionComponent iaPositionComponent = mPos.get(ia);
             Box2dComponent iaBox2dComponent = mBox2d.get(ia);
             Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
@@ -49,7 +49,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
                 MassData imobileMassData = new MassData();
                 imobileMassData.mass = 100f;
                 iaBox2dComponent.body.setMassData(imobileMassData);
-                MessageManager.getInstance().dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.ATTACK_COOLDOWN_MESSAGE);
+                MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.ATTACK_COOLDOWN_MESSAGE);
                 UUID mobId = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(ia);
                 serverContext.getServerConnexion().broadCastPacket(new MobAttackCoolDownPacket(mobId, 15));
 
@@ -66,7 +66,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
 
                         playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
 
-                        MessageManager.getInstance().dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.FOCUS_PLAYER_MESSAGE, entityId);
+                        MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, entityId);
                         iaBox2dComponent.body.setMassData(normalMassData);
                     }
                 });

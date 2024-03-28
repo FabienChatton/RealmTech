@@ -1,18 +1,18 @@
-package ch.realmtech.server.ia;
+package ch.realmtech.server.enemy;
 
 import ch.realmtech.server.ServerContext;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 
-public class IaTestTelegraph implements Telegraph {
-    private final IaTestStateMachine stateMachine;
+public class EnemyTelegraph implements Telegraph {
+    private final EnemyStateMachine stateMachine;
     private final int id;
     private final ServerContext serverContext;
 
-    public IaTestTelegraph(int id, ServerContext serverContext) {
+    public EnemyTelegraph(int id, ServerContext serverContext) {
         this.id = id;
         this.serverContext = serverContext;
-        stateMachine = new IaTestStateMachine(this, IaTestState.SLEEP);
+        stateMachine = new EnemyStateMachine(this, EnemyState.SLEEP);
     }
 
     public int getId() {
@@ -23,7 +23,7 @@ public class IaTestTelegraph implements Telegraph {
         return serverContext;
     }
 
-    public IaTestStateMachine getStateMachine() {
+    public EnemyStateMachine getStateMachine() {
         return stateMachine;
     }
 

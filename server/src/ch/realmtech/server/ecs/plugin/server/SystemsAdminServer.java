@@ -3,7 +3,7 @@ package ch.realmtech.server.ecs.plugin.server;
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.*;
-import ch.realmtech.server.ia.IaTestSystem;
+import ch.realmtech.server.enemy.EnemySystem;
 import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
 
@@ -20,7 +20,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, ItemManagerServer.class, ItemManagerServer::new);
         putCustomSystem(10, PlayerMouvementSystemServer.class, PlayerMouvementSystemServer::new);
         putCustomSystem(10, MapSystemServer.class, MapSystemServer::new);
-        putCustomSystem(10, IaTestSystem.class, IaTestSystem::new);
+        putCustomSystem(10, EnemySystem.class, EnemySystem::new);
         putCustomSystem(10, PhysicEntityIaTestSystem.class, PhysicEntityIaTestSystem::new);
         putCustomSystem(10, PlayerSyncSystem.class, PlayerSyncSystem::new);
         putCustomSystem(10, MobFocusPlayerSystem.class, MobFocusPlayerSystem::new);
@@ -71,8 +71,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(MapSystemServer.class);
     }
 
-    public IaTestSystem getIaTestSystem() {
-        return getCustomSystem(IaTestSystem.class);
+    public EnemySystem getIaTestSystem() {
+        return getCustomSystem(EnemySystem.class);
     }
 
     public CraftingSystem getCraftingSystem() {

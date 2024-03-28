@@ -1,4 +1,4 @@
-package ch.realmtech.server.ia;
+package ch.realmtech.server.enemy;
 
 import com.badlogic.gdx.ai.steer.Steerable;
 import com.badlogic.gdx.ai.steer.SteeringAcceleration;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.ai.utils.Location;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
-public class IaTestSteerable implements Steerable<Vector2> {
+public class EnemySteerable implements Steerable<Vector2> {
     private final Body body;
     private final float boundingRadius;
     private boolean tagged;
@@ -19,7 +19,7 @@ public class IaTestSteerable implements Steerable<Vector2> {
     private SteeringBehavior<Vector2> steeringBehavior;
     private static final SteeringAcceleration<Vector2> steeringOutput = new SteeringAcceleration<>(new Vector2());
 
-    public IaTestSteerable(Body body, float boundingRadius) {
+    public EnemySteerable(Body body, float boundingRadius) {
         this.body = body;
         this.boundingRadius = boundingRadius;
 

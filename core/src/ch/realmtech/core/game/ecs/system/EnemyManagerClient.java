@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class IaManagerClient extends Manager {
+public class EnemyManagerClient extends Manager {
     @Wire
     private SystemsAdminClient systemsAdminClient;
     @Wire
@@ -26,18 +26,18 @@ public class IaManagerClient extends Manager {
     @Wire
     private BodyDef bodyDef;
     private ComponentMapper<Box2dComponent> mBox2d;
-    private final Map<UUID, Integer> iaS = new HashMap<>();
+    private final Map<UUID, Integer> enemies = new HashMap<>();
 
     public void otherIa(UUID uuid, float x, float y) {
-        if (iaS.containsKey(uuid)) {
-            Box2dComponent box2dComponent = mBox2d.get(iaS.get(uuid));
+        if (enemies.containsKey(uuid)) {
+            Box2dComponent box2dComponent = mBox2d.get(enemies.get(uuid));
             box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
         } else {
-            iaS.put(uuid, createIa(uuid, x, y));
+            enemies.put(uuid, createEnemy(uuid, x, y));
         }
     }
 
-    private int createIa(UUID uuid, float x, float y) {
+    private int createEnemy(UUID uuid, float x, float y) {
         int iaTestId = world.create();
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);

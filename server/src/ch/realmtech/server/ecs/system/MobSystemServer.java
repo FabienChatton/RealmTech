@@ -6,10 +6,10 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.ia.IaComponent;
-import ch.realmtech.server.ia.IaTestState;
-import ch.realmtech.server.ia.IaTestSteerable;
-import ch.realmtech.server.ia.IaTestTelegraph;
+import ch.realmtech.server.enemy.EnemyComponent;
+import ch.realmtech.server.enemy.EnemyState;
+import ch.realmtech.server.enemy.EnemySteerable;
+import ch.realmtech.server.enemy.EnemyTelegraph;
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -51,7 +51,7 @@ public class MobSystemServer extends BaseSystem {
     }
 
     private void naturalSpawnIa() {
-        IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(IaComponent.class)).getEntities();
+        IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
         IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
 
         if (iaEntities.isEmpty()) {
@@ -82,8 +82,8 @@ public class MobSystemServer extends BaseSystem {
         bodyIaTest.setTransform(x, y, bodyIaTest.getAngle());
 
         playerShape.dispose();
-        IaComponent iaComponent = world.edit(mobId).create(IaComponent.class).set(new IaTestTelegraph(mobId, serverContext), new IaTestSteerable(bodyIaTest, 4));
-        messageManager.dispatchMessage(null, iaComponent.getIaTestAgent(), IaTestState.FOCUS_PLAYER_MESSAGE, playerId);
+        EnemyComponent enemyComponent = world.edit(mobId).create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyIaTest, 4));
+        messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, playerId);
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
         world.edit(mobId).create(Box2dComponent.class).set(0.9f, 0.9f, bodyIaTest);
         world.edit(mobId).create(LifeComponent.class).set(10);

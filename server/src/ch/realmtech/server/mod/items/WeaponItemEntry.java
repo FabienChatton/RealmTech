@@ -12,7 +12,7 @@ public class WeaponItemEntry extends ItemEntry {
     }
 
     @Override
-    public ClickInteractionItemClient getLeftClickInteraction() {
+    public ClickInteractionItemClient getLeftClickOnJustPressed() {
         return (clientContext, event, itemId, cellTargetId) -> {
             clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY()));
             clientContext.getSystemsAdminClient().getParticleEffectsSystem().createHitEffect(new Vector2(event.gameCoordinateX(), event.gameCoordinateY()));

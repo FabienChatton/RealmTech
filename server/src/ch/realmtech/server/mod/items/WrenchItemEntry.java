@@ -14,7 +14,7 @@ public class WrenchItemEntry extends ItemEntry {
     }
 
     @Override
-    public ClickInteractionItemClient getRightClickInteraction() {
+    public ClickInteractionItemClient getRightClickOnJustPressed() {
         return (clientContext, event, itemId, cellTargetId) -> {
             if (clientContext.getWorld().getMapper(FaceComponent.class).has(cellTargetId)) {
                 FaceComponent faceComponent = clientContext.getWorld().getMapper(FaceComponent.class).get(cellTargetId);
