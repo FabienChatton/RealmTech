@@ -11,39 +11,6 @@ import ch.realmtech.server.registry.Registry;
 
 public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdminClientForClient {
 
-    private PlayerManagerClient playerManagerClient;
-    private ItemManagerClient itemManagerClient;
-    private PlayerInputSystem playerInputSystem;
-    private MouvementSystem mouvementSystem;
-    private PlayerMouvementSystem playerMouvementSystem;
-    private TextureAnimatedSystem textureAnimatedSystem;
-    private IaManagerClient iaManagerClient;
-    private UpdateBox2dWithPosition updateBox2dWithPosition;
-    private CameraFollowPlayerSystem cameraFollowPlayerSystem;
-    private MapRendererSystem mapRendererSystem;
-    private CellBeingMineRenderSystem cellBeingMineRenderSystem;
-    private CellHoverSystem cellHoverSystem;
-    private WailaSystem wailaSystem;
-    private TextureRenderer textureRenderer;
-    private PlayerInventorySystem playerInventorySystem;
-    private ItemBarSystem itemBarSystem;
-    private CellBeingMineSystem cellBeingMineSystem;
-    private LightCycleSystem lightCycleSystem;
-    private TimeSystemSimulation timeSystemSimulation;
-    private LightManager lightManager;
-    private FurnaceIconSystem furnaceIconSystem;
-    private FurnaceSimulationSystem furnaceSimulationSystem;
-    private CraftingManager craftingManager;
-    private EnergyGeneratorClientSystem energyBatteryIconSystem;
-    private InventoryNeiSystem inventoryNeiSystem;
-    private GameStageBatchBeginSystem gameStageBatchBeginSystem;
-    private GameStageBatchEndSystem gameStageBatchEndSystem;
-    private TiledTextureSystem tiledTextureSystem;
-    private PlayerFootStepSystem playerFootStepSystem;
-    private QuestSystem questSystem;
-    private ParticleEffectsSystem particleEffectsSystem;
-    private MobManagerClient mobManagerClient;
-
     /*
     0-100       update game
     101         batch begin
@@ -57,142 +24,43 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        setPlayerManagerClient(putCustomSystem(11, new PlayerManagerClient()));
-        setItemManagerClient(putCustomSystem(12, new ItemManagerClient()));
-        setPlayerInputSystem(putCustomSystem(13, new PlayerInputSystem()));
-        setTimeSystemSimulation(putCustomSystem(14, new TimeSystemSimulation()));
-        setIaManagerClient(putCustomSystem(15, new IaManagerClient()));
-        setLightManager(putCustomSystem(16, new LightManager()));
-        setFurnaceIconSystem(putCustomSystem(17, new FurnaceIconSystem()));
-        setFurnaceSimulationSystem(putCustomSystem(18, new FurnaceSimulationSystem()));
-        setCraftingManager(putCustomSystem(19, new CraftingManager()));
-        setEnergyBatteryIconSystem(putCustomSystem(20, new EnergyGeneratorClientSystem()));
-        setMouvementSystem(putCustomSystem(21, new MouvementSystem()));
-        setPlayerMouvementSystem(putCustomSystem(22, new PlayerMouvementSystem()));
-        setTextureAnimatedSystem(putCustomSystem(23, new TextureAnimatedSystem()));
-        setUpdateBox2dWithPosition(putCustomSystem(24, new UpdateBox2dWithPosition()));
-        setCameraFollowPlayerSystem(putCustomSystem(25, new CameraFollowPlayerSystem()));
-        setTiledTextureSystem(putCustomSystem(26, new TiledTextureSystem()));
-        setPlayerFootStepSystem(putCustomSystem(27, new PlayerFootStepSystem()));
-        setMobManagerClient(putCustomSystem(28, new MobManagerClient()));
+        putCustomSystem(11, PlayerManagerClient.class, PlayerManagerClient::new);
+        putCustomSystem(12, ItemManagerClient.class, ItemManagerClient::new);
+        putCustomSystem(13, PlayerInputSystem.class, PlayerInputSystem::new);
+        putCustomSystem(14, TimeSystemSimulation.class, TimeSystemSimulation::new);
+        putCustomSystem(15, IaManagerClient.class, IaManagerClient::new);
+        putCustomSystem(16, LightManager.class, LightManager::new);
+        putCustomSystem(17, FurnaceIconSystem.class, FurnaceIconSystem::new);
+        putCustomSystem(18, FurnaceSimulationSystem.class, FurnaceSimulationSystem::new);
+        putCustomSystem(19, CraftingManager.class, CraftingManager::new);
+        putCustomSystem(20, EnergyGeneratorClientSystem.class, EnergyGeneratorClientSystem::new);
+        putCustomSystem(21, MouvementSystem.class, MouvementSystem::new);
+        putCustomSystem(22, PlayerMouvementSystem.class, PlayerMouvementSystem::new);
+        putCustomSystem(23, TextureAnimatedSystem.class, TextureAnimatedSystem::new);
+        putCustomSystem(24, UpdateBox2dWithPosition.class, UpdateBox2dWithPosition::new);
+        putCustomSystem(25, CameraFollowPlayerSystem.class, CameraFollowPlayerSystem::new);
+        putCustomSystem(26, TiledTextureSystem.class, TiledTextureSystem::new);
+        putCustomSystem(27, PlayerFootStepSystem.class, PlayerFootStepSystem::new);
+        putCustomSystem(28, MobManagerClient.class, MobManagerClient::new);
 
         // render
-        setGameStageBatchBeginSystem(putCustomSystem(101, new GameStageBatchBeginSystem()));
-        setMapRendererSystem(putCustomSystem(110, new MapRendererSystem()));
-        setCellHoverSystem(putCustomSystem(120, new CellHoverSystem()));
-        setTextureRenderer(putCustomSystem(130, new TextureRenderer()));
-        setCellBeingMineRenderSystem(putCustomSystem(140, new CellBeingMineRenderSystem()));
-        setParticleEffectsSystem(putCustomSystem(150, new ParticleEffectsSystem()));
-        setGameStageBatchEndSystem(putCustomSystem(200, new GameStageBatchEndSystem()));
+        putCustomSystem(101, GameStageBatchBeginSystem.class, GameStageBatchBeginSystem::new);
+        putCustomSystem(110, MapRendererSystem.class, MapRendererSystem::new);
+        putCustomSystem(120, CellHoverSystem.class, CellHoverSystem::new);
+        putCustomSystem(130, TextureRenderer.class, TextureRenderer::new);
+        putCustomSystem(140, CellBeingMineRenderSystem.class, CellBeingMineRenderSystem::new);
+        putCustomSystem(150, ParticleEffectsSystem.class, ParticleEffectsSystem::new);
+        putCustomSystem(200, GameStageBatchEndSystem.class, GameStageBatchEndSystem::new);
 
 
-        setLightCycleSystem(putCustomSystem(300, new LightCycleSystem()));
-        setWailaSystem(putCustomSystem(310, new WailaSystem()));
-        setQuestSystem(putCustomSystem(320, new QuestSystem()));
-        setPlayerInventorySystem(putCustomSystem(340, new PlayerInventorySystem()));
-        setInventoryNeiSystem(putCustomSystem(350, new InventoryNeiSystem()));
-        setItemBarSystem(putCustomSystem(360, new ItemBarSystem()));
-        setCellBeingMineSystem(putCustomSystem(360, new CellBeingMineSystem()));
+        putCustomSystem(300, LightCycleSystem.class, LightCycleSystem::new);
+        putCustomSystem(310, WailaSystem.class, WailaSystem::new);
+        putCustomSystem(320, QuestSystem.class, QuestSystem::new);
+        putCustomSystem(340, PlayerInventorySystem.class, PlayerInventorySystem::new);
+        putCustomSystem(350, InventoryNeiSystem.class, InventoryNeiSystem::new);
+        putCustomSystem(360, ItemBarSystem.class, ItemBarSystem::new);
+        putCustomSystem(360, CellBeingMineSystem.class, CellBeingMineSystem::new);
 
-    }
-
-    public PlayerManagerClient getPlayerManagerClient() {
-        return playerManagerClient;
-    }
-
-    public ItemManagerClient getItemManagerClient() {
-        return itemManagerClient;
-    }
-
-    public PlayerInputSystem getPlayerInputSystem() {
-        return playerInputSystem;
-    }
-
-    public MouvementSystem getPlayerMouvementTextureSystem() {
-        return getMouvementSystem();
-    }
-
-    public PlayerMouvementSystem getPlayerMouvementSystem() {
-        return playerMouvementSystem;
-    }
-
-    public TextureAnimatedSystem getPlayerTextureAnimated() {
-        return getTextureAnimatedSystem();
-    }
-
-    public IaManagerClient getIaManagerClient() {
-        return iaManagerClient;
-    }
-
-    public UpdateBox2dWithPosition getUpdateBox2dWithPosition() {
-        return updateBox2dWithPosition;
-    }
-
-    public CameraFollowPlayerSystem getCameraFollowPlayerSystem() {
-        return cameraFollowPlayerSystem;
-    }
-
-    public MapRendererSystem getMapRendererSystem() {
-        return mapRendererSystem;
-    }
-
-    public CellBeingMineRenderSystem getCellBeingMineRenderSystem() {
-        return cellBeingMineRenderSystem;
-    }
-
-    public WailaSystem getCellHoverEtWailaSystem() {
-        return getWailaSystem();
-    }
-
-    public TextureRenderer getTextureRenderer() {
-        return textureRenderer;
-    }
-
-    public PlayerInventorySystem getPlayerInventorySystem() {
-        return playerInventorySystem;
-    }
-
-    public ItemBarSystem getItemBarManager() {
-        return getItemBarSystem();
-    }
-
-    public CellBeingMineSystem getCellBeingMineSystem() {
-        return cellBeingMineSystem;
-    }
-
-    public LightCycleSystem getLightCycleSystem() {
-        return lightCycleSystem;
-    }
-
-    public TimeSystemSimulation getTimeSystemSimulation() {
-        return timeSystemSimulation;
-    }
-
-    public CraftingManager getCraftingManager() {
-        return craftingManager;
-    }
-
-    @Override
-    public LightManager getLightManager() {
-        return lightManager;
-    }
-
-    @Override
-    public FurnaceIconSystem getFurnaceIconSystem() {
-        return furnaceIconSystem;
-    }
-
-    @Override
-    public EnergyGeneratorClientSystem getEnergyBatteryIconSystem() {
-        return energyBatteryIconSystem;
-    }
-
-    public TiledTextureSystem getTiledTextureSystem() {
-        return tiledTextureSystem;
-    }
-
-    public QuestSystem getQuestManager() {
-        return getQuestSystem();
     }
 
     @Override
@@ -202,183 +70,155 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         }
     }
 
-    public void setPlayerManagerClient(PlayerManagerClient playerManagerClient) {
-        this.playerManagerClient = playerManagerClient;
+    public PlayerManagerClient getPlayerManagerClient() {
+        return getCustomSystem(PlayerManagerClient.class);
     }
 
-    public void setItemManagerClient(ItemManagerClient itemManagerClient) {
-        this.itemManagerClient = itemManagerClient;
+    public ItemManagerClient getItemManagerClient() {
+        return getCustomSystem(ItemManagerClient.class);
     }
 
-    public void setPlayerInputSystem(PlayerInputSystem playerInputSystem) {
-        this.playerInputSystem = playerInputSystem;
+    public PlayerInputSystem getPlayerInputSystem() {
+        return getCustomSystem(PlayerInputSystem.class);
+    }
+
+    public MouvementSystem getPlayerMouvementTextureSystem() {
+        return getCustomSystem(MouvementSystem.class);
+    }
+
+    public PlayerMouvementSystem getPlayerMouvementSystem() {
+        return getCustomSystem(PlayerMouvementSystem.class);
+    }
+
+    public TextureAnimatedSystem getPlayerTextureAnimated() {
+        return getCustomSystem(TextureAnimatedSystem.class);
+    }
+
+    public IaManagerClient getIaManagerClient() {
+        return getCustomSystem(IaManagerClient.class);
+    }
+
+    public UpdateBox2dWithPosition getUpdateBox2dWithPosition() {
+        return getCustomSystem(UpdateBox2dWithPosition.class);
+    }
+
+    public CameraFollowPlayerSystem getCameraFollowPlayerSystem() {
+        return getCustomSystem(CameraFollowPlayerSystem.class);
+    }
+
+    public MapRendererSystem getMapRendererSystem() {
+        return getCustomSystem(MapRendererSystem.class);
+    }
+
+    public CellBeingMineRenderSystem getCellBeingMineRenderSystem() {
+        return getCustomSystem(CellBeingMineRenderSystem.class);
+    }
+
+    public WailaSystem getCellHoverEtWailaSystem() {
+        return getCustomSystem(WailaSystem.class);
+    }
+
+    public TextureRenderer getTextureRenderer() {
+        return getCustomSystem(TextureRenderer.class);
+    }
+
+    public PlayerInventorySystem getPlayerInventorySystem() {
+        return getCustomSystem(PlayerInventorySystem.class);
+    }
+
+    public ItemBarSystem getItemBarManager() {
+        return getCustomSystem(ItemBarSystem.class);
+    }
+
+    public CellBeingMineSystem getCellBeingMineSystem() {
+        return getCustomSystem(CellBeingMineSystem.class);
+    }
+
+    public LightCycleSystem getLightCycleSystem() {
+        return getCustomSystem(LightCycleSystem.class);
+    }
+
+    public TimeSystemSimulation getTimeSystemSimulation() {
+        return getCustomSystem(TimeSystemSimulation.class);
+    }
+
+    public CraftingManager getCraftingManager() {
+        return getCustomSystem(CraftingManager.class);
+    }
+
+    @Override
+    public LightManager getLightManager() {
+        return getCustomSystem(LightManager.class);
+    }
+
+    @Override
+    public FurnaceIconSystem getFurnaceIconSystem() {
+        return getCustomSystem(FurnaceIconSystem.class);
+    }
+
+    @Override
+    public EnergyGeneratorClientSystem getEnergyBatteryIconSystem() {
+        return getCustomSystem(EnergyGeneratorClientSystem.class);
+    }
+
+    public TiledTextureSystem getTiledTextureSystem() {
+        return getCustomSystem(TiledTextureSystem.class);
+    }
+
+    public QuestSystem getQuestManager() {
+        return getCustomSystem(QuestSystem.class);
     }
 
     public MouvementSystem getMouvementSystem() {
-        return mouvementSystem;
-    }
-
-    public void setMouvementSystem(MouvementSystem mouvementSystem) {
-        this.mouvementSystem = mouvementSystem;
-    }
-
-    public void setPlayerMouvementSystem(PlayerMouvementSystem playerMouvementSystem) {
-        this.playerMouvementSystem = playerMouvementSystem;
+        return getCustomSystem(MouvementSystem.class);
     }
 
     public TextureAnimatedSystem getTextureAnimatedSystem() {
-        return textureAnimatedSystem;
-    }
-
-    public void setTextureAnimatedSystem(TextureAnimatedSystem textureAnimatedSystem) {
-        this.textureAnimatedSystem = textureAnimatedSystem;
-    }
-
-    public void setIaManagerClient(IaManagerClient iaManagerClient) {
-        this.iaManagerClient = iaManagerClient;
-    }
-
-    public void setUpdateBox2dWithPosition(UpdateBox2dWithPosition updateBox2dWithPosition) {
-        this.updateBox2dWithPosition = updateBox2dWithPosition;
-    }
-
-    public void setCameraFollowPlayerSystem(CameraFollowPlayerSystem cameraFollowPlayerSystem) {
-        this.cameraFollowPlayerSystem = cameraFollowPlayerSystem;
-    }
-
-    public void setMapRendererSystem(MapRendererSystem mapRendererSystem) {
-        this.mapRendererSystem = mapRendererSystem;
-    }
-
-    public void setCellBeingMineRenderSystem(CellBeingMineRenderSystem cellBeingMineRenderSystem) {
-        this.cellBeingMineRenderSystem = cellBeingMineRenderSystem;
+        return getCustomSystem(TextureAnimatedSystem.class);
     }
 
     public CellHoverSystem getCellHoverSystem() {
-        return cellHoverSystem;
-    }
-
-    public void setCellHoverSystem(CellHoverSystem cellHoverSystem) {
-        this.cellHoverSystem = cellHoverSystem;
+        return getCustomSystem(CellHoverSystem.class);
     }
 
     public WailaSystem getWailaSystem() {
-        return wailaSystem;
-    }
-
-    public void setWailaSystem(WailaSystem wailaSystem) {
-        this.wailaSystem = wailaSystem;
-    }
-
-    public void setTextureRenderer(TextureRenderer textureRenderer) {
-        this.textureRenderer = textureRenderer;
-    }
-
-    public void setPlayerInventorySystem(PlayerInventorySystem playerInventorySystem) {
-        this.playerInventorySystem = playerInventorySystem;
+        return getCustomSystem(WailaSystem.class);
     }
 
     public ItemBarSystem getItemBarSystem() {
-        return itemBarSystem;
-    }
-
-    public void setItemBarSystem(ItemBarSystem itemBarSystem) {
-        this.itemBarSystem = itemBarSystem;
-    }
-
-    public void setCellBeingMineSystem(CellBeingMineSystem cellBeingMineSystem) {
-        this.cellBeingMineSystem = cellBeingMineSystem;
-    }
-
-    public void setLightCycleSystem(LightCycleSystem lightCycleSystem) {
-        this.lightCycleSystem = lightCycleSystem;
-    }
-
-    public void setTimeSystemSimulation(TimeSystemSimulation timeSystemSimulation) {
-        this.timeSystemSimulation = timeSystemSimulation;
-    }
-
-    public void setLightManager(LightManager lightManager) {
-        this.lightManager = lightManager;
-    }
-
-    public void setFurnaceIconSystem(FurnaceIconSystem furnaceIconSystem) {
-        this.furnaceIconSystem = furnaceIconSystem;
+        return getCustomSystem(ItemBarSystem.class);
     }
 
     public FurnaceSimulationSystem getFurnaceSimulationSystem() {
-        return furnaceSimulationSystem;
-    }
-
-    public void setFurnaceSimulationSystem(FurnaceSimulationSystem furnaceSimulationSystem) {
-        this.furnaceSimulationSystem = furnaceSimulationSystem;
-    }
-
-    public void setCraftingManager(CraftingManager craftingManager) {
-        this.craftingManager = craftingManager;
-    }
-
-    public void setEnergyBatteryIconSystem(EnergyGeneratorClientSystem energyBatteryIconSystem) {
-        this.energyBatteryIconSystem = energyBatteryIconSystem;
+        return getCustomSystem(FurnaceSimulationSystem.class);
     }
 
     public InventoryNeiSystem getInventoryNeiSystem() {
-        return inventoryNeiSystem;
-    }
-
-    public void setInventoryNeiSystem(InventoryNeiSystem inventoryNeiSystem) {
-        this.inventoryNeiSystem = inventoryNeiSystem;
+        return getCustomSystem(InventoryNeiSystem.class);
     }
 
     public GameStageBatchBeginSystem getGameStageBatchBeginSystem() {
-        return gameStageBatchBeginSystem;
-    }
-
-    public void setGameStageBatchBeginSystem(GameStageBatchBeginSystem gameStageBatchBeginSystem) {
-        this.gameStageBatchBeginSystem = gameStageBatchBeginSystem;
+        return getCustomSystem(GameStageBatchBeginSystem.class);
     }
 
     public GameStageBatchEndSystem getGameStageBatchEndSystem() {
-        return gameStageBatchEndSystem;
-    }
-
-    public void setGameStageBatchEndSystem(GameStageBatchEndSystem gameStageBatchEndSystem) {
-        this.gameStageBatchEndSystem = gameStageBatchEndSystem;
-    }
-
-    public void setTiledTextureSystem(TiledTextureSystem tiledTextureSystem) {
-        this.tiledTextureSystem = tiledTextureSystem;
+        return getCustomSystem(GameStageBatchEndSystem.class);
     }
 
     public PlayerFootStepSystem getPlayerFootStepSystem() {
-        return playerFootStepSystem;
-    }
-
-    public void setPlayerFootStepSystem(PlayerFootStepSystem playerFootStepSystem) {
-        this.playerFootStepSystem = playerFootStepSystem;
+        return getCustomSystem(PlayerFootStepSystem.class);
     }
 
     public QuestSystem getQuestSystem() {
-        return questSystem;
-    }
-
-    public void setQuestSystem(QuestSystem questSystem) {
-        this.questSystem = questSystem;
+        return getCustomSystem(QuestSystem.class);
     }
 
     public ParticleEffectsSystem getParticleEffectsSystem() {
-        return particleEffectsSystem;
-    }
-
-    public void setParticleEffectsSystem(ParticleEffectsSystem particleEffectsSystem) {
-        this.particleEffectsSystem = particleEffectsSystem;
+        return getCustomSystem(ParticleEffectsSystem.class);
     }
 
     public MobManagerClient getMobManagerClient() {
-        return mobManagerClient;
+        return getCustomSystem(MobManagerClient.class);
     }
 
-    public void setMobManagerClient(MobManagerClient mobManagerClient) {
-        this.mobManagerClient = mobManagerClient;
-    }
 }

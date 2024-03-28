@@ -157,6 +157,7 @@ public class ServerContext implements Closeable, Context {
         logger.info("Closing server...");
         tickThread.close();
         commandServerThread.close();
+        ecsEngineServer.dispose();
         saveAndClose = true;
         try {
             if (serverNetty != null) {

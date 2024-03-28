@@ -15,13 +15,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 
-public final class EcsEngineServer implements GetWorld {
+public final class EcsEngineServer implements GetWorld, Disposable {
     private final static Logger logger = LoggerFactory.getLogger(EcsEngineServer.class);
     private ServerContext serverContext;
     private World world;
@@ -149,5 +150,10 @@ public final class EcsEngineServer implements GetWorld {
 
     public SerializerController getSerializerController() {
         return serializerController;
+    }
+
+    public void dispose() {
+        world.dispose();
+        systemsAdminServer.dispose();
     }
 }

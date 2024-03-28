@@ -126,6 +126,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     public void dispose() {
         world.dispose();
         physicWorld.dispose();
+        systemAdminClient.dispose();
         try {
             clientConnexion.close();
             serverTickBeatMonitoring.close();

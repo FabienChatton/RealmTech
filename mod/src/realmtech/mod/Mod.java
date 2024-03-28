@@ -14,6 +14,7 @@ import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
+import com.artemis.annotations.Wire;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
@@ -35,9 +36,9 @@ public class Mod implements ModInitializer {
             @EvaluateAfter("#systems")
             public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
                 SystemsAdminServer systemsAdminServer = RegistryUtils.evaluateSafe(rootRegistry, SystemsAdminServer.class);
-                systemsAdminServer.putCustomSystem(10, new CustomTimeSystem());
+                systemsAdminServer.putCustomSystem(10, TimeSystem.class, CustomTimeSystem::new);
 
-                systemsAdminServer.putCustomSystem(10, new AddCustomSystem());
+                systemsAdminServer.putCustomSystem(10, AddCustomSystem.class, AddCustomSystem::new);
             }
         });
         customSystems.addEntry(new CustomPacketEntry());
@@ -48,12 +49,19 @@ public class Mod implements ModInitializer {
 
     static class CustomTimeSystem extends TimeSystem {
         @Override
+        protected void processSystem() {
+            super.processSystem();
+        }
+
+        @Override
         public float getAccumulatedDelta() {
             return 69;
         }
     }
 
     static class AddCustomSystem extends BaseSystem {
+        @Wire
+        private SystemsAdminServer systemsAdminServer;
 
         @Override
         protected void processSystem() {
@@ -71,7 +79,6 @@ public class Mod implements ModInitializer {
         @EvaluateAfter("#customSystems")
         public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
             SystemsAdminServer systemsAdminServer = RegistryUtils.evaluateSafe(rootRegistry, SystemsAdminServer.class);
-            System.out.println(systemsAdminServer.getCustomSystem(TimeSystem.class).getAccumulatedDelta());
         }
     }
 

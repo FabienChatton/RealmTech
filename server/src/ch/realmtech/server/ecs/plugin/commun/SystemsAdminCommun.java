@@ -8,22 +8,17 @@ import com.artemis.ArtemisPlugin;
 import com.artemis.BaseSystem;
 import com.artemis.WorldConfigurationBuilder;
 import com.artemis.managers.TagManager;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin, SystemsAdminCommunItf {
-    private TagManager tagManager;
-    private UuidEntityManager uuidEntityManager;
-    private InventoryManager inventoryManager;
-    private MapManager mapManager;
-    private SaveInfManager saveInfManager;
-    private EnergyManager energyManager;
-    private CellPaddingManager cellPaddingManager;
-    private MobManager mobManager;
+public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin, SystemsAdminCommunItf, Disposable {
     private Registry<?> rootRegistry;
-    private final HashMap<Class<? extends BaseSystem>, Map.Entry<Integer, BaseSystem>> customSystems;
+    private final HashMap<Class<? extends BaseSystem>, Map.Entry<Integer, Supplier<? extends BaseSystem>>> customSystems;
+    private HashMap<Class<? extends BaseSystem>, BaseSystem> customSystemsInstance;
 
     public SystemsAdminCommun(String name) {
         super(name);
@@ -34,20 +29,25 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         this.rootRegistry = rootRegistry;
 
-        setTagManager(putCustomSystem(10, new TagManager()));
-        setUuidEntityManager(putCustomSystem(10, new UuidEntityManager()));
-        setInventoryManager(putCustomSystem(10, new InventoryManager()));
-        setMapManager(putCustomSystem(10, new MapManager()));
-        setSaveInfManager(putCustomSystem(10, new SaveInfManager()));
-        setEnergyManager(putCustomSystem(10, new EnergyManager()));
-        setCellPaddingManager(putCustomSystem(10, new CellPaddingManager()));
-        setMobManager(putCustomSystem(10, new MobManager()));
+        putCustomSystem(10, TagManager.class, TagManager::new);
+        putCustomSystem(10, UuidEntityManager.class, UuidEntityManager::new);
+        putCustomSystem(10, InventoryManager.class, InventoryManager::new);
+        putCustomSystem(10, MapManager.class, MapManager::new);
+        putCustomSystem(10, SaveInfManager.class, SaveInfManager::new);
+        putCustomSystem(10, EnergyManager.class, EnergyManager::new);
+        putCustomSystem(10, CellPaddingManager.class, CellPaddingManager::new);
+        putCustomSystem(10, MobManager.class, MobManager::new);
     }
 
     @Override
     public void setup(WorldConfigurationBuilder b) {
-        for (Map.Entry<Integer, BaseSystem> customSystem : customSystems.values()) {
-            b.with(Integer.MAX_VALUE - customSystem.getKey(), customSystem.getValue());
+        customSystemsInstance = new HashMap<>();
+        for (Class<? extends BaseSystem> customSystemClass : customSystems.keySet()) {
+            Map.Entry<Integer, Supplier<? extends BaseSystem>> customSystem = customSystems.get(customSystemClass);
+            BaseSystem systemInstance = customSystem.getValue().get();
+
+            b.with(Integer.MAX_VALUE - customSystem.getKey(), systemInstance);
+            customSystemsInstance.put(customSystemClass, systemInstance);
         }
     }
 
@@ -59,98 +59,59 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
 
     @Override
     public TagManager getTagManager() {
-        return tagManager;
-    }
-
-    public void setTagManager(TagManager tagManager) {
-        this.tagManager = tagManager;
+        return getCustomSystem(TagManager.class);
     }
 
     @Override
     public UuidEntityManager getUuidEntityManager() {
-        return uuidEntityManager;
-    }
-
-    public void setUuidEntityManager(UuidEntityManager uuidEntityManager) {
-        this.uuidEntityManager = uuidEntityManager;
+        return getCustomSystem(UuidEntityManager.class);
     }
 
     @Override
     public InventoryManager getInventoryManager() {
-        return inventoryManager;
-    }
-
-    public void setInventoryManager(InventoryManager inventoryManager) {
-        this.inventoryManager = inventoryManager;
+        return getCustomSystem(InventoryManager.class);
     }
 
     @Override
     public MapManager getMapManager() {
-        return mapManager;
-    }
-
-    public void setMapManager(MapManager mapManager) {
-        this.mapManager = mapManager;
+        return getCustomSystem(MapManager.class);
     }
 
     @Override
     public SaveInfManager getSaveInfManager() {
-        return saveInfManager;
-    }
-
-    public void setSaveInfManager(SaveInfManager saveInfManager) {
-        this.saveInfManager = saveInfManager;
+        return getCustomSystem(SaveInfManager.class);
     }
 
     @Override
     public EnergyManager getEnergyManager() {
-        return energyManager;
-    }
-
-    public void setEnergyManager(EnergyManager energyManager) {
-        this.energyManager = energyManager;
+        return getCustomSystem(EnergyManager.class);
     }
 
     @Override
     public CellPaddingManager getCellPaddingManager() {
-        return cellPaddingManager;
-    }
-
-    public void setCellPaddingManager(CellPaddingManager cellPaddingManager) {
-        this.cellPaddingManager = cellPaddingManager;
+        return getCustomSystem(CellPaddingManager.class);
     }
 
     @Override
     public MobManager getMobManager() {
-        return mobManager;
+        return getCustomSystem(MobManager.class);
     }
 
-    public void setMobManager(MobManager mobManager) {
-        this.mobManager = mobManager;
-    }
-
-    public <T extends BaseSystem> T putCustomSystem(int order, T customSystem) {
-        BaseSystem alreadyPresentSystem = null;
-        for (Class<? extends BaseSystem> customSystemClazz : customSystems.keySet()) {
-            if (customSystemClazz.isInstance(customSystem)) {
-                alreadyPresentSystem = getCustomSystem(customSystemClazz);
-            }
-        }
-        if (alreadyPresentSystem != null) {
-            customSystems.remove(alreadyPresentSystem.getClass());
-        }
-        customSystems.put(customSystem.getClass(), new AbstractMap.SimpleEntry<>(order, customSystem));
-        return customSystem;
+    public <T extends BaseSystem> void putCustomSystem(int order, Class<? extends T> customSystemClass, Supplier<? extends T> customSystemSupplier) {
+        customSystems.put(customSystemClass, new AbstractMap.SimpleEntry<>(order, customSystemSupplier));
     }
 
     @SuppressWarnings("unchecked")
     public <T extends BaseSystem> T getCustomSystem(Class<T> customSystemClazz) {
-        for (Class<? extends BaseSystem> inCustomSystemClazz : customSystems.keySet()) {
-            BaseSystem inCustomSystem = customSystems.get(inCustomSystemClazz).getValue();
-            if (customSystemClazz.isInstance(inCustomSystem)) {
-                return (T) inCustomSystem;
-            }
+        if (customSystemsInstance == null) {
+            return null;
+        } else {
+            return (T) customSystemsInstance.get(customSystemClazz);
         }
-        return null;
+    }
+
+    @Override
+    public void dispose() {
+        customSystemsInstance = null;
     }
 }
