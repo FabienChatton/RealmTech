@@ -1,5 +1,6 @@
 package ch.realmtech.server.mod.packets;
 
+import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.packet.Packet;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.*;
@@ -65,6 +66,11 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(PlayerWeaponShotPacket.class, PlayerWeaponShotPacket::new));
         packets.add(new SimpleEntry<>(ParticleAddPacket.class, ParticleAddPacket::new));
         packets.add(new SimpleEntry<>(MobAttackCoolDownPacket.class, MobAttackCoolDownPacket::new));
+    }
+
+    @Override
+    public void postEvaluate() {
+        getPackets().forEach((packet) -> ServerContext.PACKETS.put(packet.getKey(), packet.getValue()));
     }
 
     public List<Map.Entry<Class<? extends Packet>, Function<ByteBuf, ? extends Packet>>> getPackets() {

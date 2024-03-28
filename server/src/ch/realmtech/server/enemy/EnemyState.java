@@ -19,6 +19,7 @@ public enum EnemyState implements State<EnemyTelegraph> {
 
         @Override
         public boolean onMessage(EnemyTelegraph entity, Telegram telegram) {
+            super.onMessage(entity, telegram);
             int playerId = (int) telegram.extraInfo;
             if (playerId == -1) return false;
 
@@ -28,13 +29,13 @@ public enum EnemyState implements State<EnemyTelegraph> {
             EnemyComponent enemyComponent = mEnemy.get(entity.getId());
             Box2dComponent playerBox2dComponent = mBox2d.get(playerId);
             enemyComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(enemyComponent.getIaTestSteerable(), new Box2dLocation(playerBox2dComponent.body)));
-            entity.getStateMachine().changeState(FOCUS_PLAYER);
             return true;
         }
     },
     SLEEP(0) {
         @Override
         public boolean onMessage(EnemyTelegraph entity, Telegram telegram) {
+            super.onMessage(entity, telegram);
             ComponentMapper<EnemyComponent> mEnemy = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(EnemyComponent.class);
             EnemyComponent enemyComponent = mEnemy.get(entity.getId());
             enemyComponent.getIaTestSteerable().setSteeringBehavior(null);
@@ -45,6 +46,10 @@ public enum EnemyState implements State<EnemyTelegraph> {
     ATTACK_COOLDOWN(2) {
         @Override
         public boolean onMessage(EnemyTelegraph entity, Telegram telegram) {
+            super.onMessage(entity, telegram);
+            ComponentMapper<EnemyComponent> mEnemy = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(EnemyComponent.class);
+            EnemyComponent enemyComponent = mEnemy.get(entity.getId());
+            enemyComponent.getIaTestSteerable().setSteeringBehavior(null);
             return true;
         }
     }
@@ -72,4 +77,12 @@ public enum EnemyState implements State<EnemyTelegraph> {
     public void exit(EnemyTelegraph entity) {
         System.out.println("exit");
     }
+
+    @Override
+    public boolean onMessage(EnemyTelegraph entity, Telegram telegram) {
+        entity.getStateMachine().changeState(this);
+        return false;
+    }
+
+
 }

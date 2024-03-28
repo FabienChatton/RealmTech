@@ -40,6 +40,9 @@ public abstract class Entry {
      */
     public abstract void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate;
 
+    public void postEvaluate() {
+    }
+
     /**
      * Get the name of the entry.
      * @return The name of the entry.

@@ -69,6 +69,8 @@ public class ModLoader {
             }
         }
 
+        entrySort.forEach(Entry::postEvaluate);
+
         if (isFail) {
             throw new ModLoaderFail("Can not launch game if mods are not loaded correctly");
         }

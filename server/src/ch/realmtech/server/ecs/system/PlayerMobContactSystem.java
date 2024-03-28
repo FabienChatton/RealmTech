@@ -15,7 +15,6 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.MassData;
 
 import java.util.UUID;
 
@@ -45,10 +44,6 @@ public class PlayerMobContactSystem extends IteratingSystem {
             Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
 
             if (Rectangle.tmp.overlaps(Rectangle.tmp2)) {
-                MassData normalMassData = iaBox2dComponent.body.getMassData();
-                MassData imobileMassData = new MassData();
-                imobileMassData.mass = 100f;
-                iaBox2dComponent.body.setMassData(imobileMassData);
                 MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.ATTACK_COOLDOWN_MESSAGE);
                 UUID mobId = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(ia);
                 serverContext.getServerConnexion().broadCastPacket(new MobAttackCoolDownPacket(mobId, 15));
@@ -67,7 +62,6 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
 
                         MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, entityId);
-                        iaBox2dComponent.body.setMassData(normalMassData);
                     }
                 });
             }

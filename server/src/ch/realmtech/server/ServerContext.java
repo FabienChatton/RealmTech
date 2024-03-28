@@ -14,7 +14,6 @@ import ch.realmtech.server.mod.ModLoader;
 import ch.realmtech.server.mod.ModLoaderFail;
 import ch.realmtech.server.mod.options.OptionLoader;
 import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
-import ch.realmtech.server.mod.packets.PacketLoader;
 import ch.realmtech.server.netty.*;
 import ch.realmtech.server.packet.PacketMap;
 import ch.realmtech.server.packet.ServerConnexion;
@@ -78,7 +77,6 @@ public class ServerContext implements Closeable, Context {
 
             RegistryUtils.findEntryOrThrow(rootRegistry, VerifyTokenOptionEntry.class).setValue(connexionConfig.isVerifyAccessToken());
             logger.info("Verify access token: {}", connexionConfig.isVerifyAccessToken());
-            RegistryUtils.findEntryOrThrow(rootRegistry, PacketLoader.class).getPackets().forEach((packet) -> PACKETS.put(packet.getKey(), packet.getValue()));
             ecsEngineServer = new EcsEngineServer(this);
             serverExecuteContext = new ServerExecuteContext(this);
             if (connexionConfig.getClientExecute() == null) {
