@@ -71,21 +71,21 @@ public class MobSystemServer extends BaseSystem {
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Body bodyIaTest = physicWorld.createBody(bodyDef);
-        bodyIaTest.setUserData(mobId);
+        Body bodyMob = physicWorld.createBody(bodyDef);
+        bodyMob.setUserData(mobId);
         PolygonShape playerShape = new PolygonShape();
         playerShape.setAsBox(0.9f, 0.9f);
         fixtureDef.shape = playerShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
         fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT | PhysiqueWorldHelper.BIT_PLAYER;
-        bodyIaTest.createFixture(fixtureDef);
-        bodyIaTest.setTransform(x, y, bodyIaTest.getAngle());
+        bodyMob.createFixture(fixtureDef);
+        bodyMob.setTransform(x, y, bodyMob.getAngle());
 
         playerShape.dispose();
-        EnemyComponent enemyComponent = world.edit(mobId).create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyIaTest, 4));
+        EnemyComponent enemyComponent = world.edit(mobId).create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4));
         messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, playerId);
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
-        world.edit(mobId).create(Box2dComponent.class).set(0.9f, 0.9f, bodyIaTest);
+        world.edit(mobId).create(Box2dComponent.class).set(0.9f, 0.9f, bodyMob);
         world.edit(mobId).create(LifeComponent.class).set(10);
         PositionComponent positionComponent = world.edit(mobId).create(PositionComponent.class);
         serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), mobId);

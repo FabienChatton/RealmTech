@@ -31,6 +31,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, WeaponRayManager.class, WeaponRayManager::new);
         putCustomSystem(10, InvincibilitySystem.class, InvincibilitySystem::new);
         putCustomSystem(10, MobAttackCooldownSystem.class, MobAttackCooldownSystem::new);
+        putCustomSystem(10, FixDynamicBodySystem.class, FixDynamicBodySystem::new);
 
         putCustomSystem(10, CraftingSystem.class, CraftingSystem::new);
         putCustomSystem(10, CraftingManager.class, CraftingManager::new);
@@ -165,5 +166,9 @@ public class SystemsAdminServer extends SystemsAdminCommun {
 
     public MobAttackCooldownSystem getMobAttackCooldownSystem() {
         return getCustomSystem(MobAttackCooldownSystem.class);
+    }
+
+    public FixDynamicBodySystem getFixDynamicBodySystem() {
+        return getCustomSystem(FixDynamicBodySystem.class);
     }
 }

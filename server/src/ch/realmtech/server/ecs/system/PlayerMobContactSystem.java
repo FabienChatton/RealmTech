@@ -60,9 +60,8 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(100);
 
                         playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
-
-                        MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, entityId);
                     }
+                    MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, entityId);
                 });
             }
         }

@@ -25,9 +25,10 @@ public class EnemySteerable implements Steerable<Vector2> {
 
         tagged = false;
         maxAngularAcceleration = 10.0f;
+        maxAngularSpeed = 10.0f;
+
         maxLinearAcceleration = 10.0f;
         maxLinearSpeed = 10.0f;
-        maxAngularSpeed = 10.0f;
 
         Box2dLocation box2dLocation = new Box2dLocation(body);
         box2dLocation.getPosition().set(body.getPosition());
@@ -37,17 +38,26 @@ public class EnemySteerable implements Steerable<Vector2> {
         if (steeringBehavior != null) {
             // Calculate steering acceleration
             steeringBehavior.calculateSteering(steeringOutput);
-            applySteering(steeringOutput, delta);
+            applySteering(delta);
         }
     }
 
-    private void applySteering (SteeringAcceleration<Vector2> steering, float time) {
-        // Update position and linear velocity. Velocity is trimmed to maximum speed
-        getPosition().mulAdd(getLinearVelocity(), time);
-        body.setLinearVelocity(getLinearVelocity().mulAdd(steering.linear, time).limit(this.getMaxLinearSpeed()));
-        // Update orientation and angular velocity
-        setOrientation(getOrientation() + getAngularVelocity() * time);
-        setAngularVelocity(getAngularVelocity() + steering.angular * time);
+    private void applySteering(float delta) {
+        boolean anyAccelerations = false;
+
+        if (!steeringOutput.linear.isZero()) {
+            Vector2 force = steeringOutput.linear.scl(delta).scl(50f);
+            body.applyForceToCenter(force, true);
+            anyAccelerations = true;
+        }
+
+        if (anyAccelerations) {
+            Vector2 velocity = body.getLinearVelocity();
+            float currentSpeedSquare = velocity.len2();
+            if (currentSpeedSquare > maxLinearSpeed * maxLinearSpeed) {
+                body.setLinearVelocity(velocity.scl(maxLinearSpeed / (float) Math.sqrt(currentSpeedSquare)));
+            }
+        }
     }
 
     public SteeringBehavior<Vector2> getSteeringBehavior() {
@@ -134,7 +144,7 @@ public class EnemySteerable implements Steerable<Vector2> {
 
     @Override
     public void setMaxAngularAcceleration(float maxAngularAcceleration) {
-        this.maxLinearAcceleration = maxAngularAcceleration;
+        this.maxAngularAcceleration = maxAngularAcceleration;
     }
 
     @Override

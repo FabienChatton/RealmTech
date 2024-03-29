@@ -42,9 +42,11 @@ public class PlayerInputSystem extends BaseSystem {
         int topCell = systemsAdminClient.getMapManager().getTopCell(chunk, innerChunkX, innerChunkY);
         int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed())
-                    .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
-                    .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
+            if (mItem.has(selectItem)) {
+                Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed())
+                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
+                        .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
+            }
 
         } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 
