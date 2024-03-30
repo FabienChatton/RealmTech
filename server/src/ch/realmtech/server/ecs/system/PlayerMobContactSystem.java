@@ -33,15 +33,14 @@ public class PlayerMobContactSystem extends IteratingSystem {
 
         PositionComponent playerPositionComponent = mPos.get(entityId);
         Box2dComponent playerBox2dComponent = mBox2d.get(entityId);
-        float grow = 1f;
-        Rectangle.tmp.set(playerPositionComponent.x - grow / 2f, playerPositionComponent.y - grow / 2f, playerBox2dComponent.widthWorld + grow, playerBox2dComponent.heightWorld + grow);
+        Rectangle.tmp.set(playerBox2dComponent.body.getPosition().x, playerBox2dComponent.body.getPosition().y, playerBox2dComponent.widthWorld, playerBox2dComponent.heightWorld);
 
         for (int i = 0; i < ias.size(); i++) {
             int ia = ias.get(i);
             EnemyComponent enemyComponent = mEnemy.get(ia);
             PositionComponent iaPositionComponent = mPos.get(ia);
             Box2dComponent iaBox2dComponent = mBox2d.get(ia);
-            Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
+            Rectangle.tmp2.set(iaBox2dComponent.body.getPosition().x, iaBox2dComponent.body.getPosition().y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
 
             if (Rectangle.tmp.overlaps(Rectangle.tmp2)) {
                 MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.ATTACK_COOLDOWN_MESSAGE);
@@ -49,7 +48,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
                 serverContext.getServerConnexion().broadCastPacket(new MobAttackCoolDownPacket(mobId, 15));
 
                 world.edit(ia).create(MobAttackCooldownComponent.class).set(15, () -> {
-                    Rectangle.tmp.set(playerPositionComponent.x - grow / 2f, playerPositionComponent.y - grow / 2f, playerBox2dComponent.widthWorld + grow, playerBox2dComponent.heightWorld + grow);
+                    Rectangle.tmp.set(playerPositionComponent.x, playerPositionComponent.y, playerBox2dComponent.widthWorld, playerBox2dComponent.heightWorld);
                     Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
 
                     if (Rectangle.tmp.overlaps(Rectangle.tmp2)) {

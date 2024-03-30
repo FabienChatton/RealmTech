@@ -73,15 +73,24 @@ public class MobSystemServer extends BaseSystem {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         Body bodyMob = physicWorld.createBody(bodyDef);
         bodyMob.setUserData(mobId);
-        PolygonShape playerShape = new PolygonShape();
-        playerShape.setAsBox(0.9f, 0.9f);
-        fixtureDef.shape = playerShape;
+
+        PolygonShape physicContactShape = new PolygonShape();
+        physicContactShape.setAsBox(0.9f, 0.9f);
+        fixtureDef.shape = physicContactShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
-        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT | PhysiqueWorldHelper.BIT_PLAYER;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
         bodyMob.createFixture(fixtureDef);
         bodyMob.setTransform(x, y, bodyMob.getAngle());
 
-        playerShape.dispose();
+        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
+        PolygonShape playerContactShape = new PolygonShape();
+        playerContactShape.setAsBox(0.1f, 0.1f);
+        fixtureDef.shape = playerContactShape;
+        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
+        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_PLAYER;
+        bodyMob.createFixture(fixtureDef);
+
+        playerContactShape.dispose();
         EnemyComponent enemyComponent = world.edit(mobId).create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4));
         messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, playerId);
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));

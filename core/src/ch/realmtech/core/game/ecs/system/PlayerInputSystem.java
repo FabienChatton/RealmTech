@@ -41,7 +41,7 @@ public class PlayerInputSystem extends BaseSystem {
         byte innerChunkY = MapManager.getInnerChunk(worldPosY);
         int topCell = systemsAdminClient.getMapManager().getTopCell(chunk, innerChunkX, innerChunkY);
         int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (mItem.has(selectItem)) {
                 Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed())
                         .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
@@ -84,9 +84,11 @@ public class PlayerInputSystem extends BaseSystem {
                         }
                     });
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickOnPressed())
-                    .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
-                    .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
+            if (mItem.has(selectItem)) {
+                Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickOnPressed())
+                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
+                        .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
+            }
         }
     }
 }

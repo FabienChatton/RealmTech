@@ -152,20 +152,22 @@ public class ServerContext implements Closeable, Context {
 
     @Override
     public void close() throws IOException {
-        logger.info("Closing server...");
-        tickThread.close();
-        commandServerThread.close();
-        ecsEngineServer.dispose();
-        saveAndClose = true;
-        try {
-            if (serverNetty != null) {
-                serverNetty.close().await();
+        synchronized (this) {
+            logger.info("Closing server...");
+            tickThread.close();
+            commandServerThread.close();
+            ecsEngineServer.dispose();
+            saveAndClose = true;
+            try {
+                if (serverNetty != null) {
+                    serverNetty.close().await();
+                }
+            } catch (InterruptedException e) {
+                throw new IOException(e);
             }
-        } catch (InterruptedException e) {
-            throw new IOException(e);
-        }
-        if (clientRef != null) {
-            clientRef.closeEcs();
+            if (clientRef != null) {
+                clientRef.closeEcs();
+            }
         }
     }
 

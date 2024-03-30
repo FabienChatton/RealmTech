@@ -54,8 +54,8 @@ public class WeaponRayManager extends Manager {
     public int getMobHit(int playerId, Vector2 vectorClick) {
         PositionComponent playerPos = mPos.get(playerId);
 
-        Vector2 vectorStart = new Vector2(playerPos.x, playerPos.y);
-        Vector2 vectorEnd = vectorClick.sub(vectorStart).setLength(100);
+        Vector2 vectorStart = playerPos.toVector2().add(0.5f, 0.5f);
+        Vector2 vectorEnd = vectorClick.cpy().sub(vectorStart.cpy()).setLength(10).add(vectorStart);
         IntBag mobs = rayCast(vectorStart, vectorEnd, Aspect.all(EnemyComponent.class), getFirstHit());
 
         if (!mobs.isEmpty()) {
