@@ -8,6 +8,7 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.packet.clientPacket.MobDeletePacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
+import ch.realmtech.server.packet.clientPacket.PlayerHasWeaponShotPacket;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
@@ -67,6 +68,14 @@ public class WeaponRayManager extends Manager {
 
     public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick) {
         int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChannel);
+        UUID playerUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(playerId);
+        PositionComponent playerPos = mPos.get(playerId);
+
+        int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.x));
+        int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.y));
+
+        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new PlayerHasWeaponShotPacket(playerUuid), chunkPosX, chunkPosY);
+
         int mobId = getMobHit(playerId, vectorClick);
         if (mobId != -1) {
             PositionComponent mobPosition = mPos.get(mobId);
@@ -77,8 +86,7 @@ public class WeaponRayManager extends Manager {
                 systemsAdminServer.getMobManager().destroyMob(mobId);
                 serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(mobUuid), clientChannel);
             } else {
-                PositionComponent playerPosition = mPos.get(playerId);
-                Vector2 knowBack = mobPosition.toVector2().sub(playerPosition.toVector2()).setLength(100);
+                Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength(100);
                 systemsAdminServer.getMobManager().knockBackMob(mobId, knowBack);
                 world.edit(mobId).create(InvincibilityComponent.class).set(60);
             }

@@ -15,4 +15,6 @@ public interface SystemsAdminClientForClient extends SystemsAdminCommunItf {
     ParticleEffectForClient getParticleEffectsSystem();
 
     Registry<?> getRootRegistry();
+
+    WeaponManagerClientClient getWeaponManagerClient();
 }

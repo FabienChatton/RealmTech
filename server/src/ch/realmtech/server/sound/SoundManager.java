@@ -52,6 +52,7 @@ public class SoundManager {
     public final static String BLIP = "sound/effects/menu/blip1.wav";
     public final static String DENY = "sound/effects/menu/launch_deny1.wav";
     public final static String BREAKING_CELL = "sound/effects/level/break/bfh1_breaking_02.ogg";
+    public final static String WEAPON_SHOT = "sound/effects/items/bang_06.ogg";
     private final HashMap<String, Long> soundLoop;
     private final AssetManager assetManager;
     private final Integer optionSound;
@@ -116,6 +117,7 @@ public class SoundManager {
         assetManager.load(BLIP, Sound.class);
         assetManager.load(DENY, Sound.class);
         assetManager.load(BREAKING_CELL, Sound.class);
+        assetManager.load(WEAPON_SHOT, Sound.class);
     }
 
     public void playFootStep(int playerId, World world, PlayerFootStepSound playerFootStepSound, float volume) {
@@ -173,5 +175,9 @@ public class SoundManager {
             soundLoop.put("breakingCell", System.currentTimeMillis());
             assetManager.get(BREAKING_CELL, Sound.class).play(getSoundPourCent() * 0.1f);
         }
+    }
+
+    public void playWeaponShoot() {
+        assetManager.get(WEAPON_SHOT, Sound.class).play(getSoundPourCent() * 0.7f);
     }
 }

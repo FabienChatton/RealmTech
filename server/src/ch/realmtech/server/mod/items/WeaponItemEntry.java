@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class WeaponItemEntry extends ItemEntry {
     public WeaponItemEntry() {
-        super("Weapon", "pioche-stone-01", ItemBehavior.builder().build());
+        super("Weapon", "p2022", ItemBehavior.builder().build());
     }
 
     @Override

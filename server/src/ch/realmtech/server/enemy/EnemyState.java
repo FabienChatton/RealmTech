@@ -79,17 +79,14 @@ public enum EnemyState implements State<EnemyTelegraph> {
 
     @Override
     public void enter(EnemyTelegraph entity) {
-        System.out.println("enter");
     }
 
     @Override
     public void update(EnemyTelegraph entity) {
-        System.out.println("update");
     }
 
     @Override
     public void exit(EnemyTelegraph entity) {
-        System.out.println("exit");
     }
 
     @Override

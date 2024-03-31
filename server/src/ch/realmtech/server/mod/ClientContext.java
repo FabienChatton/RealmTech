@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
 import ch.realmtech.server.packet.ServerPacket;
 import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.sound.SoundManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -26,6 +27,8 @@ public interface ClientContext extends GetWorld, Context {
     TextureAtlas getTextureAtlas();
 
     void onTextureAtlasLoaded(Consumer<TextureAtlas> textureAtlasConsumer);
+
+    SoundManager getSoundManager();
 
     SystemsAdminClientForClient getSystemsAdminClient();
 }

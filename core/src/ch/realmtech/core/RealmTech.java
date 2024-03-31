@@ -395,6 +395,7 @@ public final class RealmTech extends Game implements InternalConnexion {
         }
     }
 
+    @Override
     public SoundManager getSoundManager() {
         return soundManager;
     }
