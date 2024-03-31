@@ -24,9 +24,8 @@ import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 public final class ECSEngine implements Disposable, GetWorld {
     private final static Logger logger = LoggerFactory.getLogger(ECSEngine.class);
@@ -41,12 +40,14 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final SystemEnableOnInventoryOpen systemEnableOnPlayerInventoryOpen;
     private final ClientConnexion clientConnexion;
     private final List<Runnable> nextFrameRunnable;
+    private final Map<Long, List<Runnable>> nextFrameRunnableSchedule;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
     private final SystemsAdminClient systemAdminClient;
     private final CommandClientExecute commandClientExecute;
     private final SerializerController serializerController;
     private final RayHandler rayHandler;
     private final TickEmulationInvocationStrategy tickEmulationInvocationStrategy;
+    private static long tickCount;
 
     public ECSEngine(final RealmTech context, ClientConnexion clientConnexion) throws Exception {
         this.context = context;
@@ -57,6 +58,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
+        nextFrameRunnableSchedule = Collections.synchronizedMap(new HashMap<>());
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController();
@@ -115,11 +117,21 @@ public final class ECSEngine implements Disposable, GetWorld {
             copyNextFrameRunnable = List.copyOf(nextFrameRunnable);
             nextFrameRunnable.clear();
         }
+
+        synchronized (nextFrameRunnableSchedule) {
+            List<Runnable> runnables = nextFrameRunnableSchedule.get(tickCount);
+            if (runnables != null) {
+                Stream<Runnable> stream = copyNextFrameRunnable.stream();
+                copyNextFrameRunnable = Stream.concat(stream, List.copyOf(runnables).stream()).toList();
+            }
+        }
+
         if (context.getEcsEngine() == null) return;
         copyNextFrameRunnable.forEach(Runnable::run);
         if (context.getEcsEngine() == null) return;
         world.setDelta(delta);
         world.process();
+        tickCount++;
     }
 
     @Override
@@ -185,6 +197,18 @@ public final class ECSEngine implements Disposable, GetWorld {
     public void nextFrame(Runnable runnable) {
         synchronized (nextFrameRunnable) {
             nextFrameRunnable.add(runnable);
+        }
+    }
+
+    public void nextFrame(int frameLapse, Runnable runnable) {
+        long futureTick = tickCount + frameLapse;
+        synchronized (nextFrameRunnableSchedule) {
+            List<Runnable> runnableSchedule = nextFrameRunnableSchedule.get(futureTick);
+            if (runnableSchedule == null) {
+                nextFrameRunnableSchedule.put(futureTick, new ArrayList<>(List.of(runnable)));
+            } else {
+                runnableSchedule.add(runnable);
+            }
         }
     }
 

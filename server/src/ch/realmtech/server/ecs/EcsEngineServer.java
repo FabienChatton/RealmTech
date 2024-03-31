@@ -1,6 +1,7 @@
 package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.netty.ConnexionConfig;
 import ch.realmtech.server.netty.ServerHandler;
@@ -109,7 +110,7 @@ public final class EcsEngineServer implements GetWorld, Disposable {
     }
 
     public void saveMap() throws IOException {
-        int infMap = systemsAdminServer.getTagManager().getEntityId("infMap");
+        InfMapComponent infMap = systemsAdminServer.getMapManager().getInfMap();
         systemsAdminServer.getSaveInfManager().saveInfMap(infMap);
         logger.info("Map saved");
     }

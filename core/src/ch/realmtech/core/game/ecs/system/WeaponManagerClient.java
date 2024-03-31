@@ -27,6 +27,6 @@ public class WeaponManagerClient extends Manager implements WeaponManagerClientC
         context.getSoundManager().playWeaponShoot();
         int weaponShotLight = world.create();
         systemsAdminClient.getLightManager().createLight(weaponShotLight, Color.WHITE, 10, playerPos.x, playerPos.y);
-        context.nextFrame(() -> systemsAdminClient.getLightManager().disposeLight(weaponShotLight));
+        context.nextFrame(2, () -> systemsAdminClient.getLightManager().disposeLight(weaponShotLight));
     }
 }

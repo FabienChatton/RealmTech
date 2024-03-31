@@ -35,18 +35,16 @@ public class SaveInfManager extends Manager {
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<PositionComponent> mPosition;
 
-    public void saveInfMap(int mapId) throws IOException {
-        InfMapComponent infMapComponent = mInfMap.get(mapId);
-        SaveMetadataComponent saveMetadataComponent = mMetaDonnees.get(infMapComponent.infMetaDonnees);
-        saveInfMap(mapId, saveMetadataComponent.saveName);
+    public void saveInfMap(InfMapComponent infMap) throws IOException {
+        SaveMetadataComponent saveMetadataComponent = mMetaDonnees.get(infMap.infMetaDonnees);
+        saveInfMap(infMap, saveMetadataComponent.saveName);
     }
 
-    public void saveInfMap(int mapId, String saveName) throws IOException {
-        InfMapComponent infMapComponent = mInfMap.get(mapId);
-        if (infMapComponent != null) {
+    public void saveInfMap(InfMapComponent infMap, String saveName) throws IOException {
+        if (infMap != null) {
             Path savePath = getSavePath(saveName);
-            saveSaveMetadata(infMapComponent.infMetaDonnees, savePath);
-            for (int infChunkId : infMapComponent.infChunks) {
+            saveSaveMetadata(infMap.infMetaDonnees, savePath);
+            for (int infChunkId : infMap.infChunks) {
                 saveInfChunk(infChunkId, savePath);
             }
         }

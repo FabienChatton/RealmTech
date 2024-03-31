@@ -58,6 +58,7 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -411,8 +412,16 @@ public final class RealmTech extends Game implements InternalConnexion {
         return ecsEngine.getClientConnexion();
     }
     public void nextFrame(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         if (ecsEngine != null) {
             ecsEngine.nextFrame(runnable);
+        }
+    }
+
+    public void nextFrame(int frameLapse, Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        if (ecsEngine != null) {
+            ecsEngine.nextFrame(frameLapse, runnable);
         }
     }
 
