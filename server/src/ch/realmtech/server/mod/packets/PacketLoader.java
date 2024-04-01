@@ -67,6 +67,7 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(ParticleAddPacket.class, ParticleAddPacket::new));
         packets.add(new SimpleEntry<>(MobAttackCoolDownPacket.class, MobAttackCoolDownPacket::new));
         packets.add(new SimpleEntry<>(PlayerHasWeaponShotPacket.class, PlayerHasWeaponShotPacket::new));
+        packets.add(new SimpleEntry<>(EnemyHitPacket.class, EnemyHitPacket::new));
     }
 
     @Override

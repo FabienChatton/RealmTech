@@ -192,7 +192,7 @@ public class ClientExecuteContext implements ClientExecute {
             float x = physicEntityArgs.x();
             float y = physicEntityArgs.y();
             if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
-                context.getSystemsAdminClient().getIaManagerClient().otherIa(uuid, x, y);
+                context.getSystemsAdminClient().getEnemyManagerClient().otherIa(uuid, x, y);
             }
         });
     }
@@ -274,5 +274,10 @@ public class ClientExecuteContext implements ClientExecute {
         context.nextFrame(() -> {
             context.getSystemsAdminClient().getMobManagerClient().mobAttackCoolDown(mobUuid, cooldown);
         });
+    }
+
+    @Override
+    public void nextFrame(Runnable runnable) {
+        context.nextFrame(runnable);
     }
 }

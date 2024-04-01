@@ -1,12 +1,15 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.component.TextureColorComponent;
+import ch.realmtech.core.game.ecs.component.TextureImportantComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -16,8 +19,9 @@ public class TextureRenderer extends IteratingSystem {
     private Stage gameStage;
 
     private ComponentMapper<TextureComponent> mTexture;
-    private ComponentMapper<TextureImportant> mTextureImportant;
+    private ComponentMapper<TextureImportantComponent> mTextureImportant;
     private ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<TextureColorComponent> mTextureColor;
 
     @Override
     protected void process(int entityId) {
@@ -27,7 +31,7 @@ public class TextureRenderer extends IteratingSystem {
 
             TextureRegion textureRegion;
             if (mTextureImportant.has(entityId)) {
-                TextureImportant textureImportantComponent = mTextureImportant.get(entityId);
+                TextureImportantComponent textureImportantComponent = mTextureImportant.get(entityId);
                 TextureRegion textureImportant = textureImportantComponent.getTexture();
                 if (textureImportant != null) {
                     textureRegion = textureImportant;
@@ -39,6 +43,11 @@ public class TextureRenderer extends IteratingSystem {
                 textureRegion = textureComponent.texture;
             }
 
+            boolean hasColor = mTextureColor.has(entityId);
+            if (hasColor) {
+                gameStage.getBatch().setColor(mTextureColor.get(entityId).getColor());
+            }
+
             gameStage.getBatch().draw(
                     textureRegion,
                     positionComponent.x,
@@ -46,6 +55,10 @@ public class TextureRenderer extends IteratingSystem {
                     textureComponent.texture.getRegionWidth() * RealmTech.UNITE_SCALE * textureComponent.scale,
                     textureComponent.texture.getRegionHeight() * RealmTech.UNITE_SCALE * textureComponent.scale
             );
+
+            if (hasColor) {
+                gameStage.getBatch().setColor(Color.WHITE);
+            }
         }
     }
 }

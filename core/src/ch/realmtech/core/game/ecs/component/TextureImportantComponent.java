@@ -1,16 +1,16 @@
-package ch.realmtech.core.game.ecs.system;
+package ch.realmtech.core.game.ecs.component;
 
 import com.artemis.Component;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class TextureImportant extends Component {
+public class TextureImportantComponent extends Component {
     private TextureRegion[] textureRegions;
     private int tickElapse;
     private int tickEnd;
     private int indexArray;
     private int index;
 
-    public TextureImportant set(TextureRegion[] textureRegions, int tickElapse, int tickEnd) {
+    public TextureImportantComponent set(TextureRegion[] textureRegions, int tickElapse, int tickEnd) {
         this.textureRegions = textureRegions;
         this.tickElapse = tickElapse;
         this.tickEnd = tickEnd;

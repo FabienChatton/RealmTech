@@ -95,7 +95,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return getCustomSystem(TextureAnimatedSystem.class);
     }
 
-    public EnemyManagerClient getIaManagerClient() {
+    @Override
+    public EnemyManagerClient getEnemyManagerClient() {
         return getCustomSystem(EnemyManagerClient.class);
     }
 

@@ -66,4 +66,6 @@ public interface ClientExecute {
     void addParticle(ParticleAddPacket.Particles particle, Vector2 worldPos);
 
     void mobAttackCoolDown(UUID modUuid, int cooldown);
+
+    void nextFrame(Runnable runnable);
 }

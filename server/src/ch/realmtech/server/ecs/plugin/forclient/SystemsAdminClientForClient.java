@@ -8,6 +8,9 @@ import ch.realmtech.server.registry.Registry;
 public interface SystemsAdminClientForClient extends SystemsAdminCommunItf {
     LightManagerForClient getLightManager();
     FurnaceIconSystemForClient getFurnaceIconSystem();
+
+    EnemyManagerForClient getEnemyManagerClient();
+
     CraftingManager getCraftingManager();
 
     EnergyIconSystemForClient getEnergyBatteryIconSystem();

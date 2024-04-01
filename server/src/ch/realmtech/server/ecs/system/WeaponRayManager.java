@@ -6,6 +6,7 @@ import ch.realmtech.server.ecs.component.InvincibilityComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
+import ch.realmtech.server.packet.clientPacket.EnemyHitPacket;
 import ch.realmtech.server.packet.clientPacket.MobDeletePacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import ch.realmtech.server.packet.clientPacket.PlayerHasWeaponShotPacket;
@@ -79,16 +80,17 @@ public class WeaponRayManager extends Manager {
         int mobId = getMobHit(playerId, vectorClick);
         if (mobId != -1) {
             PositionComponent mobPosition = mPos.get(mobId);
-            UUID mobUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobId);
+            UUID enemyUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobId);
             serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, mobPosition.toVector2()), clientChannel);
 
             if (systemsAdminServer.getMobManager().attackMob(mobId, 5)) {
                 systemsAdminServer.getMobManager().destroyMob(mobId);
-                serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(mobUuid), clientChannel);
+                serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(enemyUuid), clientChannel);
             } else {
                 Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength(100);
                 systemsAdminServer.getMobManager().knockBackMob(mobId, knowBack);
                 world.edit(mobId).create(InvincibilityComponent.class).set(60);
+                serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyHitPacket(enemyUuid), chunkPosX, chunkPosY);
             }
         }
     }

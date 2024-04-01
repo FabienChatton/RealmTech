@@ -1,11 +1,15 @@
 package ch.realmtech.core.game.ecs.system;
 
+import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.component.TextureColorComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.forclient.EnemyManagerForClient;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
@@ -14,7 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class EnemyManagerClient extends Manager {
+public class EnemyManagerClient extends Manager implements EnemyManagerForClient {
+    @Wire(name = "context")
+    private RealmTech context;
     @Wire
     private SystemsAdminClient systemsAdminClient;
     @Wire
@@ -70,5 +76,12 @@ public class EnemyManagerClient extends Manager {
 
         textureAnimationComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
         return iaTestId;
+    }
+
+    @Override
+    public void enemyJustHit(UUID enemyUuid) {
+        int enemyId = systemsAdminClient.getUuidEntityManager().getEntityId(enemyUuid);
+        world.edit(enemyId).create(TextureColorComponent.class).set(Color.RED);
+        context.nextFrame(60, () -> world.edit(enemyId).remove(TextureColorComponent.class));
     }
 }
