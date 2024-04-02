@@ -4,6 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.server.ecs.plugin.forclient.ParticleEffectForClient;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
@@ -21,8 +22,8 @@ public class ParticleEffectsSystem extends BaseSystem implements ParticleEffectF
     @Override
     protected void initialize() {
         activeParticleEffect = new Array<>();
-        // hitParticleEffect.load();
         hitParticleEffect = new ParticleEffect();
+        hitParticleEffect.load(Gdx.files.local("texture/particles/hit.p"), Gdx.files.local("texture/particles"));
         hitParticleEffectPool = new ParticleEffectPool(hitParticleEffect, 1, 10);
 
     }
@@ -31,7 +32,7 @@ public class ParticleEffectsSystem extends BaseSystem implements ParticleEffectF
     protected void processSystem() {
         for (int i = 0; i < activeParticleEffect.size; i++) {
             PooledEffect particleEffect = activeParticleEffect.get(i);
-            particleEffect.draw(context.getGameStage().getBatch());
+            particleEffect.draw(context.getGameStage().getBatch(), Gdx.graphics.getDeltaTime());
             if (particleEffect.isComplete()) {
                 particleEffect.free();
                 activeParticleEffect.removeIndex(i);
