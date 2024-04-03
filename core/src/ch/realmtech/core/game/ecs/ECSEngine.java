@@ -41,6 +41,7 @@ public final class ECSEngine implements Disposable, GetWorld {
     private final ClientConnexion clientConnexion;
     private final List<Runnable> nextFrameRunnable;
     private final Map<Long, List<Runnable>> nextFrameRunnableSchedule;
+    private final Map<Long, List<Runnable>> nextTickSimulationRunnableSchedule;
     public final ServerTickBeatMonitoring serverTickBeatMonitoring;
     private final SystemsAdminClient systemAdminClient;
     private final CommandClientExecute commandClientExecute;
@@ -59,6 +60,7 @@ public final class ECSEngine implements Disposable, GetWorld {
         fixtureDef = new FixtureDef();
         nextFrameRunnable = Collections.synchronizedList(new ArrayList<>());
         nextFrameRunnableSchedule = Collections.synchronizedMap(new HashMap<>());
+        nextTickSimulationRunnableSchedule = Collections.synchronizedMap(new HashMap<>());
         commandClientExecute = new CommandClientExecute(context);
         serverTickBeatMonitoring = new ServerTickBeatMonitoring();
         serializerController = new SerializerController();
@@ -124,6 +126,17 @@ public final class ECSEngine implements Disposable, GetWorld {
                 Stream<Runnable> stream = copyNextFrameRunnable.stream();
                 copyNextFrameRunnable = Stream.concat(stream, List.copyOf(runnables).stream()).toList();
             }
+            nextFrameRunnableSchedule.remove(tickCount);
+        }
+
+        synchronized (nextTickSimulationRunnableSchedule) {
+            long tick = systemAdminClient.getTickSlaveEmulationSystem().getTick();
+            List<Runnable> runnables = nextTickSimulationRunnableSchedule.get(tick);
+                if (runnables != null) {
+                    Stream<Runnable> stream = copyNextFrameRunnable.stream();
+                    copyNextFrameRunnable = Stream.concat(stream, List.copyOf(runnables).stream()).toList();
+                }
+            nextTickSimulationRunnableSchedule.remove(tick);
         }
 
         if (context.getEcsEngine() == null) return;
@@ -211,6 +224,23 @@ public final class ECSEngine implements Disposable, GetWorld {
             }
         }
     }
+
+    public void nextTickSimulation(int tick, Runnable runnable) {
+        long futureTick = systemAdminClient.getTickSlaveEmulationSystem().getTick() + tick;
+        synchronized (nextTickSimulationRunnableSchedule) {
+            List<Runnable> runnableSchedule = nextTickSimulationRunnableSchedule.get(futureTick);
+            if (runnableSchedule == null) {
+                nextTickSimulationRunnableSchedule.put(futureTick, new ArrayList<>(List.of(runnable)));
+            } else {
+                runnableSchedule.add(runnable);
+            }
+        }
+    }
+
+    public void nextTickSimulation(Runnable runnable) {
+        nextTickSimulation(1, runnable);
+    }
+
 
     public CommandClientExecute getCommandClientExecute() {
         return commandClientExecute;

@@ -83,6 +83,6 @@ public class EnemyManagerClient extends Manager implements EnemyManagerForClient
         int enemyId = systemsAdminClient.getUuidEntityManager().getEntityId(enemyUuid);
         world.edit(enemyId).create(TextureColorComponent.class).set(Color.RED);
         systemsAdminClient.getParticleEffectsSystem().createHitEffect(mBox2d.get(enemyId).body.getPosition());
-        context.nextFrame(60, () -> world.edit(enemyId).remove(TextureColorComponent.class));
+        context.nextTickSimulation(60, () -> world.edit(enemyId).remove(TextureColorComponent.class));
     }
 }

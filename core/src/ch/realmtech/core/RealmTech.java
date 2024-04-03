@@ -425,6 +425,17 @@ public final class RealmTech extends Game implements InternalConnexion {
         }
     }
 
+    public void nextTickSimulation(int tick, Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        if (ecsEngine != null) {
+            ecsEngine.nextTickSimulation(tick, runnable);
+        }
+    }
+
+    public void nextTickSimulation(Runnable runnable) {
+        nextTickSimulation(1, runnable);
+    }
+
     @Override
     public void writeToConsole(String s) {
         gameScreen.writeToConsole(s);

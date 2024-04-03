@@ -43,6 +43,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         putCustomSystem(27, PlayerFootStepSystem.class, PlayerFootStepSystem::new);
         putCustomSystem(28, MobManagerClient.class, MobManagerClient::new);
         putCustomSystem(29, WeaponManagerClient.class, WeaponManagerClient::new);
+        putCustomSystem(30, TickSlaveEmulationSystem.class, TickSlaveEmulationSystem::new);
 
         // render
         putCustomSystem(101, GameStageBatchBeginSystem.class, GameStageBatchBeginSystem::new);
@@ -221,6 +222,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
     public MobManagerClient getMobManagerClient() {
         return getCustomSystem(MobManagerClient.class);
+    }
+
+    public TickSlaveEmulationSystem getTickSlaveEmulationSystem() {
+        return getCustomSystem(TickSlaveEmulationSystem.class);
     }
 
     @Override
