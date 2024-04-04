@@ -48,7 +48,7 @@ public class PlayerInputSystem extends BaseSystem {
                         .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
             }
 
-        } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && (mItem.has(selectItem) && mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed() == null)) {
 
             Optional<ClickInteraction> leftClickInteractionItemSelected = Optional.empty();
             if (mItem.has(selectItem)) {
