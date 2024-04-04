@@ -9,8 +9,11 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LightCycleSystem extends BaseSystem {
+    private final static Logger logger = LoggerFactory.getLogger(LightCycleSystem.class);
     @Wire(name = "physicWorld")
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     @Wire(name = "gameCamera")
@@ -32,7 +35,11 @@ public class LightCycleSystem extends BaseSystem {
 
         rayHandler.setCombinedMatrix(((OrthographicCamera) gameCamera));
         rayHandler.setAmbientLight(new Color(0,0,0, alpha));
-        rayHandler.updateAndRender();
+        try {
+            rayHandler.updateAndRender();
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+        }
     }
 
 

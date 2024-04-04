@@ -2,6 +2,7 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
+import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
@@ -29,6 +30,11 @@ public class PlayerInputSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        if (context.getScreen() instanceof GameScreen gameScreen) {
+            if (gameScreen.consoleIsShow()) {
+                return;
+            }
+        }
         Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 gameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
         int worldPosX = MapManager.getWorldPos(gameCoordinate.x);

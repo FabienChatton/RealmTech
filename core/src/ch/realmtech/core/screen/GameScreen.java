@@ -194,4 +194,8 @@ public class GameScreen extends AbstractScreen {
     public void writeToConsole(String s) {
         consoleUi.writeToConsole(s);
     }
+
+    public boolean consoleIsShow() {
+        return consoleUi.getConsoleWindow().getParent() != null;
+    }
 }
