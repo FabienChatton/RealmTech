@@ -38,7 +38,7 @@ public class LightCycleSystem extends BaseSystem {
         try {
             rayHandler.updateAndRender();
         } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
+            logger.warn(e.getMessage());
         }
     }
 

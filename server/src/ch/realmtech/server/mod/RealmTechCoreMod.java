@@ -143,7 +143,7 @@ public class RealmTechCoreMod implements ModInitializer {
         craftFurnaceRegistry.addEntry(new GoldIngotCraftEntry());
 
         // quests
-        Registry<QuestEntry> questRegistry = Registry.createRegistry(modRegistry, "quests");
+        Registry<QuestEntry> questRegistry = Registry.createRegistry(modRegistry, "quests", "quests");
         questRegistry.addEntry(new CraftingExpansionQuestEntry());
         questRegistry.addEntry(new FirstCraftQuestEntry());
         questRegistry.addEntry(new FirstEnergyBatteryQuestEntry());

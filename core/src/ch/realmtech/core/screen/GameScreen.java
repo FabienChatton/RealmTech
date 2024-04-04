@@ -88,7 +88,7 @@ public class GameScreen extends AbstractScreen {
             }
         }
         // open inventory
-        if (Gdx.input.isKeyJustPressed(InputMapper.openInventory.getKey()) && consoleUi.getConsoleWindow().getParent() == null) {
+        if (Gdx.input.isKeyJustPressed(InputMapper.openInventory.getKey()) && canInteractWithWorld()) {
             if (!context.getSystemsAdminClient().getPlayerInventorySystem().isEnabled()) {
                 context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
                 context.getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(context.getSystemsAdminClient().getPlayerInventorySystem().getDisplayInventoryPlayer());
@@ -97,8 +97,8 @@ public class GameScreen extends AbstractScreen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey()) && consoleUi.getConsoleWindow().getParent() == null) {
-            if (!context.getSystemsAdminClient().getQuestSystem().isEnabled()) {
+        if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey())) {
+            if (!context.getSystemsAdminClient().getQuestSystem().isEnabled() && canInteractWithWorld()) {
                 context.getSystemsAdminClient().getQuestManager().openQuest();
             } else {
                 context.getSystemsAdminClient().getQuestManager().closeQuest();
@@ -108,7 +108,7 @@ public class GameScreen extends AbstractScreen {
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)) {
-            if (consoleUi.getConsoleWindow().getParent() == null) {
+            if (consoleUi.getConsoleWindow().getParent() == null && canInteractWithWorld()) {
                 uiStage.addActor(consoleUi.getConsoleWindow());
                 Gdx.input.setInputProcessor(uiStage);
             } else {
@@ -195,7 +195,7 @@ public class GameScreen extends AbstractScreen {
         consoleUi.writeToConsole(s);
     }
 
-    public boolean consoleIsShow() {
-        return consoleUi.getConsoleWindow().getParent() != null;
+    public boolean canInteractWithWorld() {
+        return consoleUi.getConsoleWindow().getParent() == null && !context.getSystemsAdminClient().getQuestSystem().isEnabled();
     }
 }

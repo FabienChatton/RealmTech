@@ -31,7 +31,7 @@ public class PlayerInputSystem extends BaseSystem {
     @Override
     protected void processSystem() {
         if (context.getScreen() instanceof GameScreen gameScreen) {
-            if (gameScreen.consoleIsShow()) {
+            if (!gameScreen.canInteractWithWorld()) {
                 return;
             }
         }
