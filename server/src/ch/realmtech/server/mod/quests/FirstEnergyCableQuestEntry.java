@@ -4,7 +4,7 @@ import ch.realmtech.server.registry.QuestEntry;
 
 public class FirstEnergyCableQuestEntry extends QuestEntry {
     public FirstEnergyCableQuestEntry() {
-        super("FirstEnergyCable", "First Energy Cable", """
+        super("FirstEnergyCable", "tier 0", "First Energy Cable", """
                 Now that you have the ability to smelt ores, you can use the ingots to create
                 the components needed for electrical installations.
                 First, make copper electric cables with 3 copper ingots aligned horizontally.

@@ -4,7 +4,7 @@ import ch.realmtech.server.registry.QuestEntry;
 
 public class KnowYouWorldQuestEntry extends QuestEntry {
     public KnowYouWorldQuestEntry() {
-        super("KnowYourWorld", "Know Your World", """
+        super("KnowYourWorld", "tier 0", "Know Your World", """
                 RealmTech is a game that procedurally generates the Terran. You can explore endlessly.
                 If you can't find a certain resource near your location, explore further.
                 RealmTech is also a multiplayer game, so a friend can join your world using the multiplayer menu.

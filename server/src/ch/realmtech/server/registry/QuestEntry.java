@@ -3,11 +3,13 @@ package ch.realmtech.server.registry;
 public abstract class QuestEntry extends Entry {
     private final String title;
     private final String content;
+    private final String category;
 
-    public QuestEntry(String name, String title, String content) {
+    public QuestEntry(String name, String category, String title, String content) {
         super(name);
         this.title = title;
         this.content = content;
+        this.category = category;
     }
 
     @Override
@@ -21,5 +23,9 @@ public abstract class QuestEntry extends Entry {
 
     public String getContent() {
         return content;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }

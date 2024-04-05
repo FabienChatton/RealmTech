@@ -4,7 +4,7 @@ import ch.realmtech.server.registry.QuestEntry;
 
 public class FirstEnergyBatteryQuestEntry extends QuestEntry {
     public FirstEnergyBatteryQuestEntry() {
-        super("FirstEnergyBattery", "First Energy Battery", """
+        super("FirstEnergyBattery", "tier 0", "First Energy Battery", """
                 To create our first energy generator, we must first create a battery.
                 The energy battery allows energy to be stored.
                 The direction of the battery is important. To change the direction, use a wrench.

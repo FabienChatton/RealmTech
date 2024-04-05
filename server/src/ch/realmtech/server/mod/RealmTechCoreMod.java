@@ -18,6 +18,7 @@ import ch.realmtech.server.mod.options.server.RenderDistanceOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyAccessTokenUrnOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.mod.packets.PacketLoader;
+import ch.realmtech.server.mod.questCategory.Tier0QuestCategory;
 import ch.realmtech.server.mod.quests.*;
 import ch.realmtech.server.registry.*;
 
@@ -155,6 +156,10 @@ public class RealmTechCoreMod implements ModInitializer {
         questRegistry.addEntry(new GetReadyForElectricityQuestEntry());
         questRegistry.addEntry(new KnowYouWorldQuestEntry());
         questRegistry.addEntry(new ThermalExpansionQuestEntry());
+
+        // quests category
+        Registry<QuestCategory> questCategoryRegistry = Registry.createRegistry(modRegistry, "questsCategory", "questsCategory");
+        questCategoryRegistry.addEntry(new Tier0QuestCategory());
 
         // entity edit factory
         Registry<EditEntityFactory> entityEditFactory = Registry.createRegistry(modRegistry, "editEntity");

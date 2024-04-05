@@ -1,7 +1,7 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
-import ch.realmtech.server.registry.Entry;
+import ch.realmtech.server.registry.QuestCategory;
 import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
@@ -31,14 +31,13 @@ public class QuestSystem extends BaseSystem {
         questWindow.setFillParent(true);
 
         Table questTitleScrollTable = new Table(context.getSkin());
-        List<? extends Entry> questEntries = RegistryUtils.findEntries(context.getRootRegistry(), "#quests");
-        for (Entry questEntry : questEntries) {
-            QuestEntry quest = (QuestEntry) questEntry;
-            TextButton questTitleButton = new TextButton(quest.getTitle(), context.getSkin());
+        List<? extends QuestCategory> questCategories = RegistryUtils.findEntries(context.getRootRegistry(), "#questsCategory");
+        for (QuestCategory questEntry : questCategories) {
+            TextButton questTitleButton = new TextButton(questEntry.getDisplayTitle(), context.getSkin());
             questTitleButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    setSelectedQuest(quest);
+                    //setSelectedQuest(quest);
                     return true;
                 }
             });

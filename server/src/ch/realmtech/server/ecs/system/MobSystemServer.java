@@ -46,7 +46,7 @@ public class MobSystemServer extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        naturalSpawnIa();
+        // naturalSpawnIa();
         messageManager.update();
     }
 
