@@ -7,9 +7,15 @@ import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.rafaskoberg.gdx.typinglabel.TypingLabel;
 
 import java.util.List;
@@ -22,11 +28,53 @@ public class QuestSystem extends BaseSystem {
     private ScrollPane questTitleScroll;
     private Table questContent;
     private QuestEntry selectedQuestOld = null;
+    private Stage questStage;
+    private Image questStageImage;
+    private FrameBuffer fbo;
 
     @Override
     protected void initialize() {
         super.initialize();
         setEnabled(false);
+
+        questStage = new Stage();
+        questStage.setDebugAll(true);
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+
+        Table table = new Table();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        table.add(new Label("bonjour bonjour bonjour bonjour bonjour bonjour", context.getSkin())).row();
+        ScrollPane questItemScrollPane = new ScrollPane(table);
+        rootTable.add(questItemScrollPane);
+        questStage.addActor(rootTable);
+
         questWindow = new Window("Quest", context.getSkin());
         questWindow.setFillParent(true);
 
@@ -50,11 +98,25 @@ public class QuestSystem extends BaseSystem {
 
         questContent = new Table(context.getSkin());
         questWindow.add(questContent).fill().expand();
+
+        questStageImage = new Image();
+        questContent.add(questStageImage);
+
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     }
 
     @Override
     protected void processSystem() {
-
+        fbo.begin();
+        Gdx.gl.glClearColor(1, 1, 1, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        questStage.getViewport().setScreenPosition(10, 10);
+        questStage.act(Gdx.graphics.getDeltaTime());
+        questStage.draw();
+        fbo.end();
+        TextureRegion textureRegion = new TextureRegion(fbo.getColorBufferTexture());
+        textureRegion.flip(false, true);
+        questStageImage.setDrawable(new TextureRegionDrawable(textureRegion));
     }
 
     public void setSelectedQuest(QuestEntry selectedQuest) {
@@ -78,7 +140,8 @@ public class QuestSystem extends BaseSystem {
     }
 
     public void openQuest() {
-        Gdx.input.setInputProcessor(context.getUiStage());
+//         Gdx.input.setInputProcessor(context.getUiStage());
+        Gdx.input.setInputProcessor(questStage);
         context.getUiStage().addActor(questWindow);
         setEnabled(true);
     }
