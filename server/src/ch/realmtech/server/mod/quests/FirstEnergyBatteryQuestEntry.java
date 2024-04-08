@@ -12,5 +12,11 @@ public class FirstEnergyBatteryQuestEntry extends QuestEntry {
                 To recharge the battery, connect a cable connected to a power input port connected to a power source.
                 As energy sources, there is an energy generator or a battery with its output side connected.
                 """);
+
+    }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "energy-battery-01-0001";
     }
 }

@@ -13,5 +13,11 @@ public class CraftingExpansionQuestEntry extends QuestEntry {
                 After crafting the table, close the inventory and right-click to place it on the floor.
                 Finally, interact with the craft table by right-clicking on the cell.
                 """);
+
+    }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "table-craft-01";
     }
 }

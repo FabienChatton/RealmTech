@@ -13,5 +13,12 @@ public class GetReadyForElectricityQuestEntry extends QuestEntry {
                 To turn the cell, the location of your click is important: click on the right-hand part of the cell to turn it to the right.
                 Click on the left-hand side of the cell to turn it to the left. And the same for top and bottom.
                 """);
+
+
+    }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "wrench-01";
     }
 }

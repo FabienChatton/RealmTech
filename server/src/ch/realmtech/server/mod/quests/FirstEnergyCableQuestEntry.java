@@ -13,5 +13,11 @@ public class FirstEnergyCableQuestEntry extends QuestEntry {
                 To connect the cables to each other and to the machines,
                 right-click with a wrench on the side to which you wish to connect the cable.
                 """);
+
+    }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "energy-cable-01-item";
     }
 }

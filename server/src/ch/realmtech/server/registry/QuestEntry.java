@@ -28,4 +28,8 @@ public abstract class QuestEntry extends Entry {
     public String getCategory() {
         return category;
     }
+
+    public String getTextureRegionForIcon() {
+        return "default-texture";
+    }
 }

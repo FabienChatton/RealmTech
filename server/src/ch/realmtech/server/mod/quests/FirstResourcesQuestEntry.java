@@ -9,5 +9,11 @@ public class FirstResourcesQuestEntry extends QuestEntry {
                 Hold down the left mouse button to break a tree cell to get some wood.
                 To find out if you can harvest a resource, check if the text break with is green.
                 """);
+
+    }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "buche-01";
     }
 }

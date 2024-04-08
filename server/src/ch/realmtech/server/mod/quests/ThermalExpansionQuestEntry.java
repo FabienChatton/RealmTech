@@ -16,4 +16,9 @@ public class ThermalExpansionQuestEntry extends QuestEntry {
                 The best fuel at this stage of the game is coal, but you can also use wood logs.
                 """);
     }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "furnace-01";
+    }
 }

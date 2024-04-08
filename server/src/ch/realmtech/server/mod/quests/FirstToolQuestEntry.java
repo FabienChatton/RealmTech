@@ -12,5 +12,12 @@ public class FirstToolQuestEntry extends QuestEntry {
                 Put one stick in the middle of the inventory, and another stick down the middle.
                 Now you can mine stones with your pickaxe.
                 """);
+
+
+    }
+
+    @Override
+    public String getTextureRegionForIcon() {
+        return "pioche-bois-01";
     }
 }
