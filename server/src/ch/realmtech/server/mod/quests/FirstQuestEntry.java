@@ -10,7 +10,7 @@ public class FirstQuestEntry extends QuestEntry {
                 Your goal in this version is to {COLOR=RED}{SLOW}fill a battery with energy{ENDCOLOR}.
                 This requires many small steps. This quest book will help you get there.
                 """);
-
+        setPos(32, 32);
     }
 
     @Override

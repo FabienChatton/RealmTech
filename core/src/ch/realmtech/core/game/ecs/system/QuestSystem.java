@@ -7,6 +7,7 @@ import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -61,17 +62,25 @@ public class QuestSystem extends BaseSystem {
         questWindow.clear();
 
         Table table = new Table();
-        int i = 0;
-        for (QuestEntry questEntry : questCategory.getQuestInThisCategory()) {
+        List<QuestEntry> questInThisCategory = questCategory.getQuestInThisCategory().stream().sorted(QuestSystem::sortPosQuestEntry).toList();
+        Cell<Image> previousImageCell = null;
+        for (int i = 0; i < questInThisCategory.size(); i++) {
+            QuestEntry questEntry = questInThisCategory.get(i);
             Image questIcon = new Image(context.getTextureAtlas().findRegion(questEntry.getTextureRegionForIcon()));
-            questIcon.setPosition(-100, -100);
             questIcon.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     setSelectedQuest(questEntry);
                 }
             });
-            table.add(questIcon);
+            Cell<Image> imageCell = table.add(questIcon).bottom().left();
+            if (i > 0) {
+                QuestEntry previousQuestEntry = questInThisCategory.get(i - 1);
+                Vector2 pad = questEntry.getPos().sub(previousQuestEntry.getPos());
+                imageCell.padLeft(pad.x - 32);
+                imageCell.padBottom(pad.y + previousImageCell.getPadBottom());
+            }
+            previousImageCell = imageCell;
         }
 
         ScrollPane questItemScrollPane = new ScrollPane(table);
@@ -84,8 +93,6 @@ public class QuestSystem extends BaseSystem {
                 setSelectedQuestListCategory();
                 return true;
             }
-
-            ;
         });
         questWindow.add(listCategory);
     }
@@ -122,5 +129,14 @@ public class QuestSystem extends BaseSystem {
         setEnabled(false);
         questWindow.remove();
 
+    }
+
+    private static int sortPosQuestEntry(QuestEntry q1, QuestEntry q2) {
+        int compare = 0;
+        compare = Double.compare(q1.getPos().x, q2.getPos().x);
+        if (compare == 0) {
+            compare = Double.compare(q1.getPos().y, q2.getPos().y);
+        }
+        return compare;
     }
 }
