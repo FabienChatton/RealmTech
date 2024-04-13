@@ -1,6 +1,7 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.server.registry.QuestCategory;
 import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -15,12 +16,14 @@ import com.rafaskoberg.gdx.typinglabel.TypingLabel;
 
 import java.util.List;
 
+import static ch.realmtech.core.helper.ButtonsMenu.TextButtonMenu;
+
 public class QuestSystem extends BaseSystem {
     @Wire(name = "context")
     private RealmTech context;
 
     private Window questWindow;
-    private QuestEntry selectedQuestOld = null;
+    private QuestCategory selectedCategoryOld = null;
 
     @Override
     protected void initialize() {
@@ -42,14 +45,7 @@ public class QuestSystem extends BaseSystem {
         Table questTitleScrollTable = new Table(context.getSkin());
         List<? extends QuestCategory> questCategories = RegistryUtils.findEntries(context.getRootRegistry(), "#questsCategory");
         for (QuestCategory questCategory : questCategories) {
-            TextButton questTitleButton = new TextButton(questCategory.getDisplayTitle(), context.getSkin());
-            questTitleButton.addListener(new ClickListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    setSelectedQuestCategory(questCategory);
-                    return true;
-                }
-            });
+            TextButtonMenu questTitleButton = new TextButtonMenu(context, questCategory.getDisplayTitle(), new OnClick((event, x, y) -> setSelectedQuestCategory(questCategory)));
             questTitleScrollTable.add(questTitleButton).padBottom(10f).left().top();
             questTitleScrollTable.row();
         }
@@ -86,35 +82,25 @@ public class QuestSystem extends BaseSystem {
         ScrollPane questItemScrollPane = new ScrollPane(table);
         questWindow.add(questItemScrollPane).expand().fill().row();
 
-        TextButton listCategory = new TextButton("quest category", context.getSkin());
-        listCategory.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                setSelectedQuestListCategory();
-                return true;
-            }
-        });
+        TextButton listCategory = new TextButtonMenu(context, "quest category", new OnClick((event, x, y) -> setSelectedQuestListCategory()));
         questWindow.add(listCategory);
+        selectedCategoryOld = questCategory;
     }
 
     public void setSelectedQuest(QuestEntry selectedQuest) {
         questWindow.clear();
 
-        if (selectedQuestOld == null || selectedQuestOld != selectedQuest) {
-            Table questContentTable = new Table(context.getSkin());
-            questContentTable.add(new Label(selectedQuest.getTitle(), context.getSkin())).expandX().center();
-            questContentTable.row();
+        Table questContentTable = new Table(context.getSkin());
+        questContentTable.add(new Label(selectedQuest.getTitle(), context.getSkin())).expandX().center();
+        questContentTable.row();
 
-            TypingLabel contentLabel = new TypingLabel(selectedQuest.getContent(), context.getSkin());
-            contentLabel.setWrap(true);
+        TypingLabel contentLabel = new TypingLabel(selectedQuest.getContent(), context.getSkin());
+        contentLabel.setWrap(true);
 
-            ScrollPane contentScrollPane = new ScrollPane(contentLabel);
-            questContentTable.add(contentScrollPane).expand().fillX().left().top();
-            questWindow.add(questContentTable).expand().fill().left().top();
-            selectedQuestOld = selectedQuest;
-        } else {
-            selectedQuestOld = null;
-        }
+        ScrollPane contentScrollPane = new ScrollPane(contentLabel);
+        questContentTable.add(contentScrollPane).expand().fillX().left().top();
+        questWindow.add(questContentTable).expand().fill().left().top().row();
+        questWindow.add(new TextButtonMenu(context, "Back", new OnClick((event, x, y) -> setSelectedQuestCategory(selectedCategoryOld)))).bottom();
     }
 
     public void openQuest() {
