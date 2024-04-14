@@ -288,7 +288,7 @@ public final class RealmTech extends Game implements InternalConnexion {
             logger.error("Option file can not be saved. {}", e.getMessage());
         }
         discord.stop();
-        closeEcs();
+        closeEcsNow();
     }
 
     @Override
@@ -347,6 +347,14 @@ public final class RealmTech extends Game implements InternalConnexion {
             }
             ecsEngine = null;
         });
+    }
+
+    public void closeEcsNow() {
+        if (ecsEngine != null) {
+            ecsEngine.clearAllEntity();
+            ecsEngine.dispose();
+        }
+        ecsEngine = null;
     }
 
     @Override
