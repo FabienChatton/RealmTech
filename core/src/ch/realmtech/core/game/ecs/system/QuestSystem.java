@@ -9,6 +9,7 @@ import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -24,6 +25,8 @@ public class QuestSystem extends BaseSystem {
 
     private Window questWindow;
     private QuestCategory selectedCategoryOld = null;
+    private QuestEntry questOver;
+    private Window questOverTitle;
 
     @Override
     protected void initialize() {
@@ -32,11 +35,23 @@ public class QuestSystem extends BaseSystem {
 
         questWindow = new Window("Quest", context.getSkin());
         questWindow.setFillParent(true);
+        questOverTitle = new Window("", context.getSkin());
+        questOverTitle.setHeight(0);
     }
 
     @Override
     protected void processSystem() {
-
+        if (questOver != null) {
+            if (!context.getUiStage().getActors().contains(questOverTitle, true)) {
+                context.getUiStage().addActor(questOverTitle);
+            }
+            questOverTitle.setPosition(Gdx.input.getX() - questOverTitle.getTitleLabel().getWidth() / 2f, Gdx.graphics.getHeight() - Gdx.input.getY() + questOverTitle.getTitleLabel().getHeight());
+            questOverTitle.getTitleLabel().setText(questOver.getTitle());
+        } else {
+            if (context.getUiStage().getActors().contains(questOverTitle, true)) {
+                questOverTitle.remove();
+            }
+        }
     }
 
     private void setSelectedQuestListCategory() {
@@ -64,6 +79,18 @@ public class QuestSystem extends BaseSystem {
             QuestEntry questEntry = questInThisCategory.get(i);
             Image questIcon = new Image(context.getTextureAtlas().findRegion(questEntry.getTextureRegionForIcon()));
             questIcon.addListener(new ClickListener() {
+                @Override
+                public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    super.enter(event, x, y, pointer, fromActor);
+                    questOver = questEntry;
+                }
+
+                @Override
+                public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                    super.exit(event, x, y, pointer, toActor);
+                    questOver = null;
+                }
+
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     setSelectedQuest(questEntry);
