@@ -146,17 +146,17 @@ public class RealmTechCoreMod implements ModInitializer {
 
         // quests
         Registry<QuestEntry> questRegistry = Registry.createRegistry(modRegistry, "quests", "quests");
-        questRegistry.addEntry(new CraftingExpansionQuestEntry());
-        questRegistry.addEntry(new FirstCraftQuestEntry());
-        questRegistry.addEntry(new FirstEnergyBatteryQuestEntry());
-        questRegistry.addEntry(new FirstEnergyCableQuestEntry());
-        questRegistry.addEntry(new FirstEnergyGeneratorQuestEntry());
         questRegistry.addEntry(new FirstQuestEntry());
-        questRegistry.addEntry(new FirstResourcesQuestEntry());
-        questRegistry.addEntry(new FirstToolQuestEntry());
-        questRegistry.addEntry(new GetReadyForElectricityQuestEntry());
         questRegistry.addEntry(new KnowYouWorldQuestEntry());
+        questRegistry.addEntry(new FirstResourcesQuestEntry());
+        questRegistry.addEntry(new FirstCraftQuestEntry());
+        questRegistry.addEntry(new CraftingExpansionQuestEntry());
+        questRegistry.addEntry(new FirstToolQuestEntry());
         questRegistry.addEntry(new ThermalExpansionQuestEntry());
+        questRegistry.addEntry(new GetReadyForElectricityQuestEntry());
+        questRegistry.addEntry(new FirstEnergyCableQuestEntry());
+        questRegistry.addEntry(new FirstEnergyBatteryQuestEntry());
+        questRegistry.addEntry(new FirstEnergyGeneratorQuestEntry());
         questRegistry.addEntry(new QuestPosition1Entry()); // test position
         questRegistry.addEntry(new QuestPosition2Entry()); // test position
         questRegistry.addEntry(new QuestPosition3Entry()); // test position
@@ -168,6 +168,10 @@ public class RealmTechCoreMod implements ModInitializer {
         Registry<QuestCategory> questCategoryRegistry = Registry.createRegistry(modRegistry, "questsCategory", "questsCategory");
         questCategoryRegistry.addEntry(new Tier0QuestCategory());
         questCategoryRegistry.addEntry(new PositionTestCategory()); // test position
+
+        // quests manager
+        Registry<Entry> questManagerRegistry = Registry.createRegistry(modRegistry, "questManager");
+        questManagerRegistry.addEntry(new QuestManagerEntry());
 
         // entity edit factory
         Registry<EditEntityFactory> entityEditFactory = Registry.createRegistry(modRegistry, "editEntity");

@@ -4,6 +4,10 @@ public class PlayerSerializerConfig {
     private int playerId;
     /** @since V2 */
     private boolean writeInventory = true;
+    /**
+     * @since V3
+     */
+    private boolean writeQuestProperty = false;
 
     public PlayerSerializerConfig(byte playerSerializerConfigByte) {
         initFromByte(playerSerializerConfigByte);
@@ -26,8 +30,17 @@ public class PlayerSerializerConfig {
         return this;
     }
 
+    public PlayerSerializerConfig writeQuestProperty(boolean writeInventory) {
+        this.writeInventory = writeInventory;
+        return this;
+    }
+
     public boolean isWriteInventory() {
         return writeInventory;
+    }
+
+    public boolean isWriteQuestProperty() {
+        return writeQuestProperty;
     }
 
     public byte toByte() {
@@ -35,10 +48,14 @@ public class PlayerSerializerConfig {
         if (isWriteInventory()) {
             ret |= 1 << 0;
         }
+        if (isWriteQuestProperty()) {
+            ret |= 1 << 1;
+        }
         return ret;
     }
 
     public void initFromByte(byte b) {
-        writeInventory((b & 0b00000001) == 1);
+        writeInventory((b & 0b1) == 1);
+        writeQuestProperty((b >> 1 & 0b1) == 1);
     }
 }

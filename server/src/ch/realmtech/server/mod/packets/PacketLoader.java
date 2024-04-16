@@ -68,6 +68,8 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(MobAttackCoolDownPacket.class, MobAttackCoolDownPacket::new));
         packets.add(new SimpleEntry<>(PlayerHasWeaponShotPacket.class, PlayerHasWeaponShotPacket::new));
         packets.add(new SimpleEntry<>(EnemyHitPacket.class, EnemyHitPacket::new));
+        packets.add(new SimpleEntry<>(QuestCheckboxCompletedPacket.class, QuestCheckboxCompletedPacket::new));
+        packets.add(new SimpleEntry<>(QuestSetCompleted.class, QuestSetCompleted::new));
     }
 
     @Override

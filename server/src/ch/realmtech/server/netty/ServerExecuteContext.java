@@ -59,9 +59,18 @@ public class ServerExecuteContext implements ServerExecute {
                 }
                 return;
             }
-            ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getSystemsAdminServer().getPlayerManagerServer().createPlayerServer(clientChanel, playerUuid, username);
-            serverContext.getServerConnexion().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
-            serverContext.getSystemsAdminServer().getPlayerManagerServer().setPlayerUsername(playerUuid, username);
+            try {
+                ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getSystemsAdminServer().getPlayerManagerServer().createPlayerServer(clientChanel, playerUuid, username);
+                serverContext.getServerConnexion().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
+                serverContext.getSystemsAdminServer().getPlayerManagerServer().setPlayerUsername(playerUuid, username);
+            } catch (Exception e) {
+                serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
+                logger.info("Player {} has failed to been created. Cause : {}, {}", username, e.getMessage(), clientChanel);
+                if (clientChanel != null) {
+                    serverContext.getEcsEngineServer().nextTick(clientChanel::close);
+                }
+                return;
+            }
 
             // new player with new connexion get all players.
             // players already on server get this player.

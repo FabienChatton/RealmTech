@@ -4,15 +4,15 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
-import ch.realmtech.server.ecs.component.InfMapComponent;
-import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
+import ch.realmtech.server.quests.QuestPlayerProperty;
+import ch.realmtech.server.registry.QuestEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
@@ -279,5 +279,16 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void nextFrame(Runnable runnable) {
         context.nextFrame(runnable);
+    }
+
+    @Override
+    public void questSetCompleted(int questEntryId, long completedTimestamp) {
+        context.nextFrame(() -> {
+            int mainPlayer = context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer();
+            QuestPlayerPropertyComponent questPlayerPropertyComponent = context.getEcsEngine().getWorld().getMapper(QuestPlayerPropertyComponent.class).get(mainPlayer);
+            QuestEntry questEntryCompleted = RegistryUtils.findEntryUnsafe(context.getRootRegistry(), questEntryId);
+            QuestPlayerProperty questPlayerPropertyToCompleted = questPlayerPropertyComponent.getQuestPlayerProperties().stream().filter((questPlayerProperty) -> questPlayerProperty.getQuestEntry() == questEntryCompleted).findFirst().orElseThrow();
+            questPlayerPropertyToCompleted.setCompleted(completedTimestamp);
+        });
     }
 }

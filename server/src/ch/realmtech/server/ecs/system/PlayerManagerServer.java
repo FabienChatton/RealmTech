@@ -188,7 +188,7 @@ public class PlayerManagerServer extends Manager {
             return;
         }
 
-        SerializedApplicationBytes playerBytes = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(playerId));
+        SerializedApplicationBytes playerBytes = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(playerId).writeInventory(true).writeQuestProperty(true));
 
         playerFile.createNewFile();
         try (FileOutputStream fos = new FileOutputStream(playerFile)) {

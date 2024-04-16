@@ -68,4 +68,6 @@ public interface ClientExecute {
     void mobAttackCoolDown(UUID modUuid, int cooldown);
 
     void nextFrame(Runnable runnable);
+
+    void questSetCompleted(int questEntryId, long completedTimestamp);
 }

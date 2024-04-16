@@ -20,7 +20,7 @@ public final class Popup {
     public static void popupErreur(RealmTech context, String messageOriginal, Stage stage) {
         String erreur = "Erreur";
         String message = messageOriginal != null ? messageOriginal : "unknown error message";
-        float width = Math.min(getWidht(context, message), Gdx.graphics.getWidth() - 20);
+        float width = Math.min(getWidth(context, message), Gdx.graphics.getWidth() - 20);
         Label label = new Label(message, context.getSkin());
         label.setWrap(true);
         Dialog popupErreur = new Dialog(erreur, context.getSkin());
@@ -37,7 +37,7 @@ public final class Popup {
 
     public static void popupConfirmation(RealmTech context, String message, Stage stage, Runnable okRunnable) {
         String confirmation = "confirmation";
-        float width = Math.min(getWidht(context, message), Gdx.graphics.getWidth() - 20);
+        float width = Math.min(getWidth(context, message), Gdx.graphics.getWidth() - 20);
         Label label = new Label(message, context.getSkin());
         label.setWrap(true);
         Dialog popupConfirmation = new Dialog(confirmation, context.getSkin());
@@ -55,7 +55,7 @@ public final class Popup {
         context.getSoundManager().playBlip();
     }
 
-    private static float getWidht(RealmTech context, String message) {
+    public static float getWidth(RealmTech context, String message) {
         glyphLayout.setText(context.getSkin().getFont("helvetica"), (message != null) ? message : "unknown message");
         return glyphLayout.width + 10;
     }

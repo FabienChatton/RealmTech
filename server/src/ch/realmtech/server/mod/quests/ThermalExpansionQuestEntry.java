@@ -15,6 +15,7 @@ public class ThermalExpansionQuestEntry extends QuestEntry {
                 Once the arrow is full, the result will be a copper ingot.
                 The best fuel at this stage of the game is coal, but you can also use wood logs.
                 """);
+        setPos(320, 0);
     }
 
     @Override

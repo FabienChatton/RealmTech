@@ -12,7 +12,8 @@ public class PlayerSerializerController extends AbstractSerializerController<Pla
             {
                 put((byte) 1, new PlayerSerializerV1());
                 put((byte) 2, new PlayerSerializerV2());
+                put((byte) 3, new PlayerSerializerV3());
             }
-        }, (byte) 2);
+        }, (byte) 3);
     }
 }

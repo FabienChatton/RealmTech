@@ -2,6 +2,9 @@ package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.helper.OnClick;
+import ch.realmtech.core.helper.Popup;
+import ch.realmtech.server.mod.quests.QuestManagerEntry;
+import ch.realmtech.server.packet.serverPacket.QuestCheckboxCompletedPacket;
 import ch.realmtech.server.registry.QuestCategory;
 import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -27,6 +30,7 @@ public class QuestSystem extends BaseSystem {
     private QuestCategory selectedCategoryOld = null;
     private QuestEntry questOver;
     private Window questOverTitle;
+    private QuestManagerEntry questManagerEntry;
 
     @Override
     protected void initialize() {
@@ -37,6 +41,7 @@ public class QuestSystem extends BaseSystem {
         questWindow.setFillParent(true);
         questOverTitle = new Window("", context.getSkin());
         questOverTitle.setHeight(0);
+        questManagerEntry = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), QuestManagerEntry.class);
     }
 
     @Override
@@ -58,8 +63,7 @@ public class QuestSystem extends BaseSystem {
         questWindow.clear();
 
         Table questTitleScrollTable = new Table(context.getSkin());
-        List<? extends QuestCategory> questCategories = RegistryUtils.findEntries(context.getRootRegistry(), "#questsCategory");
-        for (QuestCategory questCategory : questCategories) {
+        for (QuestCategory questCategory : questManagerEntry.getQuestCategories()) {
             TextButtonMenu questTitleButton = new TextButtonMenu(context, questCategory.getDisplayTitle(), new OnClick((event, x, y) -> setSelectedQuestCategory(questCategory)));
             questTitleScrollTable.add(questTitleButton).padBottom(10f).left().top();
             questTitleScrollTable.row();
@@ -83,6 +87,9 @@ public class QuestSystem extends BaseSystem {
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                     super.enter(event, x, y, pointer, fromActor);
                     questOver = questEntry;
+                    float width = Popup.getWidth(context, questEntry.getTitle());
+                    questOverTitle.setWidth(width);
+                    questOverTitle.getTitleLabel().setWidth(width);
                 }
 
                 @Override
@@ -127,6 +134,16 @@ public class QuestSystem extends BaseSystem {
         ScrollPane contentScrollPane = new ScrollPane(contentLabel);
         questContentTable.add(contentScrollPane).expand().fillX().left().top();
         questWindow.add(questContentTable).expand().fill().left().top().row();
+
+        CheckBox isCompleted = new CheckBox("isCompleted", context.getSkin());
+        isCompleted.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                context.sendRequest(new QuestCheckboxCompletedPacket(selectedQuest));
+                return true;
+            }
+        });
+        questWindow.add(isCompleted).padRight(10);
         questWindow.add(new TextButtonMenu(context, "Back", new OnClick((event, x, y) -> setSelectedQuestCategory(selectedCategoryOld)))).bottom();
     }
 

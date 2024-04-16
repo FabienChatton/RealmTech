@@ -10,7 +10,7 @@ public class FirstCraftQuestEntry extends QuestEntry {
                 Left-click on your logs and put them in the crafting table to make planks.
                 Planks can be placed on the floor.
                 """);
-
+        setPos(128, 0);
     }
 
     @Override

@@ -13,6 +13,7 @@ import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.life.LifeSerializerController;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController;
 import ch.realmtech.server.serialize.player.PlayerSerializerController;
+import ch.realmtech.server.serialize.quests.QuestSerializerController;
 import ch.realmtech.server.serialize.savemetadata.SaveMetadataSerializerController;
 import ch.realmtech.server.serialize.uuid.UuidSerializerController;
 import com.artemis.World;
@@ -43,6 +44,7 @@ public final class SerializerController {
     private final EnergyBatterySerializerController energyBatterySerializerController = registerSerializerController(new EnergyBatterySerializerController(this));
     private final EnergyCableSerializerController energyCableSerializerController = registerSerializerController(new EnergyCableSerializerController(this));
     private final EnergyGeneratorSerializerController energyGeneratorSerializerController = registerSerializerController(new EnergyGeneratorSerializerController(this));
+    private final QuestSerializerController questSerializerController = registerSerializerController(new QuestSerializerController(this));
 
     public void initialize(World world) throws Exception {
         if (this.world != null) throw new IllegalCallerException("Already initialize");
@@ -124,6 +126,10 @@ public final class SerializerController {
 
     public EnergyGeneratorSerializerController getEnergyGeneratorSerializerController() {
         return energyGeneratorSerializerController;
+    }
+
+    public QuestSerializerController getQuestSerializerController() {
+        return questSerializerController;
     }
 
     @SuppressWarnings("unchecked")

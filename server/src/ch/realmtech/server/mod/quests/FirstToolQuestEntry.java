@@ -12,8 +12,7 @@ public class FirstToolQuestEntry extends QuestEntry {
                 Put one stick in the middle of the inventory, and another stick down the middle.
                 Now you can mine stones with your pickaxe.
                 """);
-
-
+        setPos(256, 0);
     }
 
     @Override

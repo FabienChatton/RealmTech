@@ -12,7 +12,7 @@ public class FirstEnergyGeneratorQuestEntry extends QuestEntry {
                 energy battery in the crafting inventory (regardless of item location).
                 To create your first energy units, place coal in the furnace and the furnace's internal battery will fill up.
                 """);
-
+        setPos(576, 0);
     }
 
     @Override

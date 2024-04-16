@@ -12,7 +12,7 @@ public class KnowYouWorldQuestEntry extends QuestEntry {
                 These are crafted with a stick and a coal on top.
                 For the moment, there are no monsters, so your life is not in danger.
                 """);
-
+        setPos(-64, 0);
     }
 
     @Override
