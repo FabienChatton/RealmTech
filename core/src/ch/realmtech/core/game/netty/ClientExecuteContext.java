@@ -7,6 +7,7 @@ import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.mod.quests.QuestManagerEntry;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -289,6 +291,18 @@ public class ClientExecuteContext implements ClientExecute {
             QuestEntry questEntryCompleted = RegistryUtils.findEntryUnsafe(context.getRootRegistry(), questEntryId);
             QuestPlayerProperty questPlayerPropertyToCompleted = questPlayerPropertyComponent.getQuestPlayerProperties().stream().filter((questPlayerProperty) -> questPlayerProperty.getQuestEntry() == questEntryCompleted).findFirst().orElseThrow();
             questPlayerPropertyToCompleted.setCompleted(completedTimestamp);
+        });
+    }
+
+    @Override
+    public void playerCreateQuest(SerializedApplicationBytes questSerializedApplicationBytes) {
+        context.nextFrame(() -> {
+            List<QuestPlayerProperty> completedQuestPlayerProperties = context.getSerializerController().getQuestSerializerController().decode(questSerializedApplicationBytes);
+            QuestManagerEntry questManagerEntry = RegistryUtils.findEntryOrThrow(context.getSystemsAdminClient().getRootRegistry(), QuestManagerEntry.class);
+            List<QuestPlayerProperty> questPlayerProperties = questManagerEntry.mapToQuestEntry(completedQuestPlayerProperties);
+
+            int playerId = context.getPlayerId();
+            context.getEcsEngine().getWorld().getMapper(QuestPlayerPropertyComponent.class).create(playerId).set(questPlayerProperties);
         });
     }
 }

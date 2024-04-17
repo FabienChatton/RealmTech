@@ -5,7 +5,10 @@ import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.QuestPlayerPropertyComponent;
 import ch.realmtech.server.level.cell.ChestEditEntity;
+import ch.realmtech.server.mod.quests.QuestManagerEntry;
 import ch.realmtech.server.quests.QuestPlayerProperty;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.life.LifeArgs;
@@ -13,6 +16,7 @@ import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import com.artemis.annotations.Wire;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -21,6 +25,8 @@ import java.util.function.Consumer;
 
 public class PlayerSerializerV3 implements Serializer<PlayerSerializerConfig, Consumer<Integer>> {
 
+    @Wire(name = "rootRegistry")
+    private Registry<?> rootRegistry;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<LifeComponent> mLife;
     private ComponentMapper<QuestPlayerPropertyComponent> mQuestProperty;
@@ -69,11 +75,11 @@ public class PlayerSerializerV3 implements Serializer<PlayerSerializerConfig, Co
 
         LifeArgs lifeArgs = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getLifeSerializerController());
 
-        List<QuestPlayerProperty> questPlayerProperties;
+        List<QuestPlayerProperty> completedQuestPlayerProperties;
         if (playerSerializerConfig.isWriteQuestProperty()) {
-            questPlayerProperties = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getQuestSerializerController());
+            completedQuestPlayerProperties = ByteBufferHelper.decodeSerializedApplicationBytes(buffer, serializerController.getQuestSerializerController());
         } else {
-            questPlayerProperties = null;
+            completedQuestPlayerProperties = List.of();
         }
 
         return (playerId) -> {
@@ -84,7 +90,9 @@ public class PlayerSerializerV3 implements Serializer<PlayerSerializerConfig, Co
             mPos.create(playerId).set(posX, posY);
             mLife.create(playerId).set(lifeArgs.heart());
 
-            if (questPlayerProperties != null) {
+            if (completedQuestPlayerProperties != null) {
+                QuestManagerEntry questManagerEntry = RegistryUtils.findEntryOrThrow(rootRegistry, QuestManagerEntry.class);
+                List<QuestPlayerProperty> questPlayerProperties = questManagerEntry.mapToQuestEntry(completedQuestPlayerProperties);
                 mQuestProperty.create(playerId).set(questPlayerProperties);
             }
         };

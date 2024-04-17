@@ -98,10 +98,10 @@ public class GameScreen extends AbstractScreen {
         }
 
         if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey())) {
-            if (!context.getSystemsAdminClient().getQuestSystem().isEnabled() && canInteractWithWorld()) {
-                context.getSystemsAdminClient().getQuestManager().openQuest();
+            if (!context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled() && canInteractWithWorld()) {
+                context.getSystemsAdminClient().getQuestPlayerSystem().openQuest();
             } else {
-                context.getSystemsAdminClient().getQuestManager().closeQuest();
+                context.getSystemsAdminClient().getQuestPlayerSystem().closeQuest();
             }
 
         }
@@ -196,6 +196,6 @@ public class GameScreen extends AbstractScreen {
     }
 
     public boolean canInteractWithWorld() {
-        return consoleUi.getConsoleWindow().getParent() == null && !context.getSystemsAdminClient().getQuestSystem().isEnabled();
+        return consoleUi.getConsoleWindow().getParent() == null && !context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled();
     }
 }

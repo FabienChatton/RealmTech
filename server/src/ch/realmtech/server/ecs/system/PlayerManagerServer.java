@@ -6,6 +6,7 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.packet.clientPacket.PlayerCreateQuestPacket;
 import ch.realmtech.server.quests.QuestPlayerProperty;
 import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.serialize.player.PlayerSerializerConfig;
@@ -153,6 +154,10 @@ public class PlayerManagerServer extends Manager {
             mQuestPlayer.create(playerId).set(questPlayerProperties);
             logger.info("Can not read quests from Player {}. He get default quests", playerUsername);
         }
+
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            serverContext.getServerConnexion().sendPacketTo(new PlayerCreateQuestPacket(serverContext.getSerializerController().getQuestSerializerController().encode(playerId)), channel);
+        });
 
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(posX, posY, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),

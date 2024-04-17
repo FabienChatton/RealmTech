@@ -29,15 +29,18 @@ public class QuestValidatorSystem extends IteratingSystem {
         for (QuestPlayerProperty questPlayerProperty : questPlayerPropertyComponent.getQuestPlayerProperties()) {
             if (!questPlayerProperty.isCompleted()) {
                 QuestEntry questEntry = questPlayerProperty.getQuestEntry();
+                boolean validate = false;
                 for (QuestEntryValidator questEntryValidator : questEntry.getQuestEntryValidators()) {
-                    boolean validate = questEntryValidator.validate(systemsAdminServer, playerChestInventoryId);
+                    validate = questEntryValidator.validate(systemsAdminServer, playerChestInventoryId);
                     if (!validate) {
                         break;
                     }
                 }
-                long completedTimestamp = systemsAdminServer.getQuestManagerServer().completeQuest(entityId, questEntry);
-                PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(entityId);
-                serverContext.getServerConnexion().sendPacketTo(new QuestSetCompleted(questEntry.getId(), completedTimestamp), playerConnexionComponent.channel);
+                if (validate) {
+                    long completedTimestamp = systemsAdminServer.getQuestManagerServer().completeQuest(entityId, questEntry);
+                    PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(entityId);
+                    serverContext.getServerConnexion().sendPacketTo(new QuestSetCompleted(questEntry.getId(), completedTimestamp), playerConnexionComponent.channel);
+                }
             }
         }
     }

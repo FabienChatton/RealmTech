@@ -70,4 +70,6 @@ public interface ClientExecute {
     void nextFrame(Runnable runnable);
 
     void questSetCompleted(int questEntryId, long completedTimestamp);
+
+    void playerCreateQuest(SerializedApplicationBytes questSerializedApplicationBytes);
 }

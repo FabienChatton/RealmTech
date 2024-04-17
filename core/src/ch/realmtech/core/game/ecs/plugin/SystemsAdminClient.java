@@ -168,10 +168,6 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return getCustomSystem(TiledTextureSystem.class);
     }
 
-    public QuestPlayerSystem getQuestManager() {
-        return getCustomSystem(QuestPlayerSystem.class);
-    }
-
     public MouvementSystem getMouvementSystem() {
         return getCustomSystem(MouvementSystem.class);
     }
@@ -212,7 +208,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return getCustomSystem(PlayerFootStepSystem.class);
     }
 
-    public QuestPlayerSystem getQuestSystem() {
+    public QuestPlayerSystem getQuestPlayerSystem() {
         return getCustomSystem(QuestPlayerSystem.class);
     }
 

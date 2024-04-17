@@ -10,8 +10,13 @@ import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class QuestManagerServer extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(QuestManagerServer.class);
     @Wire
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<QuestPlayerPropertyComponent> mQuestPlayerProperty;
@@ -31,10 +36,15 @@ public class QuestManagerServer extends Manager {
 
     public long completeQuest(int playerId, QuestEntry questEntry) {
         QuestPlayerPropertyComponent questPlayerPropertyComponent = mQuestPlayerProperty.get(playerId);
-        QuestPlayerProperty selectedQuestPlayerProperty = questPlayerPropertyComponent.getQuestPlayerProperties().stream().filter(questPlayerProperty -> questPlayerProperty.getQuestEntry() == questEntry).findFirst().orElseThrow();
+        Optional<QuestPlayerProperty> selectedQuestPlayerPropertyOpt = questPlayerPropertyComponent.getQuestPlayerProperties().stream().filter(questPlayerProperty -> questPlayerProperty.getQuestEntry() == questEntry).findFirst();
 
-        long completedTimestamp = System.currentTimeMillis();
-        selectedQuestPlayerProperty.setCompleted(completedTimestamp);
+        long completedTimestamp = 0;
+        if (selectedQuestPlayerPropertyOpt.isPresent()) {
+            completedTimestamp = System.currentTimeMillis();
+            selectedQuestPlayerPropertyOpt.get().setCompleted(completedTimestamp);
+        } else {
+            logger.warn("Enable complete quest {}. Enable to find quest entry", questEntry);
+        }
         return completedTimestamp;
     }
 
