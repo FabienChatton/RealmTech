@@ -65,6 +65,7 @@ public class ServerExecuteContext implements ServerExecute {
                 serverContext.getSystemsAdminServer().getPlayerManagerServer().setPlayerUsername(playerUuid, username);
             } catch (Exception e) {
                 serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
+                serverContext.getSystemsAdminServer().getPlayerManagerServer().removePlayer(clientChanel);
                 logger.info("Player {} has failed to been created. Cause : {}, {}", username, e.getMessage(), clientChanel);
                 if (clientChanel != null) {
                     serverContext.getEcsEngineServer().nextTick(clientChanel::close);
