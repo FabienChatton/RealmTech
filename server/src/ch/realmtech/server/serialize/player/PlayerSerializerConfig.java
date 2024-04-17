@@ -30,8 +30,8 @@ public class PlayerSerializerConfig {
         return this;
     }
 
-    public PlayerSerializerConfig writeQuestProperty(boolean writeInventory) {
-        this.writeInventory = writeInventory;
+    public PlayerSerializerConfig writeQuestProperty(boolean writeQuestProperty) {
+        this.writeQuestProperty = writeQuestProperty;
         return this;
     }
 
