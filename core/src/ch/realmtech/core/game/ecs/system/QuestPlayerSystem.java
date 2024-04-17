@@ -1,14 +1,17 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.helper.Popup;
+import ch.realmtech.server.ecs.component.QuestPlayerPropertyComponent;
 import ch.realmtech.server.mod.quests.QuestManagerEntry;
 import ch.realmtech.server.packet.serverPacket.QuestCheckboxCompletedPacket;
 import ch.realmtech.server.registry.QuestCategory;
 import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
+import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -17,20 +20,26 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.rafaskoberg.gdx.typinglabel.TypingLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 import static ch.realmtech.core.helper.ButtonsMenu.TextButtonMenu;
 
-public class QuestSystem extends BaseSystem {
+public class QuestPlayerSystem extends BaseSystem {
+    private final static Logger logger = LoggerFactory.getLogger(QuestPlayerSystem.class);
     @Wire(name = "context")
     private RealmTech context;
+    @Wire
+    private SystemsAdminClient systemsAdminClient;
 
     private Window questWindow;
     private QuestCategory selectedCategoryOld = null;
     private QuestEntry questOver;
     private Window questOverTitle;
     private QuestManagerEntry questManagerEntry;
+    private ComponentMapper<QuestPlayerPropertyComponent> mQuestPlayerProperty;
 
     @Override
     protected void initialize() {
@@ -77,7 +86,7 @@ public class QuestSystem extends BaseSystem {
         questWindow.clear();
 
         Table table = new Table();
-        List<QuestEntry> questInThisCategory = questCategory.getQuestInThisCategory().stream().sorted(QuestSystem::sortPosQuestEntry).toList();
+        List<QuestEntry> questInThisCategory = questCategory.getQuestInThisCategory().stream().sorted(QuestPlayerSystem::sortPosQuestEntry).toList();
         Cell<Image> previousImageCell = null;
         for (int i = 0; i < questInThisCategory.size(); i++) {
             QuestEntry questEntry = questInThisCategory.get(i);
@@ -135,15 +144,22 @@ public class QuestSystem extends BaseSystem {
         questContentTable.add(contentScrollPane).expand().fillX().left().top();
         questWindow.add(questContentTable).expand().fill().left().top().row();
 
-        CheckBox isCompleted = new CheckBox("isCompleted", context.getSkin());
-        isCompleted.addListener(new ClickListener() {
+        CheckBox isCompletedCheckBox = new CheckBox("isCompleted", context.getSkin());
+        int mainPlayerId = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
+        if (mQuestPlayerProperty.has(mainPlayerId)) {
+            QuestPlayerPropertyComponent questPlayerPropertyComponent = mQuestPlayerProperty.get(mainPlayerId);
+            questPlayerPropertyComponent.findQuestPlayerProperty(selectedQuest).ifPresentOrElse((questPlayerProperty) -> isCompletedCheckBox.setChecked(questPlayerProperty.isCompleted()),
+                    () -> logger.info("Can not find quest property: {}", selectedQuest));
+        }
+
+        isCompletedCheckBox.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 context.sendRequest(new QuestCheckboxCompletedPacket(selectedQuest));
                 return true;
             }
         });
-        questWindow.add(isCompleted).padRight(10);
+        questWindow.add(isCompletedCheckBox).padRight(10);
         questWindow.add(new TextButtonMenu(context, "Back", new OnClick((event, x, y) -> setSelectedQuestCategory(selectedCategoryOld)))).bottom();
     }
 

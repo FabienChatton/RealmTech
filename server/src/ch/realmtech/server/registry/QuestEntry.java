@@ -1,8 +1,11 @@
 package ch.realmtech.server.registry;
 
+import ch.realmtech.server.mod.questsValidator.ItemInInventoryValidator;
+import ch.realmtech.server.mod.questsValidator.QuestEntryValidator;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class QuestEntry extends Entry {
@@ -11,6 +14,9 @@ public abstract class QuestEntry extends Entry {
     private final String category;
     private final Vector2 pos;
     private List<QuestEntry> dependQuests;
+    private String[] dependQuestsFqrn;
+    private List<QuestEntryValidator> questEntryValidators;
+    private String[] requireItemsFqrn;
 
     public QuestEntry(String name, String category, String title, String content) {
         super(name);
@@ -22,12 +28,27 @@ public abstract class QuestEntry extends Entry {
 
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
-        List<QuestEntry> dependQuests = new ArrayList<>();
-        for (String dependQuestFqrn : getDependQuestsFqrn()) {
-            QuestEntry dependQuestEntry = RegistryUtils.evaluateSafe(rootRegistry, dependQuestFqrn, QuestEntry.class);
-            dependQuests.add(dependQuestEntry);
+        if (dependQuestsFqrn != null) {
+            List<QuestEntry> dependQuests = new ArrayList<>(dependQuestsFqrn.length);
+            for (String dependQuestFqrn : dependQuestsFqrn) {
+                QuestEntry dependQuestEntry = RegistryUtils.evaluateSafe(rootRegistry, dependQuestFqrn, QuestEntry.class);
+                dependQuests.add(dependQuestEntry);
+            }
+            this.dependQuests = dependQuests;
+        } else {
+            dependQuests = Collections.emptyList();
         }
-        this.dependQuests = dependQuests;
+
+        if (requireItemsFqrn != null) {
+            questEntryValidators = new ArrayList<>(requireItemsFqrn.length);
+            for (String requireItem : requireItemsFqrn) {
+                ItemInInventoryValidator itemInInventoryValidator = new ItemInInventoryValidator(requireItem);
+                itemInInventoryValidator.evaluate(rootRegistry);
+                questEntryValidators.add(itemInInventoryValidator);
+            }
+        } else {
+            questEntryValidators = Collections.emptyList();
+        }
     }
 
     public String getTitle() {
@@ -46,12 +67,16 @@ public abstract class QuestEntry extends Entry {
         return "default-texture";
     }
 
-    protected List<String> getDependQuestsFqrn() {
-        return List.of();
-    }
-
     protected void setPos(float x, float y) {
         pos.set(x, y);
+    }
+
+    protected void setDependQuestsFqrn(String... dependQuestsFqrn) {
+        this.dependQuestsFqrn = dependQuestsFqrn;
+    }
+
+    protected void setRequireItemsFqrn(String... requireItemsFqrn) {
+        this.requireItemsFqrn = requireItemsFqrn;
     }
 
     public Vector2 getPos() {
@@ -60,5 +85,9 @@ public abstract class QuestEntry extends Entry {
 
     public List<QuestEntry> getDependQuests() {
         return dependQuests;
+    }
+
+    public List<QuestEntryValidator> getQuestEntryValidators() {
+        return questEntryValidators;
     }
 }

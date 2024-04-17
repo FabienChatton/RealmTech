@@ -6,6 +6,8 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.quests.QuestPlayerProperty;
+import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.serialize.player.PlayerSerializerConfig;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
@@ -46,6 +48,7 @@ public class PlayerManagerServer extends Manager {
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<LifeComponent> mLife;
+    private ComponentMapper<QuestPlayerPropertyComponent> mQuestPlayer;
 
     public PlayerManagerServer() {
         players = new IntBag();
@@ -140,6 +143,16 @@ public class PlayerManagerServer extends Manager {
             heart = 10;
         }
         mLife.create(playerId).set(heart);
+
+        if (!mQuestPlayer.has(playerId)) {
+            List<? extends QuestEntry> allQuestsEntry = systemsAdminServer.getQuestManagerServer().getQuestManagerEntry().getQuests();
+            List<QuestPlayerProperty> questPlayerProperties = new ArrayList<>(allQuestsEntry.size());
+            for (QuestEntry questEntry : allQuestsEntry) {
+                questPlayerProperties.add(new QuestPlayerProperty(questEntry));
+            }
+            mQuestPlayer.create(playerId).set(questPlayerProperties);
+            logger.info("Can not read quests from Player {}. He get default quests", playerUsername);
+        }
 
         return new ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg(posX, posY, playerUuid,
                 serverContext.getSerializerController().getInventorySerializerManager().encode(chestInventoryComponent),

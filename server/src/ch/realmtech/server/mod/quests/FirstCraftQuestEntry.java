@@ -11,6 +11,7 @@ public class FirstCraftQuestEntry extends QuestEntry {
                 Planks can be placed on the floor.
                 """);
         setPos(128, 0);
+        setDependQuestsFqrn("realmtech.quests.FirstResources");
     }
 
     @Override

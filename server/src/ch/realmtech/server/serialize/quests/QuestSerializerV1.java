@@ -60,7 +60,7 @@ public class QuestSerializerV1 implements Serializer<Integer, List<QuestPlayerPr
         List<QuestPlayerProperty> unCompletedQuestPlayerProperties = new ArrayList<>(totalQuestSize - size);
         List<? extends QuestEntry> unCompletedQuestEntry = allQuests.stream().filter((questEntry) -> completedQuestPlayerProperties.stream().map(QuestPlayerProperty::getQuestEntry).toList().contains(questEntry)).toList();
         for (QuestEntry questEntry : unCompletedQuestEntry) {
-            unCompletedQuestPlayerProperties.add(new QuestPlayerProperty(questEntry, false, 0));
+            unCompletedQuestPlayerProperties.add(new QuestPlayerProperty(questEntry));
         }
         return Stream.concat(completedQuestPlayerProperties.stream(), unCompletedQuestPlayerProperties.stream()).toList();
     }

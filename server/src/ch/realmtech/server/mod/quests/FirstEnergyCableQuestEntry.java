@@ -14,6 +14,7 @@ public class FirstEnergyCableQuestEntry extends QuestEntry {
                 right-click with a wrench on the side to which you wish to connect the cable.
                 """);
         setPos(448, 0);
+        setDependQuestsFqrn("realmtech.quests.GetReadyForElectricity");
     }
 
     @Override

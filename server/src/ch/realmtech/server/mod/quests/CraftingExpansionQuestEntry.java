@@ -14,6 +14,7 @@ public class CraftingExpansionQuestEntry extends QuestEntry {
                 Finally, interact with the craft table by right-clicking on the cell.
                 """);
         setPos(192, 0);
+        setDependQuestsFqrn("realmtech.quests.FirstCraft");
     }
 
     @Override

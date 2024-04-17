@@ -13,6 +13,7 @@ public class FirstEnergyGeneratorQuestEntry extends QuestEntry {
                 To create your first energy units, place coal in the furnace and the furnace's internal battery will fill up.
                 """);
         setPos(576, 0);
+        setDependQuestsFqrn("realmtech.quests.FirstEnergyBattery");
     }
 
     @Override

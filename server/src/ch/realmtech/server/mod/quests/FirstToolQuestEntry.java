@@ -13,6 +13,7 @@ public class FirstToolQuestEntry extends QuestEntry {
                 Now you can mine stones with your pickaxe.
                 """);
         setPos(256, 0);
+        setDependQuestsFqrn("realmtech.quests.CraftingExpansion");
     }
 
     @Override

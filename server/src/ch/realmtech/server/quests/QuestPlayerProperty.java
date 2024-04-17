@@ -7,10 +7,20 @@ public class QuestPlayerProperty {
     private boolean isCompleted;
     private long completedTimestamp;
 
+    /**
+     * For completed quests
+     */
     public QuestPlayerProperty(QuestEntry questEntry, boolean isCompleted, long completedTimestamp) {
         this.questEntry = questEntry;
         this.isCompleted = isCompleted;
         this.completedTimestamp = completedTimestamp;
+    }
+
+    /**
+     * For un completed quests
+     */
+    public QuestPlayerProperty(QuestEntry questEntry) {
+        this(questEntry, false, 0);
     }
 
     public QuestEntry getQuestEntry() {

@@ -57,7 +57,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
         putCustomSystem(300, LightCycleSystem.class, LightCycleSystem::new);
         putCustomSystem(310, WailaSystem.class, WailaSystem::new);
-        putCustomSystem(320, QuestSystem.class, QuestSystem::new);
+        putCustomSystem(320, QuestPlayerSystem.class, QuestPlayerSystem::new);
         putCustomSystem(340, PlayerInventorySystem.class, PlayerInventorySystem::new);
         putCustomSystem(350, InventoryNeiSystem.class, InventoryNeiSystem::new);
         putCustomSystem(360, ItemBarSystem.class, ItemBarSystem::new);
@@ -168,8 +168,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return getCustomSystem(TiledTextureSystem.class);
     }
 
-    public QuestSystem getQuestManager() {
-        return getCustomSystem(QuestSystem.class);
+    public QuestPlayerSystem getQuestManager() {
+        return getCustomSystem(QuestPlayerSystem.class);
     }
 
     public MouvementSystem getMouvementSystem() {
@@ -212,8 +212,8 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         return getCustomSystem(PlayerFootStepSystem.class);
     }
 
-    public QuestSystem getQuestSystem() {
-        return getCustomSystem(QuestSystem.class);
+    public QuestPlayerSystem getQuestSystem() {
+        return getCustomSystem(QuestPlayerSystem.class);
     }
 
     public ParticleEffectsSystem getParticleEffectsSystem() {

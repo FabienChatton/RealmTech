@@ -8,7 +8,7 @@ import ch.realmtech.server.mod.EvaluateBefore;
  * Entry are the content of RealmTech. A entry need to have a parent registry to work properly.
  * Every entry has a name.
  */
-public abstract class Entry {
+public abstract class Entry implements Evaluator {
     private final String name;
     protected Registry<?> parentRegistry;
 

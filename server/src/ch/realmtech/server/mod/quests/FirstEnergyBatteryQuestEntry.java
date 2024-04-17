@@ -13,6 +13,7 @@ public class FirstEnergyBatteryQuestEntry extends QuestEntry {
                 As energy sources, there is an energy generator or a battery with its output side connected.
                 """);
         setPos(512, 0);
+        setDependQuestsFqrn("realmtech.quests.FirstEnergyCable");
     }
 
     @Override

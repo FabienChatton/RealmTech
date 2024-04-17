@@ -13,6 +13,7 @@ public class KnowYouWorldQuestEntry extends QuestEntry {
                 For the moment, there are no monsters, so your life is not in danger.
                 """);
         setPos(-64, 0);
+        setDependQuestsFqrn("realmtech.quests.TheBeginning");
     }
 
     @Override

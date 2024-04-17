@@ -10,6 +10,8 @@ public class FirstResourcesQuestEntry extends QuestEntry {
                 To find out if you can harvest a resource, check if the text break with is green.
                 """);
         setPos(64, 0);
+        setDependQuestsFqrn("realmtech.quests.TheBeginning");
+        setRequireItemsFqrn("realmtech.items.Wood");
     }
 
     @Override

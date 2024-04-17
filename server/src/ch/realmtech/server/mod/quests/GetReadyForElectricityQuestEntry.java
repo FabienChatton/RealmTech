@@ -14,6 +14,7 @@ public class GetReadyForElectricityQuestEntry extends QuestEntry {
                 Click on the left-hand side of the cell to turn it to the left. And the same for top and bottom.
                 """);
         setPos(384, 0);
+        setDependQuestsFqrn("realmtech.quests.ThermalExpansion");
     }
 
     @Override

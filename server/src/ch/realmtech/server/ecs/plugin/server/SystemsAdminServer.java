@@ -33,6 +33,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, MobAttackCooldownSystem.class, MobAttackCooldownSystem::new);
         putCustomSystem(10, FixDynamicBodySystem.class, FixDynamicBodySystem::new);
         putCustomSystem(10, QuestManagerServer.class, QuestManagerServer::new);
+        putCustomSystem(10, QuestValidatorSystem.class, QuestValidatorSystem::new);
 
         putCustomSystem(10, CraftingSystem.class, CraftingSystem::new);
         putCustomSystem(10, CraftingManager.class, CraftingManager::new);
@@ -175,5 +176,9 @@ public class SystemsAdminServer extends SystemsAdminCommun {
 
     public QuestManagerServer getQuestManagerServer() {
         return getCustomSystem(QuestManagerServer.class);
+    }
+
+    public QuestValidatorSystem getQuestValidatorSystem() {
+        return getCustomSystem(QuestValidatorSystem.class);
     }
 }
