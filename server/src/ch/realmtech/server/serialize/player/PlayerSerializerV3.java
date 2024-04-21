@@ -90,7 +90,7 @@ public class PlayerSerializerV3 implements Serializer<PlayerSerializerConfig, Co
             mPos.create(playerId).set(posX, posY);
             mLife.create(playerId).set(lifeArgs.heart());
 
-            if (completedQuestPlayerProperties != null) {
+            if (!completedQuestPlayerProperties.isEmpty()) {
                 QuestManagerEntry questManagerEntry = RegistryUtils.findEntryOrThrow(rootRegistry, QuestManagerEntry.class);
                 List<QuestPlayerProperty> questPlayerProperties = questManagerEntry.mapToQuestEntry(completedQuestPlayerProperties);
                 mQuestProperty.create(playerId).set(questPlayerProperties);

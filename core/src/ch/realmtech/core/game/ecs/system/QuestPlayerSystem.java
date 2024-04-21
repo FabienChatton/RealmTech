@@ -148,15 +148,26 @@ public class QuestPlayerSystem extends BaseSystem {
         int mainPlayerId = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         if (mQuestPlayerProperty.has(mainPlayerId)) {
             QuestPlayerPropertyComponent questPlayerPropertyComponent = mQuestPlayerProperty.get(mainPlayerId);
-            questPlayerPropertyComponent.findQuestPlayerProperty(selectedQuest).ifPresentOrElse((questPlayerProperty) -> isCompletedCheckBox.setChecked(questPlayerProperty.isCompleted()),
+            questPlayerPropertyComponent.findQuestPlayerProperty(selectedQuest).ifPresentOrElse((questPlayerProperty) -> {
+                        if (questPlayerProperty.isCompleted()) {
+                            isCompletedCheckBox.setChecked(true);
+                            isCompletedCheckBox.setDisabled(true);
+                        }
+                    },
                     () -> logger.info("Can not find quest property: {}", selectedQuest));
         }
 
         isCompletedCheckBox.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                context.sendRequest(new QuestCheckboxCompletedPacket(selectedQuest));
-                return true;
+                if (!isCompletedCheckBox.isChecked()) {
+                    context.sendRequest(new QuestCheckboxCompletedPacket(selectedQuest));
+                    isCompletedCheckBox.setChecked(true);
+                    // attends la réponse pour compléter dans la property
+                    return true;
+                } else {
+                    return false;
+                }
             }
         });
         questWindow.add(isCompletedCheckBox).padRight(10);

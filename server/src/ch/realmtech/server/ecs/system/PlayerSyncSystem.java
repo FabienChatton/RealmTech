@@ -30,7 +30,7 @@ public class PlayerSyncSystem extends IteratingSystem {
         UUID playerUuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(entityId);
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(entityId);
         PositionComponent positionComponent = mPos.get(entityId);
-        SerializedApplicationBytes playerEncode = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(entityId).writeInventory(false));
+        SerializedApplicationBytes playerEncode = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(entityId).writeInventory(false).writeQuestProperty(false));
         int chunkPosX = MapManager.getChunkPos((int) positionComponent.x);
         int chunkPosY = MapManager.getChunkPos((int) positionComponent.y);
 
