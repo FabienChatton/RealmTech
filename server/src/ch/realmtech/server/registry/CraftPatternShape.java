@@ -98,6 +98,7 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
                     if (expectedI + testI > items.get(expectedI).size()) continue testItems;
                     for (int expectedJ = 0; expectedJ < craftPattern2d.get(expectedI).size(); expectedJ++) {
                         if (expectedJ + testJ >= items.get(expectedI).size()) continue testItems;
+                        if (expectedI + testI >= items.size()) continue;
                         if (craftPattern2d.get(expectedI).get(expectedJ) != items.get(expectedI + testI).get(expectedJ + testJ)) {
                             continue testItems;
                         }
