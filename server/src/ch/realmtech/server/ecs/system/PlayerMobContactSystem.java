@@ -26,6 +26,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<EnemyComponent> mEnemy;
+    private ComponentMapper<LifeComponent> mLife;
     @Override
     protected void process(int entityId) {
         IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class, PositionComponent.class, Box2dComponent.class).exclude(MobAttackCooldownComponent.class)).getEntities();
@@ -33,6 +34,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
 
         PositionComponent playerPositionComponent = mPos.get(entityId);
         Box2dComponent playerBox2dComponent = mBox2d.get(entityId);
+        LifeComponent playerLifeComponent = mLife.get(entityId);
         Rectangle.tmp.set(playerBox2dComponent.body.getPosition().x, playerBox2dComponent.body.getPosition().y, playerBox2dComponent.widthWorld, playerBox2dComponent.heightWorld);
 
         for (int i = 0; i < ias.size(); i++) {
@@ -58,7 +60,14 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         Rectangle.tmp2.getCenter(iaRectangleCenter);
                         Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(100);
 
-                        playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
+                        // remove player heal
+                        if (playerLifeComponent.decrementHeart(1)) {
+                            playerLifeComponent.set(10);
+                            playerBox2dComponent.body.setTransform(0, 0, 0);
+                        } else {
+                            // knock back if not death
+                            playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
+                        }
                     }
                     MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, entityId);
                 });

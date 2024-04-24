@@ -27,13 +27,7 @@ public class MobManager extends Manager {
 
     public boolean attackMob(int mobId, int damageAmount) {
         LifeComponent lifeComponent = mLife.get(mobId);
-        if (lifeComponent.getHeart() > damageAmount) {
-            lifeComponent.set(lifeComponent.getHeart() - damageAmount);
-            return false;
-        } else {
-            lifeComponent.set(0);
-            return true;
-        }
+        return lifeComponent.decrementHeart(damageAmount);
     }
 
     public void knockBackMob(int mobId, Vector2 knockBackAmount) {
