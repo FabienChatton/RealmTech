@@ -10,17 +10,18 @@ import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.enemy.EnemyState;
 import ch.realmtech.server.enemy.EnemySteerable;
 import ch.realmtech.server.enemy.EnemyTelegraph;
-import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class MobSystemServer extends BaseSystem {
@@ -37,31 +38,40 @@ public class MobSystemServer extends BaseSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
     private final MessageManager messageManager = MessageManager.getInstance();
+    private long lastNaturalSpawn = 0;
+    private Random random;
+    private final static int NATURAL_SPAWN_COOL_DOWN_MILLIS = 1000;
+    private final static int MIN_DST_SPAWN_PLAYER = 20;
+    private final static int MAX_DST_SPAWN_PLAYER = 35;
 
     @Override
     protected void initialize() {
         super.initialize();
         messageManager.setDebugEnabled(false);
+        random = new Random();
     }
 
     @Override
     protected void processSystem() {
-        // naturalSpawnIa();
+        naturalSpawnIa();
         messageManager.update();
     }
 
     private void naturalSpawnIa() {
-        IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
-        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
+        if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > NATURAL_SPAWN_COOL_DOWN_MILLIS) {
+            // IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
+            IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
 
-        if (iaEntities.isEmpty()) {
             for (int i = 0; i < players.size(); i++) {
                 int playerId = players.get(i);
-                if (mPos.has(playerId)) {
-                    PositionComponent playerPosition = mPos.get(playerId);
 
-                    createMobTest(playerPosition.x + 5, playerPosition.y, playerId);
-                }
+                Vector2 playerVector = mPos.get(playerId).toVector2();
+                Vector2 enemySpawnVector = new Vector2();
+                enemySpawnVector.add(random.nextInt(MIN_DST_SPAWN_PLAYER, MAX_DST_SPAWN_PLAYER), 0);
+                enemySpawnVector.rotateDeg(random.nextFloat(360));
+                Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
+                createMobTest(enemySpawnPos.x, enemySpawnPos.y, playerId);
+                lastNaturalSpawn = System.currentTimeMillis();
             }
         }
     }

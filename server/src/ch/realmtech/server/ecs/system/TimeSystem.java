@@ -22,4 +22,8 @@ public class TimeSystem extends BaseSystem {
     public static float getAlpha(float time) {
         return Math.max(0.1f, interpolation.apply((float) (Math.sin(Math.toRadians(time * 3 / 10f) + 1f / 3f) + 1) / 2f));
     }
+
+    public boolean isNight() {
+        return Math.abs(getAlpha(getAccumulatedDelta()) - 0.1f) < 0.0001;
+    }
 }
