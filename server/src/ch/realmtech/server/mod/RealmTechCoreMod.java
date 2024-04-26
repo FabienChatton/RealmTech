@@ -17,6 +17,10 @@ import ch.realmtech.server.mod.options.server.AuthServerBaseUrlServerOptionEntry
 import ch.realmtech.server.mod.options.server.RenderDistanceOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyAccessTokenUrnOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.MaxEnemyCountOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.MinDstSpawnPlayerOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.NaturalSpawnCoolDownOptionEntry;
 import ch.realmtech.server.mod.packets.PacketLoader;
 import ch.realmtech.server.mod.questCategory.PositionTestCategory;
 import ch.realmtech.server.mod.questCategory.Tier0QuestCategory;
@@ -188,6 +192,10 @@ public class RealmTechCoreMod implements ModInitializer {
         serverOptionRegistry.addEntry(new RenderDistanceOptionEntry());
         serverOptionRegistry.addEntry(new VerifyAccessTokenUrnOptionEntry());
         serverOptionRegistry.addEntry(new VerifyTokenOptionEntry());
+        serverOptionRegistry.addEntry(new MaxDstSpawnPlayerOptionEntry());
+        serverOptionRegistry.addEntry(new MaxEnemyCountOptionEntry());
+        serverOptionRegistry.addEntry(new MinDstSpawnPlayerOptionEntry());
+        serverOptionRegistry.addEntry(new NaturalSpawnCoolDownOptionEntry());
 
         // client options
         Registry<OptionClientEntry<?>> clientOptionRegistry = Registry.createRegistry(optionsRegistry, "client", "customOptions", "clientOptions");

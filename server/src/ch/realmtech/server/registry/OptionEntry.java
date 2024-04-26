@@ -23,6 +23,13 @@ public abstract sealed class OptionEntry<T> extends Entry permits OptionClientEn
         setValue(getPropertyValue(optionLoader));
     }
 
+    /**
+     * Get the value from the property file. Please use the {@link #getPropertyValueInt} from int value
+     * or {@link #getPropertyValueString} from string value.
+     *
+     * @param optionLoader The corresponding optionLoader matching the context.
+     * @return The value from the property file.
+     */
     protected abstract T getPropertyValue(OptionLoader optionLoader);
 
     public abstract void setValue(T value);
@@ -37,6 +44,11 @@ public abstract sealed class OptionEntry<T> extends Entry permits OptionClientEn
         return optionValue.get();
     }
 
+    /**
+     * Get the default value.
+     * This value will be use if the option is reset.
+     * @return The default value.
+     */
     public abstract T getDefaultValue();
 
     protected abstract Integer getPropertyValueInt(OptionLoader optionLoader);

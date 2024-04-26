@@ -10,6 +10,11 @@ import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.enemy.EnemyState;
 import ch.realmtech.server.enemy.EnemySteerable;
 import ch.realmtech.server.enemy.EnemyTelegraph;
+import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.MaxEnemyCountOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.MinDstSpawnPlayerOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.NaturalSpawnCoolDownOptionEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
@@ -41,16 +46,21 @@ public class MobSystemServer extends BaseSystem {
     private final MessageManager messageManager = MessageManager.getInstance();
     private long lastNaturalSpawn = 0;
     private Random random;
-    private final static int NATURAL_SPAWN_COOL_DOWN_MILLIS = 1000;
-    private final static int MIN_DST_SPAWN_PLAYER = 20;
-    private final static int MAX_DST_SPAWN_PLAYER = 35;
-    private final static int MAX_ENEMY_COUNT = 10;
+    private NaturalSpawnCoolDownOptionEntry naturalSpawnCoolDownOptionEntry;
+    private MaxDstSpawnPlayerOptionEntry maxDstSpawnPlayerOptionEntry;
+    private MinDstSpawnPlayerOptionEntry minDstSpawnPlayerOptionEntry;
+    private MaxEnemyCountOptionEntry maxEnemyCountOptionEntry;
 
     @Override
     protected void initialize() {
         super.initialize();
         messageManager.setDebugEnabled(false);
         random = new Random();
+
+        naturalSpawnCoolDownOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), NaturalSpawnCoolDownOptionEntry.class);
+        maxDstSpawnPlayerOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), MaxDstSpawnPlayerOptionEntry.class);
+        minDstSpawnPlayerOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), MinDstSpawnPlayerOptionEntry.class);
+        maxEnemyCountOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), MaxEnemyCountOptionEntry.class);
     }
 
     @Override
@@ -60,9 +70,9 @@ public class MobSystemServer extends BaseSystem {
     }
 
     private void naturalSpawnIa() {
-        if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > NATURAL_SPAWN_COOL_DOWN_MILLIS) {
+        if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > naturalSpawnCoolDownOptionEntry.getValue()) {
             IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
-            if (iaEntities.size() > MAX_ENEMY_COUNT) {
+            if (iaEntities.size() > maxEnemyCountOptionEntry.getValue()) {
                 return;
             }
             IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
@@ -72,7 +82,7 @@ public class MobSystemServer extends BaseSystem {
 
                 Vector2 playerVector = mPos.get(playerId).toVector2();
                 Vector2 enemySpawnVector = new Vector2();
-                enemySpawnVector.add(random.nextInt(MIN_DST_SPAWN_PLAYER, MAX_DST_SPAWN_PLAYER), 0);
+                enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
                 enemySpawnVector.rotateDeg(random.nextFloat(360));
                 Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
                 createMobTest(enemySpawnPos.x, enemySpawnPos.y, playerId);
