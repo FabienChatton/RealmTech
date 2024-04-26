@@ -10,6 +10,7 @@ import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.enemy.EnemyState;
 import ch.realmtech.server.enemy.EnemySteerable;
 import ch.realmtech.server.enemy.EnemyTelegraph;
+import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Wire;
@@ -43,6 +44,7 @@ public class MobSystemServer extends BaseSystem {
     private final static int NATURAL_SPAWN_COOL_DOWN_MILLIS = 1000;
     private final static int MIN_DST_SPAWN_PLAYER = 20;
     private final static int MAX_DST_SPAWN_PLAYER = 35;
+    private final static int MAX_ENEMY_COUNT = 10;
 
     @Override
     protected void initialize() {
@@ -59,7 +61,10 @@ public class MobSystemServer extends BaseSystem {
 
     private void naturalSpawnIa() {
         if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > NATURAL_SPAWN_COOL_DOWN_MILLIS) {
-            // IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
+            IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
+            if (iaEntities.size() > MAX_ENEMY_COUNT) {
+                return;
+            }
             IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
 
             for (int i = 0; i < players.size(); i++) {
