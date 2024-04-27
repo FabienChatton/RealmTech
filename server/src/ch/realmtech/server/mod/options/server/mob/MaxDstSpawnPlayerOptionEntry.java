@@ -20,6 +20,6 @@ public class MaxDstSpawnPlayerOptionEntry extends OptionServerEntry<Integer> {
 
     @Override
     public Integer getDefaultValue() {
-        return null;
+        return 35;
     }
 }
