@@ -58,7 +58,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         Vector2 iaRectangleCenter = new Vector2();
                         Rectangle.tmp.getCenter(playerRectangleCenter);
                         Rectangle.tmp2.getCenter(iaRectangleCenter);
-                        Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(100);
+                        Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(10000);
 
                         // remove player heal
                         if (playerLifeComponent.decrementHeart(1)) {
@@ -66,7 +66,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
                             playerBox2dComponent.body.setTransform(0, 0, 0);
                         } else {
                             // knock back if not death
-                            playerBox2dComponent.body.applyLinearImpulse(knockbackVector, playerBox2dComponent.body.getWorldCenter(), true);
+                            playerBox2dComponent.body.applyForce(knockbackVector, playerBox2dComponent.body.getPosition(), true);
                         }
                     }
                     MessageManager.getInstance().dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, entityId);
