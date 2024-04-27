@@ -2,8 +2,8 @@ Thruster
 - Delay -
 active: false
 - Duration - 
-lowMin: 1.0
-lowMax: 1.0
+lowMin: 100.0
+lowMax: 100.0
 - Count - 
 min: 0
 max: 2000
