@@ -59,13 +59,22 @@ public class InventoryManager extends Manager {
         return false;
     }
 
-    public boolean moveStackToStackNumber(int[] stackSrc, int[] stackDst, int nombre) {
-        for (int i = 0, j = tailleStack(stackSrc) - 1; i < nombre && j >= 0; i++, j--) {
-            if (!addItemToStack(stackDst, stackSrc[j])) {
+    public boolean moveStackToStackNumber(int[] stackSrc, int[] stackDst, int desiredNumber) {
+        int max = stackSrc.length - tailleStack(stackDst);
+        int available = tailleStack(stackSrc);
+
+        int n = Math.min(Math.min(available, max), desiredNumber);
+
+        if (n <= 0) return false;
+
+        for (int i = available - 1, j = 0; i >= 0 && j < n; i--, j++) {
+            if (!addItemToStack(stackDst, stackSrc[i])) {
                 return false;
+            } else {
+                stackSrc[i] = 0;
             }
-            stackSrc[j] = 0;
         }
+
         return true;
     }
 
@@ -89,43 +98,6 @@ public class InventoryManager extends Manager {
             }
         }
         return false; // Il n'y pas d'emplacement dans la stack pour ajouter l'item
-    }
-
-    /**
-     * Déplace une stack au maximum vers une autre stack
-     * @param stackSrc la stack à déplacer.
-     * @param stackDst la stack destination.
-     * @return true si quelque chose a été déplacé
-     */
-    public boolean moveStackToStack(int[] stackSrc, int[] stackDst) {
-        if (stackSrc[0] == 0) return false;
-        if (stackDst[0] == 0) {
-            System.arraycopy(stackSrc, 0, stackDst, 0, tailleStack(stackSrc)); // déplace toute la stack si la stack de destination est vide
-            // vide la stack source
-            final int tailleStack = tailleStack(stackSrc);
-            for (int i = 0; i < tailleStack; i++) {
-                stackSrc[i] = 0;
-            }
-            return true;
-        }
-        final ItemComponent itemComponentSrc = mItem.get(stackSrc[0]);
-        final ItemComponent itemComponentDst = mItem.get(stackDst[0]);
-
-        if (!(itemComponentSrc.itemRegisterEntry == itemComponentDst.itemRegisterEntry)) {
-            return false;
-        }
-        if (stackDst.length < tailleStack(stackDst)) {
-            return false; // on ne peut pas ajouter des items si la stack est déjà remplie
-        }
-
-        boolean deplace = false;
-        // déplace de la stack source à la stack destination en vidant la stack source
-        for (int i = tailleStack(stackSrc) - 1, j = tailleStack(stackDst); i >= 0 && j < stackDst.length; i--, j++) {
-            stackDst[j] = stackSrc[i];
-            stackSrc[i] = 0;
-            deplace = true;
-        }
-        return deplace;
     }
 
     /**
@@ -407,24 +379,29 @@ public class InventoryManager extends Manager {
             }
         }
 
+        if (srcStack == null) {
+            throw new IllegalAccessError("Source can't be null");
+        }
+
         int[][] dstInventory = mInventory.get(dstInventoryId).inventory;
         if (slotIndex > dstInventory.length) {
             throw new IllegalAccessError("slot item is out of bound");
         }
-        if (srcStack != null) {
-            int[] mutatedInventories = null;
-            int[] dstStack = dstInventory[slotIndex];
-            if (canMouveStack(srcStack, dstStack)) {
-                int itemCraftResultTemoin = srcStack[0];
-                if (mItemResult.has(itemCraftResultTemoin)) {
-                    if (itemsToMove.length < tailleStack(srcStack)) throw new IllegalAccessError("The craft result can only be fully moved");
-                    ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(itemCraftResultTemoin);
-                    mutatedInventories = itemResultCraftComponent.pickEvent.pick(world);
-                    for (int i = 0; i < InventoryManager.tailleStack(srcStack); i++) {
-                        world.edit(srcStack[i]).remove(ItemResultCraftComponent.class);
-                    }
+
+        int[] mutatedInventories = null;
+        int[] dstStack = dstInventory[slotIndex];
+
+        if (tailleStack(dstStack) < dstStack.length) {
+            int itemCraftResultTemoin = srcStack[0];
+            if (mItemResult.has(itemCraftResultTemoin)) {
+                if (itemsToMove.length < tailleStack(srcStack)) throw new IllegalAccessError("The craft result can only be fully moved");
+                ItemResultCraftComponent itemResultCraftComponent = mItemResult.get(itemCraftResultTemoin);
+                mutatedInventories = itemResultCraftComponent.pickEvent.pick(world);
+                for (int i = 0; i < InventoryManager.tailleStack(srcStack); i++) {
+                    world.edit(srcStack[i]).remove(ItemResultCraftComponent.class);
                 }
             }
+
             boolean inventoryMoved = moveStackToStackNumber(srcStack, dstStack, itemsToMove.length);
             if (!inventoryMoved) throw new IllegalAccessError("move stack to stack has no effect");
             return mutatedInventories;
