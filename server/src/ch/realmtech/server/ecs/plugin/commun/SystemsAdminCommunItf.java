@@ -19,7 +19,7 @@ public interface SystemsAdminCommunItf {
 
     CellPaddingManager getCellPaddingManager();
 
-    MobManager getMobManager();
+    EnemyManager getMobManager();
 
     <T extends BaseSystem> T getCustomSystem(Class<T> customSystemClazz);
 }

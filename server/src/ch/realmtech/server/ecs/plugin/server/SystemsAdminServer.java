@@ -16,21 +16,21 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        putCustomSystem(10, MobSystemServer.class, MobSystemServer::new);
+        putCustomSystem(10, EnemySystemServer.class, EnemySystemServer::new);
         putCustomSystem(10, ItemManagerServer.class, ItemManagerServer::new);
         putCustomSystem(10, PlayerMouvementSystemServer.class, PlayerMouvementSystemServer::new);
         putCustomSystem(10, MapSystemServer.class, MapSystemServer::new);
         putCustomSystem(10, EnemySystem.class, EnemySystem::new);
         putCustomSystem(10, PhysicEntityIaTestSystem.class, PhysicEntityIaTestSystem::new);
         putCustomSystem(10, PlayerSyncSystem.class, PlayerSyncSystem::new);
-        putCustomSystem(10, MobFocusPlayerSystem.class, MobFocusPlayerSystem::new);
+        putCustomSystem(10, EnemyFocusPlayerSystem.class, EnemyFocusPlayerSystem::new);
         putCustomSystem(10, FurnaceSystem.class, FurnaceSystem::new);
         putCustomSystem(10, EnergyBatterySystem.class, EnergyBatterySystem::new);
         putCustomSystem(10, EnergyGeneratorSystem.class, EnergyGeneratorSystem::new);
         putCustomSystem(10, PlayerMobContactSystem.class, PlayerMobContactSystem::new);
         putCustomSystem(10, WeaponRayManager.class, WeaponRayManager::new);
         putCustomSystem(10, InvincibilitySystem.class, InvincibilitySystem::new);
-        putCustomSystem(10, MobAttackCooldownSystem.class, MobAttackCooldownSystem::new);
+        putCustomSystem(10, EnemyAttackCooldownSystem.class, EnemyAttackCooldownSystem::new);
         putCustomSystem(10, FixDynamicBodySystem.class, FixDynamicBodySystem::new);
         putCustomSystem(10, QuestManagerServer.class, QuestManagerServer::new);
         putCustomSystem(10, QuestValidatorSystem.class, QuestValidatorSystem::new);
@@ -62,8 +62,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(ItemManagerServer.class);
     }
 
-    public MobSystemServer getMobSystemServer() {
-        return getCustomSystem(MobSystemServer.class);
+    public EnemySystemServer getMobSystemServer() {
+        return getCustomSystem(EnemySystemServer.class);
     }
 
     public PlayerMouvementSystemServer getPlayerMouvementSystemServer() {
@@ -130,8 +130,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(PlayerSyncSystem.class);
     }
 
-    public MobFocusPlayerSystem getIaMobFocusPlayerSystem() {
-        return getCustomSystem(MobFocusPlayerSystem.class);
+    public EnemyFocusPlayerSystem getIaMobFocusPlayerSystem() {
+        return getCustomSystem(EnemyFocusPlayerSystem.class);
     }
 
     public FurnaceSystem getFurnaceSystem() {
@@ -166,8 +166,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(InvincibilitySystem.class);
     }
 
-    public MobAttackCooldownSystem getMobAttackCooldownSystem() {
-        return getCustomSystem(MobAttackCooldownSystem.class);
+    public EnemyAttackCooldownSystem getMobAttackCooldownSystem() {
+        return getCustomSystem(EnemyAttackCooldownSystem.class);
     }
 
     public FixDynamicBodySystem getFixDynamicBodySystem() {

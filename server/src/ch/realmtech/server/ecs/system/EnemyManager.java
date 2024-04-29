@@ -9,7 +9,7 @@ import com.artemis.annotations.Wire;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Vector2;
 
-public class MobManager extends Manager {
+public class EnemyManager extends Manager {
     @Wire(name = "physicWorld")
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     @Wire(name = "systemsAdmin")

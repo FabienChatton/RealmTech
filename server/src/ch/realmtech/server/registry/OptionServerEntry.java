@@ -27,4 +27,9 @@ public abstract non-sealed class OptionServerEntry<T> extends OptionEntry<T> {
     protected Boolean getPropertyValueBoolean(OptionLoader optionLoader) {
         return optionLoader.getPropertyOrCreate(optionLoader.getPropertiesServer(), getName(), (Boolean) getDefaultValue());
     }
+
+    @Override
+    protected Float getPropertyValueFloat(OptionLoader optionLoader) {
+        return optionLoader.getPropertyOrCreate(optionLoader.getPropertiesServer(), getName(), (Float) getDefaultValue());
+    }
 }

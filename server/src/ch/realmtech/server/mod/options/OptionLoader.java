@@ -88,6 +88,14 @@ public class OptionLoader extends Entry {
         return property != null ? property : propertyDefaultValue;
     }
 
+    public Float getPropertyOrCreate(Properties properties, String propertyName, Float propertyDefaultValue) {
+        String property = properties.getProperty(propertyName);
+        if (property == null) {
+            properties.setProperty(propertyName, propertyDefaultValue.toString());
+        }
+        return property != null ? Float.parseFloat(property) : propertyDefaultValue;
+    }
+
 
     public Properties getPropertiesServer() {
         return propertiesServer;

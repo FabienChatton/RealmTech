@@ -56,4 +56,6 @@ public abstract sealed class OptionEntry<T> extends Entry permits OptionClientEn
     protected abstract String getPropertyValueString(OptionLoader optionLoader);
 
     protected abstract Boolean getPropertyValueBoolean(OptionLoader optionLoader);
+
+    protected abstract Float getPropertyValueFloat(OptionLoader optionLoader);
 }

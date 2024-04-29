@@ -6,7 +6,7 @@ import com.artemis.annotations.All;
 import com.artemis.systems.IteratingSystem;
 
 @All(MobAttackCooldownComponent.class)
-public class MobAttackCooldownSystem extends IteratingSystem {
+public class EnemyAttackCooldownSystem extends IteratingSystem {
     private ComponentMapper<MobAttackCooldownComponent> mMobAttackCooldown;
 
     @Override

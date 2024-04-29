@@ -7,7 +7,6 @@ import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
-import ch.realmtech.server.enemy.EnemyState;
 import ch.realmtech.server.enemy.EnemySteerable;
 import ch.realmtech.server.enemy.EnemyTelegraph;
 import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
@@ -30,7 +29,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import java.util.Random;
 import java.util.UUID;
 
-public class MobSystemServer extends BaseSystem {
+public class EnemySystemServer extends BaseSystem {
     @Wire(name = "physicWorld")
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     @Wire(name = "serverContext")
@@ -65,11 +64,11 @@ public class MobSystemServer extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        naturalSpawnIa();
+        naturalSpawnEnemy();
         messageManager.update();
     }
 
-    private void naturalSpawnIa() {
+    private void naturalSpawnEnemy() {
         if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > naturalSpawnCoolDownOptionEntry.getValue()) {
             IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
             if (iaEntities.size() > maxEnemyCountOptionEntry.getValue()) {
@@ -85,13 +84,13 @@ public class MobSystemServer extends BaseSystem {
                 enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
                 enemySpawnVector.rotateDeg(random.nextFloat(360));
                 Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
-                createMobTest(enemySpawnPos.x, enemySpawnPos.y, playerId);
+                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y);
                 lastNaturalSpawn = System.currentTimeMillis();
             }
         }
     }
 
-    public int createMobTest(float x, float y, int playerId) {
+    public int spawnEnemy(float x, float y) {
         int mobId = world.create();
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
@@ -117,7 +116,7 @@ public class MobSystemServer extends BaseSystem {
 
         playerContactShape.dispose();
         EnemyComponent enemyComponent = world.edit(mobId).create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4));
-        messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, playerId);
+
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
         world.edit(mobId).create(Box2dComponent.class).set(0.9f, 0.9f, bodyMob);
         world.edit(mobId).create(LifeComponent.class).set(10);
