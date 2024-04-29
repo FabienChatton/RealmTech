@@ -90,6 +90,9 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
         if (items.stream().flatMap(Collection::stream).filter(Objects::nonNull).count() != craftPattern2d.stream().flatMap(Collection::stream).filter(Objects::nonNull).count())
             return Optional.empty();
         if (items.size() < craftPattern2d.size()) return Optional.empty();
+        boolean valide = false;
+
+        loop:
         for (int testI = 0; testI < items.size(); testI++) {
 
             testItems:
@@ -100,7 +103,20 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
                         if (expectedJ + testJ >= items.get(expectedI).size()) continue testItems;
                         if (expectedI + testI >= items.size()) continue;
                         if (craftPattern2d.get(expectedI).get(expectedJ) != items.get(expectedI + testI).get(expectedJ + testJ)) {
-                            continue testItems;
+                            // craft invalide
+                            if (!valide) {
+                                // no items have already been matched
+                                // continue to find a valide craft in the grid
+                                continue testItems;
+                            } else {
+                                // an item have been matched
+                                // and this match is invalide
+                                // break the loop, the craft is invalide
+                                break loop;
+                            }
+                        } else {
+                            // craft valide
+                            valide = true;
                         }
                     }
                 }

@@ -3,6 +3,7 @@ package ch.realmtech.crafts;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
 import ch.realmtech.server.ecs.component.InventoryComponent;
+import ch.realmtech.server.mod.crafts.craftingtable.CraftingTableCraftEntry;
 import ch.realmtech.server.mod.crafts.craftingtable.EnergyBatteryCraftEntry;
 import ch.realmtech.server.mod.crafts.craftingtable.PlankCraftEntry;
 import ch.realmtech.server.mod.items.*;
@@ -412,6 +413,30 @@ public class TestCraft {
         List<FurnaceCraftShapeless> furnaceRecipes = (List<FurnaceCraftShapeless>) RegistryUtils.findEntries(serverContext.getRootRegistry(), "#furnaceRecipes");
         List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
         Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(furnaceRecipes, mapToItems);
+
+        assertFalse(newCraftResult.isPresent());
+    }
+
+    @Test
+    public void testInvalideRecipe() {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        ItemEntry plankItem = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), PlankItemEntry.class);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventory(motherChest);
+
+        // 0, 1, 2      x, 0, 0
+        // 3, 4, 5      0, 0, x
+        // 6, 7, 8      0, x, x
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(plankItem, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[5], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(plankItem, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[7], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(plankItem, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[8], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(plankItem, UUID.randomUUID()));
+
+        CraftingTableCraftEntry craftEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), CraftingTableCraftEntry.class);
+        List<CraftRecipeEntry> craftingTableRecipes = List.of(craftEntry);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
 
         assertFalse(newCraftResult.isPresent());
     }
