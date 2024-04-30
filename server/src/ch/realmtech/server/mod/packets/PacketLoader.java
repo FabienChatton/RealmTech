@@ -62,7 +62,7 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(PlayerOutOfRange.class, PlayerOutOfRange::new));
         packets.add(new SimpleEntry<>(SubscribeToEntityPacket.class, SubscribeToEntityPacket::new));
         packets.add(new SimpleEntry<>(UnSubscribeToEntityPacket.class, UnSubscribeToEntityPacket::new));
-        packets.add(new SimpleEntry<>(MobDeletePacket.class, MobDeletePacket::new));
+        packets.add(new SimpleEntry<>(EnemyDeletePacket.class, EnemyDeletePacket::new));
         packets.add(new SimpleEntry<>(PlayerWeaponShotPacket.class, PlayerWeaponShotPacket::new));
         packets.add(new SimpleEntry<>(ParticleAddPacket.class, ParticleAddPacket::new));
         packets.add(new SimpleEntry<>(MobAttackCoolDownPacket.class, MobAttackCoolDownPacket::new));

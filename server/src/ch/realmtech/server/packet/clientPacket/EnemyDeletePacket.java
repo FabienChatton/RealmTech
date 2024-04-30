@@ -6,14 +6,14 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.UUID;
 
-public class MobDeletePacket implements ClientPacket {
+public class EnemyDeletePacket implements ClientPacket {
     private final UUID mobUuid;
 
-    public MobDeletePacket(UUID mobUuid) {
+    public EnemyDeletePacket(UUID mobUuid) {
         this.mobUuid = mobUuid;
     }
 
-    public MobDeletePacket(ByteBuf byteBuf) {
+    public EnemyDeletePacket(ByteBuf byteBuf) {
         this.mobUuid = ByteBufferHelper.readUUID(byteBuf);
     }
 

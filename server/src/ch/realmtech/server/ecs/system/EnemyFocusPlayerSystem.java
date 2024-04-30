@@ -4,6 +4,7 @@ import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.enemy.EnemyState;
+import ch.realmtech.server.mod.options.server.mob.EnemyDispawnDstOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.EnemyFocusPlayerDstOptionEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.ComponentMapper;
@@ -21,11 +22,13 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<EnemyComponent> mEnemy;
     private EnemyFocusPlayerDstOptionEntry enemyFocusPlayerDstOptionEntry;
+    private EnemyDispawnDstOptionEntry enemyDispawnDstOptionEntry;
 
     @Override
     protected void initialize() {
         super.initialize();
         enemyFocusPlayerDstOptionEntry = RegistryUtils.findEntryOrThrow(systemsAdminServer.getRootRegistry(), EnemyFocusPlayerDstOptionEntry.class);
+        enemyDispawnDstOptionEntry = RegistryUtils.findEntryOrThrow(systemsAdminServer.getRootRegistry(), EnemyDispawnDstOptionEntry.class);
     }
 
     @Override
@@ -51,6 +54,8 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
         if (minPlayerId != -1) {
             if (minPlayerDst <= enemyFocusPlayerDstOptionEntry.getValue()) {
                 messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, minPlayerId);
+            } else if (minPlayerDst >= enemyDispawnDstOptionEntry.getValue()) {
+                systemsAdminServer.getIaTestSystem().destroyEnemyServer(entityId);
             } else {
                 messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.SLEEP_MESSAGE);
             }

@@ -19,10 +19,17 @@ public class EnemyManager extends Manager {
 
     private final MessageManager messageManager = MessageManager.getInstance();
 
-    public void destroyMob(int mobId) {
-        Box2dComponent box2dComponent = mBox2d.get(mobId);
+    /**
+     * Destroy enemy from the world, ecs and physic.
+     * If on server, prefer to {@link ch.realmtech.server.enemy.EnemySystem#destroyEnemyServer(int)}
+     * to send a packet to player.
+     *
+     * @param enemyId The enemy to delete.
+     */
+    public void destroyWorldEnemy(int enemyId) {
+        Box2dComponent box2dComponent = mBox2d.get(enemyId);
         physicWorld.destroyBody(box2dComponent.body);
-        world.delete(mobId);
+        world.delete(enemyId);
     }
 
     public boolean attackMob(int mobId, int damageAmount) {

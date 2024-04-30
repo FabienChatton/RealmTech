@@ -258,7 +258,7 @@ public class ClientExecuteContext implements ClientExecute {
     public void mobDelete(UUID mobUuid) {
         context.nextFrame(() -> {
             int mobId = context.getSystemsAdminClient().getUuidEntityManager().getEntityId(mobUuid);
-            context.getSystemsAdminClient().getMobManager().destroyMob(mobId);
+            context.getSystemsAdminClient().getMobManager().destroyWorldEnemy(mobId);
         });
     }
 

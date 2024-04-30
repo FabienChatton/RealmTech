@@ -7,7 +7,6 @@ import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.packet.clientPacket.EnemyHitPacket;
-import ch.realmtech.server.packet.clientPacket.MobDeletePacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import ch.realmtech.server.packet.clientPacket.PlayerHasWeaponShotPacket;
 import com.artemis.Aspect;
@@ -84,8 +83,7 @@ public class WeaponRayManager extends Manager {
             serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, mobPosition.toVector2()), clientChannel);
 
             if (systemsAdminServer.getMobManager().attackMob(mobId, 5)) {
-                systemsAdminServer.getMobManager().destroyMob(mobId);
-                serverContext.getServerConnexion().sendPacketTo(new MobDeletePacket(enemyUuid), clientChannel);
+                systemsAdminServer.getIaTestSystem().destroyEnemyServer(mobId);
             } else {
                 Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength(100);
                 systemsAdminServer.getMobManager().knockBackMob(mobId, knowBack);
