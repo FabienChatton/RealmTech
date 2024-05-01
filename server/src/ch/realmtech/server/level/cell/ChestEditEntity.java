@@ -41,7 +41,7 @@ public class ChestEditEntity implements EditEntity {
         executeOnContext.onCommun((world) -> {
             SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
             int chestInventoryId = systemsAdmin.getInventoryManager().getChestInventoryId(entityId);
-            ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().removeInventoryUi(chestInventoryId);
+            systemsAdmin.getInventoryManager().removeInventoryUi(chestInventoryId);
         });
     }
 
