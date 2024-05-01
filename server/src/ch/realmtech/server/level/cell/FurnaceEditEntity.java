@@ -43,6 +43,7 @@ public class FurnaceEditEntity implements EditEntity {
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onCommun((world) -> ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().deleteFurnace(entityId));
         executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
     }
 

@@ -38,6 +38,7 @@ public class InventoryManager extends Manager {
     private ComponentMapper<CraftingTableComponent> mCraftingTable;
     private ComponentMapper<ItemResultCraftComponent> mItemResult;
     private ComponentMapper<InventoryUiComponent> mInventoryUi;
+    private ComponentMapper<FurnaceComponent> mFurnace;
 
     public boolean addItemToInventory(int inventoryId, int itemId) {
         return addItemToInventory(mInventory.get(inventoryId), itemId);
@@ -473,6 +474,20 @@ public class InventoryManager extends Manager {
         systemsAdminCommun.getUuidEntityManager().registerEntityIdWithUuid(furnaceUuid, motherEntity);
 
         return new int[]{craftingInventoryId, craftingResultInventoryId, carburantInventoryId};
+    }
+
+    public void deleteFurnace(int entityId) {
+        CraftingTableComponent craftingTableComponent = mCraftingTable.get(entityId);
+        FurnaceComponent furnaceComponent = mFurnace.get(entityId);
+
+        int craftingInventoryId = craftingTableComponent.craftingInventory;
+        int craftingResultInventoryId = craftingTableComponent.craftingResultInventory;
+        int inventoryCarburantId = furnaceComponent.inventoryCarburant;
+
+        removeInventoryUi(craftingInventoryId);
+        removeInventoryUi(craftingResultInventoryId);
+        removeInventoryUi(inventoryCarburantId);
+        systemsAdminCommun.getUuidEntityManager().deleteRegisteredEntity(entityId);
     }
 
     public EntityEdit createInventoryUi(int inventoryId, UUID inventoryUuid, int[][] inventory, int numberOfSlotParRow, int numberOfRow) {
