@@ -76,6 +76,7 @@ public class CraftChangeFunctions {
             // only if item in result is the same as the craft
             if (itemWitness != null) {
                 if (itemWitness.itemRegisterEntry != craftResult.getItemResult()) {
+                    furnaceComponent.tickProcess = 0;
                     return Optional.empty();
                 }
             }
