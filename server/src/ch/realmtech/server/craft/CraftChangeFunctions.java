@@ -54,33 +54,48 @@ public class CraftChangeFunctions {
 
             CraftingTableComponent craftingTableComponent = mCraftingTable.get(furnaceId);
             FurnaceComponent furnaceComponent = mFurnace.get(furnaceId);
-            InventoryComponent craftingInventoryComponent = mInventory.get(craftingTableComponent.craftingInventory);
-            InventoryComponent carburantInventoryComponent = mInventory.get(furnaceComponent.inventoryCarburant);
+            InventoryComponent craftingResultInventoryComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
 
             Optional<CraftResult> craftResultOpt = systemsAdminServer.getCraftingManager().getNewCraftResult(craftingTableComponent);
 
-            if (craftResultOpt.isPresent()) {
-                CraftResult craftResult = craftResultOpt.get();
-                if (furnaceComponent.tickProcess >= craftResult.getTimeToProcess()) {
-                    furnaceComponent.tickProcess = 0;
-                    return Optional.of(craftResultOpt);
-                } else {
-                    if (furnaceComponent.remainingTickToBurn > 0) {
-                        furnaceComponent.tickProcess++;
-
-                        // sync to player for icon
-                        if (furnaceComponent.tickProcess == 1) {
-                            ServerContext serverContext = world.getRegistered("serverContext");
-                            serverContext.getServerConnexion().sendPacketToSubscriberForEntity(new FurnaceExtraInfoPacket(
-                                            systemsAdminServer.getUuidEntityManager().getEntityUuid(furnaceId),
-                                            -1,
-                                            craftResult.getTimeToProcess())
-                                    , systemsAdminServer.getUuidEntityManager().getEntityUuid(furnaceId));
-                        }
-                    }
-                }
-            } else {
+            // do absolutely nothing if no carburant in the furnace
+            if (furnaceComponent.remainingTickToBurn <= 0) {
                 furnaceComponent.tickProcess = 0;
+                return Optional.empty();
+            }
+
+            // no craft available
+            if (craftResultOpt.isEmpty()) {
+                furnaceComponent.tickProcess = 0;
+                return Optional.empty();
+            }
+
+            CraftResult craftResult = craftResultOpt.get();
+            ItemComponent itemWitness = mItem.get(craftingResultInventoryComponent.inventory[0][0]);
+
+            // only if item in result is the same as the craft
+            if (itemWitness != null) {
+                if (itemWitness.itemRegisterEntry != craftResult.getItemResult()) {
+                    return Optional.empty();
+                }
+            }
+
+            furnaceComponent.tickProcess++;
+
+            // craft available and process has finished
+            if (furnaceComponent.tickProcess >= craftResult.getTimeToProcess()) {
+                furnaceComponent.tickProcess = 0;
+                return Optional.of(craftResultOpt);
+            }
+
+            // sync to player for icon
+            if (furnaceComponent.tickProcess == 1) {
+                ServerContext serverContext = world.getRegistered("serverContext");
+                serverContext.getServerConnexion().sendPacketToSubscriberForEntity(new FurnaceExtraInfoPacket(
+                                systemsAdminServer.getUuidEntityManager().getEntityUuid(furnaceId),
+                                -1,
+                                craftResult.getTimeToProcess()),
+                        systemsAdminServer.getUuidEntityManager().getEntityUuid(furnaceId));
             }
 
             return Optional.empty();
