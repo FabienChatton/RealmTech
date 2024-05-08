@@ -57,11 +57,11 @@ public class WeaponRayManager extends Manager {
         return entityHits;
     }
 
-    public int getMobHit(int playerId, Vector2 vectorClick) {
+    public int getMobHit(int playerId, Vector2 vectorClick, float range) {
         PositionComponent playerPos = mPos.get(playerId);
 
         Vector2 vectorStart = playerPos.toVector2().add(0.5f, 0.5f);
-        Vector2 vectorEnd = vectorClick.cpy().sub(vectorStart.cpy()).setLength(10).add(vectorStart);
+        Vector2 vectorEnd = vectorClick.cpy().sub(vectorStart.cpy()).setLength(range).add(vectorStart);
         IntBag mobs = rayCast(vectorStart, vectorEnd, Aspect.all(EnemyComponent.class), getFirstHit());
 
         if (!mobs.isEmpty()) {
@@ -89,7 +89,7 @@ public class WeaponRayManager extends Manager {
 
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new PlayerHasWeaponShotPacket(playerUuid), chunkPosX, chunkPosY);
 
-        int mobId = getMobHit(playerId, vectorClick);
+        int mobId = getMobHit(playerId, vectorClick, itemComponent.itemRegisterEntry.getItemBehavior().getAttackRange());
         if (mobId != -1) {
             PositionComponent mobPosition = mPos.get(mobId);
             UUID enemyUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobId);
