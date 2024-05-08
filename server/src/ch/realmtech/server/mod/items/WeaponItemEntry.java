@@ -5,15 +5,20 @@ import ch.realmtech.server.level.ClickInteractionItemClient;
 import ch.realmtech.server.packet.serverPacket.PlayerWeaponShotPacket;
 import ch.realmtech.server.registry.ItemEntry;
 
+import java.util.UUID;
+
 public class WeaponItemEntry extends ItemEntry {
     public WeaponItemEntry() {
-        super("Weapon", "p2022", ItemBehavior.builder().build());
+        super("Weapon", "p2022", ItemBehavior.builder()
+                .setAttackDommage(5)
+                .build());
     }
 
     @Override
     public ClickInteractionItemClient getLeftClickOnJustPressed() {
-        return (clientContext, event, itemId, cellTargetId) -> {
-            clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY()));
+        return (clientContext, event, cellId, itemId) -> {
+            UUID itemUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(itemId);
+            clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY(), itemUuid));
         };
     }
 }

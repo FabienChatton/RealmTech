@@ -25,7 +25,7 @@ public class ChestCellEntry extends CellEntry {
                 .editEntity(ChestEditEntity.createNewInventory(9, 3))
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .canPlaceCellOnTop(false)
-                .interagieClickDroit(ChestCellEntry::rightClickInteraction)
+                .interagieClickDroit((clientContext, cellId, itemId) -> rightClickInteraction(clientContext, cellId))
                 .build());
     }
 

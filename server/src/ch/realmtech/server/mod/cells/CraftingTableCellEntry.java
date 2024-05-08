@@ -34,7 +34,7 @@ public class CraftingTableCellEntry extends CellEntry {
                 .breakWith(ItemType.HAND, "realmtech.items.CraftingTable")
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .canPlaceCellOnTop(false)
-                .interagieClickDroit(CraftingTableCellEntry::rightClickInteraction)
+                .interagieClickDroit((clientContext, cellId, itemId) -> rightClickInteraction(clientContext, cellId))
                 .build());
     }
 

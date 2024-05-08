@@ -15,9 +15,9 @@ public class WrenchItemEntry extends ItemEntry {
 
     @Override
     public ClickInteractionItemClient getRightClickOnJustPressed() {
-        return (clientContext, event, itemId, cellTargetId) -> {
-            if (clientContext.getWorld().getMapper(FaceComponent.class).has(cellTargetId)) {
-                FaceComponent faceComponent = clientContext.getWorld().getMapper(FaceComponent.class).get(cellTargetId);
+        return (clientContext, event, cellId, itemId) -> {
+            if (clientContext.getWorld().getMapper(FaceComponent.class).has(cellId)) {
+                FaceComponent faceComponent = clientContext.getWorld().getMapper(FaceComponent.class).get(cellId);
                 float texture01coordinateX = MapManager.getTexture01coordinate(event.gameCoordinateX());
                 float texture01coordinateY = MapManager.getTexture01coordinate(event.gameCoordinateY());
                 int worldPosX = MapManager.getWorldPos(event.gameCoordinateX());

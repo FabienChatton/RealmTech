@@ -50,8 +50,8 @@ public class PlayerInputSystem extends BaseSystem {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (mItem.has(selectItem)) {
                 Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed())
-                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
-                        .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
+                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)))
+                        .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell, selectItem));
             }
 
         } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
@@ -63,11 +63,11 @@ public class PlayerInputSystem extends BaseSystem {
             Optional<ClickInteraction> leftClickInteractionItemSelected = Optional.empty();
             if (mItem.has(selectItem)) {
                 leftClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnPressed())
-                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell));
+                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)));
             }
 
             // item right click first, or mine top cell
-            leftClickInteractionItemSelected.ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell), () -> {
+            leftClickInteractionItemSelected.ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell, selectItem), () -> {
                 systemsAdminClient.getMapManager().addCellBeingMine(topCell);
             });
 
@@ -80,13 +80,13 @@ public class PlayerInputSystem extends BaseSystem {
 
             if (mItem.has(selectItem)) {
                 rightClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickOnJustPressed())
-                        .map((rightClickInteractionItemClient) -> rightClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell));
+                        .map((rightClickInteractionItemClient) -> rightClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)));
             }
 
             // item interaction first, and if not, cell interaction
             rightClickInteractionItemSelected
                     .or(() -> rightClickInteractionCell)
-                    .ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell), () -> {
+                    .ifPresentOrElse((clickInteraction) -> clickInteraction.accept(context, topCell, selectItem), () -> {
                         if (selectItem != 0) {
                             // place bloc if no interaction
                             UUID itemUuid = systemsAdminClient.getUuidEntityManager().getEntityUuid(selectItem);
@@ -96,8 +96,8 @@ public class PlayerInputSystem extends BaseSystem {
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             if (mItem.has(selectItem)) {
                 Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickOnPressed())
-                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y), topCell))
-                        .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell));
+                        .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)))
+                        .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell, selectItem));
             }
         }
     }

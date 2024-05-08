@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.InvincibilityComponent;
+import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
@@ -19,10 +20,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class WeaponRayManager extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(WeaponRayManager.class);
     @Wire(name = "serverContext")
     private ServerContext serverContext;
     @Wire
@@ -32,6 +36,7 @@ public class WeaponRayManager extends Manager {
 
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PositionComponent> mPos;
+    private ComponentMapper<ItemComponent> mItem;
 
     private IntBag rayCast(Vector2 vectorStart, Vector2 vectorEnd, Aspect.Builder aspectBuilder, BodyHitsCallback callback) {
         IntBag entities = world.getAspectSubscriptionManager().get(aspectBuilder.all(Box2dComponent.class).exclude(InvincibilityComponent.class)).getEntities();
@@ -66,10 +71,18 @@ public class WeaponRayManager extends Manager {
         }
     }
 
-    public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick) {
+    public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick, UUID itemUuid) {
         int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChannel);
         UUID playerUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(playerId);
         PositionComponent playerPos = mPos.get(playerId);
+
+        int itemId = systemsAdminServer.getUuidEntityManager().getEntityId(itemUuid);
+        if (itemId == -1) {
+            logger.info("Item uuid {} not found for player weapon shot", itemUuid);
+            return;
+        }
+
+        ItemComponent itemComponent = mItem.get(itemId);
 
         int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.x));
         int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.y));
@@ -82,7 +95,7 @@ public class WeaponRayManager extends Manager {
             UUID enemyUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobId);
             serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, mobPosition.toVector2()), clientChannel);
 
-            if (systemsAdminServer.getMobManager().attackMob(mobId, 5)) {
+            if (systemsAdminServer.getMobManager().attackMob(mobId, itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage())) {
                 systemsAdminServer.getIaTestSystem().destroyEnemyServer(mobId);
             } else {
                 Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength(100);

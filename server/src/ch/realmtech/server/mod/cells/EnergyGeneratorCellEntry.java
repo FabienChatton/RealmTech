@@ -30,7 +30,7 @@ public class EnergyGeneratorCellEntry extends CellEntry {
                 .editEntity(EnergyGeneratorEditEntity.createDefault(), ChestEditEntity.createNewInventory(1, 1))
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .canPlaceCellOnTop(false)
-                .interagieClickDroit((clientContext, cellId) -> {
+                .interagieClickDroit((clientContext, cellId, itemId) -> {
                     ComponentMapper<InventoryComponent> mInventory = clientContext.getWorld().getMapper(InventoryComponent.class);
                     ComponentMapper<ChestComponent> mChest = clientContext.getWorld().getMapper(ChestComponent.class);
                     ComponentMapper<EnergyGeneratorIconComponent> mEnergyBatteryIcon = clientContext.getWorld().getMapper(EnergyGeneratorIconComponent.class);

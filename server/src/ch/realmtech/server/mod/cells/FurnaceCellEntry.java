@@ -31,7 +31,7 @@ public class FurnaceCellEntry extends CellEntry {
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .editEntity(FurnaceEditEntity.createFurnace())
                 .canPlaceCellOnTop(false)
-                .interagieClickDroit(FurnaceCellEntry::rightClickInteraction)
+                .interagieClickDroit((clientContext, cellId, itemId) -> rightClickInteraction(clientContext, cellId))
                 .build());
     }
 

@@ -15,7 +15,7 @@ public class EnergyBatteryCellEntry extends CellEntry {
                 .physiqueBody(CreatePhysiqueBody.defaultPhysiqueBody())
                 .editEntity(EnergyBatteryEditEntity.createDefault())
                 .canPlaceCellOnTop(false)
-                .interagieClickDroit((clientContext, cellId) -> {
+                .interagieClickDroit((clientContext, cellId, itemId) -> {
                     EnergyBatteryComponent energyBatteryComponent = clientContext.getWorld().getMapper(EnergyBatteryComponent.class).get(cellId);
                     clientContext.writeToConsole(Long.toString(energyBatteryComponent.getStored()));
                 })

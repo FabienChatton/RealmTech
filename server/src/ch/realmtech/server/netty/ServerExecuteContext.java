@@ -257,7 +257,7 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick) {
-        serverContext.getEcsEngineServer().nextTick(() -> serverContext.getSystemsAdminServer().getWeaponRayManager().playerWeaponShot(clientChannel, vectorClick));
+    public void playerWeaponShot(Channel clientChannel, Vector2 vectorClick, UUID itemUuid) {
+        serverContext.getEcsEngineServer().nextTick(() -> serverContext.getSystemsAdminServer().getWeaponRayManager().playerWeaponShot(clientChannel, vectorClick, itemUuid));
     }
 }

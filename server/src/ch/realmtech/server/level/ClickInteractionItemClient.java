@@ -3,9 +3,9 @@ package ch.realmtech.server.level;
 import ch.realmtech.server.mod.ClientContext;
 
 public interface ClickInteractionItemClient {
-    void accept(ClientContext clientContext, ClickEventClient event, int itemId, int cellTargetId);
+    void accept(ClientContext clientContext, ClickEventClient event, int cellId, int itemId);
 
-    default ClickInteraction toClickInteraction(ClickEventClient event, int cellTargetId) {
-        return (clientContext, integer) -> accept(clientContext, event, integer, cellTargetId);
+    default ClickInteraction toClickInteraction(ClickEventClient event) {
+        return (clientContext, cellId, itemId) -> accept(clientContext, event, cellId, itemId);
     }
 }
