@@ -87,7 +87,9 @@ public class WeaponRayManager extends Manager {
         int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.x));
         int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.y));
 
-        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new PlayerHasWeaponShotPacket(playerUuid), chunkPosX, chunkPosY);
+        if (itemComponent.itemRegisterEntry.getItemBehavior().isFireArme()) {
+            serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new PlayerHasWeaponShotPacket(playerUuid), chunkPosX, chunkPosY);
+        }
 
         int mobId = getMobHit(playerId, vectorClick, itemComponent.itemRegisterEntry.getItemBehavior().getAttackRange());
         if (mobId != -1) {

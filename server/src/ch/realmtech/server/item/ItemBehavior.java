@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Null;
 public class ItemBehavior {
     private int attackDommage;
     private float attackRange;
+    private boolean fireArme;
     private ItemType itemType;
     private float speedEffect;
     private CellEntry newPlaceCellEntry;
@@ -33,6 +34,10 @@ public class ItemBehavior {
 
     public float getAttackRange() {
         return attackRange;
+    }
+
+    public boolean isFireArme() {
+        return fireArme;
     }
 
     public float getSpeedEffect() {
@@ -70,6 +75,11 @@ public class ItemBehavior {
 
         public ItemBehaviorBuilder setAttackRange(float attackRange) {
             itemBehavior.attackRange = attackRange;
+            return this;
+        }
+
+        public ItemBehaviorBuilder setFireArm() {
+            itemBehavior.fireArme = true;
             return this;
         }
 

@@ -12,6 +12,7 @@ public class WeaponItemEntry extends ItemEntry {
         super("Weapon", "p2022", ItemBehavior.builder()
                 .setAttackDommage(5)
                 .setAttackRange(10)
+                .setFireArm()
                 .build());
     }
 
