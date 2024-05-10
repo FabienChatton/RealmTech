@@ -100,7 +100,7 @@ public class WeaponRayManager extends Manager {
             if (systemsAdminServer.getMobManager().attackMob(mobId, itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage())) {
                 systemsAdminServer.getIaTestSystem().destroyEnemyServer(mobId);
             } else {
-                Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength(100);
+                Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength2(100);
                 systemsAdminServer.getMobManager().knockBackMob(mobId, knowBack);
                 world.edit(mobId).create(InvincibilityComponent.class).set(60);
                 serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyHitPacket(enemyUuid), chunkPosX, chunkPosY);
