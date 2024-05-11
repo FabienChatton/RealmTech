@@ -98,14 +98,12 @@ public class GameScreen extends AbstractScreen {
         }
 
         if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey())) {
-            if (!canInteractWithWorld()) {
-                return;
-            }
-            
             if (context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled()) {
                 context.getSystemsAdminClient().getQuestPlayerSystem().closeQuest();
             } else {
-                context.getSystemsAdminClient().getQuestPlayerSystem().openQuest();
+                if (canInteractWithWorld()) {
+                    context.getSystemsAdminClient().getQuestPlayerSystem().openQuest();
+                }
             }
         }
 
