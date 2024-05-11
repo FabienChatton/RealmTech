@@ -53,6 +53,7 @@ public class SoundManager {
     public final static String DENY = "sound/effects/menu/launch_deny1.wav";
     public final static String BREAKING_CELL = "sound/effects/level/break/bfh1_breaking_02.ogg";
     public final static String WEAPON_SHOT = "sound/effects/items/bang_05.ogg";
+    public final static String SWORD_SWING = "sound/effects/items/Spear_SwingFast2.wav" ;
     private final HashMap<String, Long> soundLoop;
     private final AssetManager assetManager;
     private final Integer optionSound;
@@ -118,6 +119,7 @@ public class SoundManager {
         assetManager.load(DENY, Sound.class);
         assetManager.load(BREAKING_CELL, Sound.class);
         assetManager.load(WEAPON_SHOT, Sound.class);
+        assetManager.load(SWORD_SWING, Sound.class);
     }
 
     public void playFootStep(int playerId, World world, PlayerFootStepSound playerFootStepSound, float volume) {
@@ -179,5 +181,9 @@ public class SoundManager {
 
     public void playWeaponShoot() {
         assetManager.get(WEAPON_SHOT, Sound.class).play(getSoundPourCent() * 0.7f);
+    }
+
+    public void playSwordSwing() {
+        assetManager.get(SWORD_SWING, Sound.class).play(getSoundPourCent() * 0.8f);
     }
 }

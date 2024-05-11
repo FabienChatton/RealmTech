@@ -18,6 +18,7 @@ public class WoodenSwordItemEntry extends ItemEntry {
     @Override
     public ClickInteractionItemClient getLeftClickOnJustPressed() {
         return (clientContext, event, cellId, itemId) -> {
+            clientContext.getSoundManager().playSwordSwing();
             UUID itemUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(itemId);
             clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY(), itemUuid));
         };
