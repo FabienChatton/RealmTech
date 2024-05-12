@@ -11,6 +11,7 @@ import java.util.Optional;
 public abstract class CellEntry extends Entry {
     private final CellBehavior cellBehavior;
     private final String textureRegionName;
+    private TextureRegion textureRegionCache;
 
     public CellEntry(String name, String textureRegionName, CellBehavior newcellBehavior) {
         super(name);
@@ -36,7 +37,15 @@ public abstract class CellEntry extends Entry {
     }
 
     public TextureRegion getTextureRegion(TextureAtlas textureAtlas) {
-        return textureAtlas.findRegion(textureRegionName);
+        if (textureRegionCache == null) {
+            TextureRegion textureRegion = textureAtlas.findRegion(textureRegionName);
+            if (textureRegion == null) {
+                textureRegion = textureAtlas.findRegion("default-texture");
+            }
+            textureRegionCache = textureRegion;
+
+        }
+        return textureRegionCache;
     }
 
     public Optional<EditEntity> getEditEntity() {

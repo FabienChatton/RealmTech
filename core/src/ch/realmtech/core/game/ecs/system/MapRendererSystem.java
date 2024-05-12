@@ -9,6 +9,8 @@ import ch.realmtech.server.ecs.component.InfChunkComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.map.WorldMap;
+import ch.realmtech.server.mod.options.client.TiledTextureOptionEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -22,10 +24,13 @@ import java.util.List;
 
 @All(InfMapComponent.class)
 public class MapRendererSystem extends IteratingSystem {
+    @Wire(name = "context")
+    private RealmTech context;
     @Wire(name = "gameStage")
     private Stage gameStage;
     @Wire
     private TextureAtlas textureAtlas;
+    @Wire
     private SystemsAdminClient systemsAdminClient;
     private ComponentMapper<InfMapComponent> mMap;
     private ComponentMapper<InfChunkComponent> mChunk;
@@ -51,6 +56,12 @@ public class MapRendererSystem extends IteratingSystem {
             {3, 0, 2, 2, 3, 2, 1, 1, 2, 3, 1, 0, 3, 1, 3, 1},
             {2, 2, 3, 0, 0, 0, 1, 1, 3, 0, 0, 2, 3, 1, 1, 2},
     };
+    private TiledTextureOptionEntry tiledTextureOptionEntry;
+    @Override
+    protected void initialize() {
+        super.initialize();
+        tiledTextureOptionEntry = RegistryUtils.findEntryOrThrow(systemsAdminClient.getRootRegistry(), TiledTextureOptionEntry.class);
+    }
 
     @Override
     protected void process(int mapId) {
@@ -71,15 +82,10 @@ public class MapRendererSystem extends IteratingSystem {
                         TextureRegion textureRegion;
                         if (mFace.has(cellId)) {
                             textureRegion = textureAtlas.findRegion(mFace.get(cellId).getFaceTexture());
-                        } else if (mTiledTexture.has(cellId)) {
+                        } else if (tiledTextureOptionEntry.getValue() && mTiledTexture.has(cellId)) {
                             textureRegion = mTiledTexture.get(cellId).getTiledTextureRegion();
                         } else {
-                            TextureRegion textureRegionFind = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
-                            if (textureRegionFind == null) {
-                                textureRegion = textureAtlas.findRegion("default-texture");
-                            } else {
-                                textureRegion = textureRegionFind;
-                            }
+                            textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
                         }
                         gameStage.getBatch().draw(
                             textureRegion,
