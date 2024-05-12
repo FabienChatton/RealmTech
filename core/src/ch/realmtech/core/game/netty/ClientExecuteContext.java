@@ -68,17 +68,26 @@ public class ClientExecuteContext implements ClientExecute {
 
     @Override
     public void chunkAMounter(SerializedApplicationBytes applicationChunkBytes) {
-        context.nextFrame(() -> context.getSystemsAdminClient().getMapManager().chunkAMounter(applicationChunkBytes));
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getMapManager().chunkAMounter(applicationChunkBytes);
+            context.getSystemsAdminClient().getMapRendererSystem().refreshCache();
+        });
     }
 
     @Override
     public void chunkADamner(int chunkPosX, int chunkPosY) {
-        context.nextFrame(() -> context.getSystemsAdminClient().getMapManager().damneChunkClient(chunkPosX, chunkPosY));
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getMapManager().damneChunkClient(chunkPosX, chunkPosY);
+            context.getSystemsAdminClient().getMapRendererSystem().refreshCache();
+        });
     }
 
     @Override
     public void chunkARemplacer(int chunkPosX, int chunkPosY, SerializedApplicationBytes chunkApplicationBytes, int oldChunkPosX, int oldChunkPosY) {
-        context.nextFrame(() -> context.getSystemsAdminClient().getMapManager().chunkARemplacer(chunkPosX, chunkPosY, chunkApplicationBytes, oldChunkPosX, oldChunkPosY));
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getMapManager().chunkARemplacer(chunkPosX, chunkPosY, chunkApplicationBytes, oldChunkPosX, oldChunkPosY);
+            context.getSystemsAdminClient().getMapRendererSystem().refreshCache();
+        });
     }
 
     @Override
@@ -122,6 +131,7 @@ public class ClientExecuteContext implements ClientExecute {
             int chunkPosY = MapManager.getChunkPos(worldPosY);
             int chunkId = context.getSystemsAdminClient().getMapManager().getChunk(chunkPosX, chunkPosY, infChunks);
             context.getSystemsAdminClient().getMapManager().newCellInChunk(chunkId, cellArgs);
+            context.getSystemsAdminClient().getMapRendererSystem().refreshCache();
         });
     }
 
@@ -130,6 +140,7 @@ public class ClientExecuteContext implements ClientExecute {
         context.nextFrame(() -> {
             CellArgs cellArgs = context.getSerializerController().getCellSerializerController().decode(cellApplicationBytes);
             context.getSystemsAdminClient().getMapManager().setCell(worldPosX, worldPosY, layer, cellArgs);
+            context.getSystemsAdminClient().getMapRendererSystem().refreshCache();
         });
     }
 

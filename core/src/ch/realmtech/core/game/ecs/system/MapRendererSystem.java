@@ -57,49 +57,57 @@ public class MapRendererSystem extends IteratingSystem {
             {2, 2, 3, 0, 0, 0, 1, 1, 3, 0, 0, 2, 3, 1, 1, 2},
     };
     private TiledTextureOptionEntry tiledTextureOptionEntry;
+    private List<List<List<Integer>>> chunksCache;
     @Override
     protected void initialize() {
         super.initialize();
         tiledTextureOptionEntry = RegistryUtils.findEntryOrThrow(systemsAdminClient.getRootRegistry(), TiledTextureOptionEntry.class);
     }
 
+    public void refreshCache() {
+        InfMapComponent infMapComponent = context.getEcsEngine().getMapEntity().getComponent(InfMapComponent.class);
+        chunksCache = getInOrder(infMapComponent);
+    }
+
     @Override
     protected void process(int mapId) {
         InfMapComponent infMapComponent = mMap.get(mapId);
-        List<List<List<Integer>>> chunks = getInOrder(infMapComponent);
-        draw(chunks, infMapComponent);
+        // refreshCache();
+        if (chunksCache == null) {
+            return;
+        }
+        draw(chunksCache, infMapComponent);
     }
 
     private void draw(List<List<List<Integer>>> chunks, InfMapComponent infMapComponent) {
         for (int i = chunks.size() - 1; i >= 0; i--) {
             for (List<Integer> cellComponents : chunks.get(i)) {
-                if (cellComponents != null) {
-                    for (Integer cellId : cellComponents) {
-                        InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
-                        CellComponent cellComponent = mCell.get(cellId);
-                        int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
-                        int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
-                        TextureRegion textureRegion;
-                        if (mFace.has(cellId)) {
-                            textureRegion = textureAtlas.findRegion(mFace.get(cellId).getFaceTexture());
-                        } else if (tiledTextureOptionEntry.getValue() && mTiledTexture.has(cellId)) {
-                            textureRegion = mTiledTexture.get(cellId).getTiledTextureRegion();
-                        } else {
-                            textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
-                        }
-                        gameStage.getBatch().draw(
-                            textureRegion,
-                            worldX,
-                            worldY,
-                            0.5f,
-                            0.5f,
-                            textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
-                            textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE,
-                            1,
-                            1,
-                            0
-                        );
+                for (Integer cellId : cellComponents) {
+                    InfChunkComponent infChunkComponent = mChunk.get(infMapComponent.infChunks[i]);
+                    CellComponent cellComponent = mCell.get(cellId);
+                    if (cellComponent == null) continue;
+                    int worldX = MapManager.getWorldPos(infChunkComponent.chunkPosX, cellComponent.getInnerPosX());
+                    int worldY = MapManager.getWorldPos(infChunkComponent.chunkPosY, cellComponent.getInnerPosY());
+                    TextureRegion textureRegion;
+                    if (mFace.has(cellId)) {
+                        textureRegion = textureAtlas.findRegion(mFace.get(cellId).getFaceTexture());
+                    } else if (tiledTextureOptionEntry.getValue() && mTiledTexture.has(cellId)) {
+                        textureRegion = mTiledTexture.get(cellId).getTiledTextureRegion();
+                    } else {
+                        textureRegion = cellComponent.cellRegisterEntry.getTextureRegion(textureAtlas);
                     }
+                    gameStage.getBatch().draw(
+                        textureRegion,
+                        worldX,
+                        worldY,
+                        0.5f,
+                        0.5f,
+                        textureRegion.getRegionWidth() * RealmTech.UNITE_SCALE,
+                        textureRegion.getRegionHeight() * RealmTech.UNITE_SCALE,
+                        1,
+                        1,
+                        0
+                    );
                 }
             }
         }
