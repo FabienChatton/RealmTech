@@ -45,13 +45,25 @@ public class EnemyManagerClient extends Manager implements EnemyManagerForClient
 
     private int createEnemy(UUID uuid, float x, float y) {
         int iaTestId = world.create();
+
+        TextureComponent textureComponent = world.edit(iaTestId).create(TextureComponent.class);
+        textureComponent.scale = 1.6f;
+        TextureAnimationComponent textureAnimationComponent = world.edit(iaTestId).create(TextureAnimationComponent.class);
+
+        TextureAtlas.AtlasRegion textureFront0 = textureAtlas.findRegion("zombie-0");
+        TextureAtlas.AtlasRegion textureFront1 = textureAtlas.findRegion("zombie-1");
+        TextureAtlas.AtlasRegion textureFront2 = textureAtlas.findRegion("zombie-2");
+        textureAnimationComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
+
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         Body bodyIaTest = physicWorld.createBody(bodyDef);
         bodyIaTest.setUserData(iaTestId);
         PolygonShape playerShape = new PolygonShape();
-        playerShape.setAsBox(iaTestId / 2f, iaTestId / 2f);
+
+        TextureRegion textureRegion = textureAnimationComponent.animationFront[0];
+        playerShape.setAsBox(textureRegion.getRegionWidth() / RealmTech.PPM, textureRegion.getRegionHeight() / RealmTech.PPM);
         fixtureDef.shape = playerShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_PLAYER;
         fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
@@ -64,17 +76,9 @@ public class EnemyManagerClient extends Manager implements EnemyManagerForClient
         box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
         world.edit(iaTestId).create(PositionComponent.class);
         systemsAdminClient.getUuidEntityManager().registerEntityIdWithUuid(uuid, iaTestId);
-        TextureComponent textureComponent = world.edit(iaTestId).create(TextureComponent.class);
-        textureComponent.scale = 1.6f;
-        TextureAnimationComponent textureAnimationComponent = world.edit(iaTestId).create(TextureAnimationComponent.class);
-
-        TextureAtlas.AtlasRegion textureFront0 = textureAtlas.findRegion("zombie-0");
-        TextureAtlas.AtlasRegion textureFront1 = textureAtlas.findRegion("zombie-1");
-        TextureAtlas.AtlasRegion textureFront2 = textureAtlas.findRegion("zombie-2");
 
         world.edit(iaTestId).create(MouvementComponent.class);
 
-        textureAnimationComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
         return iaTestId;
     }
 
