@@ -10,8 +10,8 @@ import java.util.UUID;
 public class WoodenSwordItemEntry extends ItemEntry {
     public WoodenSwordItemEntry() {
         super("WoodenSword", "wooden-sword-01", ItemBehavior.builder()
-                .setAttackRange(5)
                 .setAttackRange(4)
+                .setAttackDommage(2)
                 .build());
     }
 
