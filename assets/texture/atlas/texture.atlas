@@ -6,33 +6,33 @@ buche-01
 cell-breaking-stage-01
 	bounds: 669, 241, 32, 32
 cell-breaking-stage-02
-	bounds: 375, 11, 32, 32
+	bounds: 409, 11, 32, 32
 cell-breaking-stage-03
 	bounds: 137, 36, 32, 32
 cell-breaking-stage-04
-	bounds: 613, 130, 32, 32
+	bounds: 613, 96, 32, 32
 cell-breaking-stage-05
 	bounds: 409, 79, 32, 32
 cell-breaking-stage-06
 	bounds: 69, 81, 32, 32
 cell-breaking-stage-07
-	bounds: 545, 73, 32, 32
+	bounds: 545, 39, 32, 32
 cell-breaking-stage-08
 	bounds: 239, 45, 32, 32
 cell-breaking-stage-09
-	bounds: 647, 28, 32, 32
+	bounds: 665, 164, 32, 32
 cell-breaking-stage-10
 	bounds: 103, 2, 32, 32
 cell-breaking-stage-11
 	bounds: 495, 142, 32, 32
 cell-breaking-stage-12
-	bounds: 579, 5, 32, 32
+	bounds: 568, 198, 32, 32
 cell-breaking-stage-13
 	bounds: 307, 45, 32, 32
 cell-breaking-stage-14
 	bounds: 703, 241, 32, 32
 cell-breaking-stage-15
-	bounds: 443, 11, 32, 32
+	bounds: 477, 108, 32, 32
 cellOver-01
 	bounds: 443, 113, 32, 32
 chest-01
@@ -40,43 +40,43 @@ chest-01
 coal-01
 	bounds: 499, 176, 33, 31
 coal-ore-01
-	bounds: 647, 96, 32, 32
+	bounds: 647, 62, 32, 32
 copper-ingot-01
-	bounds: 568, 198, 32, 32
+	bounds: 602, 198, 32, 32
 copper-ore-03
 	bounds: 103, 70, 32, 32
 default-texture
-	bounds: 477, 6, 32, 32
+	bounds: 511, 107, 32, 32
 energy-battery-01-0001
 	bounds: 375, 79, 32, 32
 energy-battery-01-0010
-	bounds: 681, 62, 32, 32
+	bounds: 681, 28, 32, 32
 energy-battery-01-0100
-	bounds: 579, 73, 32, 32
+	bounds: 579, 39, 32, 32
 energy-battery-01-1000
-	bounds: 511, 107, 32, 32
+	bounds: 511, 73, 32, 32
 energy-cable-01-0000
-	bounds: 636, 198, 32, 32
+	bounds: 670, 207, 32, 32
 energy-cable-01-0001
 	bounds: 135, 138, 32, 41
 energy-cable-01-0010
-	bounds: 665, 164, 32, 32
+	bounds: 699, 173, 32, 32
 energy-cable-01-0011
 	bounds: 635, 232, 32, 41
 energy-cable-01-0100
-	bounds: 545, 5, 32, 32
+	bounds: 563, 141, 32, 32
 energy-cable-01-0101
 	bounds: 35, 6, 32, 41
 energy-cable-01-0110
-	bounds: 613, 62, 32, 32
+	bounds: 613, 28, 32, 32
 energy-cable-01-0111
 	bounds: 169, 138, 32, 41
 energy-cable-01-1000
-	bounds: 477, 108, 32, 32
+	bounds: 477, 74, 32, 32
 energy-cable-01-1001
 	bounds: 101, 138, 32, 41
 energy-cable-01-1010
-	bounds: 704, 207, 32, 32
+	bounds: 597, 164, 32, 32
 energy-cable-01-1011
 	bounds: 601, 232, 32, 41
 energy-cable-01-1100
@@ -84,29 +84,29 @@ energy-cable-01-1100
 energy-cable-01-1101
 	bounds: 1, 6, 32, 41
 energy-cable-01-1110
-	bounds: 563, 141, 32, 32
+	bounds: 579, 107, 32, 32
 energy-cable-01-1111
 	bounds: 567, 232, 32, 41
 energy-cable-01-item
-	bounds: 511, 39, 32, 32
+	bounds: 511, 5, 32, 32
 furnace-01
-	bounds: 477, 74, 32, 32
+	bounds: 477, 40, 32, 32
 furnace-arrow-01
-	bounds: 307, 11, 32, 32
+	bounds: 341, 11, 32, 32
 furnace-arrow-02
 	bounds: 137, 70, 32, 32
 furnace-arrow-03
-	bounds: 631, 164, 32, 32
+	bounds: 613, 130, 32, 32
 furnace-arrow-04
 	bounds: 375, 45, 32, 32
 furnace-arrow-05
 	bounds: 407, 147, 32, 32
 furnace-arrow-06
-	bounds: 511, 73, 32, 32
+	bounds: 511, 39, 32, 32
 furnace-arrow-07
 	bounds: 205, 45, 32, 32
 furnace-arrow-08
-	bounds: 647, 130, 32, 32
+	bounds: 647, 96, 32, 32
 furnace-arrow-09
 	bounds: 443, 45, 32, 32
 furnace-arrow-10
@@ -114,43 +114,43 @@ furnace-arrow-10
 furnace-time-to-burn-01
 	bounds: 441, 147, 32, 32
 furnace-time-to-burn-02
-	bounds: 545, 107, 32, 32
+	bounds: 545, 73, 32, 32
 furnace-time-to-burn-03
 	bounds: 307, 113, 32, 32
 furnace-time-to-burn-04
-	bounds: 647, 62, 32, 32
+	bounds: 647, 28, 32, 32
 furnace-time-to-burn-05
 	bounds: 137, 2, 32, 32
 furnace-time-to-burn-06
 	bounds: 103, 104, 32, 32
 furnace-time-to-burn-07
-	bounds: 602, 198, 32, 32
+	bounds: 636, 198, 32, 32
 furnace-time-to-burn-08
 	bounds: 341, 79, 32, 32
 furnace-time-to-burn-09
 	bounds: 305, 147, 32, 32
 furnace-time-to-burn-10
-	bounds: 409, 11, 32, 32
+	bounds: 443, 11, 32, 32
 gold-ingot-01
-	bounds: 681, 130, 32, 32
+	bounds: 681, 96, 32, 32
 gold-ore-01
 	bounds: 307, 79, 32, 32
 grass-01-0-0
 	bounds: 137, 104, 32, 32
 grass-01-0-1
-	bounds: 597, 164, 32, 32
+	bounds: 631, 164, 32, 32
 grass-01-1-0
 	bounds: 69, 13, 32, 32
 grass-01
 	bounds: 69, 13, 32, 32
 grass-01-1-1
-	bounds: 579, 107, 32, 32
+	bounds: 579, 73, 32, 32
 heart-01
 	bounds: 239, 113, 32, 32
 inventory-01
 	bounds: 205, 113, 32, 32
 inventory-02
-	bounds: 613, 28, 32, 32
+	bounds: 647, 130, 32, 32
 iron-ingot-01
 	bounds: 171, 104, 32, 32
 iron-ore-01
@@ -168,17 +168,17 @@ pelle-stone-01
 pioche-bois-01
 	bounds: 529, 141, 32, 32
 pioche-stone-01
-	bounds: 670, 207, 32, 32
+	bounds: 704, 207, 32, 32
 plank-02
 	bounds: 205, 11, 32, 32
 plank-cell-01
-	bounds: 699, 173, 32, 32
+	bounds: 681, 130, 32, 32
 reimu
 	bounds: 1, 115, 64, 64
 reimu-back-0
-	bounds: 701, 36, 18, 24
+	bounds: 693, 2, 18, 24
 reimu-back-1
-	bounds: 681, 36, 18, 24
+	bounds: 673, 2, 18, 24
 reimu-back-2
 	bounds: 653, 2, 18, 24
 reimu-front-0
@@ -190,7 +190,7 @@ reimu-front-2
 reimu-left-0
 	bounds: 715, 148, 16, 23
 reimu-left-1
-	bounds: 673, 4, 17, 22
+	bounds: 715, 51, 17, 22
 reimu-left-2
 	bounds: 715, 75, 17, 22
 reimu-right-0
@@ -198,35 +198,37 @@ reimu-right-0
 reimu-right-1
 	bounds: 715, 99, 17, 22
 reimu-right-2
-	bounds: 692, 12, 17, 22
+	bounds: 715, 27, 17, 22
 sand-01-0-0
 	bounds: 409, 45, 32, 32
 sand-01-0-1
 	bounds: 69, 47, 32, 32
 sand-01-0-2
-	bounds: 545, 39, 32, 32
+	bounds: 545, 5, 32, 32
 sand-01-1-0
 	bounds: 341, 45, 32, 32
 sand-01-1-1
 	bounds: 339, 147, 32, 32
 sand-01-1-2
-	bounds: 477, 40, 32, 32
+	bounds: 477, 6, 32, 32
 sand-01-2-0
 	bounds: 341, 113, 32, 32
 sand-01
 	bounds: 341, 113, 32, 32
 sand-01-2-1
-	bounds: 681, 96, 32, 32
+	bounds: 681, 62, 32, 32
 sand-01-2-2
 	bounds: 273, 11, 32, 32
 sandales-01
-	bounds: 341, 11, 32, 32
+	bounds: 375, 11, 32, 32
 stick-02
 	bounds: 373, 147, 32, 32
 stone-ore-01
-	bounds: 511, 5, 32, 32
+	bounds: 545, 107, 32, 32
+stone-sword-01
+	bounds: 307, 11, 32, 32
 table-craft-01
-	bounds: 613, 96, 32, 32
+	bounds: 613, 62, 32, 32
 tin-ingot-01
 	bounds: 237, 147, 32, 32
 tin-ore-01
@@ -250,7 +252,7 @@ wooden-sword-01
 wrench-01
 	bounds: 171, 36, 32, 32
 zombie-0
-	bounds: 579, 39, 32, 32
+	bounds: 579, 5, 32, 32
 zombie-1
 	bounds: 375, 113, 32, 32
 zombie-2

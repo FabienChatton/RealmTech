@@ -95,6 +95,7 @@ public class RealmTechCoreMod implements ModInitializer {
         itemsRegistry.addEntry(new WrenchItemEntry());
         itemsRegistry.addEntry(new WeaponItemEntry());
         itemsRegistry.addEntry(new WoodenSwordItemEntry());
+        itemsRegistry.addEntry(new StoneSwordItemEntry());
 
         // icons
         Registry<Entry> iconsRegistry = Registry.createRegistry(modRegistry, "icons", "icons");
@@ -139,6 +140,7 @@ public class RealmTechCoreMod implements ModInitializer {
         craftCraftingTableRegistry.addEntry(new EnergyCableCraftEntry());
         craftCraftingTableRegistry.addEntry(new WrenchCraftEntry());
         craftCraftingTableRegistry.addEntry(new WoodenSwordCraftEntry());
+        craftCraftingTableRegistry.addEntry(new StoneSwordCraftEntry());
 
         // craft furnace
         Registry<FurnaceCraftShapeless> craftFurnaceRegistry = Registry.createRegistry(crafts, "furnace", "furnaceRecipes");
