@@ -1,5 +1,5 @@
 texture.png
-	size: 737, 274
+	size: 756, 274
 	repeat: none
 buche-01
 	bounds: 171, 70, 32, 32
@@ -20,7 +20,7 @@ cell-breaking-stage-07
 cell-breaking-stage-08
 	bounds: 239, 45, 32, 32
 cell-breaking-stage-09
-	bounds: 665, 164, 32, 32
+	bounds: 699, 173, 32, 32
 cell-breaking-stage-10
 	bounds: 103, 2, 32, 32
 cell-breaking-stage-11
@@ -40,7 +40,7 @@ chest-01
 coal-01
 	bounds: 499, 176, 33, 31
 coal-ore-01
-	bounds: 647, 62, 32, 32
+	bounds: 647, 28, 32, 32
 copper-ingot-01
 	bounds: 602, 198, 32, 32
 copper-ore-03
@@ -50,7 +50,7 @@ default-texture
 energy-battery-01-0001
 	bounds: 375, 79, 32, 32
 energy-battery-01-0010
-	bounds: 681, 28, 32, 32
+	bounds: 715, 139, 32, 32
 energy-battery-01-0100
 	bounds: 579, 39, 32, 32
 energy-battery-01-1000
@@ -60,7 +60,7 @@ energy-cable-01-0000
 energy-cable-01-0001
 	bounds: 135, 138, 32, 41
 energy-cable-01-0010
-	bounds: 699, 173, 32, 32
+	bounds: 681, 130, 32, 32
 energy-cable-01-0011
 	bounds: 635, 232, 32, 41
 energy-cable-01-0100
@@ -106,7 +106,7 @@ furnace-arrow-06
 furnace-arrow-07
 	bounds: 205, 45, 32, 32
 furnace-arrow-08
-	bounds: 647, 96, 32, 32
+	bounds: 647, 62, 32, 32
 furnace-arrow-09
 	bounds: 443, 45, 32, 32
 furnace-arrow-10
@@ -118,7 +118,7 @@ furnace-time-to-burn-02
 furnace-time-to-burn-03
 	bounds: 307, 113, 32, 32
 furnace-time-to-burn-04
-	bounds: 647, 28, 32, 32
+	bounds: 665, 164, 32, 32
 furnace-time-to-burn-05
 	bounds: 137, 2, 32, 32
 furnace-time-to-burn-06
@@ -132,7 +132,7 @@ furnace-time-to-burn-09
 furnace-time-to-burn-10
 	bounds: 443, 11, 32, 32
 gold-ingot-01
-	bounds: 681, 96, 32, 32
+	bounds: 681, 62, 32, 32
 gold-ore-01
 	bounds: 307, 79, 32, 32
 grass-01-0-0
@@ -147,6 +147,8 @@ grass-01-1-1
 	bounds: 579, 73, 32, 32
 heart-01
 	bounds: 239, 113, 32, 32
+heart-02
+	bounds: 647, 96, 32, 32
 inventory-01
 	bounds: 205, 113, 32, 32
 inventory-02
@@ -172,33 +174,33 @@ pioche-stone-01
 plank-02
 	bounds: 205, 11, 32, 32
 plank-cell-01
-	bounds: 681, 130, 32, 32
+	bounds: 681, 96, 32, 32
 reimu
 	bounds: 1, 115, 64, 64
 reimu-back-0
-	bounds: 693, 2, 18, 24
-reimu-back-1
 	bounds: 673, 2, 18, 24
-reimu-back-2
+reimu-back-1
 	bounds: 653, 2, 18, 24
+reimu-back-2
+	bounds: 633, 2, 18, 24
 reimu-front-0
-	bounds: 613, 1, 18, 25
-reimu-front-1
 	bounds: 475, 154, 18, 25
+reimu-front-1
+	bounds: 737, 248, 18, 25
 reimu-front-2
-	bounds: 633, 1, 18, 25
+	bounds: 613, 1, 18, 25
 reimu-left-0
-	bounds: 715, 148, 16, 23
+	bounds: 693, 3, 16, 23
 reimu-left-1
-	bounds: 715, 51, 17, 22
+	bounds: 715, 42, 17, 22
 reimu-left-2
-	bounds: 715, 75, 17, 22
+	bounds: 715, 91, 17, 22
 reimu-right-0
-	bounds: 715, 123, 16, 23
+	bounds: 715, 66, 16, 23
 reimu-right-1
-	bounds: 715, 99, 17, 22
+	bounds: 715, 115, 17, 22
 reimu-right-2
-	bounds: 715, 27, 17, 22
+	bounds: 734, 115, 17, 22
 sand-01-0-0
 	bounds: 409, 45, 32, 32
 sand-01-0-1
@@ -216,7 +218,7 @@ sand-01-2-0
 sand-01
 	bounds: 341, 113, 32, 32
 sand-01-2-1
-	bounds: 681, 62, 32, 32
+	bounds: 681, 28, 32, 32
 sand-01-2-2
 	bounds: 273, 11, 32, 32
 sandales-01

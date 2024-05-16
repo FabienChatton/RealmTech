@@ -87,7 +87,7 @@ public class ItemBarSystem extends IteratingSystem {
             heartBar.clear();
             if (heart > 0) {
                 for (int i = 0; i < heart; i++) {
-                    heartBar.add(new Image(context.getTextureAtlas().findRegion("heart-01"))).size(12f).padBottom(5f).fillX().left();
+                    heartBar.add(new Image(context.getTextureAtlas().findRegion("heart-02"))).size(12f).padBottom(5f).fillX().left();
                 }
             }
         }
