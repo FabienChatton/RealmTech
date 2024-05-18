@@ -36,4 +36,6 @@ public interface ServerExecute {
     void unSubscribeToEntity(Channel clientChannel, UUID entityUuid);
 
     void playerWeaponShot(Channel clientChannel, Vector2 vector2, UUID itemUuid);
+
+    void askPlayerRespawn(Channel clientChannel);
 }

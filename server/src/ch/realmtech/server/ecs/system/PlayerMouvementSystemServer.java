@@ -4,11 +4,13 @@ import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
+import com.artemis.annotations.Exclude;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 @All({PlayerConnexionComponent.class, PlayerMovementComponent.class})
+@Exclude(PlayerDeadComponent.class)
 public class PlayerMouvementSystemServer extends IteratingSystem {
     @Wire
     private SystemsAdminServer systemsAdminServer;

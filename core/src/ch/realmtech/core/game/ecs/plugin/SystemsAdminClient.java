@@ -5,6 +5,7 @@ import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.CraftingManager;
+import ch.realmtech.server.ecs.system.PlayerDeadSystem;
 import ch.realmtech.server.ecs.system.UpdateBox2dWithPosition;
 import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
@@ -44,6 +45,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         putCustomSystem(28, MobManagerClient.class, MobManagerClient::new);
         putCustomSystem(29, WeaponManagerClient.class, WeaponManagerClient::new);
         putCustomSystem(30, TickSlaveEmulationSystem.class, TickSlaveEmulationSystem::new);
+        putCustomSystem(31, PlayerDeadSystem.class, PlayerDeadSystem::new);
 
         // render
         putCustomSystem(101, GameStageBatchBeginSystem.class, GameStageBatchBeginSystem::new);

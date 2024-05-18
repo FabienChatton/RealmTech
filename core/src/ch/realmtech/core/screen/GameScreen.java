@@ -4,8 +4,10 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
+import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.packet.serverPacket.AskPlayerRespawn;
 import ch.realmtech.server.packet.serverPacket.GetPlayerInventorySessionPacket;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -147,7 +149,11 @@ public class GameScreen extends AbstractScreen {
 
         context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {
-                PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer());
+                int mainPlayer = context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer();
+                if (context.getEcsEngine().getWorld().getMapper(PlayerDeadComponent.class).has(mainPlayer)) {
+                    context.getClientConnexion().sendAndFlushPacketToServer(new AskPlayerRespawn());
+                }
+                PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(mainPlayer);
                 Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
                 Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
                 int worldPosX = MapManager.getWorldPos(positionComponent.x);

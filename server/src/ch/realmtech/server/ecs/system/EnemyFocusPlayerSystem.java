@@ -1,5 +1,6 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
@@ -21,6 +22,7 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<EnemyComponent> mEnemy;
+    private ComponentMapper<PlayerDeadComponent> mDead;
     private EnemyFocusPlayerDstOptionEntry enemyFocusPlayerDstOptionEntry;
     private EnemyDispawnDstOptionEntry enemyDispawnDstOptionEntry;
 

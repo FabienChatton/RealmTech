@@ -290,4 +290,12 @@ public class PlayerManagerServer extends Manager {
         }
         return playerId;
     }
+
+    public void askPlayerRespawn(Channel clientChannel) {
+        int playerId = getPlayerByChannel(clientChannel);
+        if (playerId != -1) {
+            mBox2d.get(playerId).body.setTransform(0, 0, 0);
+            mLife.get(playerId).set(10);
+        }
+    }
 }

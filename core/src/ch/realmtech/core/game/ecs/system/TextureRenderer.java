@@ -3,10 +3,12 @@ package ch.realmtech.core.game.ecs.system;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.component.TextureColorComponent;
 import ch.realmtech.core.game.ecs.component.TextureImportantComponent;
+import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.component.TextureComponent;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
+import com.artemis.annotations.Exclude;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Color;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 @All({PositionComponent.class, TextureComponent.class})
+@Exclude(PlayerDeadComponent.class)
 public class TextureRenderer extends IteratingSystem {
     @Wire(name = "gameStage")
     private Stage gameStage;

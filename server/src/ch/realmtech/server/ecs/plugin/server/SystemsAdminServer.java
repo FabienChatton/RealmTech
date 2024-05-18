@@ -34,6 +34,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, FixDynamicBodySystem.class, FixDynamicBodySystem::new);
         putCustomSystem(10, QuestManagerServer.class, QuestManagerServer::new);
         putCustomSystem(10, QuestValidatorSystem.class, QuestValidatorSystem::new);
+        putCustomSystem(10, PlayerDeadSystem.class, PlayerDeadSystem::new);
 
         putCustomSystem(10, CraftingSystem.class, CraftingSystem::new);
         putCustomSystem(10, CraftingManager.class, CraftingManager::new);

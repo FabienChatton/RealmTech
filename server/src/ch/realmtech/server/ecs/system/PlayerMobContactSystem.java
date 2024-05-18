@@ -19,7 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.UUID;
 
 @All({PlayerConnexionComponent.class, PositionComponent.class, Box2dComponent.class})
-@Exclude(InvincibilityComponent.class)
+@Exclude({InvincibilityComponent.class, PlayerDeadComponent.class})
 public class PlayerMobContactSystem extends IteratingSystem {
     @Wire(name = "serverContext")
     private ServerContext serverContext;
@@ -62,8 +62,8 @@ public class PlayerMobContactSystem extends IteratingSystem {
 
                         // remove player heal
                         if (playerLifeComponent.decrementHeart(1)) {
-                            playerLifeComponent.set(10);
-                            playerBox2dComponent.body.setTransform(0, 0, 0);
+//                            playerLifeComponent.set(10);
+//                            playerBox2dComponent.body.setTransform(0, 0, 0);
                         } else {
                             // knock back if not death
                             playerBox2dComponent.body.applyForce(knockbackVector, playerBox2dComponent.body.getPosition(), true);
