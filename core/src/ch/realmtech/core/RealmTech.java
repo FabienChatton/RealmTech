@@ -57,6 +57,7 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -472,6 +473,14 @@ public final class RealmTech extends Game implements InternalConnexion {
             ecsEngineConsumer.accept(getEcsEngine());
         } else {
             onEcsEngineInitializes.add(ecsEngineConsumer);
+        }
+    }
+
+    public void withGameScreen(Consumer<GameScreen> withGameScreen) {
+        if (gameScreen != null) {
+            withGameScreen.accept(gameScreen);
+        } else {
+            logger.warn("Can not run with game screen {}", Arrays.toString(Thread.currentThread().getStackTrace()));
         }
     }
 

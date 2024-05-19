@@ -2,7 +2,6 @@ package ch.realmtech.core.screen;
 
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.helper.Popup;
-import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
 import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
@@ -10,7 +9,6 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.AskPlayerRespawn;
 import ch.realmtech.server.packet.serverPacket.GetPlayerInventorySessionPacket;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -35,7 +33,7 @@ public class GameScreen extends AbstractScreen {
     private final Label sendDataSize;
     private final Label topCellId;
     private final Label versionLabel;
-    private ConsoleUi consoleUi;
+    private final ConsoleUi consoleUi;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -74,78 +72,6 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         super.update(delta);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
-            context.setScreen(ScreenType.GAME_PAUSE);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
-            if (uiTable.getChildren().contains(debugTable, true)) {
-                uiTable.clear();
-                uiStage.setDebugAll(false);
-            } else {
-                uiTable.add(debugTable).expand().left().top();
-                if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                    uiStage.setDebugAll(true);
-                }
-            }
-        }
-        // open inventory
-        if (Gdx.input.isKeyJustPressed(InputMapper.openInventory.getKey()) && canInteractWithWorld()) {
-            if (!context.getSystemsAdminClient().getPlayerInventorySystem().isEnabled()) {
-                context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
-                context.getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(context.getSystemsAdminClient().getPlayerInventorySystem().getDisplayInventoryPlayer());
-            } else {
-                context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(InputMapper.openQuest.getKey())) {
-            if (context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled()) {
-                context.getSystemsAdminClient().getQuestPlayerSystem().closeQuest();
-            } else {
-                if (canInteractWithWorld()) {
-                    context.getSystemsAdminClient().getQuestPlayerSystem().openQuest();
-                }
-            }
-        }
-
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)) {
-            if (consoleUi.getConsoleWindow().getParent() == null && canInteractWithWorld()) {
-                uiStage.addActor(consoleUi.getConsoleWindow());
-                Gdx.input.setInputProcessor(uiStage);
-            } else {
-                consoleUi.getConsoleWindow().remove();
-                Gdx.input.setInputProcessor(context.getInputManager());
-            }
-        }
-
-//        if (Gdx.input.isKeyJustPressed(context.getOption().keyDropItem.get())) {
-//            context.getEcsEngine().dropCurentPlayerItem();
-//        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 0);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 1);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 2);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 3);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 4);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 5);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 6);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 7);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9))
-            context.getSystemsAdminClient().getItemBarSystem().setSlotSelected((byte) 8);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP))
-            context.getSystemsAdminClient().getItemBarSystem().slotSelectedUp();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN))
-            context.getSystemsAdminClient().getItemBarSystem().slotSelectedDown();
 
         context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {
@@ -204,5 +130,49 @@ public class GameScreen extends AbstractScreen {
 
     public boolean canInteractWithWorld() {
         return consoleUi.getConsoleWindow().getParent() == null && !context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled();
+    }
+
+    public void toggleDebugTable(boolean allDebug) {
+        if (uiTable.getChildren().contains(debugTable, true)) {
+            uiTable.clear();
+            uiStage.setDebugAll(false);
+        } else {
+            if (canInteractWithWorld()) {
+                uiTable.add(debugTable).expand().left().top();
+                uiStage.setDebugAll(allDebug);
+            }
+        }
+    }
+
+    public void openInventory() {
+        if (!context.getSystemsAdminClient().getPlayerInventorySystem().isEnabled()) {
+            context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
+            context.getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(context.getSystemsAdminClient().getPlayerInventorySystem().getDisplayInventoryPlayer());
+        } else {
+            if (canInteractWithWorld()) {
+                context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
+            }
+        }
+    }
+
+    public void openQuestMenu() {
+
+        if (context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled()) {
+            context.getSystemsAdminClient().getQuestPlayerSystem().closeQuest();
+        } else {
+            if (canInteractWithWorld()) {
+                context.getSystemsAdminClient().getQuestPlayerSystem().openQuest();
+            }
+        }
+    }
+
+    public void openConsole() {
+        if (consoleUi.getConsoleWindow().getParent() == null && canInteractWithWorld()) {
+            uiStage.addActor(consoleUi.getConsoleWindow());
+            Gdx.input.setInputProcessor(uiStage);
+        } else {
+            consoleUi.getConsoleWindow().remove();
+            Gdx.input.setInputProcessor(context.getInputManager());
+        }
     }
 }
