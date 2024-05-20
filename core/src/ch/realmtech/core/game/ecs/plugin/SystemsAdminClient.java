@@ -47,6 +47,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         putCustomSystem(30, TickSlaveEmulationSystem.class, TickSlaveEmulationSystem::new);
         putCustomSystem(31, PlayerDeadSystem.class, PlayerDeadSystem::new);
         putCustomSystem(32, PlayerGameInteractionSystem.class, PlayerGameInteractionSystem::new);
+        putCustomSystem(33, PlayerDeadClientManager.class, PlayerDeadClientManager::new);
 
         // render
         putCustomSystem(101, GameStageBatchBeginSystem.class, GameStageBatchBeginSystem::new);

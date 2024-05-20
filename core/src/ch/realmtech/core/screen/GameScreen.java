@@ -1,9 +1,10 @@
 package ch.realmtech.core.screen;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.helper.ButtonsMenu;
+import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
-import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.AskPlayerRespawn;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ public class GameScreen extends AbstractScreen {
     private final Label topCellId;
     private final Label versionLabel;
     private final ConsoleUi consoleUi;
+    private final Window deadMessage;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -50,6 +53,7 @@ public class GameScreen extends AbstractScreen {
         topCellId = new Label(null, skin);
         versionLabel = new Label("Version : " + RealmTech.REALMTECH_VERSION, skin);
         consoleUi = new ConsoleUi(skin, context);
+        deadMessage = new Window("You are dead", skin);
 
         debugTable.add(fpsLabel).left().row();
         debugTable.add(versionLabel).left().row();
@@ -61,6 +65,8 @@ public class GameScreen extends AbstractScreen {
         debugTable.add(topCellId).left().row();
         debugTable.add(reciveDataSize).left().row();
         debugTable.add(sendDataSize).left().row();
+
+        deadMessage.add(new ButtonsMenu.TextButtonMenu(context, "Respawn", new OnClick((event, x, y) -> context.getClientConnexion().sendAndFlushPacketToServer(new AskPlayerRespawn()))));
     }
 
     @Override
@@ -76,9 +82,6 @@ public class GameScreen extends AbstractScreen {
         context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {
                 int mainPlayer = context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer();
-                if (context.getEcsEngine().getWorld().getMapper(PlayerDeadComponent.class).has(mainPlayer)) {
-                    context.getClientConnexion().sendAndFlushPacketToServer(new AskPlayerRespawn());
-                }
                 PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(mainPlayer);
                 Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
                 Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);
@@ -174,5 +177,15 @@ public class GameScreen extends AbstractScreen {
             consoleUi.getConsoleWindow().remove();
             Gdx.input.setInputProcessor(context.getInputManager());
         }
+    }
+
+    public void showDeadMessage() {
+        Gdx.input.setInputProcessor(uiStage);
+        uiTable.add(deadMessage);
+    }
+
+    public void hideDeadMessage() {
+        deadMessage.remove();
+        Gdx.input.setInputProcessor(context.getInputManager());
     }
 }
