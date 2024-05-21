@@ -148,18 +148,17 @@ public class GameScreen extends AbstractScreen {
     }
 
     public void openInventory() {
-        if (!context.getSystemsAdminClient().getPlayerInventorySystem().isEnabled()) {
-            context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
-            context.getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(context.getSystemsAdminClient().getPlayerInventorySystem().getDisplayInventoryPlayer());
+        if (context.getSystemsAdminClient().getPlayerInventorySystem().isEnabled()) {
+            context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
         } else {
             if (canInteractWithWorld()) {
-                context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
+                context.getClientConnexion().sendAndFlushPacketToServer(new GetPlayerInventorySessionPacket());
+                context.getSystemsAdminClient().getPlayerInventorySystem().openPlayerInventory(context.getSystemsAdminClient().getPlayerInventorySystem().getDisplayInventoryPlayer());
             }
         }
     }
 
     public void openQuestMenu() {
-
         if (context.getSystemsAdminClient().getQuestPlayerSystem().isEnabled()) {
             context.getSystemsAdminClient().getQuestPlayerSystem().closeQuest();
         } else {
