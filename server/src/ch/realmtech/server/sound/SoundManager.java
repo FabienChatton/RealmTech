@@ -1,6 +1,7 @@
 package ch.realmtech.server.sound;
 
 import ch.realmtech.server.ecs.component.PlayerComponent;
+import ch.realmtech.server.mod.options.client.SoundOptionEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;
@@ -56,9 +57,9 @@ public class SoundManager {
     public final static String SWORD_SWING = "sound/effects/items/Spear_SwingFast2.wav" ;
     private final HashMap<String, Long> soundLoop;
     private final AssetManager assetManager;
-    private final Integer optionSound;
+    private final SoundOptionEntry optionSound;
 
-    public SoundManager(AssetManager assetManager, Integer optionSound) {
+    public SoundManager(AssetManager assetManager, SoundOptionEntry optionSound) {
         this.assetManager = assetManager;
         this.optionSound = optionSound;
         soundLoop = new HashMap<>();
@@ -72,7 +73,7 @@ public class SoundManager {
     }
 
     private float getSoundPourCent() {
-        return optionSound / 100f;
+        return optionSound.getValue() / 100f;
     }
 
     public static void LoadAsset(AssetManager assetManager) {

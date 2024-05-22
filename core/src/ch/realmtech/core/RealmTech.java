@@ -152,7 +152,7 @@ public final class RealmTech extends Game implements InternalConnexion {
         initMap();
         initSound();
         Box2D.init();
-        Integer soundOption = RegistryUtils.findEntry(rootRegistry, SoundOptionEntry.class).orElseThrow(() -> new RuntimeException("Can not find sound option")).getValue();
+        SoundOptionEntry soundOption = RegistryUtils.findEntry(rootRegistry, SoundOptionEntry.class).orElseThrow(() -> new RuntimeException("Can not find sound option"));
         soundManager = new SoundManager(assetManager, soundOption);
         discord = new Discord(Thread.currentThread());
         discord.init();
