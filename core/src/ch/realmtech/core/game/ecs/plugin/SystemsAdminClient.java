@@ -3,6 +3,7 @@ package ch.realmtech.core.game.ecs.plugin;
 import ch.realmtech.core.game.ecs.system.*;
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.ecs.plugin.forclient.HitManagerForClient;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.ecs.system.CraftingManager;
 import ch.realmtech.server.ecs.system.PlayerDeadSystem;
@@ -48,6 +49,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         putCustomSystem(31, PlayerDeadSystem.class, PlayerDeadSystem::new);
         putCustomSystem(32, PlayerGameInteractionSystem.class, PlayerGameInteractionSystem::new);
         putCustomSystem(33, PlayerDeadClientManager.class, PlayerDeadClientManager::new);
+        putCustomSystem(34, HitClientManager.class, HitClientManager::new);
 
         // render
         putCustomSystem(101, GameStageBatchBeginSystem.class, GameStageBatchBeginSystem::new);
@@ -101,6 +103,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
     }
 
     @Override
+    public HitManagerForClient getHitManagerForClient() {
+        return getCustomSystem(HitClientManager.class);
+    }
+
     public EnemyManagerClient getEnemyManagerClient() {
         return getCustomSystem(EnemyManagerClient.class);
     }

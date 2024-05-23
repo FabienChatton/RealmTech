@@ -32,11 +32,6 @@ public class EnemyManager extends Manager {
         world.delete(enemyId);
     }
 
-    public boolean attackMob(int mobId, int damageAmount) {
-        LifeComponent lifeComponent = mLife.get(mobId);
-        return lifeComponent.decrementHeart(damageAmount);
-    }
-
     public void knockBackMob(int mobId, Vector2 knockBackAmount) {
         Box2dComponent box2dComponent = mBox2d.get(mobId);
         box2dComponent.body.applyLinearImpulse(knockBackAmount, box2dComponent.body.getWorldCenter(), true);

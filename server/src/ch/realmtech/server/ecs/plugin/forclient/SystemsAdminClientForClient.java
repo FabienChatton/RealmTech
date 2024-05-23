@@ -9,7 +9,7 @@ public interface SystemsAdminClientForClient extends SystemsAdminCommunItf {
     LightManagerForClient getLightManager();
     FurnaceIconSystemForClient getFurnaceIconSystem();
 
-    EnemyManagerForClient getEnemyManagerClient();
+    HitManagerForClient getHitManagerForClient();
 
     CraftingManager getCraftingManager();
 

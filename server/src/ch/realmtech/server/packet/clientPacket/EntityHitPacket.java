@@ -6,20 +6,20 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.UUID;
 
-public class EnemyHitPacket implements ClientPacket {
+public class EntityHitPacket implements ClientPacket {
     private final UUID enemyUuid;
 
-    public EnemyHitPacket(UUID enemyUuid) {
+    public EntityHitPacket(UUID enemyUuid) {
         this.enemyUuid = enemyUuid;
     }
 
-    public EnemyHitPacket(ByteBuf byteBuf) {
+    public EntityHitPacket(ByteBuf byteBuf) {
         this.enemyUuid = ByteBufferHelper.readUUID(byteBuf);
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.nextFrame(() -> clientExecute.getContext().getSystemsAdminClient().getEnemyManagerClient().enemyJustHit(enemyUuid));
+        clientExecute.nextFrame(() -> clientExecute.getContext().getSystemsAdminClient().getHitManagerForClient().entityJustHit(enemyUuid));
     }
 
     @Override

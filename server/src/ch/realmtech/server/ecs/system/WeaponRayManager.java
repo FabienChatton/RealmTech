@@ -1,13 +1,10 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.InvincibilityComponent;
-import ch.realmtech.server.ecs.component.ItemComponent;
-import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
-import ch.realmtech.server.packet.clientPacket.EnemyHitPacket;
+import ch.realmtech.server.packet.clientPacket.EntityHitPacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import ch.realmtech.server.packet.clientPacket.PlayerHasWeaponShotPacket;
 import com.artemis.Aspect;
@@ -37,6 +34,7 @@ public class WeaponRayManager extends Manager {
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<LifeComponent> mLife;
 
     private IntBag rayCast(Vector2 vectorStart, Vector2 vectorEnd, Aspect.Builder aspectBuilder, BodyHitsCallback callback) {
         IntBag entities = world.getAspectSubscriptionManager().get(aspectBuilder.all(Box2dComponent.class).exclude(InvincibilityComponent.class)).getEntities();
@@ -57,15 +55,17 @@ public class WeaponRayManager extends Manager {
         return entityHits;
     }
 
-    public int getMobHit(int playerId, Vector2 vectorClick, float range) {
+    public int getHit(int playerId, Vector2 vectorClick, float range) {
         PositionComponent playerPos = mPos.get(playerId);
 
         Vector2 vectorStart = playerPos.toVector2().add(0.5f, 0.5f);
         Vector2 vectorEnd = vectorClick.cpy().sub(vectorStart.cpy()).setLength(range).add(vectorStart);
-        IntBag mobs = rayCast(vectorStart, vectorEnd, Aspect.all(EnemyComponent.class), getFirstHit());
+        IntBag entities = rayCast(vectorStart, vectorEnd, Aspect
+                .all(LifeComponent.class, PositionComponent.class)
+                .one(EnemyComponent.class, PlayerConnexionComponent.class), getFirstHit());
 
-        if (!mobs.isEmpty()) {
-            return mobs.get(0);
+        if (!entities.isEmpty()) {
+            return entities.get(0);
         } else {
             return -1;
         }
@@ -91,19 +91,18 @@ public class WeaponRayManager extends Manager {
             serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new PlayerHasWeaponShotPacket(playerUuid), chunkPosX, chunkPosY);
         }
 
-        int mobId = getMobHit(playerId, vectorClick, itemComponent.itemRegisterEntry.getItemBehavior().getAttackRange());
-        if (mobId != -1) {
-            PositionComponent mobPosition = mPos.get(mobId);
-            UUID enemyUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(mobId);
-            serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, mobPosition.toVector2()), clientChannel);
+        int entityId = getHit(playerId, vectorClick, itemComponent.itemRegisterEntry.getItemBehavior().getAttackRange());
+        if (entityId != -1) {
+            PositionComponent pos = mPos.get(entityId);
+            LifeComponent lifeComponent = mLife.get(entityId);
+            UUID EntityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId);
+            serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, pos.toVector2()), clientChannel);
 
-            if (systemsAdminServer.getMobManager().attackMob(mobId, itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage())) {
-                systemsAdminServer.getIaTestSystem().destroyEnemyServer(mobId);
-            } else {
-                Vector2 knowBack = mobPosition.toVector2().sub(playerPos.toVector2()).setLength2(100);
-                systemsAdminServer.getMobManager().knockBackMob(mobId, knowBack);
-                world.edit(mobId).create(InvincibilityComponent.class).set(60);
-                serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyHitPacket(enemyUuid), chunkPosX, chunkPosY);
+            if (!lifeComponent.decrementHeart(itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage())) {
+                Vector2 knowBack = pos.toVector2().sub(playerPos.toVector2()).setLength2(100);
+                systemsAdminServer.getMobManager().knockBackMob(entityId, knowBack);
+                world.edit(entityId).create(InvincibilityComponent.class).set(60);
+                serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EntityHitPacket(EntityUuid), chunkPosX, chunkPosY);
             }
         }
     }
