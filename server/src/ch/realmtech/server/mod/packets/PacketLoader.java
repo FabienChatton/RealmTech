@@ -50,7 +50,7 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(DisconnectMessagePacket.class, DisconnectMessagePacket::new));
         packets.add(new SimpleEntry<>(TimeGetRequestPacket.class, TimeGetRequestPacket::new));
         packets.add(new SimpleEntry<>(TimeSetPacket.class, TimeSetPacket::new));
-        packets.add(new SimpleEntry<>(PhysicEntitySetPacket.class, PhysicEntitySetPacket::new));
+        packets.add(new SimpleEntry<>(EnemySetPacket.class, EnemySetPacket::new));
         packets.add(new SimpleEntry<>(PlayerSyncPacket.class, PlayerSyncPacket::new));
         packets.add(new SimpleEntry<>(PlayerCreateConnexion.class, PlayerCreateConnexion::new));
         packets.add(new SimpleEntry<>(FurnaceExtraInfoPacket.class, FurnaceExtraInfoPacket::new));

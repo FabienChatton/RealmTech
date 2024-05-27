@@ -2,12 +2,12 @@ package ch.realmtech.server.ecs.component;
 
 import com.artemis.Component;
 
-public class MobAttackCooldownComponent extends Component {
+public class EnemyAttackCooldownComponent extends Component {
     private int remainingTick;
     private int totalTick;
     private Runnable onEnd;
 
-    public MobAttackCooldownComponent set(int remainingTick, Runnable onEnd) {
+    public EnemyAttackCooldownComponent set(int remainingTick, Runnable onEnd) {
         this.remainingTick = remainingTick;
         this.totalTick = remainingTick;
         this.onEnd = onEnd;

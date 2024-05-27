@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
+import ch.realmtech.server.ecs.component.EnemyHitPlayerComponent;
 import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
@@ -17,6 +18,7 @@ import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
+import com.artemis.EntityEdit;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
@@ -70,8 +72,8 @@ public class EnemySystemServer extends BaseSystem {
 
     private void naturalSpawnEnemy() {
         if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > naturalSpawnCoolDownOptionEntry.getValue()) {
-            IntBag iaEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
-            if (iaEntities.size() > maxEnemyCountOptionEntry.getValue()) {
+            IntBag enemyEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
+            if (enemyEntities.size() > maxEnemyCountOptionEntry.getValue()) {
                 return;
             }
             IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
@@ -115,12 +117,14 @@ public class EnemySystemServer extends BaseSystem {
         bodyMob.createFixture(fixtureDef);
 
         playerContactShape.dispose();
-        EnemyComponent enemyComponent = world.edit(mobId).create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4));
+        EntityEdit mobEdit = world.edit(mobId);
+        mobEdit.create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4), systemsAdminServer.getIaMobFocusPlayerSystem().enemyFocusPlayer(), EnemyComponent.ZOMBIE_FLAG);
+        mobEdit.create(EnemyHitPlayerComponent.class);
 
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
-        world.edit(mobId).create(Box2dComponent.class).set(0.9f, 0.9f, bodyMob);
-        world.edit(mobId).create(LifeComponent.class).set(10);
-        PositionComponent positionComponent = world.edit(mobId).create(PositionComponent.class);
+        mobEdit.create(Box2dComponent.class).set(0.9f, 0.9f, bodyMob);
+        mobEdit.create(LifeComponent.class).set(10);
+        PositionComponent positionComponent = mobEdit.create(PositionComponent.class);
         serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), mobId);
         positionComponent.set(x, y);
         return mobId;

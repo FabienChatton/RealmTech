@@ -3,7 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.enemy.EnemyComponent;
-import ch.realmtech.server.packet.clientPacket.PhysicEntitySetPacket;
+import ch.realmtech.server.packet.clientPacket.EnemySetPacket;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.Component;
@@ -20,7 +20,7 @@ public class PhysicEntityIaTestSystem extends IteratingSystem {
     protected void process(int entityId) {
         Bag<Component> bag = new Bag<>();
         world.getEntity(entityId).getComponents(bag);
-        SerializedApplicationBytes physicEntityBytes = world.getRegistered(SerializerController.class).getPhysicEntitySerializerController().encode(entityId);
-        serverContext.getServerConnexion().broadCastPacket(new PhysicEntitySetPacket(physicEntityBytes));
+        SerializedApplicationBytes physicEntityBytes = world.getRegistered(SerializerController.class).getEnemySerializerController().encode(entityId);
+        serverContext.getServerConnexion().broadCastPacket(new EnemySetPacket(physicEntityBytes));
     }
 }

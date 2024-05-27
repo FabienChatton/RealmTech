@@ -15,6 +15,8 @@ import com.artemis.systems.IteratingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
 
+import java.util.function.IntConsumer;
+
 @All({EnemyComponent.class, PositionComponent.class})
 public class EnemyFocusPlayerSystem extends IteratingSystem {
     private final MessageManager messageManager = MessageManager.getInstance();
@@ -35,32 +37,40 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        PositionComponent enemyPositionComponent = mPos.get(entityId);
-        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
         EnemyComponent enemyComponent = mEnemy.get(entityId);
+        enemyComponent.getUpdateEnemy().accept(entityId);
+    }
 
-        int[] playerData = players.getData();
-        float minPlayerDst = Float.MAX_VALUE;
-        int minPlayerId = -1;
-        for (int i = 0; i < players.size(); i++) {
-            int playerId = playerData[i];
-            PositionComponent playerPositionComponent = mPos.get(playerId);
-            float dst = enemyPositionComponent.toVector2().dst(playerPositionComponent.toVector2());
+    public IntConsumer enemyFocusPlayer() {
+        return (entityId) -> {
+            EnemyComponent enemyComponent = mEnemy.get(entityId);
+            PositionComponent enemyPositionComponent = mPos.get(entityId);
+            IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
 
-            if (dst < minPlayerDst) {
-                minPlayerDst = dst;
-                minPlayerId = playerId;
+
+            int[] playerData = players.getData();
+            float minPlayerDst = Float.MAX_VALUE;
+            int minPlayerId = -1;
+            for (int i = 0; i < players.size(); i++) {
+                int playerId = playerData[i];
+                PositionComponent playerPositionComponent = mPos.get(playerId);
+                float dst = enemyPositionComponent.toVector2().dst(playerPositionComponent.toVector2());
+
+                if (dst < minPlayerDst) {
+                    minPlayerDst = dst;
+                    minPlayerId = playerId;
+                }
             }
-        }
 
-        if (minPlayerId != -1) {
-            if (minPlayerDst <= enemyFocusPlayerDstOptionEntry.getValue()) {
-                messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.FOCUS_PLAYER_MESSAGE, minPlayerId);
-            } else if (minPlayerDst >= enemyDispawnDstOptionEntry.getValue()) {
-                systemsAdminServer.getIaTestSystem().destroyEnemyServer(entityId);
-            } else {
-                messageManager.dispatchMessage(null, enemyComponent.getIaTestAgent(), EnemyState.SLEEP_MESSAGE);
+            if (minPlayerId != -1) {
+                if (minPlayerDst <= enemyFocusPlayerDstOptionEntry.getValue()) {
+                    messageManager.dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.FOCUS_PLAYER_MESSAGE, minPlayerId);
+                } else if (minPlayerDst >= enemyDispawnDstOptionEntry.getValue()) {
+                    systemsAdminServer.getIaTestSystem().destroyEnemyServer(entityId);
+                } else {
+                    messageManager.dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.SLEEP_MESSAGE);
+                }
             }
-        }
+        };
     }
 }

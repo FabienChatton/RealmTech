@@ -29,7 +29,7 @@ public class EnemySystem extends IteratingSystem {
     @Override
     protected void process(int entityId) {
         EnemyComponent enemyComponent = mEnemy.get(entityId);
-        enemyComponent.getIaTestSteerable().update(world.getDelta());
+        enemyComponent.getEnemySteerable().update(world.getDelta());
 
         LifeComponent lifeComponent = mLife.get(entityId);
         if (lifeComponent.getHeart() <= 0) {

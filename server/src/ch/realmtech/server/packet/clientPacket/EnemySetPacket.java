@@ -7,20 +7,20 @@ import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import io.netty.buffer.ByteBuf;
 
-public class PhysicEntitySetPacket implements ClientPacket {
+public class EnemySetPacket implements ClientPacket {
     private final SerializedApplicationBytes physicEntityBytes;
 
-    public PhysicEntitySetPacket(SerializedApplicationBytes physicEntityBytes) {
+    public EnemySetPacket(SerializedApplicationBytes physicEntityBytes) {
         this.physicEntityBytes = physicEntityBytes;
     }
 
-    public PhysicEntitySetPacket(ByteBuf byteBuf) {
+    public EnemySetPacket(ByteBuf byteBuf) {
         physicEntityBytes = ByteBufferHelper.readSerializedApplicationBytes(byteBuf);
     }
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        PhysicEntityArgs physicEntityArgs = clientExecute.getContext().getWorld().getRegistered(SerializerController.class).getPhysicEntitySerializerController().decode(physicEntityBytes);
+        PhysicEntityArgs physicEntityArgs = clientExecute.getContext().getWorld().getRegistered(SerializerController.class).getEnemySerializerController().decode(physicEntityBytes);
         clientExecute.physicEntity(physicEntityArgs);
     }
 

@@ -5,6 +5,7 @@ import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.serialize.Serializer;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.serialize.types.SerializedRawBytes;
@@ -16,29 +17,22 @@ import io.netty.buffer.Unpooled;
 
 import java.util.UUID;
 
-import static ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController.*;
-
-public class PhysicEntitySerializerV1 implements Serializer<Integer, PhysicEntityArgs> {
+public class EnemySerializerV1 implements Serializer<Integer, PhysicEntityArgs> {
 
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private ComponentMapper<ItemComponent> mItem;
+    private ComponentMapper<EnemyComponent> mEnemy;
     @Wire(name = "systemsAdmin")
     private SystemsAdminCommun systemsAdminCommun;
     @Override
-    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer physicEntityToSerialize) {
-        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, physicEntityToSerialize));
+    public SerializedRawBytes toRawBytes(World world, SerializerController serializerController, Integer enemyToSerialize) {
+        ByteBuf buffer = Unpooled.buffer(getBytesSize(world, serializerController, enemyToSerialize));
+        EnemyComponent enemyComponent = mEnemy.get(enemyToSerialize);
 
-        PositionComponent positionComponent = mPos.get(physicEntityToSerialize);
-        UUID uuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(physicEntityToSerialize);
-        byte flag;
-        if (mPlayerConnexion.has(physicEntityToSerialize)) {
-            flag = PLAYER_FLAG;
-        } else if (mItem.has(physicEntityToSerialize)) {
-            flag = ITEM_FLAG;
-        } else {
-           flag = ENEMY_FLAG;
-        }
+        PositionComponent positionComponent = mPos.get(enemyToSerialize);
+        UUID uuid = systemsAdminCommun.getUuidEntityManager().getEntityUuid(enemyToSerialize);
+        byte flag = enemyComponent.getFlag();
 
         ByteBufferHelper.writeUUID(buffer, uuid);
         buffer.writeFloat(positionComponent.x);

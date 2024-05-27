@@ -15,7 +15,7 @@ public enum EnemyState implements State<EnemyTelegraph> {
             super.exit(entity);
             ComponentMapper<EnemyComponent> mEnemy = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(EnemyComponent.class);
             EnemyComponent enemyComponent = mEnemy.get(entity.getId());
-            enemyComponent.getIaTestSteerable().setSteeringBehavior(null);
+            enemyComponent.getEnemySteerable().setSteeringBehavior(null);
         }
 
         @Override
@@ -29,7 +29,7 @@ public enum EnemyState implements State<EnemyTelegraph> {
 
             EnemyComponent enemyComponent = mEnemy.get(entity.getId());
             Box2dComponent playerBox2dComponent = mBox2d.get(playerId);
-            enemyComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(enemyComponent.getIaTestSteerable(), new Box2dLocation(playerBox2dComponent.body)));
+            enemyComponent.getEnemySteerable().setSteeringBehavior(new Seek<>(enemyComponent.getEnemySteerable(), new Box2dLocation(playerBox2dComponent.body)));
             return true;
         }
     },
@@ -39,7 +39,7 @@ public enum EnemyState implements State<EnemyTelegraph> {
             super.onMessage(entity, telegram);
             ComponentMapper<EnemyComponent> mEnemy = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(EnemyComponent.class);
             EnemyComponent enemyComponent = mEnemy.get(entity.getId());
-            enemyComponent.getIaTestSteerable().setSteeringBehavior(null);
+            enemyComponent.getEnemySteerable().setSteeringBehavior(null);
             entity.getStateMachine().changeState(SLEEP);
             return true;
         }
@@ -50,7 +50,7 @@ public enum EnemyState implements State<EnemyTelegraph> {
             super.onMessage(entity, telegram);
             ComponentMapper<EnemyComponent> mEnemy = entity.getServerContext().getEcsEngineServer().getWorld().getMapper(EnemyComponent.class);
             EnemyComponent enemyComponent = mEnemy.get(entity.getId());
-            enemyComponent.getIaTestSteerable().setSteeringBehavior(null);
+            enemyComponent.getEnemySteerable().setSteeringBehavior(null);
             return true;
         }
 

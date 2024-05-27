@@ -11,7 +11,7 @@ import ch.realmtech.server.serialize.face.FaceSerializerController;
 import ch.realmtech.server.serialize.furnace.FurnaceSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.life.LifeSerializerController;
-import ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController;
+import ch.realmtech.server.serialize.physicEntity.EnemySerializerController;
 import ch.realmtech.server.serialize.player.PlayerSerializerController;
 import ch.realmtech.server.serialize.quests.QuestSerializerController;
 import ch.realmtech.server.serialize.savemetadata.SaveMetadataSerializerController;
@@ -37,7 +37,7 @@ public final class SerializerController {
     private final SaveMetadataSerializerController saveMetadataSerializerController = registerSerializerController(new SaveMetadataSerializerController(this));
     private final CraftingTableController craftingTableController = registerSerializerController(new CraftingTableController(this));
     private final FurnaceSerializerController furnaceSerializerController = registerSerializerController(new FurnaceSerializerController(this));
-    private final PhysicEntitySerializerController physicEntitySerializerController = registerSerializerController(new PhysicEntitySerializerController(this));
+    private final EnemySerializerController enemySerializerController = registerSerializerController(new EnemySerializerController(this));
     private final LifeSerializerController lifeSerializerController = registerSerializerController(new LifeSerializerController(this));
     private final PlayerSerializerController playerSerializerController = registerSerializerController(new PlayerSerializerController(this));
     private final FaceSerializerController faceSerializerController = registerSerializerController(new FaceSerializerController(this));
@@ -100,8 +100,8 @@ public final class SerializerController {
         return furnaceSerializerController;
     }
 
-    public PhysicEntitySerializerController getPhysicEntitySerializerController() {
-        return physicEntitySerializerController;
+    public EnemySerializerController getEnemySerializerController() {
+        return enemySerializerController;
     }
 
     public LifeSerializerController getLifeSerializerController() {

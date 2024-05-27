@@ -6,6 +6,7 @@ import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
+import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.mod.quests.QuestManagerEntry;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
@@ -17,7 +18,6 @@ import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
 import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
-import ch.realmtech.server.serialize.physicEntity.PhysicEntitySerializerController;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -204,7 +204,7 @@ public class ClientExecuteContext implements ClientExecute {
             UUID uuid = physicEntityArgs.uuid();
             float x = physicEntityArgs.x();
             float y = physicEntityArgs.y();
-            if (physicEntityArgs.flag() == PhysicEntitySerializerController.ENEMY_FLAG) {
+            if (physicEntityArgs.flag() == EnemyComponent.ZOMBIE_FLAG) {
                 context.getSystemsAdminClient().getEnemyManagerClient().otherIa(uuid, x, y);
             }
         });
