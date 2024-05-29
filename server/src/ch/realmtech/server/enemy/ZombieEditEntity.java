@@ -36,6 +36,8 @@ public class ZombieEditEntity implements EditEntity {
             textureAnimationComponent.animationFront = new TextureRegion[]{textureFront0, textureFront1, textureFront2};
 
             clientForClient.getEnemyManagerCommun().createEnemyBody(edit);
+
+            edit.create(MouvementComponent.class);
         });
 
         executeOnContext.onServer((serverContext) -> {
