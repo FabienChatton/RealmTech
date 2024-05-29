@@ -100,7 +100,7 @@ public class WeaponRayManager extends Manager {
 
             if (!lifeComponent.decrementHeart(itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage())) {
                 Vector2 knowBack = pos.toVector2().sub(playerPos.toVector2()).setLength2(100);
-                systemsAdminServer.getMobManager().knockBackMob(entityId, knowBack);
+                systemsAdminServer.getEnemyManagerCommun().knockBackMob(entityId, knowBack);
                 world.edit(entityId).create(InvincibilityComponent.class).set(60);
                 serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EntityHitPacket(EntityUuid), chunkPosX, chunkPosY);
             }

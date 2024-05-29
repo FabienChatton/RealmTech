@@ -6,18 +6,18 @@ import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
-import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.mod.quests.QuestManagerEntry;
 import ch.realmtech.server.packet.clientPacket.ClientExecute;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
 import ch.realmtech.server.packet.clientPacket.ParticleAddPacket;
 import ch.realmtech.server.quests.QuestPlayerProperty;
+import ch.realmtech.server.registry.MobEntry;
 import ch.realmtech.server.registry.QuestEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.inventory.InventoryArgs;
-import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
+import ch.realmtech.server.serialize.physicEntity.EnemyArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
@@ -199,14 +199,20 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void physicEntity(PhysicEntityArgs physicEntityArgs) {
+    public void enemySet(EnemyArgs enemyArgs) {
         context.nextFrame(() -> {
-            UUID uuid = physicEntityArgs.uuid();
-            float x = physicEntityArgs.x();
-            float y = physicEntityArgs.y();
-            if (physicEntityArgs.flag() == EnemyComponent.ZOMBIE_FLAG) {
-                context.getSystemsAdminClient().getEnemyManagerClient().otherIa(uuid, x, y);
-            }
+            UUID uuid = enemyArgs.uuid();
+            float x = enemyArgs.x();
+            float y = enemyArgs.y();
+            MobEntry mobEntry = RegistryUtils.findEntryUnsafe(context.getRootRegistry(), enemyArgs.enemyEntryId());
+            context.getSystemsAdminClient().getEnemyManagerClient().setMob(uuid, x, y, mobEntry);
+        });
+    }
+
+    @Override
+    public void enemyDelete(UUID mobUuid) {
+        context.nextFrame(() -> {
+            context.getSystemsAdminClient().getEnemyManagerClient().deleteMob(mobUuid);
         });
     }
 
@@ -266,14 +272,6 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void mobDelete(UUID mobUuid) {
-        context.nextFrame(() -> {
-            int mobId = context.getSystemsAdminClient().getUuidEntityManager().getEntityId(mobUuid);
-            context.getSystemsAdminClient().getMobManager().destroyWorldEnemy(mobId);
-        });
-    }
-
-    @Override
     public void addParticle(ParticleAddPacket.Particles particle, Vector2 gameCoordinate) {
         context.nextFrame(() -> {
             if (particle == ParticleAddPacket.Particles.HIT) {
@@ -283,7 +281,7 @@ public class ClientExecuteContext implements ClientExecute {
     }
 
     @Override
-    public void mobAttackCoolDown(UUID mobUuid, int cooldown) {
+    public void enemyAttackCoolDown(UUID mobUuid, int cooldown) {
         context.nextFrame(() -> {
             context.getSystemsAdminClient().getMobManagerClient().mobAttackCoolDown(mobUuid, cooldown);
         });

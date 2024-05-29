@@ -21,7 +21,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, PlayerMouvementSystemServer.class, PlayerMouvementSystemServer::new);
         putCustomSystem(10, MapSystemServer.class, MapSystemServer::new);
         putCustomSystem(10, EnemySystem.class, EnemySystem::new);
-        putCustomSystem(10, PhysicEntityIaTestSystem.class, PhysicEntityIaTestSystem::new);
+        putCustomSystem(10, EnemySyncSystem.class, EnemySyncSystem::new);
         putCustomSystem(10, PlayerSyncSystem.class, PlayerSyncSystem::new);
         putCustomSystem(10, EnemyFocusPlayerSystem.class, EnemyFocusPlayerSystem::new);
         putCustomSystem(10, FurnaceSystem.class, FurnaceSystem::new);
@@ -123,8 +123,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(TimeSystem.class);
     }
 
-    public PhysicEntityIaTestSystem getPhysicEntitySystem() {
-        return getCustomSystem(PhysicEntityIaTestSystem.class);
+    public EnemySyncSystem getPhysicEntitySystem() {
+        return getCustomSystem(EnemySyncSystem.class);
     }
 
     public PlayerSyncSystem getPlayerSyncSystem() {

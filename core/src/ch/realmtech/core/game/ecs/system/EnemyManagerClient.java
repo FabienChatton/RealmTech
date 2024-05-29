@@ -4,18 +4,20 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.registry.MobEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class EnemyManagerClient extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(EnemyManagerClient.class);
     @Wire(name = "context")
     private RealmTech context;
     @Wire
@@ -29,15 +31,24 @@ public class EnemyManagerClient extends Manager {
     @Wire
     private BodyDef bodyDef;
     private ComponentMapper<Box2dComponent> mBox2d;
-    private final Map<UUID, Integer> enemies = new HashMap<>();
+    private ComponentMapper<MobComponent> mMob;
 
-    public void otherIa(UUID uuid, float x, float y) {
-        if (enemies.containsKey(uuid)) {
-            Box2dComponent box2dComponent = mBox2d.get(enemies.get(uuid));
-            box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
+    public void setMob(UUID uuid, float x, float y, MobEntry mobEntry) {
+        int entityId = systemsAdminClient.getUuidEntityManager().getEntityId(uuid);
+        if (entityId == -1) {
+            newCreateEnemy(uuid, x, y, mobEntry);
         } else {
-            enemies.put(uuid, createEnemy(uuid, x, y));
+            Box2dComponent box2dComponent = mBox2d.get(entityId);
+            box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
         }
+    }
+
+    private void newCreateEnemy(UUID uuid, float x, float y, MobEntry mobEntry) {
+        int enemyId = world.create();
+        mobEntry.getMobBehavior().getEditEntity().createEntity(context.getExecuteOnContext(), enemyId);
+        Box2dComponent box2dComponent = mBox2d.get(enemyId);
+        box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
+        systemsAdminClient.getUuidEntityManager().registerEntityIdWithUuid(uuid, enemyId);
     }
 
     private int createEnemy(UUID uuid, float x, float y) {
@@ -77,5 +88,16 @@ public class EnemyManagerClient extends Manager {
         world.edit(iaTestId).create(MouvementComponent.class);
 
         return iaTestId;
+    }
+
+    public void deleteMob(UUID mobUuid) {
+        int entityId = systemsAdminClient.getUuidEntityManager().getEntityId(mobUuid);
+        if (entityId == -1) {
+            logger.warn("Can not find enemy uuid {}", mobUuid);
+            return;
+        }
+
+        MobComponent mobComponent = mMob.get(entityId);
+        mobComponent.getMobEntry().getMobBehavior().getEditEntity().deleteEntity(context.getExecuteOnContext(), entityId);
     }
 }

@@ -2,7 +2,7 @@ package ch.realmtech.server.packet.clientPacket;
 
 import ch.realmtech.server.mod.ClientContext;
 import ch.realmtech.server.serialize.SerializerController;
-import ch.realmtech.server.serialize.physicEntity.PhysicEntityArgs;
+import ch.realmtech.server.serialize.physicEntity.EnemyArgs;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.badlogic.gdx.math.Vector2;
 
@@ -45,7 +45,11 @@ public interface ClientExecute {
     void disconnectMessage(String message);
     void timeSet(float time);
 
-    void physicEntity(PhysicEntityArgs physicEntityArgs);
+    void enemySet(EnemyArgs enemyArgs);
+
+    void enemyDelete(UUID mobUuid);
+
+    void enemyAttackCoolDown(UUID modUuid, int cooldown);
 
     void setPlayer(Consumer<Integer> setPlayerConsumer, UUID playerUuid);
 
@@ -61,11 +65,7 @@ public interface ClientExecute {
 
     void playerPickUpItem(UUID playerUuid);
 
-    void mobDelete(UUID mobUuid);
-
     void addParticle(ParticleAddPacket.Particles particle, Vector2 worldPos);
-
-    void mobAttackCoolDown(UUID modUuid, int cooldown);
 
     void nextFrame(Runnable runnable);
 

@@ -2,6 +2,7 @@ package ch.realmtech.server.enemy;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.LifeComponent;
+import ch.realmtech.server.ecs.component.MobComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.MapManager;
@@ -14,13 +15,14 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.UUID;
 
-@All(EnemyComponent.class)
+@All({EnemyComponent.class, MobComponent.class, PositionComponent.class})
 public class EnemySystem extends IteratingSystem {
     @Wire(name = "serverContext")
     private ServerContext serverContext;
     @Wire
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<EnemyComponent> mEnemy;
+    private ComponentMapper<MobComponent> mMob;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<LifeComponent> mLife;
 
@@ -45,6 +47,7 @@ public class EnemySystem extends IteratingSystem {
      */
     public void destroyEnemyServer(int enemyId) {
         PositionComponent enemyPos = mPos.get(enemyId);
+        MobComponent mobComponent = mMob.get(enemyId);
         UUID entityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(enemyId);
         int worldPosX = MapManager.getWorldPos(enemyPos.x);
         int worldPosY = MapManager.getWorldPos(enemyPos.y);
@@ -52,6 +55,6 @@ public class EnemySystem extends IteratingSystem {
         int chunkPosY = MapManager.getChunkPos(worldPosY);
 
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyDeletePacket(entityUuid), chunkPosX, chunkPosY);
-        systemsAdminServer.getMobManager().destroyWorldEnemy(enemyId);
+        mobComponent.getMobEntry().getMobBehavior().getEditEntity().deleteEntity(serverContext.getExecuteOnContext(), enemyId);
     }
 }

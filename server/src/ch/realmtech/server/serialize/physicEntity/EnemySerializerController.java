@@ -5,7 +5,7 @@ import ch.realmtech.server.serialize.SerializerController;
 
 import java.util.HashMap;
 
-public class EnemySerializerController extends AbstractSerializerController<Integer, PhysicEntityArgs> {
+public class EnemySerializerController extends AbstractSerializerController<Integer, EnemyArgs> {
 
     public EnemySerializerController(SerializerController serializerController) {
         super(serializerController, (byte) 19, new HashMap<>() {

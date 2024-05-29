@@ -19,7 +19,7 @@ public class EnemyDeletePacket implements ClientPacket {
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.mobDelete(mobUuid);
+        clientExecute.enemyDelete(mobUuid);
     }
 
     @Override

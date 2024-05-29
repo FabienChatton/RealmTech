@@ -10,10 +10,12 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.enemy.EnemySteerable;
 import ch.realmtech.server.enemy.EnemyTelegraph;
+import ch.realmtech.server.mod.mobs.ZombieMobEntry;
 import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.MaxEnemyCountOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.MinDstSpawnPlayerOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.NaturalSpawnCoolDownOptionEntry;
+import ch.realmtech.server.registry.MobEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
@@ -86,12 +88,20 @@ public class EnemySystemServer extends BaseSystem {
                 enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
                 enemySpawnVector.rotateDeg(random.nextFloat(360));
                 Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
-                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y);
+                newSpawnEnemy(enemySpawnPos.x, enemySpawnPos.y, RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ZombieMobEntry.class));
                 lastNaturalSpawn = System.currentTimeMillis();
             }
         }
     }
 
+    public void newSpawnEnemy(float x, float y, MobEntry mobEntry) {
+        int mobId = world.create();
+        mobEntry.getMobBehavior().getEditEntity().createEntity(serverContext.getExecuteOnContext(), mobId);
+        Box2dComponent box2dComponent = mBox2d.get(mobId);
+        box2dComponent.body.setTransform(x, y, box2dComponent.body.getAngle());
+    }
+
+    @Deprecated
     public int spawnEnemy(float x, float y) {
         int mobId = world.create();
         PhysiqueWorldHelper.resetBodyDef(bodyDef);
@@ -118,7 +128,7 @@ public class EnemySystemServer extends BaseSystem {
 
         playerContactShape.dispose();
         EntityEdit mobEdit = world.edit(mobId);
-        mobEdit.create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4), systemsAdminServer.getIaMobFocusPlayerSystem().enemyFocusPlayer(), EnemyComponent.ZOMBIE_FLAG);
+        mobEdit.create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4), systemsAdminServer.getIaMobFocusPlayerSystem().enemyFocusPlayer());
         mobEdit.create(EnemyHitPlayerComponent.class);
 
         //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));

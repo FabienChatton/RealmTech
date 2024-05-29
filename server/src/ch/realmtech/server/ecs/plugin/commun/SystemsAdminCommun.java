@@ -36,7 +36,7 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
         putCustomSystem(10, SaveInfManager.class, SaveInfManager::new);
         putCustomSystem(10, EnergyManager.class, EnergyManager::new);
         putCustomSystem(10, CellPaddingManager.class, CellPaddingManager::new);
-        putCustomSystem(10, EnemyManager.class, EnemyManager::new);
+        putCustomSystem(10, EnemyManagerCommun.class, EnemyManagerCommun::new);
     }
 
     @Override
@@ -93,8 +93,8 @@ public abstract class SystemsAdminCommun extends Entry implements ArtemisPlugin,
     }
 
     @Override
-    public EnemyManager getMobManager() {
-        return getCustomSystem(EnemyManager.class);
+    public EnemyManagerCommun getEnemyManagerCommun() {
+        return getCustomSystem(EnemyManagerCommun.class);
     }
 
     public <T extends BaseSystem> void putCustomSystem(int order, Class<? extends T> customSystemClass, Supplier<? extends T> customSystemSupplier) {

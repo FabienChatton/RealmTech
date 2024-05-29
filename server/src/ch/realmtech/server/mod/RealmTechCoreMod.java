@@ -11,6 +11,7 @@ import ch.realmtech.server.mod.crafts.furnace.TinIngotCraftEntry;
 import ch.realmtech.server.mod.factory.EditEntityFactory;
 import ch.realmtech.server.mod.icons.*;
 import ch.realmtech.server.mod.items.*;
+import ch.realmtech.server.mod.mobs.ZombieMobEntry;
 import ch.realmtech.server.mod.options.OptionLoader;
 import ch.realmtech.server.mod.options.client.*;
 import ch.realmtech.server.mod.options.server.AuthServerBaseUrlServerOptionEntry;
@@ -219,5 +220,8 @@ public class RealmTechCoreMod implements ModInitializer {
         clientOptionRegistry.addEntry(new VerifyLoginUrn());
         clientOptionRegistry.addEntry(new VsyncOptionEntry(context));
 
+        // mobs
+        Registry<MobEntry> mobsRegistry = Registry.createRegistry(modRegistry, "mobs");
+        mobsRegistry.addEntry(new ZombieMobEntry());
     }
 }

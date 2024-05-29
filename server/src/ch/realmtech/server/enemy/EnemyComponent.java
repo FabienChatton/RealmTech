@@ -8,16 +8,16 @@ public class EnemyComponent extends Component {
     private EnemyTelegraph enemyTelegraph;
     private EnemySteerable enemySteerable;
     private IntConsumer updateEnemy;
+    @Deprecated
     private byte flag;
     public final static byte PASSIVE_MOB_FLAG = 1;
     public final static byte ZOMBIE_FLAG = 2;
     public final static byte ITEM_FLAG = 3;
 
-    public EnemyComponent set(EnemyTelegraph enemyTelegraph, EnemySteerable enemySteerable, IntConsumer updateEnemy, byte flag) {
+    public EnemyComponent set(EnemyTelegraph enemyTelegraph, EnemySteerable enemySteerable, IntConsumer updateEnemy) {
         this.enemyTelegraph = enemyTelegraph;
         this.enemySteerable = enemySteerable;
         this.updateEnemy = updateEnemy;
-        this.flag = flag;
         return this;
     }
 
@@ -33,7 +33,8 @@ public class EnemyComponent extends Component {
         return updateEnemy;
     }
 
+    @Deprecated
     public byte getFlag() {
-        return flag;
+        return ZOMBIE_FLAG;
     }
 }

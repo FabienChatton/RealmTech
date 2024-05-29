@@ -1,17 +1,23 @@
 package ch.realmtech.server.registry;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import ch.realmtech.server.enemy.MobBehavior;
 
 public abstract class MobEntry extends Entry {
-    private final String textureRegionName;
+    private MobBehavior mobBehavior;
 
-    public MobEntry(String name, String textureRegionName) {
+    public MobEntry(String name) {
         super(name);
-        this.textureRegionName = textureRegionName;
+        mobBehavior = initializeMobBehavior();
     }
 
-    public TextureRegion getTextureRegion(TextureAtlas textureAtlas) {
-        return textureAtlas.findRegion(textureRegionName);
+    protected abstract MobBehavior initializeMobBehavior();
+
+    @Override
+    public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
+
+    }
+
+    public MobBehavior getMobBehavior() {
+        return mobBehavior;
     }
 }

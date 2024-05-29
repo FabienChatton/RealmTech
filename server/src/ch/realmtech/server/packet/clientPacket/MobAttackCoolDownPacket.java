@@ -22,7 +22,7 @@ public class MobAttackCoolDownPacket implements ClientPacket {
 
     @Override
     public void executeOnClient(ClientExecute clientExecute) {
-        clientExecute.mobAttackCoolDown(mobUuid, cooldown);
+        clientExecute.enemyAttackCoolDown(mobUuid, cooldown);
     }
 
     @Override
