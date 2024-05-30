@@ -47,6 +47,7 @@ public class ZombieEditEntity implements EditEntity {
             Body enemyBody = serverContext.getSystemsAdminServer().getEnemyManagerCommun().createEnemyBody(edit);
             edit.create(EnemyComponent.class).set(new EnemyTelegraph(entityId, serverContext), new EnemySteerable(enemyBody, 4), serverContext.getSystemsAdminServer().getIaMobFocusPlayerSystem().enemyFocusPlayer());
             edit.create(LifeComponent.class).set(10);
+            edit.create(EnemyHitPlayerComponent.class);
 
             serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), entityId);
         });
