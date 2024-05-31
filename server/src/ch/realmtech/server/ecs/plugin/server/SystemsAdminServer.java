@@ -3,7 +3,7 @@ package ch.realmtech.server.ecs.plugin.server;
 import ch.realmtech.server.ecs.plugin.commun.ContextType;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.*;
-import ch.realmtech.server.enemy.EnemySystem;
+import ch.realmtech.server.enemy.MobSystem;
 import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;
 
@@ -16,11 +16,11 @@ public class SystemsAdminServer extends SystemsAdminCommun {
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         super.evaluate(rootRegistry);
-        putCustomSystem(10, EnemySystemServer.class, EnemySystemServer::new);
+        putCustomSystem(10, EnemySpawnSystemServer.class, EnemySpawnSystemServer::new);
         putCustomSystem(10, ItemManagerServer.class, ItemManagerServer::new);
         putCustomSystem(10, PlayerMouvementSystemServer.class, PlayerMouvementSystemServer::new);
         putCustomSystem(10, MapSystemServer.class, MapSystemServer::new);
-        putCustomSystem(10, EnemySystem.class, EnemySystem::new);
+        putCustomSystem(10, MobSystem.class, MobSystem::new);
         putCustomSystem(10, EnemySyncSystem.class, EnemySyncSystem::new);
         putCustomSystem(10, PlayerSyncSystem.class, PlayerSyncSystem::new);
         putCustomSystem(10, EnemyFocusPlayerSystem.class, EnemyFocusPlayerSystem::new);
@@ -63,8 +63,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(ItemManagerServer.class);
     }
 
-    public EnemySystemServer getMobSystemServer() {
-        return getCustomSystem(EnemySystemServer.class);
+    public EnemySpawnSystemServer getEnemySpawnSystemServer() {
+        return getCustomSystem(EnemySpawnSystemServer.class);
     }
 
     public PlayerMouvementSystemServer getPlayerMouvementSystemServer() {
@@ -75,8 +75,8 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         return getCustomSystem(MapSystemServer.class);
     }
 
-    public EnemySystem getIaTestSystem() {
-        return getCustomSystem(EnemySystem.class);
+    public MobSystem getMobSystem() {
+        return getCustomSystem(MobSystem.class);
     }
 
     public CraftingSystem getCraftingSystem() {

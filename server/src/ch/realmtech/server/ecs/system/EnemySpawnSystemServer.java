@@ -24,7 +24,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 import java.util.Random;
 
-public class EnemySystemServer extends BaseSystem {
+public class EnemySpawnSystemServer extends BaseSystem {
     @Wire(name = "physicWorld")
     private com.badlogic.gdx.physics.box2d.World physicWorld;
     @Wire(name = "serverContext")

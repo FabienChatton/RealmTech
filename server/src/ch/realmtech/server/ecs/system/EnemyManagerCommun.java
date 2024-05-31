@@ -4,6 +4,7 @@ import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.enemy.MobSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.EntityEdit;
 import com.artemis.Manager;
@@ -32,7 +33,7 @@ public class EnemyManagerCommun extends Manager {
 
     /**
      * Destroy enemy from the world, ecs and physic.
-     * If on server, prefer to {@link ch.realmtech.server.enemy.EnemySystem#destroyEnemyServer(int)}
+     * If on server, prefer to {@link MobSystem#destroyEnemyServer(int)}
      * to send a packet to player.
      *
      * @param enemyId The enemy to delete.

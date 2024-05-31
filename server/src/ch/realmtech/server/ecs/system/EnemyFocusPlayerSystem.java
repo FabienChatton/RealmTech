@@ -71,7 +71,7 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
                 if (minPlayerDst <= enemyFocusPlayerDstOptionEntry.getValue()) {
                     messageManager.dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.FOCUS_PLAYER_MESSAGE, minPlayerId);
                 } else if (minPlayerDst >= enemyDispawnDstOptionEntry.getValue()) {
-                    systemsAdminServer.getIaTestSystem().destroyEnemyServer(entityId);
+                    systemsAdminServer.getMobSystem().destroyEnemyServer(entityId);
                 } else {
                     messageManager.dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.SLEEP_MESSAGE);
                 }

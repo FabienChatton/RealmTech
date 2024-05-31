@@ -7,6 +7,7 @@ import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.clientPacket.EnemyDeletePacket;
+import ch.realmtech.server.registry.ItemEntry;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -16,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import java.util.UUID;
 
 @All({EnemyComponent.class, MobComponent.class, PositionComponent.class})
-public class EnemySystem extends IteratingSystem {
+public class MobSystem extends IteratingSystem {
     @Wire(name = "serverContext")
     private ServerContext serverContext;
     @Wire
@@ -56,5 +57,10 @@ public class EnemySystem extends IteratingSystem {
 
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyDeletePacket(entityUuid), chunkPosX, chunkPosY);
         mobComponent.getMobEntry().getMobBehavior().getEditEntity().deleteEntity(serverContext.getExecuteOnContext(), enemyId);
+    }
+
+    public void dropItemOnDead(int entityId, ItemEntry dropItem) {
+        PositionComponent pos = mPos.get(entityId);
+        serverContext.getSystemsAdminServer().getItemManagerServer().newItemOnGround(pos.x, pos.y, dropItem, UUID.randomUUID());
     }
 }

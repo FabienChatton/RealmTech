@@ -1,6 +1,5 @@
 package ch.realmtech.server.level.cell;
 
-import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.item.ItemType;
 import ch.realmtech.server.level.ClickInteraction;
 import ch.realmtech.server.sound.PlayerFootStepSound;
@@ -142,22 +141,7 @@ public class CellBehavior {
         }
 
         public CellBehaviorBuilder editEntity(EditEntity... editEntity) {
-            cellBehavior.editEntity = new EditEntity() {
-                @Override
-                public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-                    for (EditEntity entity : editEntity) {
-                        entity.createEntity(executeOnContext, entityId);
-                    }
-                }
-
-                @Override
-                public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-                    for (EditEntity entity : editEntity) {
-                        entity.deleteEntity(executeOnContext, entityId);
-                    }
-                }
-
-            };
+            cellBehavior.editEntity = EditEntity.merge(editEntity);
             return this;
         }
 

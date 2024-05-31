@@ -14,6 +14,9 @@ public class ZombieMobEntry extends MobEntry {
         return MobBehavior.builder(new ZombieEditEntity(this))
                 .attackDommage(1)
                 .attackCoolDown(15)
+                .dropItemFqrn("realmtech.items.Sandales")
+                .heart(10)
+                .textures("zombie-0", "zombie-1", "zombie-2")
                 .build();
     }
 }
