@@ -1,15 +1,10 @@
 package ch.realmtech.server.ecs.system;
 
-import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.EnemyHitPlayerComponent;
-import ch.realmtech.server.ecs.component.LifeComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
-import ch.realmtech.server.enemy.EnemySteerable;
-import ch.realmtech.server.enemy.EnemyTelegraph;
 import ch.realmtech.server.mod.mobs.ZombieMobEntry;
 import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.MaxEnemyCountOptionEntry;
@@ -20,18 +15,14 @@ import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
-import com.artemis.EntityEdit;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import java.util.Random;
-import java.util.UUID;
 
 public class EnemySystemServer extends BaseSystem {
     @Wire(name = "physicWorld")
@@ -88,55 +79,16 @@ public class EnemySystemServer extends BaseSystem {
                 enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
                 enemySpawnVector.rotateDeg(random.nextFloat(360));
                 Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
-                newSpawnEnemy(enemySpawnPos.x, enemySpawnPos.y, RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ZombieMobEntry.class));
+                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y, RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ZombieMobEntry.class));
                 lastNaturalSpawn = System.currentTimeMillis();
             }
         }
     }
 
-    public void newSpawnEnemy(float x, float y, MobEntry mobEntry) {
+    public void spawnEnemy(float x, float y, MobEntry mobEntry) {
         int mobId = world.create();
         mobEntry.getMobBehavior().getEditEntity().createEntity(serverContext.getExecuteOnContext(), mobId);
         Box2dComponent box2dComponent = mBox2d.get(mobId);
         box2dComponent.body.setTransform(x, y, box2dComponent.body.getAngle());
-    }
-
-    @Deprecated
-    public int spawnEnemy(float x, float y) {
-        int mobId = world.create();
-        PhysiqueWorldHelper.resetBodyDef(bodyDef);
-        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        Body bodyMob = physicWorld.createBody(bodyDef);
-        bodyMob.setUserData(mobId);
-
-        PolygonShape physicContactShape = new PolygonShape();
-        physicContactShape.setAsBox(0.9f, 0.9f);
-        fixtureDef.shape = physicContactShape;
-        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
-        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
-        bodyMob.createFixture(fixtureDef);
-        bodyMob.setTransform(x, y, bodyMob.getAngle());
-
-        PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
-        PolygonShape playerContactShape = new PolygonShape();
-        playerContactShape.setAsBox(0.1f, 0.1f);
-        fixtureDef.shape = playerContactShape;
-        fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
-        fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_PLAYER;
-        bodyMob.createFixture(fixtureDef);
-
-        playerContactShape.dispose();
-        EntityEdit mobEdit = world.edit(mobId);
-        mobEdit.create(EnemyComponent.class).set(new EnemyTelegraph(mobId, serverContext), new EnemySteerable(bodyMob, 4), systemsAdminServer.getIaMobFocusPlayerSystem().enemyFocusPlayer());
-        mobEdit.create(EnemyHitPlayerComponent.class);
-
-        //iaComponent.getIaTestSteerable().setSteeringBehavior(new Seek<>(iaComponent.getIaTestSteerable(), new Box2dLocation(target)));
-        mobEdit.create(Box2dComponent.class).set(0.9f, 0.9f, bodyMob);
-        mobEdit.create(LifeComponent.class).set(10);
-        PositionComponent positionComponent = mobEdit.create(PositionComponent.class);
-        serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), mobId);
-        positionComponent.set(x, y);
-        return mobId;
     }
 }
