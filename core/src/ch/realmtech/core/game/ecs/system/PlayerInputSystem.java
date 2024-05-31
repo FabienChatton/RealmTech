@@ -1,18 +1,22 @@
 package ch.realmtech.core.game.ecs.system;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.component.MainPlayerComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.InfMapComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
+import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.ClickEventClient;
 import ch.realmtech.server.level.ClickInteraction;
 import ch.realmtech.server.packet.serverPacket.ItemToCellPlaceRequestPacket;
-import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
+import com.artemis.annotations.All;
+import com.artemis.annotations.Exclude;
 import com.artemis.annotations.Wire;
+import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
@@ -20,7 +24,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PlayerInputSystem extends BaseSystem {
+@All(MainPlayerComponent.class)
+@Exclude(PlayerDeadComponent.class)
+public class PlayerInputSystem extends IteratingSystem {
     @Wire(name = "context")
     private RealmTech context;
     @Wire
@@ -29,7 +35,7 @@ public class PlayerInputSystem extends BaseSystem {
     private ComponentMapper<ItemComponent> mItem;
 
     @Override
-    protected void processSystem() {
+    protected void process(int entityId) {
         if (context.getScreen() instanceof GameScreen gameScreen) {
             if (!gameScreen.canInteractWithWorld()) {
                 return;
