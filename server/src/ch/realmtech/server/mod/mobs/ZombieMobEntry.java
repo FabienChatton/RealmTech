@@ -12,6 +12,8 @@ public class ZombieMobEntry extends MobEntry {
     @Override
     protected MobBehavior initializeMobBehavior() {
         return MobBehavior.builder(new ZombieEditEntity(this))
+                .attackDommage(1)
+                .attackCoolDown(15)
                 .build();
     }
 }

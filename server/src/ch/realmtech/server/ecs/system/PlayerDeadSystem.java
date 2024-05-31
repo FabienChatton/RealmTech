@@ -1,19 +1,17 @@
 package ch.realmtech.server.ecs.system;
 
-import ch.realmtech.server.ecs.component.LifeComponent;
-import ch.realmtech.server.ecs.component.PlayerComponent;
-import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import ch.realmtech.server.ecs.component.PlayerDeadComponent;
+import ch.realmtech.server.ecs.component.*;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.One;
 import com.artemis.systems.IteratingSystem;
 
-@One({PlayerConnexionComponent.class, PlayerComponent.class})
+@One({PlayerConnexionComponent.class, PlayerComponent.class, Box2dComponent.class})
 @All({LifeComponent.class})
 public class PlayerDeadSystem extends IteratingSystem {
     private ComponentMapper<LifeComponent> mLife;
     private ComponentMapper<PlayerDeadComponent> mDead;
+    private ComponentMapper<Box2dComponent> mBox2d;
 
     @Override
     protected void process(int entityId) {
@@ -21,6 +19,10 @@ public class PlayerDeadSystem extends IteratingSystem {
         if (mDead.has(entityId)) {
             if (playerLife.getHeart() > 0) {
                 mDead.remove(entityId);
+            } else {
+                // every tick on death
+                Box2dComponent box2dComponent = mBox2d.get(entityId);
+                box2dComponent.body.applyLinearImpulse(0, 0, 0, 0, true);
             }
         } else {
             if (playerLife.getHeart() <= 0) {

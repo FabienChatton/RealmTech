@@ -27,34 +27,52 @@ public class PlayerMobContactSystem extends IteratingSystem {
     private ComponentMapper<Box2dComponent> mBox2d;
     private ComponentMapper<EnemyComponent> mEnemy;
     private ComponentMapper<LifeComponent> mLife;
+    private ComponentMapper<MobComponent> mMob;
     @Override
     protected void process(int entityId) {
-        IntBag ias = world.getAspectSubscriptionManager().get(Aspect.all(
+        IntBag mobs = world.getAspectSubscriptionManager().get(Aspect.all(
                 EnemyComponent.class,
                 EnemyHitPlayerComponent.class,
                 PositionComponent.class,
-                Box2dComponent.class
+                Box2dComponent.class,
+                MobComponent.class
         ).exclude(EnemyAttackCooldownComponent.class)).getEntities();
-        if (ias.isEmpty()) return;
+        if (mobs.isEmpty()) return;
 
         PositionComponent playerPositionComponent = mPos.get(entityId);
         Box2dComponent playerBox2dComponent = mBox2d.get(entityId);
         LifeComponent playerLifeComponent = mLife.get(entityId);
-        Rectangle.tmp.set(playerBox2dComponent.body.getPosition().x, playerBox2dComponent.body.getPosition().y, playerBox2dComponent.widthWorld, playerBox2dComponent.heightWorld);
+        Rectangle.tmp.set(
+                playerBox2dComponent.body.getPosition().x + playerBox2dComponent.widthWorld / 2,
+                playerBox2dComponent.body.getPosition().y + playerBox2dComponent.heightWorld / 2,
+                playerBox2dComponent.widthWorld,
+                playerBox2dComponent.heightWorld
+        );
 
-        for (int i = 0; i < ias.size(); i++) {
-            int ia = ias.get(i);
-            EnemyComponent enemyComponent = mEnemy.get(ia);
-            PositionComponent iaPositionComponent = mPos.get(ia);
-            Box2dComponent iaBox2dComponent = mBox2d.get(ia);
-            Rectangle.tmp2.set(iaBox2dComponent.body.getPosition().x, iaBox2dComponent.body.getPosition().y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
+        for (int i = 0; i < mobs.size(); i++) {
+            int mobId = mobs.get(i);
+            EnemyComponent enemyComponent = mEnemy.get(mobId);
+            PositionComponent iaPositionComponent = mPos.get(mobId);
+            Box2dComponent iaBox2dComponent = mBox2d.get(mobId);
+            MobComponent mobComponent = mMob.get(mobId);
+            Rectangle.tmp2.set(
+                    iaBox2dComponent.body.getPosition().x + iaBox2dComponent.widthWorld / 2,
+                    iaBox2dComponent.body.getPosition().y + iaBox2dComponent.heightWorld / 2,
+                    iaBox2dComponent.widthWorld,
+                    iaBox2dComponent.heightWorld
+            );
 
             if (Rectangle.tmp.overlaps(Rectangle.tmp2)) {
                 MessageManager.getInstance().dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.ATTACK_COOLDOWN_MESSAGE);
-                UUID mobId = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(ia);
-                serverContext.getServerConnexion().broadCastPacket(new MobAttackCoolDownPacket(mobId, 15));
+                UUID mobUuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(mobId);
 
-                world.edit(ia).create(EnemyAttackCooldownComponent.class).set(15, () -> {
+                int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(iaPositionComponent.x));
+                int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(iaPositionComponent.y));
+                int attackCoolDownTick = mobComponent.getMobEntry().getMobBehavior().getAttackCoolDownTick();
+                serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(
+                        new MobAttackCoolDownPacket(mobUuid, attackCoolDownTick), chunkPosX, chunkPosY);
+
+                world.edit(mobId).create(EnemyAttackCooldownComponent.class).set(attackCoolDownTick, () -> {
                     Rectangle.tmp.set(playerPositionComponent.x, playerPositionComponent.y, playerBox2dComponent.widthWorld, playerBox2dComponent.heightWorld);
                     Rectangle.tmp2.set(iaPositionComponent.x, iaPositionComponent.y, iaBox2dComponent.widthWorld, iaBox2dComponent.heightWorld);
 
@@ -66,10 +84,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(10000);
 
                         // remove player heal
-                        if (playerLifeComponent.decrementHeart(1)) {
-//                            playerLifeComponent.set(10);
-//                            playerBox2dComponent.body.setTransform(0, 0, 0);
-                        } else {
+                        if (!playerLifeComponent.decrementHeart(mobComponent.getMobEntry().getMobBehavior().getAttackDommage())) {
                             // knock back if not death
                             playerBox2dComponent.body.applyForce(knockbackVector, playerBox2dComponent.body.getPosition(), true);
                         }

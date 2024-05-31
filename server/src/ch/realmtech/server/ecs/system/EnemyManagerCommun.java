@@ -56,7 +56,7 @@ public class EnemyManagerCommun extends Manager {
         bodyMob.setUserData(entityEdit.getEntityId());
 
         PolygonShape physicContactShape = new PolygonShape();
-        physicContactShape.setAsBox(0.9f, 0.9f);
+        physicContactShape.setAsBox(0.5f, 0.5f);
         fixtureDef.shape = physicContactShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
         fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_WORLD | PhysiqueWorldHelper.BIT_GAME_OBJECT;
@@ -64,7 +64,7 @@ public class EnemyManagerCommun extends Manager {
 
         PhysiqueWorldHelper.resetFixtureDef(fixtureDef);
         PolygonShape playerContactShape = new PolygonShape();
-        playerContactShape.setAsBox(0.1f, 0.1f);
+        playerContactShape.setAsBox(0.05f, 0.05f);
         fixtureDef.shape = playerContactShape;
         fixtureDef.filter.categoryBits = PhysiqueWorldHelper.BIT_GAME_OBJECT;
         fixtureDef.filter.maskBits = PhysiqueWorldHelper.BIT_PLAYER;

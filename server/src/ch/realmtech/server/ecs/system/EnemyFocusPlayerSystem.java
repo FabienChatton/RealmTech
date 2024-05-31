@@ -1,5 +1,6 @@
 package ch.realmtech.server.ecs.system;
 
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
@@ -8,6 +9,7 @@ import ch.realmtech.server.enemy.EnemyState;
 import ch.realmtech.server.mod.options.server.mob.EnemyDispawnDstOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.EnemyFocusPlayerDstOptionEntry;
 import ch.realmtech.server.registry.RegistryUtils;
+import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
@@ -45,8 +47,11 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
         return (entityId) -> {
             EnemyComponent enemyComponent = mEnemy.get(entityId);
             PositionComponent enemyPositionComponent = mPos.get(entityId);
-            IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
-
+            IntBag players = world.getAspectSubscriptionManager().get(Aspect.all(
+                    PlayerConnexionComponent.class
+            ).exclude(
+                    PlayerDeadComponent.class
+            )).getEntities();
 
             int[] playerData = players.getData();
             float minPlayerDst = Float.MAX_VALUE;
@@ -70,6 +75,8 @@ public class EnemyFocusPlayerSystem extends IteratingSystem {
                 } else {
                     messageManager.dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.SLEEP_MESSAGE);
                 }
+            } else {
+                messageManager.dispatchMessage(null, enemyComponent.getEnemyTelegraph(), EnemyState.SLEEP_MESSAGE);
             }
         };
     }

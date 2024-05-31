@@ -4,7 +4,9 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
+import ch.realmtech.server.mod.items.SandalesItemEntry;
 import ch.realmtech.server.registry.MobEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.EntityEdit;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -61,6 +63,12 @@ public class ZombieEditEntity implements EditEntity {
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+        executeOnContext.onServer((serverContext) -> {
+            PositionComponent pos = serverContext.getEcsEngineServer().getWorld().getMapper(PositionComponent.class).get(entityId);
+            SandalesItemEntry sandales = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), SandalesItemEntry.class);
+            serverContext.getSystemsAdminServer().getItemManagerServer().newItemOnGround(pos.x, pos.y, sandales, UUID.randomUUID());
+        });
+
         executeOnContext.onCommun((world) -> {
             SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
             systemsAdmin.getEnemyManagerCommun().destroyWorldEnemy(entityId);
