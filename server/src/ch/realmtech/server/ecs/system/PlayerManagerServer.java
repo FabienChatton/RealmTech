@@ -168,6 +168,19 @@ public class PlayerManagerServer extends Manager {
         );
     }
 
+    private void deletePlayer(int playerId) {
+        int chestInventoryId = systemsAdminServer.getInventoryManager().getChestInventoryId(playerId);
+        int craftingInventoryId = systemsAdminServer.getInventoryManager().getCraftingInventoryId(playerId);
+        int craftingResultInventoryId = systemsAdminServer.getInventoryManager().getCraftingResultInventoryId(playerId);
+
+        systemsAdminServer.getInventoryManager().removeInventoryUi(chestInventoryId);
+        systemsAdminServer.getInventoryManager().removeInventoryUi(craftingInventoryId);
+        systemsAdminServer.getInventoryManager().removeInventoryUi(craftingResultInventoryId);
+        systemsAdminServer.getUuidEntityManager().deleteRegisteredEntity(playerId);
+
+        world.delete(playerId);
+    }
+
     public IntBag getPlayers() {
         return players;
     }
@@ -271,9 +284,11 @@ public class PlayerManagerServer extends Manager {
     public void removePlayer(Channel channel) {
         int[] playersConnexionData = players.getData();
         for (int i = 0; i < playersConnexionData.length; i++) {
-            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(players.get(i));
+            int playerId = playersConnexionData[i];
+            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
             if (playerConnexionComponent.channel == channel) {
-                players.removeIndex(i);
+                players.removeValue(playerId);
+                deletePlayer(playerId);
                 break;
             }
         }

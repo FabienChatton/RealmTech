@@ -535,6 +535,10 @@ public class InventoryManager extends Manager {
         return getCraftingInventory(mCraftingTable.get(motherEntity));
     }
 
+    public int getCraftingInventoryId(int motherEntity) {
+        return mCraftingTable.get(motherEntity).craftingInventory;
+    }
+
     public InventoryComponent getCraftingInventory(CraftingTableComponent craftingTableComponent) {
         return mInventory.get(craftingTableComponent.craftingInventory);
     }
@@ -546,6 +550,10 @@ public class InventoryManager extends Manager {
      */
     public InventoryComponent getCraftingResultInventory(int motherEntity) {
         return getCraftingResultInventory(mCraftingTable.get(motherEntity));
+    }
+
+    public int getCraftingResultInventoryId(int motherEntity) {
+        return mCraftingTable.get(motherEntity).craftingResultInventory;
     }
 
     public InventoryComponent getCraftingResultInventory(CraftingTableComponent craftingTableComponent) {
