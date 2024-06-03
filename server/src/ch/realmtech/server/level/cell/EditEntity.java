@@ -70,5 +70,17 @@ public interface EditEntity extends EditEntityDelete, EditEntityCreate {
 
         };
     }
+
+    static EditEntity empty() {
+        return new EditEntity() {
+            @Override
+            public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
+            }
+
+            @Override
+            public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+            }
+        };
+    }
 }
 

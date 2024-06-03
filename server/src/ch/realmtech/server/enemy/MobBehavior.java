@@ -1,13 +1,16 @@
 package ch.realmtech.server.enemy;
 
-import ch.realmtech.server.ecs.component.LifeComponent;
-import ch.realmtech.server.ecs.component.TextureAnimationComponent;
-import ch.realmtech.server.ecs.component.TextureComponent;
+import ch.realmtech.server.ecs.ExecuteOnContext;
+import ch.realmtech.server.ecs.component.*;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.registry.*;
 import com.artemis.EntityEdit;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.artemis.World;
+import com.badlogic.gdx.physics.box2d.Body;
+
+import java.util.UUID;
+import java.util.function.IntConsumer;
 
 public class MobBehavior implements Evaluator {
     private EditEntity editEntity;
@@ -16,10 +19,63 @@ public class MobBehavior implements Evaluator {
     private int heart = 10;
     private String dropItemFqrn;
     private ItemEntry dropItem;
-    private String[] textureRegionNames;
+    private EnemyTexture enemyTexture;
+    private final MobEntry mobEntry;
+    private boolean focusPlayer = false;
+
+    public MobBehavior(MobEntry mobEntry) {
+        this.mobEntry = mobEntry;
+    }
 
     @Override
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
+        editEntity = EditEntity.merge(new EditEntity() {
+            @Override
+            public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
+                executeOnContext.onCommun((world) -> {
+                    EntityEdit edit = world.edit(entityId);
+                    edit.create(MobComponent.class).set(mobEntry);
+                    edit.create(PositionComponent.class);
+                });
+
+                executeOnContext.onServer((serverContext) -> {
+                    World world = serverContext.getEcsEngineServer().getWorld();
+
+                    EntityEdit edit = world.edit(entityId);
+                    Body enemyBody = serverContext.getSystemsAdminServer().getEnemyManagerCommun().createEnemyBody(edit);
+                    IntConsumer updateEnemy;
+                    if (focusPlayer) {
+                        updateEnemy = serverContext.getSystemsAdminServer().getIaMobFocusPlayerSystem().enemyFocusPlayer();
+                    } else {
+                        updateEnemy = value -> {
+                        };
+                    }
+                    edit.create(EnemyComponent.class).set(new EnemyTelegraph(entityId, serverContext), new EnemySteerable(enemyBody, 4), updateEnemy);
+                    edit.create(EnemyHitPlayerComponent.class);
+
+                    serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), entityId);
+                });
+
+                executeOnContext.onClientWorld((clientForClient, world) -> {
+                    EntityEdit edit = world.edit(entityId);
+
+                    clientForClient.getEnemyManagerCommun().createEnemyBody(edit);
+
+                    edit.create(MouvementComponent.class);
+                });
+            }
+
+            @Override
+            public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
+                executeOnContext.onCommun((world) -> {
+                    SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
+                    systemsAdmin.getEnemyManagerCommun().destroyWorldEnemy(entityId);
+                });
+            }
+        }, editEntity);
+
+
+
         editEntity = EditEntity.merge(EditEntity.create((executeOnContext, entityId) -> {
             executeOnContext.onServer((serverContext) -> serverContext.getEcsEngineServer().getWorld().getMapper(LifeComponent.class).create(entityId)
                     .set(heart));
@@ -32,28 +88,17 @@ public class MobBehavior implements Evaluator {
             })), editEntity);
         }
 
-        if (textureRegionNames != null) {
-            editEntity = EditEntity.merge(EditEntity.create((executeOnContext, entityId) -> {
-                executeOnContext.onClientWorld((clientForClient, world) -> {
-                    EntityEdit edit = world.edit(entityId);
-                    TextureAtlas textureAtlas = world.getRegistered(TextureAtlas.class);
-
-                    TextureComponent textureComponent = edit.create(TextureComponent.class);
-                    textureComponent.scale = 1.6f;
-
-                    TextureAnimationComponent textureAnimationComponent = edit.create(TextureAnimationComponent.class);
-                    TextureRegion[] textureRegions = new TextureRegion[textureRegionNames.length];
-                    for (int i = 0; i < textureRegionNames.length; i++) {
-                        textureRegions[i] = textureAtlas.findRegion(textureRegionNames[i]);
-                    }
-                    textureAnimationComponent.animationFront = textureRegions;
-                });
-            }), editEntity);
+        if (enemyTexture != null) {
+            editEntity = EditEntity.merge(enemyTexture.createTexture(), editEntity);
         }
     }
 
-    public static MobBehaviorBuilder builder(EditEntity editEntity) {
-        return new MobBehaviorBuilder(editEntity);
+    public static MobBehaviorBuilder builder(MobEntry mobEntry) {
+        return builder(mobEntry, EditEntity.empty());
+    }
+
+    public static MobBehaviorBuilder builder(MobEntry mobEntry, EditEntity editEntity) {
+        return new MobBehaviorBuilder(mobEntry, editEntity);
     }
 
     public EditEntity getEditEntity() {
@@ -71,8 +116,8 @@ public class MobBehavior implements Evaluator {
     public static class MobBehaviorBuilder {
         private final MobBehavior mobBehavior;
 
-        private MobBehaviorBuilder(EditEntity editEntity) {
-            mobBehavior = new MobBehavior();
+        private MobBehaviorBuilder(MobEntry mobEntry, EditEntity editEntity) {
+            mobBehavior = new MobBehavior(mobEntry);
             mobBehavior.editEntity = editEntity;
         }
 
@@ -110,8 +155,16 @@ public class MobBehavior implements Evaluator {
             return this;
         }
 
-        public MobBehaviorBuilder textures(String... textureRegionNames) {
-            mobBehavior.textureRegionNames = textureRegionNames;
+        public MobBehaviorBuilder textures(EnemyTexture enemyTexture) {
+            mobBehavior.enemyTexture = enemyTexture;
+            return this;
+        }
+
+        /**
+         * default false
+         */
+        public MobBehaviorBuilder focusPlayer() {
+            mobBehavior.focusPlayer = true;
             return this;
         }
 

@@ -5,7 +5,7 @@ import ch.realmtech.server.ecs.component.Box2dComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
-import ch.realmtech.server.mod.mobs.ZombieMobEntry;
+import ch.realmtech.server.mod.mobs.ChickenMobEntry;
 import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.MaxEnemyCountOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.MinDstSpawnPlayerOptionEntry;
@@ -79,7 +79,7 @@ public class EnemySpawnSystemServer extends BaseSystem {
                 enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
                 enemySpawnVector.rotateDeg(random.nextFloat(360));
                 Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
-                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y, RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ZombieMobEntry.class));
+                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y, RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ChickenMobEntry.class));
                 lastNaturalSpawn = System.currentTimeMillis();
             }
         }

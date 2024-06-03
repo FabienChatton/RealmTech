@@ -8,11 +8,9 @@ public class EnemyComponent extends Component {
     private EnemyTelegraph enemyTelegraph;
     private EnemySteerable enemySteerable;
     private IntConsumer updateEnemy;
+
     @Deprecated
     private byte flag;
-    public final static byte PASSIVE_MOB_FLAG = 1;
-    public final static byte ZOMBIE_FLAG = 2;
-    public final static byte ITEM_FLAG = 3;
 
     public EnemyComponent set(EnemyTelegraph enemyTelegraph, EnemySteerable enemySteerable, IntConsumer updateEnemy) {
         this.enemyTelegraph = enemyTelegraph;
@@ -31,10 +29,5 @@ public class EnemyComponent extends Component {
 
     public IntConsumer getUpdateEnemy() {
         return updateEnemy;
-    }
-
-    @Deprecated
-    public byte getFlag() {
-        return ZOMBIE_FLAG;
     }
 }
