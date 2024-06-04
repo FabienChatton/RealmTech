@@ -113,6 +113,10 @@ public class MobBehavior implements Evaluator {
         return attackCoolDownTick;
     }
 
+    public boolean isFocusPlayer() {
+        return focusPlayer;
+    }
+
     public static class MobBehaviorBuilder {
         private final MobBehavior mobBehavior;
 
