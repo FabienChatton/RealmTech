@@ -31,4 +31,6 @@ public interface ClientContext extends GetWorld, Context {
     SoundManager getSoundManager();
 
     SystemsAdminClientForClient getSystemsAdminClient();
+
+    void setMenuScreen();
 }

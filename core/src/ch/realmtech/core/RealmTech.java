@@ -504,4 +504,9 @@ public final class RealmTech extends Game implements InternalConnexion {
         TextureAtlas.AtlasRegion lain = getTextureAtlas().findRegion("lain");
         System.out.println(lain);
     }
+
+    @Override
+    public void setMenuScreen() {
+        Gdx.app.postRunnable(() -> setScreen(ScreenType.MENU));
+    }
 }

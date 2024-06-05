@@ -138,6 +138,10 @@ public class ServerContext implements Closeable, Context {
     }
 
     public void saveAndClose() throws InterruptedException, IOException {
+        if (saveAndClose) {
+            // already server closed
+            return;
+        }
         try {
             save();
         } catch (IOException e) {
@@ -167,6 +171,7 @@ public class ServerContext implements Closeable, Context {
             }
             if (clientRef != null) {
                 clientRef.closeEcs();
+                clientRef.setMenuScreen();
             }
         }
     }
