@@ -4,10 +4,7 @@ import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.cells.*;
 import ch.realmtech.server.mod.crafts.craftingtable.*;
-import ch.realmtech.server.mod.crafts.furnace.CopperIngotCraftEntry;
-import ch.realmtech.server.mod.crafts.furnace.GoldIngotCraftEntry;
-import ch.realmtech.server.mod.crafts.furnace.IronIngotCraftEntry;
-import ch.realmtech.server.mod.crafts.furnace.TinIngotCraftEntry;
+import ch.realmtech.server.mod.crafts.furnace.*;
 import ch.realmtech.server.mod.factory.EditEntityFactory;
 import ch.realmtech.server.mod.icons.*;
 import ch.realmtech.server.mod.items.*;
@@ -99,6 +96,7 @@ public class RealmTechCoreMod implements ModInitializer {
         itemsRegistry.addEntry(new WoodenSwordItemEntry());
         itemsRegistry.addEntry(new StoneSwordItemEntry());
         itemsRegistry.addEntry(new RawChickenItemEntry());
+        itemsRegistry.addEntry(new ChickenNuggets());
 
         // icons
         Registry<Entry> iconsRegistry = Registry.createRegistry(modRegistry, "icons", "icons");
@@ -151,6 +149,7 @@ public class RealmTechCoreMod implements ModInitializer {
         craftFurnaceRegistry.addEntry(new TinIngotCraftEntry());
         craftFurnaceRegistry.addEntry(new CopperIngotCraftEntry());
         craftFurnaceRegistry.addEntry(new GoldIngotCraftEntry());
+        craftFurnaceRegistry.addEntry(new ChickenNuggetsCraftEntry());
 
         // quests
         Registry<QuestEntry> questRegistry = Registry.createRegistry(modRegistry, "quests", "quests");
