@@ -26,4 +26,12 @@ public class LifeComponent extends Component {
             return true;
         }
     }
+
+    public void increaseHeart(int heartToRestore) {
+        if (heart + heartToRestore > 10) {
+            heart = 10;
+        } else {
+            heart += heartToRestore;
+        }
+    }
 }

@@ -6,6 +6,7 @@ import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
+import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import ch.realmtech.server.packet.clientPacket.PlayerCreateQuestPacket;
 import ch.realmtech.server.quests.QuestPlayerProperty;
 import ch.realmtech.server.registry.QuestEntry;
@@ -50,6 +51,7 @@ public class PlayerManagerServer extends Manager {
     private ComponentMapper<InventoryComponent> mInventory;
     private ComponentMapper<LifeComponent> mLife;
     private ComponentMapper<QuestPlayerPropertyComponent> mQuestPlayer;
+    private ComponentMapper<ItemComponent> mItem;
 
     public PlayerManagerServer() {
         players = new IntBag();
@@ -312,5 +314,46 @@ public class PlayerManagerServer extends Manager {
             mBox2d.get(playerId).body.setTransform(0, 0, 0);
             mLife.get(playerId).set(10);
         }
+    }
+
+    public void eatItem(Channel clientChannel, UUID itemUuid) {
+        int playerId = getPlayerByChannel(clientChannel);
+        int itemId = systemsAdminServer.getUuidEntityManager().getEntityId(itemUuid);
+        PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+        if (itemId == -1) {
+            logger.info("Can not find item {} for eating. Requested by {}", itemUuid, playerConnexionComponent.getUsername());
+            return;
+        }
+
+        LifeComponent lifeComponent = mLife.get(playerId);
+        if (lifeComponent == null) {
+            logger.info("Can not find player life component {}", playerConnexionComponent.getUsername());
+            return;
+        }
+
+        ItemComponent itemComponent = mItem.get(itemId);
+        if (itemComponent == null) {
+            logger.info("Id {} is not a item. Requested for eating by {}", itemId, playerConnexionComponent.getUsername());
+            return;
+        }
+
+        int heartToRestore = itemComponent.itemRegisterEntry.getItemBehavior().getEatRestore();
+        if (heartToRestore <= 0) {
+            logger.info("Can not eat this item: {}. Heart to restore is invalide: {} must be positive", itemUuid, heartToRestore);
+            return;
+        }
+
+        int chestInventoryId = systemsAdminServer.getInventoryManager().getChestInventoryId(playerId);
+        if (chestInventoryId == -1) {
+            logger.info("Can not find player chest inventory. player {}", playerConnexionComponent.getUsername());
+            return;
+        }
+
+        lifeComponent.increaseHeart(heartToRestore);
+        if (!systemsAdminServer.getInventoryManager().deleteItemInInventory(chestInventoryId, itemId)) {
+            logger.info("Fail to delete item eaten. player {}", playerConnexionComponent.getUsername());
+        }
+
+        serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(serverContext, chestInventoryId), clientChannel);
     }
 }

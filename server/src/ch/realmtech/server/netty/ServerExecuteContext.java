@@ -267,4 +267,11 @@ public class ServerExecuteContext implements ServerExecute {
             serverContext.getSystemsAdminServer().getPlayerManagerServer().askPlayerRespawn(clientChannel);
         });
     }
+
+    @Override
+    public void eatItem(Channel clientChannel, UUID itemUuid) {
+        serverContext.getEcsEngineServer().nextTick(() -> {
+            serverContext.getSystemsAdminServer().getPlayerManagerServer().eatItem(clientChannel, itemUuid);
+        });
+    }
 }

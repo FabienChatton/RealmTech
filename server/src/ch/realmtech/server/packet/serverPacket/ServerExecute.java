@@ -38,4 +38,6 @@ public interface ServerExecute {
     void playerWeaponShot(Channel clientChannel, Vector2 vector2, UUID itemUuid);
 
     void askPlayerRespawn(Channel clientChannel);
+
+    void eatItem(Channel clientChannel, UUID itemUuid);
 }

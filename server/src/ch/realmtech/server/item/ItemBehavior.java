@@ -14,6 +14,7 @@ public class ItemBehavior {
     private String placeCellName;
     private int timeToBurn = 0;
     private boolean icon;
+    private int eatRestore;
 
     private ItemBehavior() {
         attackDommage = 1;
@@ -64,6 +65,10 @@ public class ItemBehavior {
         this.newPlaceCellEntry = cellEntry;
     }
 
+    public int getEatRestore() {
+        return eatRestore;
+    }
+
     public static class ItemBehaviorBuilder {
 
         private final ItemBehavior itemBehavior = new ItemBehavior();
@@ -105,6 +110,11 @@ public class ItemBehavior {
 
         public ItemBehaviorBuilder icon() {
             itemBehavior.icon = true;
+            return this;
+        }
+
+        public ItemBehaviorBuilder eatRestore(int heartToRestore) {
+            itemBehavior.eatRestore = heartToRestore;
             return this;
         }
 

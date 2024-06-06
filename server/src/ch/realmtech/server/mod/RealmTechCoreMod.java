@@ -98,6 +98,7 @@ public class RealmTechCoreMod implements ModInitializer {
         itemsRegistry.addEntry(new WeaponItemEntry());
         itemsRegistry.addEntry(new WoodenSwordItemEntry());
         itemsRegistry.addEntry(new StoneSwordItemEntry());
+        itemsRegistry.addEntry(new RawChickenItemEntry());
 
         // icons
         Registry<Entry> iconsRegistry = Registry.createRegistry(modRegistry, "icons", "icons");
