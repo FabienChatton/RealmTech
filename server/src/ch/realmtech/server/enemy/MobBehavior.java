@@ -4,11 +4,13 @@ import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
+import ch.realmtech.server.level.cell.EditEntityDelete;
 import ch.realmtech.server.registry.*;
 import com.artemis.EntityEdit;
 import com.artemis.World;
 import com.badlogic.gdx.physics.box2d.Body;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.IntConsumer;
 
@@ -22,6 +24,7 @@ public class MobBehavior implements Evaluator {
     private EnemyTexture enemyTexture;
     private final MobEntry mobEntry;
     private boolean focusPlayer = false;
+    private EditEntityDelete onKilled;
 
     public MobBehavior(MobEntry mobEntry) {
         this.mobEntry = mobEntry;
@@ -46,12 +49,12 @@ public class MobBehavior implements Evaluator {
                     IntConsumer updateEnemy;
                     if (focusPlayer) {
                         updateEnemy = serverContext.getSystemsAdminServer().getIaMobFocusPlayerSystem().enemyFocusPlayer();
+                        edit.create(EnemyHitPlayerComponent.class);
                     } else {
                         updateEnemy = value -> {
                         };
                     }
                     edit.create(EnemyComponent.class).set(new EnemyTelegraph(entityId, serverContext), new EnemySteerable(enemyBody, 4), updateEnemy);
-                    edit.create(EnemyHitPlayerComponent.class);
 
                     serverContext.getSystemsAdminServer().getUuidEntityManager().registerEntityIdWithUuid(UUID.randomUUID(), entityId);
                 });
@@ -83,9 +86,9 @@ public class MobBehavior implements Evaluator {
 
         if (dropItemFqrn != null) {
             dropItem = RegistryUtils.evaluateSafe(rootRegistry, dropItemFqrn, ItemEntry.class);
-            editEntity = EditEntity.merge(EditEntity.delete((executeOnContext, entityId) -> executeOnContext.onServer((serverContext) -> {
+            onKilled = EditEntity.merge(EditEntity.delete((executeOnContext, entityId) -> executeOnContext.onServer((serverContext) -> {
                 serverContext.getSystemsAdminServer().getMobSystem().dropItemOnDead(entityId, dropItem);
-            })), editEntity);
+            })));
         }
 
         if (enemyTexture != null) {
@@ -113,8 +116,8 @@ public class MobBehavior implements Evaluator {
         return attackCoolDownTick;
     }
 
-    public boolean isFocusPlayer() {
-        return focusPlayer;
+    public Optional<EditEntityDelete> getOnKilled() {
+        return Optional.ofNullable(onKilled);
     }
 
     public static class MobBehaviorBuilder {

@@ -55,9 +55,6 @@ public class PlayerMobContactSystem extends IteratingSystem {
             PositionComponent iaPositionComponent = mPos.get(mobId);
             Box2dComponent iaBox2dComponent = mBox2d.get(mobId);
             MobComponent mobComponent = mMob.get(mobId);
-            if (!mobComponent.getMobEntry().getMobBehavior().isFocusPlayer()) {
-                continue;
-            }
             Rectangle.tmp2.set(
                     iaBox2dComponent.body.getPosition().x + iaBox2dComponent.widthWorld / 2,
                     iaBox2dComponent.body.getPosition().y + iaBox2dComponent.heightWorld / 2,
@@ -87,7 +84,7 @@ public class PlayerMobContactSystem extends IteratingSystem {
                         Vector2 knockbackVector = playerRectangleCenter.sub(iaRectangleCenter).nor().setLength(10000);
 
                         // remove player heal
-                        if (!playerLifeComponent.decrementHeart(mobComponent.getMobEntry().getMobBehavior().getAttackDommage())) {
+                        if (!playerLifeComponent.decrementHeart(mobComponent.getMobEntry().getMobBehavior().getAttackDommage(), mobId)) {
                             // knock back if not death
                             playerBox2dComponent.body.applyForce(knockbackVector, playerBox2dComponent.body.getPosition(), true);
                         }

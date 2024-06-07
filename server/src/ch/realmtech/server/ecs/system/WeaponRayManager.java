@@ -98,7 +98,8 @@ public class WeaponRayManager extends Manager {
             UUID EntityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(entityId);
             serverContext.getServerConnexion().sendPacketTo(new ParticleAddPacket(ParticleAddPacket.Particles.HIT, pos.toVector2()), clientChannel);
 
-            if (!lifeComponent.decrementHeart(itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage())) {
+            // attack enemy
+            if (!lifeComponent.decrementHeart(itemComponent.itemRegisterEntry.getItemBehavior().getAttackDommage(), playerId)) {
                 Vector2 knowBack = pos.toVector2().sub(playerPos.toVector2()).setLength2(100);
                 systemsAdminServer.getEnemyManagerCommun().knockBackMob(entityId, knowBack);
                 world.edit(entityId).create(InvincibilityComponent.class).set(60);

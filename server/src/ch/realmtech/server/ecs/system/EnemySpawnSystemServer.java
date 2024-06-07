@@ -2,14 +2,13 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.Box2dComponent;
+import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.mod.mobs.ChickenMobEntry;
-import ch.realmtech.server.mod.options.server.mob.MaxDstSpawnPlayerOptionEntry;
-import ch.realmtech.server.mod.options.server.mob.MaxEnemyCountOptionEntry;
-import ch.realmtech.server.mod.options.server.mob.MinDstSpawnPlayerOptionEntry;
-import ch.realmtech.server.mod.options.server.mob.NaturalSpawnCoolDownOptionEntry;
+import ch.realmtech.server.mod.options.server.mob.*;
 import ch.realmtech.server.registry.MobEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Aspect;
@@ -37,6 +36,7 @@ public class EnemySpawnSystemServer extends BaseSystem {
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<Box2dComponent> mBox2d;
+    private ComponentMapper<EnemyComponent> mEnemy;
     private final MessageManager messageManager = MessageManager.getInstance();
     private long lastNaturalSpawn = 0;
     private Random random;
@@ -44,6 +44,7 @@ public class EnemySpawnSystemServer extends BaseSystem {
     private MaxDstSpawnPlayerOptionEntry maxDstSpawnPlayerOptionEntry;
     private MinDstSpawnPlayerOptionEntry minDstSpawnPlayerOptionEntry;
     private MaxEnemyCountOptionEntry maxEnemyCountOptionEntry;
+    private EnemyDispawnDstOptionEntry enemyDispawnDstOptionEntry;
 
     @Override
     protected void initialize() {
@@ -55,11 +56,13 @@ public class EnemySpawnSystemServer extends BaseSystem {
         maxDstSpawnPlayerOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), MaxDstSpawnPlayerOptionEntry.class);
         minDstSpawnPlayerOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), MinDstSpawnPlayerOptionEntry.class);
         maxEnemyCountOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), MaxEnemyCountOptionEntry.class);
+        enemyDispawnDstOptionEntry = RegistryUtils.findEntryOrThrow(systemsAdminServer.getRootRegistry(), EnemyDispawnDstOptionEntry.class);
     }
 
     @Override
     protected void processSystem() {
         naturalSpawnEnemy();
+        naturalDeSpawnEnemy();
         messageManager.update();
     }
 
@@ -83,6 +86,47 @@ public class EnemySpawnSystemServer extends BaseSystem {
                 lastNaturalSpawn = System.currentTimeMillis();
             }
         }
+    }
+
+    private void naturalDeSpawnEnemy() {
+        IntBag enemyEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
+        for (int i = 0; i < enemyEntities.size(); i++) {
+            int enemyId = enemyEntities.get(i);
+            PositionComponent enemyPos = mPos.get(enemyId);
+            Vector2 enemyVec = enemyPos.toVector2();
+            int playerId = getClosesPlayer(enemyVec);
+            if (playerId != -1) {
+                PositionComponent playerPos = mPos.get(playerId);
+                float dst = playerPos.toVector2().dst(enemyVec);
+                if (dst > enemyDispawnDstOptionEntry.getValue()) {
+                    systemsAdminServer.getMobSystem().destroyEnemyServer(enemyId);
+                }
+            }
+        }
+    }
+
+    public int getClosesPlayer(Vector2 origin) {
+        IntBag players = world.getAspectSubscriptionManager().get(Aspect.all(
+                PlayerConnexionComponent.class
+        ).exclude(
+                PlayerDeadComponent.class
+        )).getEntities();
+
+        int[] playerData = players.getData();
+        float minPlayerDst = Float.MAX_VALUE;
+        int minPlayerId = -1;
+        for (int i = 0; i < players.size(); i++) {
+            int playerId = playerData[i];
+            PositionComponent playerPositionComponent = mPos.get(playerId);
+            float dst = origin.dst(playerPositionComponent.toVector2());
+
+            if (dst < minPlayerDst) {
+                minPlayerDst = dst;
+                minPlayerId = playerId;
+            }
+        }
+
+        return minPlayerId;
     }
 
     public void spawnEnemy(float x, float y, MobEntry mobEntry) {

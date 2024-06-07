@@ -49,6 +49,7 @@ public class MobSystem extends IteratingSystem {
     public void destroyEnemyServer(int enemyId) {
         PositionComponent enemyPos = mPos.get(enemyId);
         MobComponent mobComponent = mMob.get(enemyId);
+        LifeComponent lifeComponent = mLife.get(enemyId);
         UUID entityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(enemyId);
         int worldPosX = MapManager.getWorldPos(enemyPos.x);
         int worldPosY = MapManager.getWorldPos(enemyPos.y);
@@ -56,6 +57,10 @@ public class MobSystem extends IteratingSystem {
         int chunkPosY = MapManager.getChunkPos(worldPosY);
 
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyDeletePacket(entityUuid), chunkPosX, chunkPosY);
+        if (lifeComponent.getKillerId() != -1) {
+            mobComponent.getMobEntry().getMobBehavior().getOnKilled()
+                    .ifPresent((editEntityDelete) -> editEntityDelete.deleteEntity(serverContext.getExecuteOnContext(), enemyId));
+        }
         mobComponent.getMobEntry().getMobBehavior().getEditEntity().deleteEntity(serverContext.getExecuteOnContext(), enemyId);
     }
 
