@@ -55,20 +55,20 @@ public class PlayerInputSystem extends IteratingSystem {
         int selectItem = systemsAdminClient.getItemBarManager().getSelectItem();
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             if (mItem.has(selectItem)) {
-                Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed())
+                Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getLeftClickOnJustPressed())
                         .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)))
                         .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell, selectItem));
             }
 
         } else if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 
-            if ((mItem.has(selectItem) && mItem.get(selectItem).itemRegisterEntry.getLeftClickOnJustPressed() != null)) {
+            if ((mItem.has(selectItem) && mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getLeftClickOnJustPressed() != null)) {
                 return;
             }
 
             Optional<ClickInteraction> leftClickInteractionItemSelected = Optional.empty();
             if (mItem.has(selectItem)) {
-                leftClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getLeftClickOnPressed())
+                leftClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getLeftClickOnPressed())
                         .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)));
             }
 
@@ -85,7 +85,7 @@ public class PlayerInputSystem extends IteratingSystem {
             Optional<ClickInteraction> rightClickInteractionCell = cellComponent.cellRegisterEntry.getCellBehavior().getInteragieClickDroit();
 
             if (mItem.has(selectItem)) {
-                rightClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickOnJustPressed())
+                rightClickInteractionItemSelected = Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getRightClickOnJustPressed())
                         .map((rightClickInteractionItemClient) -> rightClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)));
             }
 
@@ -101,7 +101,7 @@ public class PlayerInputSystem extends IteratingSystem {
                     });
         } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             if (mItem.has(selectItem)) {
-                Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getRightClickOnPressed())
+                Optional.ofNullable(mItem.get(selectItem).itemRegisterEntry.getItemBehavior().getRightClickOnPressed())
                         .map((leftClickInteractionItemClient) -> leftClickInteractionItemClient.toClickInteraction(new ClickEventClient(screenCoordinate.x, screenCoordinate.y, gameCoordinate.x, gameCoordinate.y)))
                         .ifPresent((clickInteraction) -> clickInteraction.accept(context, topCell, selectItem));
             }

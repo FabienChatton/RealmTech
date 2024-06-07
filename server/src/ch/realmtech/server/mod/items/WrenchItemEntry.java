@@ -10,11 +10,12 @@ import ch.realmtech.server.registry.ItemEntry;
 
 public class WrenchItemEntry extends ItemEntry {
     public WrenchItemEntry() {
-        super("Wrench", "wrench-01", ItemBehavior.builder().build());
+        super("Wrench", "wrench-01", ItemBehavior.builder()
+                .rightClickOnJustPressed(rotateBlock())
+                .build());
     }
 
-    @Override
-    public ClickInteractionItemClient getRightClickOnJustPressed() {
+    public static ClickInteractionItemClient rotateBlock() {
         return (clientContext, event, cellId, itemId) -> {
             if (clientContext.getWorld().getMapper(FaceComponent.class).has(cellId)) {
                 FaceComponent faceComponent = clientContext.getWorld().getMapper(FaceComponent.class).get(cellId);

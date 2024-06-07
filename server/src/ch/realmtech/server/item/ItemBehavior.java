@@ -1,5 +1,6 @@
 package ch.realmtech.server.item;
 
+import ch.realmtech.server.level.ClickInteractionItemClient;
 import ch.realmtech.server.registry.CellEntry;
 import com.badlogic.gdx.utils.Null;
 
@@ -15,6 +16,10 @@ public class ItemBehavior {
     private int timeToBurn = 0;
     private boolean icon;
     private int eatRestore;
+    private ClickInteractionItemClient rightClickOnPressed;
+    private ClickInteractionItemClient rightClickOnJustPressed;
+    private ClickInteractionItemClient leftClickOnPressed;
+    private ClickInteractionItemClient leftClickOnJustPressed;
 
     private ItemBehavior() {
         attackDommage = 1;
@@ -69,6 +74,22 @@ public class ItemBehavior {
         return eatRestore;
     }
 
+    public ClickInteractionItemClient getRightClickOnPressed() {
+        return rightClickOnPressed;
+    }
+
+    public ClickInteractionItemClient getRightClickOnJustPressed() {
+        return rightClickOnJustPressed;
+    }
+
+    public ClickInteractionItemClient getLeftClickOnPressed() {
+        return leftClickOnPressed;
+    }
+
+    public ClickInteractionItemClient getLeftClickOnJustPressed() {
+        return leftClickOnJustPressed;
+    }
+
     public static class ItemBehaviorBuilder {
 
         private final ItemBehavior itemBehavior = new ItemBehavior();
@@ -83,8 +104,8 @@ public class ItemBehavior {
             return this;
         }
 
-        public ItemBehaviorBuilder setFireArm() {
-            itemBehavior.fireArme = true;
+        public ItemBehaviorBuilder setFireArm(boolean isFireArm) {
+            itemBehavior.fireArme = isFireArm;
             return this;
         }
 
@@ -118,6 +139,25 @@ public class ItemBehavior {
             return this;
         }
 
+        public ItemBehaviorBuilder rightClickOnPressed(ClickInteractionItemClient rightClickOnPressed) {
+            itemBehavior.rightClickOnPressed = rightClickOnPressed;
+            return this;
+        }
+
+        public ItemBehaviorBuilder rightClickOnJustPressed(ClickInteractionItemClient rightClickOnJustPressed) {
+            itemBehavior.rightClickOnJustPressed = rightClickOnJustPressed;
+            return this;
+        }
+
+        public ItemBehaviorBuilder leftClickOnPressed(ClickInteractionItemClient leftClickOnPressed) {
+            itemBehavior.leftClickOnPressed = leftClickOnPressed;
+            return this;
+        }
+
+        public ItemBehaviorBuilder leftClickOnJustPressed(ClickInteractionItemClient leftClickOnJustPressed) {
+            itemBehavior.leftClickOnJustPressed = leftClickOnJustPressed;
+            return this;
+        }
         public ItemBehavior build() {
             return itemBehavior;
         }
