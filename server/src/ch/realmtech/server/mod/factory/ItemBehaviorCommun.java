@@ -20,7 +20,7 @@ public class ItemBehaviorCommun {
                 .setAttackDommage(dommage)
                 .setAttackRange(range)
                 .setFireArm(isFirearm)
-                .leftClickOnJustPressed(ItemInteractionCommun.attack());
+                .leftClickOnJustPressed(ItemInteractionCommun.attack(!isFirearm));
     }
 
     public static ItemBehavior.ItemBehaviorBuilder eat(int heartToRestore) {

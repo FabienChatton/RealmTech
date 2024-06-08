@@ -14,11 +14,18 @@ public class ItemInteractionCommun {
         };
     }
 
-    public static ClickInteractionItemClient attack() {
-        return (clientContext, event, cellId, itemId) -> {
-            clientContext.getSoundManager().playSwordSwing();
-            UUID itemUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(itemId);
-            clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY(), itemUuid));
-        };
+    public static ClickInteractionItemClient attack(boolean playerSwordSwing) {
+        if (playerSwordSwing) {
+            return (clientContext, event, cellId, itemId) -> {
+                clientContext.getSoundManager().playSwordSwing();
+                UUID itemUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(itemId);
+                clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY(), itemUuid));
+            };
+        } else {
+            return (clientContext, event, cellId, itemId) -> {
+                UUID itemUuid = clientContext.getSystemsAdminClient().getUuidEntityManager().getEntityUuid(itemId);
+                clientContext.sendRequest(new PlayerWeaponShotPacket(event.gameCoordinateX(), event.gameCoordinateY(), itemUuid));
+            };
+        }
     }
 }
