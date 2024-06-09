@@ -5,7 +5,7 @@ import ch.realmtech.server.registry.ItemEntry;
 
 public class RawChickenItemEntry extends ItemEntry {
     public RawChickenItemEntry() {
-        super("RawChicken", "plank-02", ItemBehaviorCommun
+        super("RawChicken", "raw-chicken", ItemBehaviorCommun
                 .eat(2)
                 .build());
     }
