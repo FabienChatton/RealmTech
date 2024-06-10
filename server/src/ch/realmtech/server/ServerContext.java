@@ -73,10 +73,16 @@ public class ServerContext implements Closeable, Context {
                 }
             }
 
-            optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);
 
-            RegistryUtils.findEntryOrThrow(rootRegistry, VerifyTokenOptionEntry.class).setValue(connexionConfig.isVerifyAccessToken());
-            logger.info("Verify access token: {}", connexionConfig.isVerifyAccessToken());
+            optionLoader = RegistryUtils.evaluateSafe(rootRegistry, OptionLoader.class);
+            VerifyTokenOptionEntry verifyTokenOptionEntry = RegistryUtils.findEntryOrThrow(rootRegistry, VerifyTokenOptionEntry.class);
+            if (connexionConfig.isNotVerifyAccessToken() != null) {
+                verifyTokenOptionEntry.setValue(!connexionConfig.isNotVerifyAccessToken());
+                logger.info("Verify access token is defined in the args: {}", verifyTokenOptionEntry.getValue());
+            } else {
+                logger.info("Verify access token is not defined in the args. Getting saved value in options file: {}", verifyTokenOptionEntry.getValue());
+            }
+
             ecsEngineServer = new EcsEngineServer(this);
             serverExecuteContext = new ServerExecuteContext(this);
             if (connexionConfig.getClientExecute() == null) {

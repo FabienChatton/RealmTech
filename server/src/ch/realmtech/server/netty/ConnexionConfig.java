@@ -10,17 +10,17 @@ public final class ConnexionConfig {
     private final String host;
     private final int port;
     private final String saveName;
-    private final boolean verifyAccessToken;
+    private final Boolean notVerifyAccessToken;
     private final long seed;
     private final String rootPath;
     private final ClientExecute clientExecute;
     private final Registry<?> rootRegistry;
 
-    private ConnexionConfig(String host, int port, String saveName, boolean verifyAccessToken, long seed, String rootPath, ClientExecute clientExecute, Registry<?> rootRegistry) {
+    private ConnexionConfig(String host, int port, String saveName, Boolean notVerifyAccessToken, long seed, String rootPath, ClientExecute clientExecute, Registry<?> rootRegistry) {
         this.host = host;
         this.port = port;
         this.saveName = saveName;
-        this.verifyAccessToken = verifyAccessToken;
+        this.notVerifyAccessToken = notVerifyAccessToken;
         this.seed = seed;
         this.rootPath = rootPath;
         this.clientExecute = clientExecute;
@@ -39,8 +39,8 @@ public final class ConnexionConfig {
         return saveName;
     }
 
-    public boolean isVerifyAccessToken() {
-        return verifyAccessToken;
+    public Boolean isNotVerifyAccessToken() {
+        return notVerifyAccessToken;
     }
 
     public long getSeed() {
@@ -67,7 +67,7 @@ public final class ConnexionConfig {
         private String host = "localhost";
         private int port = ServerNetty.PREFERRED_PORT;
         private String saveName = "default";
-        private boolean verifyAccessToken = true;
+        private Boolean notVerifyAccessToken = null;
         private long seed = SeedGenerator.randomSeed();
         private String rootPath = "";
         private ClientExecute clientExecute = null;
@@ -97,8 +97,8 @@ public final class ConnexionConfig {
             return this;
         }
 
-        public ConnexionConfigBuilder setVerifyAccessToken(boolean verifyAccessToken) {
-            this.verifyAccessToken = verifyAccessToken;
+        public ConnexionConfigBuilder setNotVerifyAccessToken(Boolean notVerifyAccessToken) {
+            this.notVerifyAccessToken = notVerifyAccessToken;
             return this;
         }
 
@@ -123,7 +123,7 @@ public final class ConnexionConfig {
         }
 
         public ConnexionConfig build() {
-            return new ConnexionConfig(host, port, saveName, verifyAccessToken, seed, rootPath, clientExecute, rootRegistry);
+            return new ConnexionConfig(host, port, saveName, notVerifyAccessToken, seed, rootPath, clientExecute, rootRegistry);
         }
     }
 }
