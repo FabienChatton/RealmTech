@@ -45,6 +45,7 @@ public class ServerExecuteContext implements ServerExecute {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(channel);
             if (playerId == -1) return;
+            UUID playerUuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(playerId);
             try {
                 serverContext.getSystemsAdminServer().getPlayerManagerServer().savePlayer(playerId);
             } catch (IOException e) {
@@ -52,7 +53,6 @@ public class ServerExecuteContext implements ServerExecute {
                 logger.warn("Can not save player inventory of {}. : {} ", username, e.getMessage());
             }
             serverContext.getSystemsAdminServer().getPlayerManagerServer().removePlayer(channel);
-            UUID playerUuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(playerId);
             serverContext.getServerConnexion().broadCastPacketExcept(new DeconnectionJoueurPacket(playerUuid), channel);
         });
     }

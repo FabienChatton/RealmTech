@@ -13,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 public class PlayerManagerClient extends Manager {
@@ -32,13 +31,7 @@ public class PlayerManagerClient extends Manager {
     private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<PlayerComponent> mPlayer;
     private ComponentMapper<InventoryComponent> mInventory;
-    private final HashMap<UUID, Integer> players;
-
     public final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
-
-    {
-        players = new HashMap<>();
-    }
 
     public int createPlayerClient(UUID uuid) {
         logger.info("Creating player for client side: {} ", uuid);
@@ -90,12 +83,11 @@ public class PlayerManagerClient extends Manager {
         TextureAtlas.AtlasRegion textureRight2 = textureAtlas.findRegion("reimu-right-2");
         textureAnimationComponent.animationRight = new TextureRegion[]{textureRight0, textureRight1, textureRight2};
 
-        players.put(uuid, playerId);
         return playerId;
     }
 
     public void playerInRange(float worldX, float worldY, UUID playerUuid) {
-        int playerId = players.get(playerUuid);
+        int playerId = systemsAdminClient.getUuidEntityManager().getEntityId(playerUuid);
         if (playerId == -1) return;
 
         final float playerWorldWith = 0.9f;
@@ -124,16 +116,12 @@ public class PlayerManagerClient extends Manager {
         positionComponent.set(box2dComponent, worldX, worldY);
     }
 
-    public HashMap<UUID, Integer> getPlayers() {
-        return players;
-    }
-
-    public void setPlayerPos(float x, float y, UUID uuid) {
-        int playerId = players.get(uuid);
+    public void setPlayerPos(float x, float y, UUID playerUuid) {
+        int playerId = systemsAdminClient.getUuidEntityManager().getEntityId(playerUuid);
         if (playerId == -1) return;
         if (!mBox2d.has(playerId)) {
             // create the player position for the first time, when is in range
-            playerInRange(x, y, uuid);
+            playerInRange(x, y, playerUuid);
         } else {
             Box2dComponent box2dComponent = mBox2d.get(playerId);
             box2dComponent.body.setTransform(x + box2dComponent.widthWorld / 2, y + box2dComponent.heightWorld / 2, box2dComponent.body.getAngle());
@@ -141,14 +129,17 @@ public class PlayerManagerClient extends Manager {
     }
 
     public void playerOutOfRange(UUID playerUuid) {
-        int playerId = players.get(playerUuid);
+        int playerId = systemsAdminClient.getUuidEntityManager().getEntityId(playerUuid);
         if (playerId == -1) return;
         mBox2d.remove(playerId);
         mPos.get(playerId);
     }
 
-    public void removePlayer(UUID uuid) {
-        world.delete(getPlayers().get(uuid));
+    public void removePlayer(UUID playerUuid) {
+        int playerId = systemsAdminClient.getUuidEntityManager().getEntityId(playerUuid);
+        if (playerId == -1) return;
+        world.delete(playerId);
+        systemsAdminClient.getUuidEntityManager().deleteRegisteredEntity(playerId);
     }
 
     public int getMainPlayer() {

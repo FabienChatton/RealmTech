@@ -1,5 +1,6 @@
 package ch.realmtech.server.packet.clientPacket;
 
+import ch.realmtech.server.divers.ByteBufferHelper;
 import ch.realmtech.server.packet.ClientPacket;
 import io.netty.buffer.ByteBuf;
 
@@ -13,9 +14,7 @@ public class DeconnectionJoueurPacket implements ClientPacket {
     }
 
     public DeconnectionJoueurPacket(ByteBuf byteBuf) {
-        long msb = byteBuf.readLong();
-        long lsm = byteBuf.readLong();
-        uuid = new UUID(msb, lsm);
+        uuid = ByteBufferHelper.readUUID(byteBuf);
     }
 
     @Override
@@ -25,8 +24,7 @@ public class DeconnectionJoueurPacket implements ClientPacket {
 
     @Override
     public void write(ByteBuf byteBuf) {
-        byteBuf.writeLong(uuid.getMostSignificantBits());
-        byteBuf.writeLong(uuid.getLeastSignificantBits());
+        ByteBufferHelper.writeUUID(byteBuf, uuid);
     }
 
     @Override
