@@ -232,7 +232,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
             if (e instanceof BufferUnderflowException || e instanceof EOFException) logger.error("The chunk {},{} was corrupted", chunkX, chunkY);
             if (e instanceof IllegalMagicNumbers) logger.error("The chunk {},{} was not recognise has a chunk file. Maybe the chunk version is < 9", chunkX, chunkY);
             if (e instanceof ZipException) logger.error("The chunk {},{} was not compressed", chunkX, chunkY);
-            logger.info("Generating the chunk {},{}", chunkX, chunkY);
+            logger.trace("Generating the chunk {},{}", chunkX, chunkY);
 
             chunkId = systemsAdminServer.getMapManager().generateNewChunk(saveMetadataComponent, chunkX, chunkY);
             try {

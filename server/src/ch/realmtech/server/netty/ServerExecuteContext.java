@@ -4,14 +4,11 @@ import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.level.cell.BreakCell;
-import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.packet.serverPacket.ServerExecute;
 import ch.realmtech.server.registry.ItemEntry;
-import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -26,11 +23,9 @@ import java.util.UUID;
 public class ServerExecuteContext implements ServerExecute {
     private final static Logger logger = LoggerFactory.getLogger(ServerExecuteContext.class);
     private final ServerContext serverContext;
-    private final VerifyTokenOptionEntry verifyToken;
 
     public ServerExecuteContext(ServerContext serverContext) {
         this.serverContext = serverContext;
-        verifyToken = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class);
     }
 
     @Override
@@ -39,52 +34,9 @@ public class ServerExecuteContext implements ServerExecute {
     }
 
     @Override
-    public void connexionPlayerRequest(Channel clientChanel, String username) {
+    public void askPlayerConnexion(Channel clientChanel, String username) {
         serverContext.getEcsEngineServer().nextTick(() -> {
-            logger.info("Player {} try to login. {}", username, clientChanel);
-            UUID playerUuid;
-            try {
-                if (serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUsername(username) != -1)
-                    throw new IllegalArgumentException("A Player with this username already existe on the server");
-                playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
-                logger.info("Player {} [{}] has successfully been authenticated. {}. Verify access token: {}", username, playerUuid, clientChanel, verifyToken.getValue());
-                if (serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUuid(playerUuid) != -1) {
-                    throw new IllegalArgumentException("A player with the same uuid already existe on the server");
-                }
-            } catch (Exception e) {
-                serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
-                logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
-                if (clientChanel != null) {
-                    serverContext.getEcsEngineServer().nextTick(clientChanel::close);
-                }
-                return;
-            }
-            try {
-                ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg = serverContext.getSystemsAdminServer().getPlayerManagerServer().createPlayerServer(clientChanel, playerUuid, username);
-                serverContext.getServerConnexion().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
-                serverContext.getSystemsAdminServer().getPlayerManagerServer().setPlayerUsername(playerUuid, username);
-            } catch (Exception e) {
-                serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
-                serverContext.getSystemsAdminServer().getPlayerManagerServer().removePlayer(clientChanel);
-                logger.info("Player {} has failed to been created. Cause : {}, {}", username, e.getMessage(), clientChanel);
-                if (clientChanel != null) {
-                    serverContext.getEcsEngineServer().nextTick(clientChanel::close);
-                }
-                return;
-            }
-
-            // new player with new connexion get all players.
-            // players already on server get this player.
-            IntBag players = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayers();
-            int[] playersData = players.getData();
-            int thisPlayerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChanel);
-            for (int i = 0; i < players.size(); i++) {
-                int playerId = playersData[i];
-                if (thisPlayerId == playerId) continue;
-                UUID uuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(playerId);
-                serverContext.getServerConnexion().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
-            }
-            serverContext.getServerConnexion().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
+            serverContext.getSystemsAdminServer().getPlayerManagerServer().askPlayerConnexion(clientChanel, username);
         });
     }
 

@@ -9,7 +9,8 @@ import java.util.UUID;
 
 public interface ServerExecute {
     ServerContext getContext();
-    void connexionPlayerRequest(Channel clientChanel, String username);
+
+    void askPlayerConnexion(Channel clientChanel, String username);
 
     void removePlayer(Channel channel);
 

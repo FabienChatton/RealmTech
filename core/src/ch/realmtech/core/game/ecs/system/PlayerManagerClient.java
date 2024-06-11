@@ -34,7 +34,7 @@ public class PlayerManagerClient extends Manager {
     private ComponentMapper<InventoryComponent> mInventory;
     private final HashMap<UUID, Integer> players;
 
-    private final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
+    public final static String MAIN_PLAYER_TAG = "MAIN_PLAYER";
 
     {
         players = new HashMap<>();

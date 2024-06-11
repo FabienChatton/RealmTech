@@ -1,7 +1,7 @@
 package ch.realmtech.core.auth;
 
 import ch.realmtech.core.game.netty.ClientConnexion;
-import ch.realmtech.server.packet.serverPacket.DemandeDeConnexionJoueurPacket;
+import ch.realmtech.server.packet.serverPacket.AskPlayerConnexion;
 
 public class AuthControllerClient {
     private final AuthRequestClient authRequestClient;
@@ -26,6 +26,6 @@ public class AuthControllerClient {
         if (createAccessToken) {
             authRequestClient.createAccessToken(username, password);
         }
-        clientConnexion.sendAndFlushPacketToServer(new DemandeDeConnexionJoueurPacket(username));
+        clientConnexion.sendAndFlushPacketToServer(new AskPlayerConnexion(username));
     }
 }

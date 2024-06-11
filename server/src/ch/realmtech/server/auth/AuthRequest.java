@@ -27,9 +27,18 @@ public class AuthRequest {
         verifyAccessTokenUrnOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), VerifyAccessTokenUrnOptionEntry.class);
     }
 
+    /**
+     * Verify access token of this username.
+     * <a href="https://github.com/FabienChatton/RealmTech-auth?tab=readme-ov-file#diagramme-pour-v%C3%A9rification-de-lauthenticit%C3%A9">
+     * See digramme for auth protocole</a>
+     *
+     * @param username The username to verify the token
+     * @return The String UUID of the authenticated player
+     * @throws FailedRequest        If the username fail to authenticate
+     * @throws IOException          Fail to send the request
+     * @throws InterruptedException Interrupted during the request send
+     */
     public String verifyAccessToken(String username) throws IOException, InterruptedException, FailedRequest {
-
-
         if (!verifyToken.getValue()) return UUID.randomUUID().toString();
         HttpRequest verifyCodeRequest = HttpRequest.newBuilder()
                 .uri(URI.create(authServerBaseUrlServerOptionEntry.getValue() + "/" + verifyAccessTokenUrnOptionEntry.getValue()))

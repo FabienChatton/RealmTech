@@ -54,6 +54,22 @@ public class ServerConnexionExtern implements ServerConnexion {
     }
 
     @Override
+    public void sendPacketToSubscriberForChunkPosExcept(ClientPacket packet, int chunkPosX, int chunkPosY, Channel... notChannels) {
+        ImmutableIntBag<?> players = serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
+        for (int i = 0; i < players.size(); i++) {
+            int playerId = players.get(i);
+            ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = serverContext.getEcsEngineServer().getWorld().getMapper(PlayerConnexionComponent.class);
+            PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+
+            for (Channel notChannel : notChannels) {
+                if (notChannel != playerConnexionComponent.channel) {
+                    playerConnexionComponent.channel.write(packet);
+                }
+            }
+        }
+    }
+
+    @Override
     public void broadCastPacketExcept(ClientPacket packet, Channel... channels) {
         if (channels.length == 0) {
             logger.warn("Warn, a packet was send to nobody: {}", packet.getClass().getSimpleName());

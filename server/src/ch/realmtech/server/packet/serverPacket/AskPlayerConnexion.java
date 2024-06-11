@@ -5,13 +5,14 @@ import ch.realmtech.server.packet.ServerPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
-public class DemandeDeConnexionJoueurPacket implements ServerPacket {
+public class AskPlayerConnexion implements ServerPacket {
     private final String username;
-    public DemandeDeConnexionJoueurPacket(String username) {
+
+    public AskPlayerConnexion(String username) {
         this.username = username;
     }
 
-    public DemandeDeConnexionJoueurPacket(ByteBuf byteBuf) {
+    public AskPlayerConnexion(ByteBuf byteBuf) {
         username = ByteBufferHelper.getString(byteBuf);
     }
 
@@ -22,7 +23,7 @@ public class DemandeDeConnexionJoueurPacket implements ServerPacket {
 
     @Override
     public void executeOnServer(Channel clientChannel, ServerExecute serverExecute) {
-        serverExecute.connexionPlayerRequest(clientChannel, username);
+        serverExecute.askPlayerConnexion(clientChannel, username);
     }
 
     @Override

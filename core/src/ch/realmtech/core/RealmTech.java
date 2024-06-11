@@ -394,7 +394,7 @@ public final class RealmTech extends Game implements InternalConnexion {
                 ConnexionConfig connexionConfig = connexionConfigBuilder
                         .setRootPath(DataCtrl.getRootPath())
                         .setSaveName(saveName)
-                        .setNotVerifyAccessToken(verifyAccessToken)
+                        .setNotVerifyAccessToken(!verifyAccessToken)
                         .setClientExecute(clientExecute)
                         .setRootRegistry(rootRegistry)
                         .build();

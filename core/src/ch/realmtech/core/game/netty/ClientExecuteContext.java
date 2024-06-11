@@ -1,6 +1,7 @@
 package ch.realmtech.core.game.netty;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
@@ -237,6 +238,9 @@ public class ClientExecuteContext implements ClientExecute {
     @Override
     public void playerCreateConnexion(UUID playerUuid) {
         context.nextFrame(() -> {
+            if (!context.getSystemsAdminClient().getTagManager().isRegistered(PlayerManagerClient.MAIN_PLAYER_TAG)) {
+                logger.warn("Creating other player but the main player is not registered. This can be lead to a other player to be the main player");
+            }
             context.getSystemsAdminClient().getPlayerManagerClient().createPlayerClient(playerUuid);
         });
     }

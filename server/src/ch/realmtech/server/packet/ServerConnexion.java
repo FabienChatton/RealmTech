@@ -11,6 +11,8 @@ public interface ServerConnexion {
 
     void sendPacketToSubscriberForChunkPos(ClientPacket packet, int chunkPosX, int chunkPosY);
 
+    void sendPacketToSubscriberForChunkPosExcept(ClientPacket packet, int chunkPosX, int chunkPosY, Channel... notChannels);
+
     void broadCastPacketExcept(ClientPacket packet, Channel... channels);
 
     void sendPacketTo(ClientPacket packet, Channel channel);

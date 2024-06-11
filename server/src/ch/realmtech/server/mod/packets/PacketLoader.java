@@ -28,7 +28,7 @@ public class PacketLoader extends Entry {
         packets = new ArrayList<>();
         packets.add(new SimpleEntry<>(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new));
         packets.add(new SimpleEntry<>(ConnexionJoueurReussitPacket.class, ConnexionJoueurReussitPacket::new));
-        packets.add(new SimpleEntry<>(DemandeDeConnexionJoueurPacket.class, DemandeDeConnexionJoueurPacket::new));
+        packets.add(new SimpleEntry<>(AskPlayerConnexion.class, AskPlayerConnexion::new));
         packets.add(new SimpleEntry<>(PlayerMovePacket.class, PlayerMovePacket::new));
         packets.add(new SimpleEntry<>(ChunkAMonterPacket.class, ChunkAMonterPacket::new));
         packets.add(new SimpleEntry<>(ChunkADamnePacket.class, ChunkADamnePacket::new));

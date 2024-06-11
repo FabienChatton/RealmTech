@@ -3,18 +3,20 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
+import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
-import ch.realmtech.server.packet.clientPacket.ConnexionJoueurReussitPacket;
-import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
-import ch.realmtech.server.packet.clientPacket.PlayerCreateQuestPacket;
+import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.quests.QuestPlayerProperty;
 import ch.realmtech.server.registry.QuestEntry;
+import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.player.PlayerSerializerConfig;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
+import com.artemis.utils.ImmutableIntBag;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.physics.box2d.*;
 import io.netty.channel.Channel;
@@ -52,9 +54,16 @@ public class PlayerManagerServer extends Manager {
     private ComponentMapper<LifeComponent> mLife;
     private ComponentMapper<QuestPlayerPropertyComponent> mQuestPlayer;
     private ComponentMapper<ItemComponent> mItem;
+    private VerifyTokenOptionEntry verifyTokenOptionEntry;
 
     public PlayerManagerServer() {
         players = new IntBag();
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        verifyTokenOptionEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), VerifyTokenOptionEntry.class);
     }
 
     public ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg createPlayerServer(Channel channel, UUID playerUuid, String playerUsername) {
@@ -154,7 +163,7 @@ public class PlayerManagerServer extends Manager {
                 questPlayerProperties.add(new QuestPlayerProperty(questEntry));
             }
             mQuestPlayer.create(playerId).set(questPlayerProperties);
-            logger.info("Can not read quests from Player {}. He get default quests", playerUsername);
+            logger.debug("Can not read quests from Player {}. He get default quests", playerUsername);
         }
 
         serverContext.getEcsEngineServer().nextTick(() -> {
@@ -314,6 +323,55 @@ public class PlayerManagerServer extends Manager {
             mBox2d.get(playerId).body.setTransform(0, 0, 0);
             mLife.get(playerId).set(10);
         }
+    }
+
+    public void askPlayerConnexion(Channel clientChanel, String username) {
+        logger.info("Player {} try to login. {}", username, clientChanel);
+
+        UUID playerUuid;
+        try {
+            // check if username is already on this server
+            if (getPlayerByUsername(username) != -1)
+                throw new IllegalArgumentException("A Player with this username already existe on the server");
+            playerUuid = UUID.fromString(serverContext.getAuthController().verifyAccessToken(username));
+            if (getPlayerByUuid(playerUuid) != -1) {
+                throw new IllegalArgumentException("A player with the same uuid already existe on the server");
+            }
+        } catch (Exception e) {
+            serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
+            logger.info("Player {} has failed to been authenticated. Cause : {}, {}", username, e.getMessage(), clientChanel);
+            return;
+        }
+
+        logger.info("Player: {} with uuid: {} has successfully been authenticated. chanel: {}. Verify access token: {}", username, playerUuid, clientChanel, verifyTokenOptionEntry.getValue());
+
+        ConnexionJoueurReussitPacket.ConnexionJoueurReussitArg connexionJoueurReussitArg;
+        try {
+            connexionJoueurReussitArg = createPlayerServer(clientChanel, playerUuid, username);
+            serverContext.getServerConnexion().sendPacketTo(new ConnexionJoueurReussitPacket(connexionJoueurReussitArg), clientChanel);
+            setPlayerUsername(playerUuid, username);
+        } catch (Exception e) {
+            serverContext.getServerConnexion().sendPacketTo(new DisconnectMessagePacket(e.getMessage()), clientChanel);
+            removePlayer(clientChanel);
+            logger.info("Player {} has failed to been created. Cause : {}, {}", username, e.getMessage(), clientChanel);
+            return;
+        }
+
+        // new player with new connexion get all players.
+        // players already on server get this player.
+        int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(connexionJoueurReussitArg.x()));
+        int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(connexionJoueurReussitArg.y()));
+        int thisPlayerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChanel);
+        ImmutableIntBag<?> players = systemsAdminServer.getPlayerSubscriptionSystem().getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
+        for (int i = 0; i < players.size(); i++) {
+            int playerId = players.get(i);
+            if (thisPlayerId == playerId) continue;
+            UUID uuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(playerId);
+            serverContext.getServerConnexion().sendPacketTo(new PlayerCreateConnexion(uuid), clientChanel);
+        }
+
+        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPosExcept(new PlayerCreateConnexion(playerUuid), chunkPosX, chunkPosY, clientChanel);
+        // serverContext.getServerConnexion().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
     }
 
     public void eatItem(Channel clientChannel, UUID itemUuid) {
