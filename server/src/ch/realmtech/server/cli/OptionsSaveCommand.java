@@ -16,7 +16,7 @@ public class OptionsSaveCommand implements Runnable {
     public void run() {
         Optional<OptionLoader> optionLoader = RegistryUtils.findEntry(optionsCommand.masterCommand.getRootRegistry(), OptionLoader.class);
         if (optionLoader.isPresent()) {
-            optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
+            optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((systemsAdminServer, serverContext) -> {
                 try {
                     optionLoader.get().saveServerOptions();
                     optionsCommand.masterCommand.output.println("Server option file saved.");

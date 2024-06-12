@@ -23,7 +23,7 @@ public class OptionsResetCommand implements Runnable {
             optionsCommand.masterCommand.output.println(String.format("(%d) options reset value", clientOptions.size()));
         });
 
-        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((world) -> {
+        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((systemsAdminServer, serverContext) -> {
             List<? extends Entry> serverOptions = RegistryUtils.findEntries(optionsCommand.masterCommand.getRootRegistry(), "#serverOptions");
             serverOptions.forEach((serverOption) -> ((OptionServerEntry<?>) serverOption).resetValue());
             optionsCommand.masterCommand.output.println(String.format("(%d) options reset value", serverOptions.size()));

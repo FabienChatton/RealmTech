@@ -3,7 +3,6 @@ package ch.realmtech.server.level.cell;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.CraftingTableComponent;
 import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.registry.CraftRecipeEntry;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
 import com.badlogic.gdx.utils.Null;
@@ -30,21 +29,22 @@ public class CraftingTableEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun(world -> ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get(), craftRecipes));
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
+            systemsAdminCommun.getInventoryManager().createCraftingTable(entityId, craftingInventoryUuid.get(), inventory, craftingNumberOfSlotParRow, craftingNumberOfRow, craftingResultInventoryUuid.get(), craftRecipes);
+        });
     }
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> {
-            SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
             CraftingTableComponent craftingTableComponent = world.getMapper(CraftingTableComponent.class).get(entityId);
-            InventoryComponent craftingInventory = systemsAdmin.getInventoryManager().mInventory.get(craftingTableComponent.craftingInventory);
-            InventoryComponent resultInventory = systemsAdmin.getInventoryManager().mInventory.get(craftingTableComponent.craftingInventory);
-            systemsAdmin.getInventoryManager().removeInventory(craftingInventory.inventory);
-            systemsAdmin.getInventoryManager().removeInventory(resultInventory.inventory);
+            InventoryComponent craftingInventory = systemsAdminCommun.getInventoryManager().mInventory.get(craftingTableComponent.craftingInventory);
+            InventoryComponent resultInventory = systemsAdminCommun.getInventoryManager().mInventory.get(craftingTableComponent.craftingInventory);
+            systemsAdminCommun.getInventoryManager().removeInventory(craftingInventory.inventory);
+            systemsAdminCommun.getInventoryManager().removeInventory(resultInventory.inventory);
 
-            systemsAdmin.getUuidEntityManager().deleteRegisteredEntity(craftingTableComponent.craftingInventory);
-            systemsAdmin.getUuidEntityManager().deleteRegisteredEntity(craftingTableComponent.craftingResultInventory);
+            systemsAdminCommun.getUuidEntityManager().deleteRegisteredEntity(craftingTableComponent.craftingInventory);
+            systemsAdminCommun.getUuidEntityManager().deleteRegisteredEntity(craftingTableComponent.craftingResultInventory);
         });
     }
 

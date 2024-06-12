@@ -2,7 +2,6 @@ package ch.realmtech.server.level.cell;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.InventoryComponent;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
 import ch.realmtech.server.registry.CraftRecipeEntry;
 import ch.realmtech.server.registry.ItemEntry;
@@ -37,13 +36,19 @@ public class FurnaceEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory));
-        executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId));
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
+            systemsAdminCommun.getInventoryManager().createFurnace(entityId, furnaceUuid.get(), craftingInventoryUuid.get(), craftingInventory, carburantInventoryUuid.get(), carburantInventory, craftingResultInventoryUuid.get(), craftingResultInventory);
+        });
+        executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> {
+            systemsAdminClientForClient.getFurnaceIconSystem().createIconFurnace(entityId);
+        });
     }
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> ((SystemsAdminCommun) world.getRegistered("systemsAdmin")).getInventoryManager().deleteFurnace(entityId));
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
+            systemsAdminCommun.getInventoryManager().deleteFurnace(entityId);
+        });
         executeOnContext.onClientWorld((systemsAdminClientForClient, world) -> systemsAdminClientForClient.getFurnaceIconSystem().deleteIconFurnace(entityId));
     }
 

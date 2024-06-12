@@ -1,7 +1,9 @@
 package ch.realmtech.server.ecs;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.ClientContext;
 import com.artemis.World;
 
@@ -13,7 +15,7 @@ public interface ExecuteOnContext {
 
     boolean onClientContext(Consumer<ClientContext> onClientRun);
 
-    boolean onServer(Consumer<ServerContext> onServerRun);
+    boolean onServer(BiConsumer<SystemsAdminServer, ServerContext> onServerRun);
 
-    boolean onCommun(Consumer<World> onCommunRun);
+    boolean onCommun(BiConsumer<SystemsAdminCommun, World> onCommunRun);
 }

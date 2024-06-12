@@ -22,8 +22,8 @@ public class DumpSubscription implements Runnable {
         SystemsAdminCommun systemsAdminCommun = dumpCommand.masterCommand.getWorld().getRegistered("systemsAdmin");
         systemsAdminCommun.onContextType(ContextType.CLIENT, () -> dumpCommand.printlnVerbose(0, "Sorry only available on server"));
         systemsAdminCommun.onContextType(ContextType.SERVER, () -> {
-            dumpCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
-                int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByUsernameOrUuid(playerIdentifieur);
+            dumpCommand.masterCommand.getContext().getExecuteOnContext().onServer((systemsAdminServer, serverContext) -> {
+                int playerId = systemsAdminServer.getPlayerManagerServer().getPlayerByUsernameOrUuid(playerIdentifieur);
                 if (playerId == -1) {
                     dumpCommand.printlnVerbose(0, "Invalide player username or uuid: " + playerIdentifieur);
                     return;

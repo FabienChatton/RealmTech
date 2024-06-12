@@ -3,7 +3,6 @@ package ch.realmtech.server.energy;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.EnergyBatteryComponent;
 import ch.realmtech.server.ecs.component.EnergyGeneratorComponent;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
@@ -31,9 +30,7 @@ public class EnergyGeneratorEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> {
-            SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
-
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
             systemsAdminCommun.getUuidEntityManager().registerEntityIdWithUuid(energyGeneratorUuid.get(), entityId);
             world.edit(entityId).create(EnergyGeneratorComponent.class).set(remainingTickToBurn);
             world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_ONLY);

@@ -3,7 +3,6 @@ package ch.realmtech.server.energy;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.EnergyBatteryComponent;
 import ch.realmtech.server.ecs.component.FaceComponent;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.serialize.SerializerController;
 import ch.realmtech.server.uuid.UuidSupplierOrRandom;
@@ -34,9 +33,8 @@ public class EnergyBatteryEditEntity implements EditEntity {
 
     @Override
     public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> {
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
             world.edit(entityId).create(EnergyBatteryComponent.class).set(stored, capacity, EnergyBatteryComponent.EnergyBatteryRole.EMITTER_RECEIVER);
-            SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
             systemsAdminCommun.getCellPaddingManager().addOrCreate(entityId, world.getRegistered(SerializerController.class).getEnergyBatterySerializerController());
             FaceComponent faceComponent = world.edit(entityId).create(FaceComponent.class);
             faceComponent.setMultiFace(false);
@@ -48,8 +46,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
 
     @Override
     public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-        executeOnContext.onCommun((world) -> {
-            SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
+        executeOnContext.onCommun((systemsAdminCommun, world) -> {
             systemsAdminCommun.getUuidEntityManager().deleteRegisteredEntity(entityId);
         });
     }

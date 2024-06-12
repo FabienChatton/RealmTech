@@ -2,7 +2,6 @@ package ch.realmtech.server.enemy;
 
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.component.*;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.level.cell.EditEntity;
 import ch.realmtech.server.level.cell.EditEntityDelete;
 import ch.realmtech.server.registry.*;
@@ -35,13 +34,13 @@ public class MobBehavior implements Evaluator {
         editEntity = EditEntity.merge(new EditEntity() {
             @Override
             public void createEntity(ExecuteOnContext executeOnContext, int entityId) {
-                executeOnContext.onCommun((world) -> {
+                executeOnContext.onCommun((systemsAdminCommun, world) -> {
                     EntityEdit edit = world.edit(entityId);
                     edit.create(MobComponent.class).set(mobEntry);
                     edit.create(PositionComponent.class);
                 });
 
-                executeOnContext.onServer((serverContext) -> {
+                executeOnContext.onServer((systemsAdminServer, serverContext) -> {
                     World world = serverContext.getEcsEngineServer().getWorld();
 
                     EntityEdit edit = world.edit(entityId);
@@ -70,9 +69,8 @@ public class MobBehavior implements Evaluator {
 
             @Override
             public void deleteEntity(ExecuteOnContext executeOnContext, int entityId) {
-                executeOnContext.onCommun((world) -> {
-                    SystemsAdminCommun systemsAdmin = world.getRegistered("systemsAdmin");
-                    systemsAdmin.getEnemyManagerCommun().destroyWorldEnemy(entityId);
+                executeOnContext.onCommun((systemsAdminCommun, world) -> {
+                    systemsAdminCommun.getEnemyManagerCommun().destroyWorldEnemy(entityId);
                 });
             }
         }, editEntity);
@@ -80,15 +78,20 @@ public class MobBehavior implements Evaluator {
 
 
         editEntity = EditEntity.merge(EditEntity.create((executeOnContext, entityId) -> {
-            executeOnContext.onServer((serverContext) -> serverContext.getEcsEngineServer().getWorld().getMapper(LifeComponent.class).create(entityId)
-                    .set(heart));
+            executeOnContext.onServer((systemsAdminServer, serverContext) -> {
+                serverContext.getEcsEngineServer().getWorld().getMapper(LifeComponent.class)
+                        .create(entityId)
+                        .set(heart);
+            });
         }), editEntity);
 
         if (dropItemFqrn != null) {
             dropItem = RegistryUtils.evaluateSafe(rootRegistry, dropItemFqrn, ItemEntry.class);
-            onKilled = EditEntity.merge(EditEntity.delete((executeOnContext, entityId) -> executeOnContext.onServer((serverContext) -> {
-                serverContext.getSystemsAdminServer().getMobSystem().dropItemOnDead(entityId, dropItem);
-            })));
+            onKilled = EditEntity.merge(EditEntity.delete((executeOnContext, entityId) -> {
+                executeOnContext.onServer((systemsAdminServer, serverContext) -> {
+                    systemsAdminServer.getMobSystem().dropItemOnDead(entityId, dropItem);
+                });
+            }));
         }
 
         if (enemyTexture != null) {

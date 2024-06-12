@@ -2,7 +2,9 @@ package ch.realmtech.core.game.ecs.plugin;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.ExecuteOnContext;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.ClientContext;
 import com.artemis.World;
 
@@ -32,15 +34,16 @@ public class ExecuteOnContextClient implements ExecuteOnContext {
     }
 
     @Override
-    public boolean onServer(Consumer<ServerContext> onServerRun) {
+    public boolean onServer(BiConsumer<SystemsAdminServer, ServerContext> onServerRun) {
         return false;
     }
 
     @Override
-    public boolean onCommun(Consumer<World> onCommunRun) {
+    public boolean onCommun(BiConsumer<SystemsAdminCommun, World> onCommunRun) {
         clientContext.getWorldOr((getWorld) -> {
             World world = getWorld.getWorld();
-            onCommunRun.accept(world);
+            SystemsAdminCommun systemsAdminCommun = world.getRegistered("systemsAdmin");
+            onCommunRun.accept(systemsAdminCommun, world);
         });
         return true;
     }

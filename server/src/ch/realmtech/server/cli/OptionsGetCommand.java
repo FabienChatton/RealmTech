@@ -17,9 +17,6 @@ public class OptionsGetCommand implements Runnable {
 
     @Override
     public void run() {
-        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
-
-        });
         Optional<OptionEntry<?>> optionEntry = RegistryUtils.findEntry(optionsCommand.masterCommand.getRootRegistry(), optionName);
         if (optionEntry.isPresent()) {
             optionsCommand.masterCommand.output.println(optionEntry.get().getValue());

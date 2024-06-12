@@ -24,7 +24,7 @@ public class OptionsReloadCommand implements Runnable {
             return;
         }
         OptionLoader optionLoader = optionLoaderOpt.get();
-        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((serverContext) -> {
+        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((systemsAdminServer, serverContext) -> {
             try {
                 optionLoader.loadServerProperties();
             } catch (IOException e) {

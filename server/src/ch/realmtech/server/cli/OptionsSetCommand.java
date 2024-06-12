@@ -27,7 +27,7 @@ public class OptionsSetCommand implements Runnable {
             }
         });
 
-        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((world) -> {
+        optionsCommand.masterCommand.getContext().getExecuteOnContext().onServer((systemsAdminServer, serverContext) -> {
             try {
                 OptionServerEntry<?> optionServer = RegistryUtils.evaluateSafe(optionsCommand.masterCommand.getRootRegistry(), optionName, OptionServerEntry.class);
                 optionServer.setValue(optionValue);
