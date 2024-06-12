@@ -43,6 +43,25 @@ task dist(type: Jar) {
 }
 
 
+publishing {
+    repositories {
+        maven {
+            version = "0.2.0-dev"
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/FabienChatton/RealmTech")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME_GITHUB")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN_GITHUB")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            artifact tasks.dist
+        }
+    }
+}
+
 dist.dependsOn classes
 
 eclipse.project.name = appName + "-desktop"

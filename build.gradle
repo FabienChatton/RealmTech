@@ -41,6 +41,7 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java-library"
+    apply plugin: "maven-publish"
 
 
     dependencies {

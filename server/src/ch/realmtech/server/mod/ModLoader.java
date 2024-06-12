@@ -47,7 +47,8 @@ public class ModLoader {
             try {
                 loadModInitializerJar();
             } catch (Exception e) {
-                logger.error("Fail to initialize a mod. Error: " + e.getMessage(), e);
+                logger.error("Fail to initialize a mod. Error: {}", e.getMessage(), e);
+                throw new ModLoaderFail(e);
             }
         } else {
             initializeMod(modInitializerTest);
@@ -132,11 +133,20 @@ public class ModLoader {
 
         ModInitializer[] modInitializers = new ModInitializer[files.length];
         for (int i = 0; i < files.length; i++) {
-            try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{files[i].toURI().toURL()}, ClassLoader.getSystemClassLoader())) {
-                Class<ModInitializer> modInitializerClass = (Class<ModInitializer>) urlClassLoader.loadClass("realmtech.mod.Mod");
+            File file = files[i];
+            String fileName = file.getName();
+            int pos = fileName.lastIndexOf(".");
+            if (pos > 0) {
+                fileName = fileName.substring(0, pos);
+            }
+            try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, ClassLoader.getSystemClassLoader())) {
+                Class<ModInitializer> modInitializerClass = (Class<ModInitializer>) urlClassLoader.loadClass("realmtech.mod." + fileName);
                 ModInitializer modInitializer = modInitializerClass.getConstructor().newInstance();
                 modInitializers[i] = modInitializer;
                 initializeMod(modInitializer);
+            } catch (ClassNotFoundException e) {
+                logger.error("Can not found ModInitialize class for mod {}. Make sure that the ModInitialize as the name {}", fileName, "realmtech.mod." + fileName);
+                throw e;
             }
         }
 
