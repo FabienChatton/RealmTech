@@ -501,8 +501,6 @@ public final class RealmTech extends Game implements InternalConnexion {
     public void textureAtlasLoaded() {
         onTextureAtlasLoaded.forEach(textureAtlasConsumer -> textureAtlasConsumer.accept(getTextureAtlas()));
         onTextureAtlasLoaded = null;
-        TextureAtlas.AtlasRegion lain = getTextureAtlas().findRegion("lain");
-        System.out.println(lain);
     }
 
     @Override

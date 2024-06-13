@@ -19,7 +19,6 @@ public class QuestManagerEntry extends Entry {
     @EvaluateAfter("#questsCategory")
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         questCategories = RegistryUtils.findEntries(rootRegistry, "#questsCategory");
-        System.out.println(questCategories);
     }
 
     public List<? extends QuestCategory> getQuestCategories() {
