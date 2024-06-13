@@ -1,6 +1,7 @@
 name: Publish Desktop jar for modding
 
 on:
+  workflow_dispatch:
   release:
     types: [ published ]
 
@@ -18,7 +19,7 @@ jobs:
           java-version: '17'
 
       - name: Publish to GitHub Packages
-        run: ./gradlew publish
+        run: ./gradlew desktop:publish
         env:
           USERNAME_GITHUB: ${{ secrets.GITHUB_ACTOR }}
           TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
