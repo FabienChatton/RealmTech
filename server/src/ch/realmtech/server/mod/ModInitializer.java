@@ -5,10 +5,16 @@ import ch.realmtech.server.registry.Registry;
 
 /**
  * The entry point for a mod. A mod need to implement this interface to be loaded.
+ * <p>
+ * The mod class must be in the {@code realmtech.mod} package and the class must have the same
+ * name as the modId (with capitalization).
+ * For exemple: {@code realmtech.mod.ModDemo}.
+ * <p>
+ * The Class can have a {@link AssetsProvider} annotation.
  */
 public interface ModInitializer {
     /**
-     * Get the mod id of the mod.
+     * Get the mod id of this mod.
      * This mod id will be used to give you the corresponding registry for this mod.
      *
      * @return The mod id.

@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Determine if a mod has a texture atlas.
- * Name your texture atlas and texture with the mod id and put them in the assets folder.
+ * The name of your texture atlas and the texture must have the same filename as your modId.
+ * The texture atlas and the texture must be located in the assets folder.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

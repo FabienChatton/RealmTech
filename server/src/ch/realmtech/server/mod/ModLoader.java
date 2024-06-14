@@ -89,12 +89,12 @@ public class ModLoader {
                     InputStream atlasResourceAsStream = modInitializer.getClass().getResourceAsStream("/" + modId + ".atlas");
                     InputStream imgResourceAsStream = modInitializer.getClass().getResourceAsStream("/" + modId + ".png");
                     if (atlasResourceAsStream == null) {
-                        logger.warn("Asset provider file not found, the atlas should be name \"" + modId + ".atlas" + "\"");
+                        logger.warn("Asset provider file not found, the atlas should be name \"{}.atlas\"", modId);
                         isFail = true;
                         if (imgResourceAsStream != null) imgResourceAsStream.close();
                     }
                     if (imgResourceAsStream == null) {
-                        logger.warn("Asset provider file not found, the img file should be name \"" + modId + ".png" + "\"");
+                        logger.warn("Asset provider file not found, the img file should be name \"{}.png\"", modId);
                         isFail = true;
                         if (atlasResourceAsStream != null) atlasResourceAsStream.close();
                     }
@@ -118,7 +118,7 @@ public class ModLoader {
                     });
 
                 } catch (IOException e) {
-                    logger.error("Impossible to load atlas from jar file. Mod:" + modId);
+                    logger.error("Impossible to load atlas from jar file. Mod: {}", modId);
                     throw new RuntimeException(e);
                 }
 
@@ -160,7 +160,7 @@ public class ModLoader {
         }
 
         for (String modId : modIdDuplicated) {
-            logger.warn("Mod id duplicated. Id" + modId);
+            logger.warn("Mod id duplicated. Id: {}", modId);
             isFail = true;
         }
     }
