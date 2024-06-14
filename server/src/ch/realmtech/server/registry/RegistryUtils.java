@@ -142,6 +142,7 @@ public class RegistryUtils {
         } else {
             return registry.childRegistries.stream()
                     .map((childRegistry) -> searchFqrnEntry(childRegistry, names[1]))
+                    .filter(Optional::isPresent)
                     .findFirst()
                     .flatMap(Function.identity());
         }

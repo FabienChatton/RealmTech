@@ -40,6 +40,10 @@ public class GiveCommand implements Callable<Integer> {
         }
 
         int playerId = systemsAdminServer.getPlayerManagerServer().getPlayerByUsernameOrUuid(playerIdentifier);
+        if (playerId == -1) {
+            masterCommand.output.println("Can not find player: " + playerIdentifier);
+            return 1;
+        }
 
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = masterCommand.getWorld().getMapper(PlayerConnexionComponent.class);
 

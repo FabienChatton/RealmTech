@@ -219,7 +219,7 @@ public class InventoryManager extends Manager {
 
     /**
      * Delete a item in this inventory. This item can be anywhere in this inventory.
-     * <strong>Delete</string> this item from this world.
+     * <strong>Delete</strong> this item from this world.
      * @param inventoryId The inventory where the item will be remove.
      * @param itemId The item id to remove.
      * @return true if the operation was successful.
@@ -245,7 +245,7 @@ public class InventoryManager extends Manager {
 
     /**
      * Delete one item in this stack. The item can be anywhere in this stack.
-     * <strong>Delete</string> this item from this world.
+     * <strong>Delete</strong> this item from this world.
      * @param stack  The stack the contains the item.
      * @param itemId The item id to remove.
      * @return true if the operation was successful.

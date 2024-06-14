@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RegistryTest {
 
@@ -139,4 +138,17 @@ public class RegistryTest {
         assertSame(ironOreItemEntryOptional.orElseThrow(), ironOreItemEntry);
     }
 
+    @Test
+    public void twoRootSubRegistriesAndGetByFqrn() {
+        Registry<?> rootRegistry = Registry.createRoot();
+
+        Registry<Entry> modOne = Registry.createRegistry(rootRegistry, "modOne");
+        Registry<Entry> modTwo = Registry.createRegistry(rootRegistry, "modTwo");
+
+        Registry<Entry> items = Registry.createRegistry(modTwo, "items");
+        items.addEntry(new ItemEntry("itemTest", null, ItemBehavior.builder().build()) {
+        });
+
+        assertTrue(RegistryUtils.findEntry(rootRegistry, "modTwo.items.itemTest").isPresent());
+    }
 }
