@@ -73,6 +73,7 @@ public class PacketLoader extends Entry {
         packets.add(new SimpleEntry<>(PlayerCreateQuestPacket.class, PlayerCreateQuestPacket::new));
         packets.add(new SimpleEntry<>(AskPlayerRespawn.class, AskPlayerRespawn::new));
         packets.add(new SimpleEntry<>(EatItemPacket.class, EatItemPacket::new));
+        packets.add(new SimpleEntry<>(NotifySendPacket.class, NotifySendPacket::new));
     }
 
     @Override

@@ -5,6 +5,7 @@ import ch.realmtech.core.game.ecs.system.PlayerManagerClient;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ctrl.ItemManager;
+import ch.realmtech.server.divers.Notify;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.mod.ClientContext;
@@ -316,6 +317,14 @@ public class ClientExecuteContext implements ClientExecute {
 
             int playerId = context.getPlayerId();
             context.getEcsEngine().getWorld().getMapper(QuestPlayerPropertyComponent.class).create(playerId).set(questPlayerProperties);
+        });
+    }
+
+    @Override
+    public void notifySend(SerializedApplicationBytes notifySerializedApplicationBytes) {
+        context.nextFrame(() -> {
+            Notify notify = context.getSerializerController().getNotifySerializerController().decode(notifySerializedApplicationBytes);
+            context.addNotify(notify);
         });
     }
 }

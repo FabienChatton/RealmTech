@@ -72,4 +72,6 @@ public interface ClientExecute {
     void questSetCompleted(int questEntryId, long completedTimestamp);
 
     void playerCreateQuest(SerializedApplicationBytes questSerializedApplicationBytes);
+
+    void notifySend(SerializedApplicationBytes notifySerializedApplicationBytes);
 }

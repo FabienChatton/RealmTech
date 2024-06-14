@@ -5,6 +5,8 @@ import ch.realmtech.core.helper.ButtonsMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
+import ch.realmtech.server.divers.Notify;
+import ch.realmtech.server.divers.NotifyCtrl;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.AskPlayerRespawn;
@@ -37,6 +39,9 @@ public class GameScreen extends AbstractScreen {
     private final Label versionLabel;
     private final ConsoleUi consoleUi;
     private final Window deadMessage;
+    private final Window notifyWindow;
+
+    private final NotifyCtrl notifyCtrl;
 
     public GameScreen(RealmTech context) throws IOException {
         super(context);
@@ -54,6 +59,9 @@ public class GameScreen extends AbstractScreen {
         versionLabel = new Label("Version : " + RealmTech.REALMTECH_VERSION, skin);
         consoleUi = new ConsoleUi(skin, context);
         deadMessage = new Window("You are dead", skin);
+        notifyWindow = new Window("Notify", skin);
+
+        notifyCtrl = new NotifyCtrl();
 
         debugTable.add(fpsLabel).left().row();
         debugTable.add(versionLabel).left().row();
@@ -103,6 +111,8 @@ public class GameScreen extends AbstractScreen {
                 logger.warn("Can not render debug: {}", e.getMessage(), e);
             }
         }));
+
+        checkNotify();
     }
 
     @Override
@@ -186,5 +196,27 @@ public class GameScreen extends AbstractScreen {
     public void hideDeadMessage() {
         deadMessage.remove();
         Gdx.input.setInputProcessor(context.getInputManager());
+    }
+
+    private void checkNotify() {
+        Notify notify = notifyCtrl.nextNotify(this::removeNotifyWindow);
+        if (notify != null) {
+            addNotifyWindow(notify);
+        }
+    }
+
+    private void removeNotifyWindow() {
+        notifyWindow.remove();
+    }
+
+    private void addNotifyWindow(Notify notify) {
+        notifyWindow.clear();
+        notifyWindow.getTitleLabel().setText(notify.title());
+        notifyWindow.add(new Label(notify.message(), skin));
+        uiTable.add(notifyWindow).expand().top().right();
+    }
+
+    public void addNotify(Notify notify) {
+        notifyCtrl.addNotify(notify);
     }
 }

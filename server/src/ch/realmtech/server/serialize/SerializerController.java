@@ -11,6 +11,7 @@ import ch.realmtech.server.serialize.face.FaceSerializerController;
 import ch.realmtech.server.serialize.furnace.FurnaceSerializerController;
 import ch.realmtech.server.serialize.inventory.InventorySerializerController;
 import ch.realmtech.server.serialize.life.LifeSerializerController;
+import ch.realmtech.server.serialize.notify.NotifySerializerController;
 import ch.realmtech.server.serialize.physicEntity.EnemySerializerController;
 import ch.realmtech.server.serialize.player.PlayerSerializerController;
 import ch.realmtech.server.serialize.quests.QuestSerializerController;
@@ -45,6 +46,7 @@ public final class SerializerController {
     private final EnergyCableSerializerController energyCableSerializerController = registerSerializerController(new EnergyCableSerializerController(this));
     private final EnergyGeneratorSerializerController energyGeneratorSerializerController = registerSerializerController(new EnergyGeneratorSerializerController(this));
     private final QuestSerializerController questSerializerController = registerSerializerController(new QuestSerializerController(this));
+    private final NotifySerializerController notifySerializerController = registerSerializerController(new NotifySerializerController(this));
 
     public void initialize(World world) throws Exception {
         if (this.world != null) throw new IllegalCallerException("Already initialize");
@@ -130,6 +132,10 @@ public final class SerializerController {
 
     public QuestSerializerController getQuestSerializerController() {
         return questSerializerController;
+    }
+
+    public NotifySerializerController getNotifySerializerController() {
+        return notifySerializerController;
     }
 
     @SuppressWarnings("unchecked")

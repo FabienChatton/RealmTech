@@ -1,5 +1,6 @@
 package ch.realmtech.server.mod;
 
+import ch.realmtech.server.divers.Notify;
 import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.ecs.plugin.forclient.SystemsAdminClientForClient;
@@ -33,4 +34,6 @@ public interface ClientContext extends GetWorld, Context {
     SystemsAdminClientForClient getSystemsAdminClient();
 
     void setMenuScreen();
+
+    void addNotify(Notify notify);
 }

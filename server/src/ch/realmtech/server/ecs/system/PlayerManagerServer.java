@@ -292,6 +292,10 @@ public class PlayerManagerServer extends Manager {
         return mPlayerConnexion.get(playerId);
     }
 
+    public PlayerConnexionComponent getPlayerConnexionComponentById(int playerId) {
+        return mPlayerConnexion.get(playerId);
+    }
+
     public void removePlayer(Channel channel) {
         int[] playersConnexionData = players.getData();
         for (int i = 0; i < playersConnexionData.length; i++) {

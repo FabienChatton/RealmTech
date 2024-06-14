@@ -20,6 +20,7 @@ import ch.realmtech.core.screen.GameScreen;
 import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
+import ch.realmtech.server.divers.Notify;
 import ch.realmtech.server.ecs.ExecuteOnContext;
 import ch.realmtech.server.ecs.GetWorld;
 import ch.realmtech.server.inventory.AddAndDisplayInventoryArgs;
@@ -506,5 +507,10 @@ public final class RealmTech extends Game implements InternalConnexion {
     @Override
     public void setMenuScreen() {
         Gdx.app.postRunnable(() -> setScreen(ScreenType.MENU));
+    }
+
+    @Override
+    public void addNotify(Notify notify) {
+        getWorldOr((getWorld) -> gameScreen.addNotify(notify));
     }
 }
