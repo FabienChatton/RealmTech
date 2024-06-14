@@ -18,7 +18,6 @@ import ch.realmtech.server.mod.options.server.VerifyAccessTokenUrnOptionEntry;
 import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
 import ch.realmtech.server.mod.options.server.mob.*;
 import ch.realmtech.server.mod.packets.PacketLoader;
-import ch.realmtech.server.mod.questCategory.PositionTestCategory;
 import ch.realmtech.server.mod.questCategory.Tier0QuestCategory;
 import ch.realmtech.server.mod.quests.*;
 import ch.realmtech.server.registry.*;
@@ -164,17 +163,11 @@ public class RealmTechCoreMod implements ModInitializer {
         questRegistry.addEntry(new FirstEnergyCableQuestEntry());
         questRegistry.addEntry(new FirstEnergyBatteryQuestEntry());
         questRegistry.addEntry(new FirstEnergyGeneratorQuestEntry());
-        questRegistry.addEntry(new QuestPosition1Entry()); // test position
-        questRegistry.addEntry(new QuestPosition2Entry()); // test position
-        questRegistry.addEntry(new QuestPosition3Entry()); // test position
-        questRegistry.addEntry(new QuestPosition4Entry()); // test position
-        questRegistry.addEntry(new QuestPosition5Entry()); // test position
 
 
         // quests category
         Registry<QuestCategory> questCategoryRegistry = Registry.createRegistry(modRegistry, "questsCategory", "questsCategory");
         questCategoryRegistry.addEntry(new Tier0QuestCategory());
-        questCategoryRegistry.addEntry(new PositionTestCategory()); // test position
 
         // quests manager
         Registry<Entry> questManagerRegistry = Registry.createRegistry(modRegistry, "questManager");

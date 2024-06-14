@@ -37,6 +37,7 @@ public class QuestPlayerSystem extends BaseSystem {
     private Window questWindow;
     private QuestCategory selectedCategoryOld = null;
     private QuestEntry questOver;
+    private Actor questOverActor;
     private Window questOverTitle;
     private QuestManagerEntry questManagerEntry;
     private ComponentMapper<QuestPlayerPropertyComponent> mQuestPlayerProperty;
@@ -59,7 +60,7 @@ public class QuestPlayerSystem extends BaseSystem {
             if (!context.getUiStage().getActors().contains(questOverTitle, true)) {
                 context.getUiStage().addActor(questOverTitle);
             }
-            questOverTitle.setPosition(Gdx.input.getX() - questOverTitle.getTitleLabel().getWidth() / 2f, Gdx.graphics.getHeight() - Gdx.input.getY() + questOverTitle.getTitleLabel().getHeight());
+            questOverTitle.setPosition(questOverActor.getX(), questOverActor.getY() + 120);
             questOverTitle.getTitleLabel().setText(questOver.getTitle());
         } else {
             if (context.getUiStage().getActors().contains(questOverTitle, true)) {
@@ -96,6 +97,7 @@ public class QuestPlayerSystem extends BaseSystem {
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                     super.enter(event, x, y, pointer, fromActor);
                     questOver = questEntry;
+                    questOverActor = questIcon;
                     float width = Popup.getWidth(context, questEntry.getTitle());
                     questOverTitle.setWidth(width);
                     questOverTitle.getTitleLabel().setWidth(width);
@@ -105,6 +107,7 @@ public class QuestPlayerSystem extends BaseSystem {
                 public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                     super.exit(event, x, y, pointer, toActor);
                     questOver = null;
+                    questOverActor = null;
                 }
 
                 @Override

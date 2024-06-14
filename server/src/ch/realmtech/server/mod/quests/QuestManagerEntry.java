@@ -1,6 +1,5 @@
 package ch.realmtech.server.mod.quests;
 
-import ch.realmtech.server.mod.EvaluateAfter;
 import ch.realmtech.server.quests.QuestPlayerProperty;
 import ch.realmtech.server.registry.*;
 
@@ -16,7 +15,6 @@ public class QuestManagerEntry extends Entry {
     }
 
     @Override
-    @EvaluateAfter("#questsCategory")
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
         questCategories = RegistryUtils.findEntries(rootRegistry, "#questsCategory");
     }
