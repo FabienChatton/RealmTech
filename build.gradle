@@ -93,24 +93,3 @@ project(":test") {
         api 'org.junit.jupiter:junit-jupiter:5.8.1'
     }
 }
-
-project(":mod") {
-    apply plugin: "java-library"
-
-    dependencies {
-        compileOnly project(":core")
-        compileOnly project(":server")
-    }
-}
-
-project(":modDesktop") {
-    apply plugin: "java-library"
-
-
-    dependencies {
-        implementation project(":desktop")
-        implementation project(":core")
-        implementation project(":server")
-        implementation project(":mod")
-    }
-}
