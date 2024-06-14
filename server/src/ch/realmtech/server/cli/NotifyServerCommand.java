@@ -42,7 +42,7 @@ public class NotifyServerCommand implements Runnable {
             return;
         }
 
-        Notify notify = new Notify("Notify send by ?", message, 2);
+        Notify notify = new Notify("Notify send by " + masterCommand.getSenderString(), message, 2);
         masterCommand.serverContext.getServerConnexion().sendPacketTo(new NotifySendPacket(masterCommand.serverContext, notify), playerConnexion.channel);
     }
 }

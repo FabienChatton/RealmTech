@@ -22,10 +22,12 @@ import static picocli.CommandLine.Command;
 })
 public class MasterServerCommand extends CommunMasterCommand implements Callable<Integer> {
     final ServerContext serverContext;
+    final int senderId;
 
-    public MasterServerCommand(ServerContext serverContext, PrintWriter output) {
+    public MasterServerCommand(ServerContext serverContext, PrintWriter output, int senderId) {
         super(output);
         this.serverContext = serverContext;
+        this.senderId = senderId;
     }
 
     @Override
@@ -56,5 +58,16 @@ public class MasterServerCommand extends CommunMasterCommand implements Callable
     @Override
     public SystemsAdminCommun getSystemAdmin() {
         return serverContext.getSystemsAdminServer();
+    }
+
+    public String getSenderString() {
+        String senderString;
+        if (senderId == CommandeServerExecute.SERVER_SENDER) {
+            senderString = "[SERVER]";
+        } else {
+            senderString = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerConnexionComponentById(senderId).getUsername();
+        }
+
+        return senderString;
     }
 }

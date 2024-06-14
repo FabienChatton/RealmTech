@@ -103,9 +103,14 @@ public class ServerExecuteContext implements ServerExecute {
     @Override
     public void consoleCommande(Channel clientChannel, String stringCommande) {
         serverContext.getEcsEngineServer().nextTick(() -> {
+            int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChannel);
+            if (playerId == -1) {
+                logger.warn("Invalide player send a console commande. socket: {}", clientChannel);
+                return;
+            }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (PrintWriter printWriter = new PrintWriter(baos, true, StandardCharsets.US_ASCII)) {
-                serverContext.getCommandeExecute().execute(stringCommande, printWriter);
+                serverContext.getCommandeExecute().execute(stringCommande, printWriter, playerId);
             }
             serverContext.getServerConnexion().sendPacketTo(new WriteToConsolePacket(baos.toString()), clientChannel);
         });

@@ -31,7 +31,7 @@ public class CommandServerThread extends Thread implements Closeable {
             if (scanner.hasNextLine()) {
                 String stringCommande = scanner.nextLine();
                 PrintWriter output = new PrintWriter(System.out);
-                commandeServerExecute.execute(stringCommande, output);
+                commandeServerExecute.execute(stringCommande, output, CommandeServerExecute.SERVER_SENDER);
                 output.flush();
             }
             try {
