@@ -1,26 +1,22 @@
-package ch.realmtech.server.divers;
+package ch.realmtech.core.game.divers;
 
+import ch.realmtech.core.RealmTech;
+import ch.realmtech.server.divers.Notify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class NotifyCtrl {
     private final static Logger logger = LoggerFactory.getLogger(NotifyCtrl.class);
+    private final RealmTech context;
     private final Queue<Notify> gameNotifyQueue;
-    private final Executor executor;
     private volatile boolean waitNotify;
 
-    public NotifyCtrl() {
+    public NotifyCtrl(RealmTech context) {
         gameNotifyQueue = new ArrayDeque<>();
-        executor = Executors.newCachedThreadPool((runnable) -> {
-            Thread thread = Executors.defaultThreadFactory().newThread(runnable);
-            thread.setDaemon(true);
-            return thread;
-        });
+        this.context = context;
     }
 
     public void addNotify(Notify notify) {
@@ -41,16 +37,11 @@ public class NotifyCtrl {
         if (notify == null) {
             return null;
         }
-        executor.execute(() -> {
-            try {
-                waitNotify = true;
-                Thread.sleep(notify.secondeToShow() * 1000L);
-                onNotifyTimeEnd.run();
-            } catch (InterruptedException e) {
-                logger.warn("Fail to wait a game notify", e);
-            } finally {
-                waitNotify = false;
-            }
+
+        waitNotify = true;
+        context.nextTickSimulation(notify.secondeToShow() * 60, () -> {
+            onNotifyTimeEnd.run();
+            waitNotify = false;
         });
         return notify;
     }

@@ -1,12 +1,12 @@
 package ch.realmtech.core.screen;
 
 import ch.realmtech.core.RealmTech;
+import ch.realmtech.core.game.divers.NotifyCtrl;
 import ch.realmtech.core.helper.ButtonsMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.screen.uiComponent.ConsoleUi;
 import ch.realmtech.server.divers.Notify;
-import ch.realmtech.server.divers.NotifyCtrl;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.AskPlayerRespawn;
@@ -61,7 +61,7 @@ public class GameScreen extends AbstractScreen {
         deadMessage = new Window("You are dead", skin);
         notifyWindow = new Window("Notify", skin);
 
-        notifyCtrl = new NotifyCtrl();
+        notifyCtrl = new NotifyCtrl(context);
 
         debugTable.add(fpsLabel).left().row();
         debugTable.add(versionLabel).left().row();
