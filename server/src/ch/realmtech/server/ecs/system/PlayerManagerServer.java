@@ -3,6 +3,7 @@ package ch.realmtech.server.ecs.system;
 import ch.realmtech.server.PhysiqueWorldHelper;
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.datactrl.DataCtrl;
+import ch.realmtech.server.divers.Notify;
 import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
@@ -360,6 +361,10 @@ public class PlayerManagerServer extends Manager {
             logger.info("Player {} has failed to been created. Cause : {}, {}", username, e.getMessage(), clientChanel);
             return;
         }
+
+        serverContext.getEcsEngineServer().nextTickSchedule(60 * 3, () -> {
+            serverContext.getServerConnexion().sendPacketTo(new NotifySendPacket(serverContext, new Notify("Advice", "Open c\nto open quest menu", 5)), clientChanel);
+        });
 
         // new player with new connexion get all players.
         // players already on server get this player.
