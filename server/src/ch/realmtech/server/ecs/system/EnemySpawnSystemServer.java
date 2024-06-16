@@ -1,13 +1,11 @@
 package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.ecs.component.Box2dComponent;
-import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
-import ch.realmtech.server.ecs.component.PlayerDeadComponent;
-import ch.realmtech.server.ecs.component.PositionComponent;
+import ch.realmtech.server.ecs.component.*;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.enemy.EnemyComponent;
 import ch.realmtech.server.mod.mobs.ChickenMobEntry;
+import ch.realmtech.server.mod.mobs.ZombieMobEntry;
 import ch.realmtech.server.mod.options.server.mob.*;
 import ch.realmtech.server.registry.MobEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -67,24 +65,12 @@ public class EnemySpawnSystemServer extends BaseSystem {
     }
 
     private void naturalSpawnEnemy() {
-        if (systemsAdminServer.getTimeSystem().isNight() && System.currentTimeMillis() - lastNaturalSpawn > naturalSpawnCoolDownOptionEntry.getValue()) {
-            IntBag enemyEntities = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities();
-            if (enemyEntities.size() > maxEnemyCountOptionEntry.getValue()) {
-                return;
-            }
-            IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
+        int enemyCount = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class, EnemyHitPlayerComponent.class)).getEntities().size();
+        int passiveMobCount = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class).exclude(EnemyHitPlayerComponent.class)).getEntities().size();
 
-            for (int i = 0; i < players.size(); i++) {
-                int playerId = players.get(i);
-
-                Vector2 playerVector = mPos.get(playerId).toVector2();
-                Vector2 enemySpawnVector = new Vector2();
-                enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
-                enemySpawnVector.rotateDeg(random.nextFloat(360));
-                Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
-                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y, RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ChickenMobEntry.class));
-                lastNaturalSpawn = System.currentTimeMillis();
-            }
+        testSpawnMob(RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ChickenMobEntry.class), passiveMobCount, 5);
+        if (systemsAdminServer.getTimeSystem().isNight()) {
+            testSpawnMob(RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), ZombieMobEntry.class), enemyCount, maxEnemyCountOptionEntry.getValue());
         }
     }
 
@@ -101,6 +87,27 @@ public class EnemySpawnSystemServer extends BaseSystem {
                 if (dst > enemyDispawnDstOptionEntry.getValue()) {
                     systemsAdminServer.getMobSystem().destroyEnemyServer(enemyId);
                 }
+            }
+        }
+    }
+
+    private void testSpawnMob(MobEntry mobEntry, int numberOfMob, int maxMob) {
+        if (System.currentTimeMillis() - lastNaturalSpawn > naturalSpawnCoolDownOptionEntry.getValue()) {
+            if (numberOfMob > maxMob) {
+                return;
+            }
+            IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
+
+            for (int i = 0; i < players.size(); i++) {
+                int playerId = players.get(i);
+
+                Vector2 playerVector = mPos.get(playerId).toVector2();
+                Vector2 enemySpawnVector = new Vector2();
+                enemySpawnVector.add(random.nextInt(minDstSpawnPlayerOptionEntry.getValue(), maxDstSpawnPlayerOptionEntry.getValue()), 0);
+                enemySpawnVector.rotateDeg(random.nextFloat(360));
+                Vector2 enemySpawnPos = playerVector.cpy().add(enemySpawnVector);
+                spawnEnemy(enemySpawnPos.x, enemySpawnPos.y, mobEntry);
+                lastNaturalSpawn = System.currentTimeMillis();
             }
         }
     }
