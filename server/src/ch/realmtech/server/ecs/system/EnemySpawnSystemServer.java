@@ -93,7 +93,7 @@ public class EnemySpawnSystemServer extends BaseSystem {
 
     private void testSpawnMob(MobEntry mobEntry, int numberOfMob, int maxMob) {
         if (System.currentTimeMillis() - lastNaturalSpawn > naturalSpawnCoolDownOptionEntry.getValue()) {
-            if (numberOfMob > maxMob) {
+            if (numberOfMob >= maxMob) {
                 return;
             }
             IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();

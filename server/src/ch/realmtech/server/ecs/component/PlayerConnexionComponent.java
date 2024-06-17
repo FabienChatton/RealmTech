@@ -17,10 +17,14 @@ public class PlayerConnexionComponent extends Component {
     private String username = "unknown";
     public final Bag<UUID> entitySubscription;
     public final IntBag playerInRange;
+    public final IntBag mobInRange;
+    public final IntBag itemInRange;
 
     public PlayerConnexionComponent() {
         entitySubscription = new Bag<>();
         playerInRange = new IntBag();
+        mobInRange = new IntBag();
+        itemInRange = new IntBag();
     }
 
     public PlayerConnexionComponent set(Channel channel) {

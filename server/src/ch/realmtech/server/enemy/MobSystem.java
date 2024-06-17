@@ -56,7 +56,8 @@ public class MobSystem extends IteratingSystem {
         int chunkPosX = MapManager.getChunkPos(worldPosX);
         int chunkPosY = MapManager.getChunkPos(worldPosY);
 
-        serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyDeletePacket(entityUuid), chunkPosX, chunkPosY);
+        serverContext.getServerConnexion().broadCastPacket(new EnemyDeletePacket(entityUuid));
+        // serverContext.getServerConnexion().sendPacketToSubscriberForChunkPos(new EnemyDeletePacket(entityUuid), chunkPosX, chunkPosY);
         if (lifeComponent.getKillerId() != -1) {
             mobComponent.getMobEntry().getMobBehavior().getOnKilled()
                     .ifPresent((editEntityDelete) -> editEntityDelete.deleteEntity(serverContext.getExecuteOnContext(), enemyId));

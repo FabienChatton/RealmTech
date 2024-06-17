@@ -201,7 +201,9 @@ public class ServerExecuteContext implements ServerExecute {
     public void subscribeToEntity(Channel clientChannel, UUID entityUuid) {
         serverContext.getEcsEngineServer().nextTick(() -> {
             int playerId = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerByChannel(clientChannel);
-            serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().addEntitySubscriptionToPlayer(playerId, entityUuid);
+            if (serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().playerRequestSubscriptionToEntity(playerId, entityUuid)) {
+                serverContext.getSystemsAdminServer().getPlayerSubscriptionSystem().addEntitySubscriptionToPlayer(playerId, entityUuid);
+            }
         });
     }
 

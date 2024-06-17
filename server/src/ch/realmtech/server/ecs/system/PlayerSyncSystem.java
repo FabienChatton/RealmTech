@@ -31,8 +31,8 @@ public class PlayerSyncSystem extends IteratingSystem {
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(entityId);
         PositionComponent positionComponent = mPos.get(entityId);
         SerializedApplicationBytes playerEncode = serverContext.getSerializerController().getPlayerSerializerController().encode(new PlayerSerializerConfig().playerId(entityId).writeInventory(false).writeQuestProperty(false));
-        int chunkPosX = MapManager.getChunkPos((int) positionComponent.x);
-        int chunkPosY = MapManager.getChunkPos((int) positionComponent.y);
+        int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(positionComponent.x));
+        int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(positionComponent.y));
 
         ImmutableIntBag<?> playersInRange = systemsAdminServer.getPlayerSubscriptionSystem().getPlayersInRangeForChunkPos(new Position(chunkPosX, chunkPosY));
         for (int i = 0; i < playersInRange.size(); i++) {

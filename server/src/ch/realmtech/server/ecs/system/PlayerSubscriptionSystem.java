@@ -2,43 +2,67 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.divers.Position;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
+import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
 import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableIntBag;
 import com.artemis.utils.IntBag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class PlayerSubscriptionSystem extends Manager {
+    private final static Logger logger = LoggerFactory.getLogger(PlayerSubscriptionSystem.class);
     @Wire
     private SystemsAdminServer systemsAdminServer;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
+    private ComponentMapper<PositionComponent> mPos;
 
-    public void addEntitySubscriptionToPlayer(int playerId, UUID entityIdSubscription) {
-        mPlayerConnexion.get(playerId).entitySubscription.add(entityIdSubscription);
+    public boolean addEntitySubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
+        PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+        if (playerConnexionComponent.entitySubscription.contains(entityUuidSubscription)) {
+            logger.trace("Player {} try to subscribe to an already subscribed entity: {}", playerConnexionComponent.getUsername(), entityUuidSubscription);
+            return false;
+        }
+        playerConnexionComponent.entitySubscription.add(entityUuidSubscription);
+        return true;
     }
 
-    public void removeEntitySubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
-        mPlayerConnexion.get(playerId).entitySubscription.remove(entityUuidSubscription);
+    public boolean removeEntitySubscriptionToPlayer(int playerId, UUID entityUuidSubscription) {
+        PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+        if (!playerConnexionComponent.entitySubscription.contains(entityUuidSubscription)) {
+            logger.trace("Player {} try to unSubscribe to unSubscribed entity: {}", playerConnexionComponent.getUsername(), entityUuidSubscription);
+            return false;
+        }
+        playerConnexionComponent.entitySubscription.remove(entityUuidSubscription);
+        return true;
     }
 
     public ImmutableIntBag<?> getPlayersInRangeForChunkPos(Position chunkPos) {
-        IntBag players = systemsAdminServer.getPlayerManagerServer().getPlayers();
-        int[] playersData = players.getData();
-        IntBag playersSubscription = new IntBag(Math.min(players.size(), 64));
+        return getEntityInRangeForChunkPos(chunkPos, Aspect.all(PositionComponent.class, PlayerConnexionComponent.class));
+    }
 
-        for (int i = 0; i < players.size(); i++) {
-            int playerId = playersData[i];
-            List<Position> chunkPoss = mPlayerConnexion.get(playerId).chunkPoss;
-            if (chunkPoss.contains(chunkPos)) {
-                playersSubscription.add(playerId);
+    public ImmutableIntBag<?> getEntityInRangeForChunkPos(Position chunkPos, Aspect.Builder aspectBuilder) {
+        IntBag entities = world.getAspectSubscriptionManager().get(aspectBuilder).getEntities();
+        int[] entitiesData = entities.getData();
+        IntBag subscription = new IntBag(Math.min(entities.size(), 64));
+
+        for (int i = 0; i < entities.size(); i++) {
+            int entityId = entitiesData[i];
+            PositionComponent entityPos = mPos.get(entityId);
+            int entityChunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(entityPos.x));
+            int entityChunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(entityPos.y));
+            if (systemsAdminServer.getMapSystemServer().chunkEstDansLaRenderDistance(chunkPos, entityChunkPosX, entityChunkPosY)) {
+                subscription.add(entityId);
             }
         }
 
-        return playersSubscription;
+        return subscription;
     }
 
     public ImmutableIntBag<?> getPlayerForEntityIdSubscription(UUID entityIdSubscription) {
@@ -76,5 +100,22 @@ public class PlayerSubscriptionSystem extends Manager {
         }
 
         return uuids;
+    }
+
+    public boolean playerRequestSubscriptionToEntity(int playerId, UUID entityUuid) {
+        PositionComponent playerPos = mPos.get(playerId);
+        int entityId = systemsAdminServer.getUuidEntityManager().getEntityId(entityUuid);
+        if (mPos.has(entityId)) {
+            int playerChunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.x));
+            int playerChunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(playerPos.y));
+
+            PositionComponent entityPos = mPos.get(entityId);
+            int entityChunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(entityPos.x));
+            int entityChunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(entityPos.y));
+            return systemsAdminServer.getMapSystemServer().chunkEstDansLaRenderDistance(new Position(playerChunkPosX, playerChunkPosY), entityChunkPosX, entityChunkPosY);
+        } else {
+            // ajouter sécurité pour distance avec inventaire
+            return true;
+        }
     }
 }

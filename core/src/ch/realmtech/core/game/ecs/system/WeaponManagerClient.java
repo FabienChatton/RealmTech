@@ -22,6 +22,9 @@ public class WeaponManagerClient extends Manager implements WeaponManagerClientC
     public void playerHasJustShoot(UUID playerUuid) {
         context.getSoundManager().playWeaponShoot();
         int playerId = systemsAdminClient.getUuidEntityManager().getEntityId(playerUuid);
+        if (playerId == -1) {
+            return;
+        }
         PositionComponent playerPos = mPos.get(playerId);
 
         context.getSoundManager().playWeaponShoot();

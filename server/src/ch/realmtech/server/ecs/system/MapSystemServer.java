@@ -45,7 +45,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
     private InfMapComponent infMapComponent;
     private SaveMetadataComponent infMetaDonnesComponent;
-    int renderDistance;
+    private RenderDistanceOptionEntry renderDistance;
     private Map<Integer, List<Position>> chunkADamner;
     private Map<Integer, List<Position>> chunkAObtenir;
     private Map<Integer, List<Position>> chunkAGarders;
@@ -62,9 +62,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     @Override
     protected void begin() {
-        renderDistance = RegistryUtils.findEntry(serverContext.getRootRegistry(), RenderDistanceOptionEntry.class)
-                .orElseThrow(() -> new RuntimeException(RenderDistanceOptionEntry.class + " not found in root registry"))
-                .getValue();
+        renderDistance = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), RenderDistanceOptionEntry.class);
     }
 
     @Override
@@ -75,7 +73,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(positionPlayerComponent.x));
         int chunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(positionPlayerComponent.y));
         if (playerConnexionComponent.ancienChunkPos == null || !(playerConnexionComponent.ancienChunkPos[0] == chunkPosX && playerConnexionComponent.ancienChunkPos[1] == chunkPosY)) {
-            List<Position> chunkADamnerPos = trouveChunkADamner(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY, renderDistance);
+            List<Position> chunkADamnerPos = trouveChunkADamner(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY);
             List<Position> chunkAObtenirPos = trouveChunkAObtenir(playerConnexionComponent.chunkPoss, chunkPosX, chunkPosY);
             List<Position> chunkAGarder = trouveChunkAGarder(chunkPosX, chunkPosY);
 
@@ -163,10 +161,11 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         return !trouve;
     }
 
-    public List<Position> trouveChunkADamner(List<Position> poss, int chunkPosX, int chunkPosY, int renderDistance) {
+    public List<Position> trouveChunkADamner(List<Position> poss, int chunkPosX, int chunkPosY) {
+        int renderDistance = this.renderDistance.getValue();
         List<Position> ret = new ArrayList<>(2 * renderDistance + 1);
         for (Position position : poss) {
-            if (!chunkEstDansLaRenderDistance(position, chunkPosX, chunkPosY, renderDistance)) {
+            if (!chunkEstDansLaRenderDistance(position, chunkPosX, chunkPosY)) {
                 ret.add(position);
             }
         }
@@ -182,6 +181,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     }
 
     public List<Position> trouveChunkAGarder(int chunkPosX, int chunkPosY) {
+        int renderDistance = this.renderDistance.getValue();
         List<Position> ret = new ArrayList<>(2 * renderDistance + 1);
         for (int i = -renderDistance + chunkPosX; i <= renderDistance + chunkPosX; i++) {
             for (int j = -renderDistance + chunkPosY; j <= renderDistance + chunkPosY; j++) {
@@ -213,9 +213,10 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
         return systemsAdminServer.getMapManager().supprimerChunkAMap(infChunks, chunkId);
     }
 
-    public boolean chunkEstDansLaRenderDistance(Position position, int posX, int posY, int renderDistance) {
-        int dstX = Math.abs(posX - position.x());
-        int dstY = Math.abs(posY - position.y());
+    public boolean chunkEstDansLaRenderDistance(Position position, int chunkPosX, int chunkPosY) {
+        int renderDistance = this.renderDistance.getValue();
+        int dstX = Math.abs(chunkPosX - position.x());
+        int dstY = Math.abs(chunkPosY - position.y());
         return dstX <= renderDistance && dstY <= renderDistance;
     }
 
