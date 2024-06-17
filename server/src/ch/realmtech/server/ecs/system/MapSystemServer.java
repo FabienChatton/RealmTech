@@ -61,7 +61,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
     }
 
     @Override
-    protected void begin() {
+    protected void initialize() {
         renderDistance = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), RenderDistanceOptionEntry.class);
     }
 

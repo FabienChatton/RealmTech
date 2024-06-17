@@ -151,6 +151,7 @@ public class GameScreen extends AbstractScreen {
             uiStage.setDebugAll(false);
         } else {
             if (canInteractWithWorld()) {
+                uiTable.clear();
                 uiTable.add(debugTable).expand().left().top();
                 uiStage.setDebugAll(allDebug);
             }
@@ -210,6 +211,7 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void addNotifyWindow(Notify notify) {
+        uiTable.clear();
         notifyWindow.clear();
         notifyWindow.getTitleLabel().setText(notify.title());
         notifyWindow.add(new Label(notify.message(), skin));
