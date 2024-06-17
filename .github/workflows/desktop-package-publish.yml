@@ -19,8 +19,11 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Set up gradle execute
+        run: chmod +x ./gradlew
+
       - name: Publish to GitHub Packages
         run: ./gradlew desktop:publish
         env:
-          USERNAME_GITHUB: ${{ secrets.GITHUB_ACTOR }}
-          TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME_GITHUB: FabienChatton
+          TOKEN_GITHUB: ${{ secrets.PACKAGE_TOKEN }}
