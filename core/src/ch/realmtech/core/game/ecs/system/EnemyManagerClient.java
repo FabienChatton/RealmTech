@@ -53,9 +53,10 @@ public class EnemyManagerClient extends Manager {
     }
 
     public void deleteMob(UUID mobUuid) {
+        logger.trace("Delete mob {}", mobUuid);
         int entityId = systemsAdminClient.getUuidEntityManager().getEntityId(mobUuid);
         if (entityId == -1) {
-            logger.warn("Can not find enemy uuid {}", mobUuid);
+            logger.debug("Can not find enemy uuid {}", mobUuid);
             return;
         }
 

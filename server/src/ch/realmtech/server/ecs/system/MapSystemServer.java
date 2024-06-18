@@ -7,18 +7,18 @@ import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.level.cell.CellManager;
 import ch.realmtech.server.level.cell.Cells;
 import ch.realmtech.server.mod.options.server.RenderDistanceOptionEntry;
-import ch.realmtech.server.packet.clientPacket.CellBreakPacket;
-import ch.realmtech.server.packet.clientPacket.ChunkADamnePacket;
-import ch.realmtech.server.packet.clientPacket.ChunkAMonterPacket;
+import ch.realmtech.server.packet.clientPacket.*;
 import ch.realmtech.server.registry.CellEntry;
 import ch.realmtech.server.registry.ItemEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import ch.realmtech.server.serialize.cell.CellArgs;
 import ch.realmtech.server.serialize.exception.IllegalMagicNumbers;
+import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.artemis.utils.IntBag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.util.*;
+import java.util.function.IntConsumer;
 import java.util.zip.ZipException;
 
 @All(PlayerConnexionComponent.class)
@@ -39,7 +40,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     private ComponentMapper<InfMapComponent> mInfMap;
     private ComponentMapper<InfChunkComponent> mChunk;
-    private ComponentMapper<PositionComponent> mPosition;
+    private ComponentMapper<PositionComponent> mPos;
     private ComponentMapper<ItemComponent> mItem;
     private ComponentMapper<CellComponent> mCell;
     private ComponentMapper<PlayerConnexionComponent> mPlayerConnexion;
@@ -67,7 +68,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
     @Override
     protected void process(int playerId) {
-        PositionComponent positionPlayerComponent = mPosition.get(playerId);
+        PositionComponent positionPlayerComponent = mPos.get(playerId);
         if (positionPlayerComponent == null) return;
         PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
         int chunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(positionPlayerComponent.x));
@@ -130,6 +131,7 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
         this.chunkADamner.forEach((playerId, chunkPoss) -> {
             PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+            removeEntityForPlayer(playerId, chunkPoss);
             chunkPoss.forEach(chunkPos -> {
                 serverContext.getServerConnexion().sendPacketTo(new ChunkADamnePacket(chunkPos.x(), chunkPos.y()), playerConnexionComponent.channel);
                 playerConnexionComponent.chunkPoss.remove(chunkPos);
@@ -148,6 +150,48 @@ public class MapSystemServer extends IteratingSystem implements CellManager {
 
         chunkADamner.clear();
         chunkAObtenir.clear();
+    }
+
+    /**
+     * Remove entity out of range for this player.
+     * Every entity in those chunk will be deleted for this player.
+     */
+    // Peut-être cacher les entity avec une position pour qu'ils aient le chunk dans lequel ils sont contenu
+    private void removeEntityForPlayer(int playerId, List<Position> chunkPoss) {
+        PlayerConnexionComponent playerConnexionComponent = mPlayerConnexion.get(playerId);
+
+        IntBag playerEntities = world.getAspectSubscriptionManager().get(Aspect.all(PlayerConnexionComponent.class, PositionComponent.class)).getEntities();
+        removeEntityOutOfRange(chunkPoss, playerEntities, (otherPlayerOutOfRange) -> {
+            UUID entityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(otherPlayerOutOfRange);
+            serverContext.getServerConnexion().sendPacketTo(new PlayerOutOfRange(entityUuid), playerConnexionComponent.channel);
+        });
+
+        IntBag mobs = world.getAspectSubscriptionManager().get(Aspect.all(MobComponent.class, PositionComponent.class)).getEntities();
+        removeEntityOutOfRange(chunkPoss, mobs, (otherMob) -> {
+            UUID entityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(otherMob);
+            serverContext.getServerConnexion().sendPacketTo(new EnemyDeletePacket(entityUuid), playerConnexionComponent.channel);
+        });
+
+        IntBag items = world.getAspectSubscriptionManager().get(Aspect.all(ItemComponent.class, PositionComponent.class)).getEntities();
+        removeEntityOutOfRange(chunkPoss, items, (otherItem) -> {
+            UUID entityUuid = systemsAdminServer.getUuidEntityManager().getEntityUuid(otherItem);
+            serverContext.getServerConnexion().sendPacketTo(new ItemOnGroundSupprimerPacket(entityUuid), playerConnexionComponent.channel);
+        });
+    }
+
+    private void removeEntityOutOfRange(List<Position> chunkPoss, IntBag otherEntities, IntConsumer entityOutOfRange) {
+        for (int i = 0; i < otherEntities.size(); i++) {
+            int otherEntity = otherEntities.get(i);
+            PositionComponent otherPos = mPos.get(otherEntity);
+            int otherChunkPosX = MapManager.getChunkPos(MapManager.getWorldPos(otherPos.x));
+            int otherChunkPosY = MapManager.getChunkPos(MapManager.getWorldPos(otherPos.y));
+            for (Position chunkPos : chunkPoss) {
+                if (chunkPos.x() == otherChunkPosX && chunkPos.y() == otherChunkPosY) {
+                    entityOutOfRange.accept(otherEntity);
+                    break;
+                }
+            }
+        }
     }
 
     private boolean chunkSansChangement(List<Position> chunkPoss, int i, int j) {
