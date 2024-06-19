@@ -2,6 +2,7 @@ package ch.realmtech.crafts;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.craft.CraftResult;
+import ch.realmtech.server.craft.PatternArgs;
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.mod.crafts.craftingtable.CraftingTableCraftEntry;
 import ch.realmtech.server.mod.crafts.craftingtable.EnergyBatteryCraftEntry;
@@ -487,5 +488,54 @@ public class TestCraft {
         Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
 
         assertTrue(newCraftResult.isPresent());
+    }
+
+    @Test
+    void testStick1() throws Exception {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        WoodItemEntry woodItemEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), WoodItemEntry.class);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventory(motherChest);
+
+        // 0, 1, 2      s, 0, 0
+        // 3, 4, 5      s, 0, 0
+        // 6, 7, 8      0, 0, 0
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(woodItemEntry, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[3], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(woodItemEntry, UUID.randomUUID()));
+        CraftPatternShape stickCraft = new CraftPatternShape("testStick", "realmtech.items.Stick", 4, new char[][]{
+                {'s'},
+                {'s'}
+        }, new PatternArgs('s', "realmtech.items.Wood")) {};
+        stickCraft.evaluate(serverContext.getRootRegistry());
+        List<CraftRecipeEntry> craftingTableRecipes = List.of(stickCraft);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
+
+        assertTrue(newCraftResult.isPresent());
+    }
+
+    @Test
+    void testStick2() throws Exception {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        WoodItemEntry woodItemEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), WoodItemEntry.class);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(motherChest, UUID.randomUUID(), 2, 2);
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventory(motherChest);
+
+        // 0, 1,      0, 0
+        // 2, 3       s, s
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[2], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(woodItemEntry, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[3], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(woodItemEntry, UUID.randomUUID()));
+        CraftPatternShape stickCraft = new CraftPatternShape("testStick", "realmtech.items.Stick", 4, new char[][]{
+                {'s'},
+                {'s'}
+        }, new PatternArgs('s', "realmtech.items.Wood")) {};
+        stickCraft.evaluate(serverContext.getRootRegistry());
+        List<CraftRecipeEntry> craftingTableRecipes = List.of(stickCraft);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
+
+        assertFalse(newCraftResult.isPresent());
     }
 }

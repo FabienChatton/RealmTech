@@ -29,6 +29,8 @@ public class CraftChangeFunctions {
                 // new craft available
                 if (itemDejaResultComponent == null) {
                     canProcessCraft = true;
+                } else if (itemDejaResultComponent.itemRegisterEntry != craftResult.get().getItemResult()) {
+                    canProcessCraft = true;
                 }
             } else {
                 // craft to remove

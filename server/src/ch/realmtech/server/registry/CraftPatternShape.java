@@ -98,6 +98,7 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
             testItems:
             for (int testJ = 0; testJ < items.get(testI).size(); testJ++) {
                 for (int expectedI = 0; expectedI < craftPattern2d.size(); expectedI++) {
+                    valide = false;
                     if (expectedI + testI > items.get(expectedI).size()) continue testItems;
                     for (int expectedJ = 0; expectedJ < craftPattern2d.get(expectedI).size(); expectedJ++) {
                         if (expectedJ + testJ >= items.get(expectedI).size()) continue testItems;
@@ -120,7 +121,9 @@ public abstract class CraftPatternShape extends CraftRecipeEntry {
                         }
                     }
                 }
-                return Optional.of(new CraftResult(itemResult, resultNumber));
+                if (valide) {
+                    return Optional.of(new CraftResult(itemResult, resultNumber));
+                }
             }
         }
         return Optional.empty();

@@ -9,6 +9,8 @@ import ch.realmtech.server.item.ItemResultCraftPickEvent;
 import ch.realmtech.server.packet.clientPacket.InventorySetPacket;
 import com.artemis.ComponentMapper;
 import com.artemis.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class OnNewCraftAvailable {
+    private final static Logger logger = LoggerFactory.getLogger(OnNewCraftAvailable.class);
     public static BiFunction<World, Integer, Function<CraftingTableComponent, Consumer<Optional<CraftResult>>>> onCraftAvailableCraftingTable() {
         return (world, entityId) -> {
             ComponentMapper<InventoryComponent> mInventory = world.getMapper(InventoryComponent.class);
@@ -24,16 +27,16 @@ public final class OnNewCraftAvailable {
             return (craftingTableComponent) -> {
                 return (craftResultOpt) -> {
                     InventoryComponent resultInventoryComponent = mInventory.get(craftingTableComponent.craftingResultInventory);
-                    if (craftResultOpt.isEmpty()) {
-                        // remove result inventory because no craft is available
-                        systemsAdminServer.getInventoryManager().removeInventory(resultInventoryComponent.inventory);
-                    } else {
+                    systemsAdminServer.getInventoryManager().removeInventory(resultInventoryComponent.inventory);
+                    if (craftResultOpt.isPresent()) {
                         CraftResult craftResult = craftResultOpt.get();
                         // add result item to result inventory
                         for (int i = 0; i < craftResult.getResultNumber(); i++) {
                             int nouvelItemResult = systemsAdminServer.getItemManagerServer().newItemInventory(craftResult.getItemResult(), UUID.randomUUID());
                             world.edit(nouvelItemResult).create(ItemResultCraftComponent.class).set(ItemResultCraftPickEvent.removeAllOneItem(craftingTableComponent.craftingInventory));
-                            systemsAdminServer.getInventoryManager().addItemToStack(resultInventoryComponent.inventory[0], nouvelItemResult);
+                            if (!systemsAdminServer.getInventoryManager().addItemToStack(resultInventoryComponent.inventory[0], nouvelItemResult)) {
+                                logger.debug("Fail to add result item to stack");
+                            }
                         }
                     }
                     ServerContext serverContext = world.getRegistered("serverContext");
