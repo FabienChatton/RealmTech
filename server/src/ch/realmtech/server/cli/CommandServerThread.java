@@ -1,6 +1,7 @@
 package ch.realmtech.server.cli;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.ecs.system.ServerCommandExecute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,13 +15,13 @@ public class CommandServerThread extends Thread implements Closeable {
     private final ServerContext serverContext;
     private final Scanner scanner;
     private volatile boolean run = true;
-    private final CommandeServerExecute commandeServerExecute;
+//    private final CommandeServerExecute commandeServerExecute;
 
     public CommandServerThread(ServerContext serverContext, CommandeServerExecute commandeServerExecute) {
         super("Command Server Cli Thread");
         this.serverContext = serverContext;
         this.scanner = new Scanner(System.in);
-        this.commandeServerExecute = commandeServerExecute;
+//        this.commandeServerExecute = commandeServerExecute;
         this.setDaemon(true);
     }
 
@@ -31,7 +32,8 @@ public class CommandServerThread extends Thread implements Closeable {
             if (scanner.hasNextLine()) {
                 String stringCommande = scanner.nextLine();
                 PrintWriter output = new PrintWriter(System.out);
-                commandeServerExecute.execute(stringCommande, output, CommandeServerExecute.SERVER_SENDER);
+                serverContext.getSystemsAdminServer().getServerCommandExecute().execute(stringCommande, output, ServerCommandExecute.SERVER_SENDER);
+//                commandeServerExecute.execute(stringCommande, output, CommandeServerExecute.SERVER_SENDER);
                 output.flush();
             }
             try {

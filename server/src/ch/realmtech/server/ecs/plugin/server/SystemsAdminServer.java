@@ -50,6 +50,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, PlayerManagerServer.class, PlayerManagerServer::new);
         putCustomSystem(10, DirtyCellSystem.class, DirtyCellSystem::new);
         putCustomSystem(10, PlayerSubscriptionSystem.class, PlayerSubscriptionSystem::new);
+        putCustomSystem(10, ServerCommandExecute.class, ServerCommandExecute::new);
     }
 
     @Override
@@ -181,5 +182,9 @@ public class SystemsAdminServer extends SystemsAdminCommun {
 
     public QuestValidatorSystem getQuestValidatorSystem() {
         return getCustomSystem(QuestValidatorSystem.class);
+    }
+
+    public ServerCommandExecute getServerCommandExecute() {
+        return getCustomSystem(ServerCommandExecute.class);
     }
 }

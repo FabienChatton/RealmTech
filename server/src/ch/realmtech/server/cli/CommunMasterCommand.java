@@ -12,7 +12,7 @@ import static picocli.CommandLine.Command;
         WhereCommand.class,
 })
 public abstract class CommunMasterCommand implements CommendContext {
-    final PrintWriter output;
+    public final PrintWriter output;
 
     public CommunMasterCommand(PrintWriter output) {
         this.output = output;
