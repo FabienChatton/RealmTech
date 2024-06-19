@@ -31,7 +31,7 @@ public class ServerCommandExecute extends Manager {
         CommandLine commandLine = new CommandLine(masterServerCommandNew);
         commandLine.setErr(output);
         commandLine.setOut(output);
-        commandLoader.addServerSubCommand(serverContext.getRootRegistry(), commandLine);
+        commandLoader.addServerSubCommand(commandLine);
 //        commandLine.addSubcommand(new CommandLine(new EchoCommand())
 //                .addSubcommand(new CommandLine(new EchoSubSubCommand()))
 //        );

@@ -1,20 +1,20 @@
 package ch.realmtech.server.mod.commandes;
 
-import ch.realmtech.server.mod.EvaluateAfter;
+import ch.realmtech.server.mod.commandes.masterCommand.MasterClientCommandNew;
+import ch.realmtech.server.mod.commandes.masterCommand.MasterCommonCommandNew;
 import ch.realmtech.server.mod.commandes.masterCommand.MasterServerCommandNew;
 import ch.realmtech.server.registry.*;
 import picocli.CommandLine;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class CommandLoader extends Entry {
-    private HashMap<Class<?>, List<Class<?>>> serverCommandChildren;
-    private HashMap<Class<?>, List<Class<?>>> clientCommandChildren;
+    private HashMap<Class<?>, List<Class<?>>> customCommandChildren;
 
     public CommandLoader() {
         super("CommandLoader");
@@ -23,14 +23,12 @@ public class CommandLoader extends Entry {
     @Override
     // @EvaluateAfter("#customCommands")
     public void evaluate(Registry<?> rootRegistry) throws InvalideEvaluate {
-        List<? extends Entry> serverCommands = RegistryUtils.findEntries(rootRegistry, "#serverCommands");
-        List<? extends Entry> clientCommands = RegistryUtils.findEntries(rootRegistry, "#clientCommands");
+        List<? extends Entry> customCommand = RegistryUtils.findEntries(rootRegistry, "#customCommands");
 
-        serverCommandChildren = makeCommandChildren(serverCommands);
-        clientCommandChildren = makeCommandChildren(clientCommands);
+        customCommandChildren = makeCommandChildren(customCommand);
     }
 
-    private HashMap<Class<?>, List<Class<?>>> makeCommandChildren(List<? extends Entry> commandEntries) {
+    private HashMap<Class<?>, List<Class<?>>> makeCommandChildren(List<? extends Entry> commandEntries) throws InvalideEvaluate {
         HashMap<Class<?>, List<Class<?>>> map = new HashMap<>();
         for (Entry customCommand : commandEntries) {
             CommandEntry commandEntry = (CommandEntry) customCommand;
@@ -40,11 +38,17 @@ public class CommandLoader extends Entry {
             List<Class<?>> children = map.getOrDefault(parentCommandClazz, new ArrayList<>());
             children.add(commandEntryClass);
             map.put(parentCommandClazz, children);
+
+            try {
+                new CommandLine(commandEntryClass);
+            } catch (CommandLine.InitializationException e) {
+                throw new InvalideEvaluate("Invalide initialization for command: " + customCommand.toFqrn() + ". Error: " + e.getMessage());
+            }
         }
         return map;
     }
 
-    public Class<?> getParentCommandClazz(CommandEntry commandEntry) {
+    public Class<?> getParentCommandClazz(CommandEntry commandEntry) throws InvalideEvaluate {
         Class<? extends CommandEntry> commandEntryClass = commandEntry.getClass();
         Field[] declaredFields = commandEntryClass.getDeclaredFields();
         for (Field declaredField : declaredFields) {
@@ -53,39 +57,35 @@ public class CommandLoader extends Entry {
                 return declaredField.getType();
             }
         }
-
-        try {
-            Method evaluate = commandEntryClass.getDeclaredMethod("evaluate", Registry.class);
-            EvaluateAfter declaredAnnotation = evaluate.getDeclaredAnnotation(EvaluateAfter.class);
-            if (declaredAnnotation != null) {
-                return declaredAnnotation.classes()[0];
-            }
-        } catch (NoSuchMethodException ignored) {
-        }
-        return null;
+        throw new InvalideEvaluate("Can not find parent command for command: " + commandEntry);
     }
 
-    public void addServerSubCommand(Registry<?> registry, CommandLine commandLine) {
-        List<Class<?>> children = serverCommandChildren.getOrDefault(MasterServerCommandNew.class, List.of());
+    public void addServerSubCommand(CommandLine commandLine) {
+        List<Class<?>> serverChildren = customCommandChildren.getOrDefault(MasterServerCommandNew.class, List.of());
+        List<Class<?>> commonChildren = customCommandChildren.getOrDefault(MasterCommonCommandNew.class, List.of());
+        List<Class<?>> children = Stream.concat(serverChildren.stream(), commonChildren.stream()).toList();
         for (Class<?> child : children) {
-            addSubCommandRec(child, registry, commandLine);
+            addSubCommandRec(child, commandLine);
         }
     }
 
-    public void addClientSubCommand(Registry<?> registry, CommandLine commandLine) {
-        List<Class<?>> children = clientCommandChildren.getOrDefault(MasterServerCommandNew.class, List.of());
+    public void addClientSubCommand(CommandLine commandLine) {
+        List<Class<?>> serverChildren = customCommandChildren.getOrDefault(MasterClientCommandNew.class, List.of());
+        List<Class<?>> commonChildren = customCommandChildren.getOrDefault(MasterCommonCommandNew.class, List.of());
+        List<Class<?>> children = Stream.concat(serverChildren.stream(), commonChildren.stream()).toList();
         for (Class<?> child : children) {
-            addSubCommandRec(child, registry, commandLine);
+            addSubCommandRec(child, commandLine);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void addSubCommandRec(Class<?> parent, Registry<?> registry, CommandLine commandLine) {
-        CommandLine subcommand = new CommandLine(RegistryUtils.findEntryOrThrow(registry, (Class<? extends CommandEntry>) parent));
+    public void addSubCommandRec(Class<?> parent, CommandLine commandLine) {
+        CommandLine subcommand = new CommandLine(parent);
         commandLine.addSubcommand(subcommand);
-        List<Class<?>> children = serverCommandChildren.getOrDefault(parent, List.of());
+        subcommand.setOut(commandLine.getOut());
+        subcommand.setErr(commandLine.getErr());
+        List<Class<?>> children = customCommandChildren.getOrDefault(parent, List.of());
         for (Class<?> child : children) {
-            addSubCommandRec(child, registry, subcommand);
+            addSubCommandRec(child, subcommand);
         }
     }
 }

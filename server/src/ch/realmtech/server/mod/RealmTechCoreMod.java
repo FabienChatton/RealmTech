@@ -3,7 +3,10 @@ package ch.realmtech.server.mod;
 import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.cells.*;
-import ch.realmtech.server.mod.commandes.*;
+import ch.realmtech.server.mod.commandes.CommandLoader;
+import ch.realmtech.server.mod.commandes.MasterServerCommandSupplierEntry;
+import ch.realmtech.server.mod.commandes.NewEchoCommand;
+import ch.realmtech.server.mod.commandes.NewEchoSubCommand;
 import ch.realmtech.server.mod.crafts.craftingtable.*;
 import ch.realmtech.server.mod.crafts.furnace.*;
 import ch.realmtech.server.mod.factory.EditEntityFactory;
@@ -221,16 +224,14 @@ public class RealmTechCoreMod implements ModInitializer {
         mobsRegistry.addEntry(new ZombieMobEntry());
         mobsRegistry.addEntry(new ChickenMobEntry());
 
-        // commands
+        // commands admin
         Registry<Entry> commandRegistry = Registry.createRegistry(modRegistry, "commands");
         commandRegistry.addEntry(new CommandLoader());
         commandRegistry.addEntry(new MasterServerCommandSupplierEntry());
 
-        // server commands
-        Registry<CommandEntry> commandServerRegistry = Registry.createRegistry(commandRegistry, "server", "customCommands", "serverCommands");
-        commandServerRegistry.addEntry(new EchoCommand());
-        commandServerRegistry.addEntry(new EchoSubCommand());
-        commandServerRegistry.addEntry(new EchoSubSubCommand());
-
+        // sub commands
+        Registry<CommandEntry> commandServerRegistry = Registry.createRegistry(commandRegistry, "subCommands", "customCommands");
+        commandServerRegistry.addEntry(new NewEchoCommand());
+        commandServerRegistry.addEntry(new NewEchoSubCommand());
     }
 }
