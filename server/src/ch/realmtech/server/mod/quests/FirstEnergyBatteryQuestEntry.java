@@ -18,6 +18,6 @@ public class FirstEnergyBatteryQuestEntry extends QuestEntry {
 
     @Override
     public String getTextureRegionForIcon() {
-        return "energy-battery-01-0001";
+        return "energy-battery-01-0100";
     }
 }

@@ -8,10 +8,7 @@ import ch.realmtech.server.mod.crafts.craftingtable.EnergyBatteryCraftEntry;
 import ch.realmtech.server.mod.crafts.craftingtable.PlankCraftEntry;
 import ch.realmtech.server.mod.items.*;
 import ch.realmtech.server.netty.ConnexionConfig;
-import ch.realmtech.server.registry.CraftRecipeEntry;
-import ch.realmtech.server.registry.FurnaceCraftShapeless;
-import ch.realmtech.server.registry.ItemEntry;
-import ch.realmtech.server.registry.RegistryUtils;
+import ch.realmtech.server.registry.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -439,5 +436,56 @@ public class TestCraft {
         Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
 
         assertFalse(newCraftResult.isPresent());
+    }
+
+    @Test
+    void testShapeless1() throws Exception {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        FurnaceItemEntry furnaceItemEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), FurnaceItemEntry.class);
+        EnergyBatteryItemEntry energyBatteryItemEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), EnergyBatteryItemEntry.class);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventory(motherChest);
+
+        // 0, 1, 2      b, 0, 0
+        // 3, 4, 5      0, 0, 0
+        // 6, 7, 8      0, f, 0
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(energyBatteryItemEntry, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[7], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(furnaceItemEntry, UUID.randomUUID()));
+
+        CraftPatternShapeless craftEntry = new CraftPatternShapeless("TestCraft", "realmtech.items.Stick", "realmtech.items.Furnace", "realmtech.items.EnergyBattery") {
+        };
+        craftEntry.evaluate(serverContext.getRootRegistry());
+        List<CraftRecipeEntry> craftingTableRecipes = List.of(craftEntry);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
+
+        assertTrue(newCraftResult.isPresent());
+    }
+
+    @Test
+    void testShapeless2() throws Exception {
+        int motherChest = serverContext.getEcsEngineServer().getWorld().create();
+        FurnaceItemEntry furnaceItemEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), FurnaceItemEntry.class);
+        EnergyBatteryItemEntry energyBatteryItemEntry = RegistryUtils.findEntryOrThrow(serverContext.getRootRegistry(), EnergyBatteryItemEntry.class);
+        serverContext.getSystemsAdminServer().getInventoryManager().createChest(motherChest, UUID.randomUUID(), 3, 3);
+        int chestInventoryId = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventoryId(motherChest);
+        InventoryComponent chestInventory = serverContext.getSystemsAdminServer().getInventoryManager().getChestInventory(motherChest);
+
+        // 0, 1, 2      b, 0, 0
+        // 3, 4, 5      0, 0, 0
+        // 6, 7, 8      0, f, f
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[0], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(energyBatteryItemEntry, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[7], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(furnaceItemEntry, UUID.randomUUID()));
+        serverContext.getSystemsAdminServer().getInventoryManager().addItemToStack(chestInventory.inventory[8], serverContext.getSystemsAdminServer().getItemManagerServer().newItemInventory(furnaceItemEntry, UUID.randomUUID()));
+
+        CraftPatternShapeless craftEntry = new CraftPatternShapeless("TestCraft", "realmtech.items.Stick", "realmtech.items.Furnace", "realmtech.items.EnergyBattery", "realmtech.items.Furnace") {
+        };
+        craftEntry.evaluate(serverContext.getRootRegistry());
+        List<CraftRecipeEntry> craftingTableRecipes = List.of(craftEntry);
+        List<List<ItemEntry>> mapToItems = serverContext.getSystemsAdminServer().getInventoryManager().mapInventoryToItemRegistry(chestInventoryId);
+        Optional<CraftResult> newCraftResult = serverContext.getSystemsAdminServer().getCraftingManager().getNewCraftResult(craftingTableRecipes, mapToItems);
+
+        assertTrue(newCraftResult.isPresent());
     }
 }

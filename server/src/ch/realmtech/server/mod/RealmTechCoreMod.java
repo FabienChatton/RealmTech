@@ -141,6 +141,7 @@ public class RealmTechCoreMod implements ModInitializer {
         craftCraftingTableRegistry.addEntry(new WrenchCraftEntry());
         craftCraftingTableRegistry.addEntry(new WoodenSwordCraftEntry());
         craftCraftingTableRegistry.addEntry(new StoneSwordCraftEntry());
+        craftCraftingTableRegistry.addEntry(new EnergyGeneratorCraftEntry());
 
         // craft furnace
         Registry<FurnaceCraftShapeless> craftFurnaceRegistry = Registry.createRegistry(crafts, "furnace", "furnaceRecipes");

@@ -90,6 +90,9 @@ public class GameScreen extends AbstractScreen {
         context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {
                 int mainPlayer = context.getSystemsAdminClient().getPlayerManagerClient().getMainPlayer();
+                if (mainPlayer == -1) {
+                    return;
+                }
                 PositionComponent positionComponent = ecsEngine.getWorld().getMapper(PositionComponent.class).get(mainPlayer);
                 Vector2 screenCoordinate = new Vector2(Gdx.input.getX(), Gdx.input.getY());
                 Vector2 pointerGameCoordinate = context.getEcsEngine().getGameCoordinate(screenCoordinate);

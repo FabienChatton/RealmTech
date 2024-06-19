@@ -6,6 +6,7 @@ import ch.realmtech.core.game.clickAndDrop.ClickAndDropActor;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
 import ch.realmtech.core.game.ecs.plugin.strategy.InGameSystemOnInventoryOpen;
 import ch.realmtech.core.game.ecs.plugin.strategy.SystemEnableOnInventoryOpen;
+import ch.realmtech.core.helper.Popup;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.shader.BlurShader;
 import ch.realmtech.core.shader.GrayShader;
@@ -100,9 +101,11 @@ public class PlayerInventorySystem extends BaseSystem {
                 trouve = true;
                 ItemComponent itemComponent = mItem.get(actor.getStack()[0]);
                 if (itemComponent != null) {
-                    overWindow.getTitleLabel().setText(itemComponent.itemRegisterEntry.getName());
-                    overWindow.setBounds(screenMouseOver.x + 16, screenMouseOver.y - actor.getHeight(), 300, 70);
-                    overLabel.setText(itemComponent.itemRegisterEntry.getId());
+                    String itemName = itemComponent.itemRegisterEntry.getName();
+                    overWindow.getTitleLabel().setText(itemName);
+                    overWindow.setBounds(screenMouseOver.x + 16, screenMouseOver.y - actor.getHeight() + 70, 300, 70);
+                    overWindow.setHeight(0);
+                    overWindow.setWidth(Popup.getWidth(context, itemName));
                 } else {
                     overWindow.remove();
                 }

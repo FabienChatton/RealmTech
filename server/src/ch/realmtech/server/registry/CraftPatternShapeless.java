@@ -8,6 +8,7 @@ import java.util.*;
  * Shapeless pattern are valide craft when require item are present in the inventory. <br />
  * For exemple: 1 wood log => 4 planks
  * <pre>
+ * {@code
  * +----------------------------+
  * | +-----+-----+              |
  * | | log |     |              |
@@ -27,6 +28,7 @@ import java.util.*;
  * | |     | log |   only 1 log |
  * | +-----+-----+   is defined |
  * +----------------------------+
+ * }
  * </pre>
  */
 public abstract class CraftPatternShapeless extends CraftRecipeEntry {
@@ -51,7 +53,9 @@ public abstract class CraftPatternShapeless extends CraftRecipeEntry {
 
     @Override
     public Optional<CraftResult> craft(List<List<ItemEntry>> items) {
-        if (items.stream().flatMap(Collection::stream).filter(Objects::nonNull).toList().equals(itemsRequires)) {
+        List<ItemEntry> itemEntriesFilter = items.stream().flatMap(Collection::stream).filter(Objects::nonNull).toList();
+        if (itemEntriesFilter.size() != itemsRequires.size()) return Optional.empty();
+        if (new HashSet<>(itemEntriesFilter).containsAll(itemsRequires)) {
             return Optional.of(new CraftResult(itemResult, resultNumber));
         } else {
             return Optional.empty();
@@ -70,25 +74,5 @@ public abstract class CraftPatternShapeless extends CraftRecipeEntry {
         for (String itemRequireName : itemsRequireName) {
             itemsRequires.add(RegistryUtils.evaluateSafe(rootRegistry, itemRequireName, ItemEntry.class));
         }
-    }
-
-    private Optional<CraftResult> craftNonNull(List<ItemEntry> items) {
-        if (items.size() != itemsRequires.size()) return Optional.empty();
-        boolean[] indexDejaPris = new boolean[itemsRequires.size()];
-        loop:
-        for (ItemEntry registerEntry : items) {
-            for (int j = 0; j < itemsRequires.size(); j++) {
-                if (!indexDejaPris[j] && registerEntry == itemsRequires.get(j)) {
-                    indexDejaPris[j] = true;
-                    continue loop;
-                }
-            }
-        }
-        for (boolean dejaPris : indexDejaPris) {
-            if (!dejaPris) {
-                return Optional.empty();
-            }
-        }
-        return Optional.of(new CraftResult(itemResult, resultNumber));
     }
 }

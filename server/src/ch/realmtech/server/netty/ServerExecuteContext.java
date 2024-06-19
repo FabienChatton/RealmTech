@@ -133,7 +133,7 @@ public class ServerExecuteContext implements ServerExecute {
                     }
                 }
             } catch (IllegalAccessError e) {
-                logger.warn(e.getMessage());
+                logger.debug(e.getMessage());
             }
         });
     }

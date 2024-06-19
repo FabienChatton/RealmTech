@@ -28,7 +28,7 @@ public class EnergyBatteryEditEntity implements EditEntity {
     }
 
     public static EnergyBatteryEditEntity createDefault() {
-        return create(new UuidSupplierOrRandom(),1_000, 10_000, FaceComponent.SOUTH);
+        return create(new UuidSupplierOrRandom(), 0, 10_000, FaceComponent.SOUTH);
     }
 
     @Override

@@ -52,8 +52,8 @@ public class WailaSystem extends BaseSystem {
 
         wailaWindow = new Window("", context.getSkin());
         wailaWindow.getTitleTable().add(wailaCellImage).right();
-        wailaWindow.getTitleTable().getChildren().reverse();
-        wailaWindow.add(wailaCellInfoHash).row();
+        // wailaWindow.getTitleTable().getChildren().reverse();
+        // wailaWindow.add(wailaCellInfoHash).row();
         wailaWindow.add(wailaCellInfoCanBreak).row();
 
         wailaStageTable.add(wailaWindow).expandY().top();
@@ -84,7 +84,7 @@ public class WailaSystem extends BaseSystem {
         // waila
         wailaWindow.getTitleLabel().setText(cellComponent.cellRegisterEntry.toString());
         wailaCellImage.setDrawable(new TextureRegionDrawable(cellComponent.cellRegisterEntry.getTextureRegion(context.getTextureAtlas())));
-        wailaCellInfoHash.setText("Id: " + cellComponent.cellRegisterEntry.getId());
+        // wailaCellInfoHash.setText("Id: " + cellComponent.cellRegisterEntry.getId());
 
         ItemType curentItemType;
         if (!mItem.has(systemsAdminClient.getItemBarManager().getSelectItem())) {

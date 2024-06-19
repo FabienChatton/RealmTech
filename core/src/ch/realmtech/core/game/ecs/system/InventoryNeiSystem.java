@@ -4,6 +4,7 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.plugin.strategy.OnPlayerInventoryOpenGetInputProcessor;
 import ch.realmtech.core.helper.ButtonsMenu;
 import ch.realmtech.core.helper.OnClick;
+import ch.realmtech.core.helper.Popup;
 import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.ItemEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -76,7 +77,6 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
         neiRootTable.row();
 
         neiItemHoverWindow = new Window("", context.getSkin());
-        neiItemHoverWindow.setWidth(400);
         neiItemHoverWindow.setHeight(0);
     }
 
@@ -114,7 +114,9 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
 
         if (actorHit instanceof NeiTableActor neiTableActor) {
             neiItemHoverWindow.setPosition(stageCoo.x - neiItemHoverWindow.getWidth(), stageCoo.y - neiItemHoverWindow.getHeight());
-            neiItemHoverWindow.getTitleLabel().setText(neiTableActor.getItemRegisterEntry().toString());
+            String itemRegistryString = neiTableActor.getItemRegisterEntry().toString();
+            neiItemHoverWindow.getTitleLabel().setText(itemRegistryString);
+            neiItemHoverWindow.setWidth(Popup.getWidth(context, itemRegistryString));
             inventoryNeiBatch.begin();
             neiItemHoverWindow.draw(inventoryNeiBatch, 1);
             inventoryNeiBatch.end();
