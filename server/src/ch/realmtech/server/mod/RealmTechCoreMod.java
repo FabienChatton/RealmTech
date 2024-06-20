@@ -27,6 +27,7 @@ import ch.realmtech.server.mod.options.server.mob.*;
 import ch.realmtech.server.mod.packets.PacketLoader;
 import ch.realmtech.server.mod.questCategory.Tier0QuestCategory;
 import ch.realmtech.server.mod.quests.*;
+import ch.realmtech.server.mod.utils.UiCreateNewWorldScreenUtils;
 import ch.realmtech.server.registry.*;
 
 public class RealmTechCoreMod implements ModInitializer {
@@ -265,5 +266,9 @@ public class RealmTechCoreMod implements ModInitializer {
         subCommandRegistry.addEntry(new TimeGetCommandEntry());
         subCommandRegistry.addEntry(new TimeSetCommandEntry());
 
+
+        // utils ui
+        Registry<Entry> utilsUi = Registry.createRegistry(modRegistry, "utilsUi");
+        utilsUi.addEntry(new UiCreateNewWorldScreenUtils());
     }
 }

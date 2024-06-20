@@ -5,7 +5,8 @@ import ch.realmtech.core.helper.ButtonsMenu;
 import ch.realmtech.core.helper.OnClick;
 import ch.realmtech.core.helper.Popup;
 import ch.realmtech.server.ecs.system.SaveInfManager;
-import ch.realmtech.server.level.worldGeneration.SeedGenerator;
+import ch.realmtech.server.mod.utils.UiCreateNewWorldScreenUtils;
+import ch.realmtech.server.registry.RegistryUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -13,16 +14,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class CreateNewWorldScreen extends AbstractScreen {
 
     private final TextField seedField;
+    private UiCreateNewWorldScreenUtils uiCreateNewWorldScreenUtils;
 
     public CreateNewWorldScreen(RealmTech context) {
         super(context);
         seedField = new TextField(null, skin);
+        uiCreateNewWorldScreenUtils = RegistryUtils.findEntryOrThrow(context.getRootRegistry(), UiCreateNewWorldScreenUtils.class);
     }
 
     @Override
@@ -76,17 +78,7 @@ public class CreateNewWorldScreen extends AbstractScreen {
             return;
         }
         try {
-            long seed;
-            if (!seedField.getText().isBlank()) {
-                byte[] seedFieldBytes = seedField.getText().getBytes(StandardCharsets.UTF_8);
-                long somme = 0;
-                for (byte seedFieldByte : seedFieldBytes) {
-                    somme += seedFieldByte;
-                }
-                seed = somme;
-            } else {
-                seed = SeedGenerator.randomSeed();
-            }
+            long seed = uiCreateNewWorldScreenUtils.parseTextFieldToSeed(seedField.getText());
             context.rejoindreSoloServeur(nouvelleSauvegardeNomTextField.getText(), seed);
         } catch (Exception e) {
             Popup.popupErreur(context, e.getMessage(), uiStage);
