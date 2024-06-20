@@ -34,7 +34,7 @@ import java.util.Optional;
 public class ServerContext implements Closeable, Context {
     private final static Logger logger = LoggerFactory.getLogger(ServerContext.class);
     public final static PacketMap PACKETS = new PacketMap();
-    public final static String REALMTECH_VERSION = "0.2.0";
+    public final static String REALMTECH_VERSION = "0.2.1-dev";
     @Null
     private final ServerNetty serverNetty;
     private final EcsEngineServer ecsEngineServer;

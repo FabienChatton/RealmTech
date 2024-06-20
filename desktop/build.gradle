@@ -46,7 +46,7 @@ task dist(type: Jar) {
 publishing {
     repositories {
         maven {
-            version = "0.2.0"
+            version = "0.2.1-dev"
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/FabienChatton/RealmTech")
             credentials {

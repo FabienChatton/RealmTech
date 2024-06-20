@@ -15,6 +15,7 @@ task run(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     ignoreExitValue = true
+    archivesBaseName = 'RealmTech-server'
 
     if (org.gradle.internal.os.OperatingSystem.current() == org.gradle.internal.os.OperatingSystem.MAC_OS) {
         // Required to run on macOS
