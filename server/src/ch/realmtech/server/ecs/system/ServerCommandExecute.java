@@ -2,8 +2,8 @@ package ch.realmtech.server.ecs.system;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.mod.commandes.CommandLoader;
-import ch.realmtech.server.mod.commandes.MasterServerCommandSupplierEntry;
 import ch.realmtech.server.mod.commandes.masterCommand.MasterServerCommandNew;
+import ch.realmtech.server.mod.commandes.masterCommand.MasterServerCommandSupplierEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.Manager;
 import com.artemis.annotations.Wire;
@@ -32,9 +32,7 @@ public class ServerCommandExecute extends Manager {
         commandLine.setErr(output);
         commandLine.setOut(output);
         commandLoader.addServerSubCommand(commandLine);
-//        commandLine.addSubcommand(new CommandLine(new EchoCommand())
-//                .addSubcommand(new CommandLine(new EchoSubSubCommand()))
-//        );
+
         if (stringCommande.equals("help")) {
             commandLine.usage(output);
         } else {

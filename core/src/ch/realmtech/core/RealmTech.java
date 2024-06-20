@@ -456,6 +456,7 @@ public final class RealmTech extends Game implements InternalConnexion {
         return rootRegistry;
     }
 
+    @Override
     public SerializerController getSerializerController() {
         return ecsEngine.getSerializerController();
     }

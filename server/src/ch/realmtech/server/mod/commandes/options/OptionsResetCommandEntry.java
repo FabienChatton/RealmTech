@@ -1,19 +1,20 @@
-package ch.realmtech.server.cli;
+package ch.realmtech.server.mod.commandes.options;
 
-import ch.realmtech.server.registry.Entry;
-import ch.realmtech.server.registry.OptionClientEntry;
-import ch.realmtech.server.registry.OptionServerEntry;
-import ch.realmtech.server.registry.RegistryUtils;
+import ch.realmtech.server.registry.*;
 
 import java.util.List;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
-@Command(name = "reset", description = "reset all options")
-public class OptionsResetCommand implements Runnable {
+@Command(name = "reset", description = "reset all options to default")
+public class OptionsResetCommandEntry extends CommandEntry {
+    public OptionsResetCommandEntry() {
+        super("OptionsReset");
+    }
+
     @ParentCommand
-    OptionsCommand optionsCommand;
+    public OptionsCommandEntry optionsCommand;
 
     @Override
     public void run() {

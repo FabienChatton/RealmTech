@@ -1,25 +1,27 @@
-package ch.realmtech.server.cli;
-
+package ch.realmtech.server.mod.commandes.dump;
 
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.component.PositionComponent;
 import ch.realmtech.server.ecs.system.UuidEntityManager;
+import ch.realmtech.server.registry.CommandEntry;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
-
-import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
 @Command(name = "players", description = "dump all loaded players")
-public class DumpPlayersCommand implements Callable<Integer> {
+public class DumpPlayersCommandEntry extends CommandEntry {
+    public DumpPlayersCommandEntry() {
+        super("DumpPlayers");
+    }
+
     @ParentCommand
-    private DumpCommand dumpCommand;
+    public DumpCommandEntry dumpCommand;
 
     @Override
-    public Integer call() throws Exception {
+    public void run() {
         ComponentMapper<PositionComponent> mPos = dumpCommand.masterCommand.getWorld().getMapper(PositionComponent.class);
         ComponentMapper<PlayerConnexionComponent> mPlayerConnexion = dumpCommand.masterCommand.getWorld().getMapper(PlayerConnexionComponent.class);
         IntBag playerEntities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager().get(Aspect.all(
@@ -45,6 +47,5 @@ public class DumpPlayersCommand implements Callable<Integer> {
         }
         if (playerEntities.isEmpty()) dumpCommand.masterCommand.output.println("No players loaded");
         else dumpCommand.masterCommand.output.println("players count: " + playerEntities.size());
-        return 0;
     }
 }

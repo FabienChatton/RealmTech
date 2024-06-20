@@ -2,7 +2,6 @@ package ch.realmtech.server;
 
 import ch.realmtech.server.auth.AuthRequest;
 import ch.realmtech.server.cli.CommandServerThread;
-import ch.realmtech.server.cli.CommandeServerExecute;
 import ch.realmtech.server.datactrl.DataCtrl;
 import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.EcsEngineServer;
@@ -43,7 +42,6 @@ public class ServerContext implements Closeable, Context {
     private final ServerConnexion serverConnexion;
     private final TickThread tickThread;
     private final CommandServerThread commandServerThread;
-    private final CommandeServerExecute commandeServerExecute;
     private final AuthRequest authRequest;
     private volatile boolean saveAndClose = false;
     private final Registry<?> rootRegistry;
@@ -94,8 +92,7 @@ public class ServerContext implements Closeable, Context {
                 serverConnexion = new ServerConnexionIntern(this, connexionConfig.getClientExecute());
                 serverNetty = null;
             }
-            commandeServerExecute = new CommandeServerExecute(this);
-            commandServerThread = new CommandServerThread(this, commandeServerExecute);
+            commandServerThread = new CommandServerThread(this);
             tickThread = new TickThread(this);
             ecsEngineServer.prepareSaveToLoad(connexionConfig);
             authRequest = new AuthRequest(this);
@@ -203,9 +200,6 @@ public class ServerContext implements Closeable, Context {
 
     public SystemsAdminServer getSystemsAdminServer() {
         return ecsEngineServer.getSystemsAdminServer();
-    }
-    public CommandeServerExecute getCommandeExecute() {
-        return commandeServerExecute;
     }
 
     public SerializerController getSerializerController() {

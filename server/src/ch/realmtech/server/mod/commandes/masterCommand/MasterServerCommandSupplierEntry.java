@@ -1,7 +1,6 @@
-package ch.realmtech.server.mod.commandes;
+package ch.realmtech.server.mod.commandes.masterCommand;
 
 import ch.realmtech.server.ServerContext;
-import ch.realmtech.server.mod.commandes.masterCommand.MasterServerCommandNew;
 import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.InvalideEvaluate;
 import ch.realmtech.server.registry.Registry;

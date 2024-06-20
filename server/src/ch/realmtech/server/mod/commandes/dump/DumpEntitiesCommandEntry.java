@@ -1,7 +1,7 @@
-package ch.realmtech.server.cli;
-
+package ch.realmtech.server.mod.commandes.dump;
 
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
+import ch.realmtech.server.registry.CommandEntry;
 import com.artemis.Aspect;
 import com.artemis.Component;
 import com.artemis.utils.Bag;
@@ -16,9 +16,13 @@ import java.util.stream.Collectors;
 import static picocli.CommandLine.*;
 
 @Command(name = "entities", description = "dump all entities in this world.", mixinStandardHelpOptions = true)
-public class DumpEntities implements Runnable {
+public class DumpEntitiesCommandEntry extends CommandEntry {
+    public DumpEntitiesCommandEntry() {
+        super("DumpEntity");
+    }
+
     @ParentCommand
-    private DumpCommand dumpCommand;
+    public DumpCommandEntry dumpCommand;
 
     @Option(names = {"-f", "--find"}, description = "Class component to find.")
     private List<String> componentFind = new ArrayList<>();
@@ -36,7 +40,7 @@ public class DumpEntities implements Runnable {
         try {
             entities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager()
                     .get(Aspect.one(findComponentsClassByName(componentFind).stream().toList())
-                    .exclude(findComponentsClassByName(componentExclude))).getEntities();
+                            .exclude(findComponentsClassByName(componentExclude))).getEntities();
         } catch (ClassNotFoundException e) {
             dumpCommand.masterCommand.output.println(e.getMessage());
             return;

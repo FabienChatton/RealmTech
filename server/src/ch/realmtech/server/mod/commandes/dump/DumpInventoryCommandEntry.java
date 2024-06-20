@@ -1,10 +1,10 @@
-package ch.realmtech.server.cli;
-
+package ch.realmtech.server.mod.commandes.dump;
 
 import ch.realmtech.server.ecs.component.InventoryComponent;
 import ch.realmtech.server.ecs.component.ItemComponent;
 import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommun;
 import ch.realmtech.server.ecs.system.InventoryManager;
+import ch.realmtech.server.registry.CommandEntry;
 import ch.realmtech.server.serialize.types.SerializedApplicationBytes;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -12,18 +12,21 @@ import com.artemis.utils.IntBag;
 
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
-@Command(name="inventory", description = "dump all inventories")
-public class DumpInventoryCommand implements Callable<Integer> {
+@Command(name = "inventory", description = "dump all inventories")
+public class DumpInventoryCommandEntry extends CommandEntry {
+    public DumpInventoryCommandEntry() {
+        super("DumpInventory");
+    }
+
     @ParentCommand
-    private DumpCommand dumpCommand;
+    public DumpCommandEntry dumpCommand;
 
     @Override
-    public Integer call() throws Exception {
+    public void run() {
         IntBag inventoryEntities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager().get(Aspect.all(InventoryComponent.class)).getEntities();
         int[] inventoryData = inventoryEntities.getData();
         SystemsAdminCommun systemsAdminCommun = dumpCommand.masterCommand.getWorld().getRegistered("systemsAdmin");
@@ -45,12 +48,11 @@ public class DumpInventoryCommand implements Callable<Integer> {
             if (!stringBuilder.toString().isBlank()) {
                 dumpCommand.printlnVerbose(2, stringBuilder);
             }
-            SerializedApplicationBytes applicationInventoryBytes = dumpCommand.masterCommand.getSerializerManagerController().getInventorySerializerManager().encode(inventoryComponent);
+            SerializedApplicationBytes applicationInventoryBytes = dumpCommand.masterCommand.getSerializerController().getInventorySerializerManager().encode(inventoryComponent);
             dumpCommand.printlnVerbose(3, String.format("%s", Arrays.toString(applicationInventoryBytes.applicationBytes())));
 
         }
         if (inventoryEntities.isEmpty()) dumpCommand.printlnVerbose(0, "no inventories loaded");
         else dumpCommand.printlnVerbose(0, "inventories count: " + inventoryEntities.size());
-        return 0;
     }
 }

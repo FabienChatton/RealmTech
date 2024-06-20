@@ -1,6 +1,7 @@
-package ch.realmtech.server.cli;
+package ch.realmtech.server.mod.commandes.options;
 
 import ch.realmtech.server.mod.options.OptionLoader;
+import ch.realmtech.server.registry.CommandEntry;
 import ch.realmtech.server.registry.RegistryUtils;
 
 import java.util.Optional;
@@ -9,9 +10,14 @@ import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
 @Command(name = "save", description = "save options to file")
-public class OptionsSaveCommand implements Runnable {
+public class OptionsSaveCommandEntry extends CommandEntry {
+    public OptionsSaveCommandEntry() {
+        super("OptionsSave");
+    }
+
     @ParentCommand
-    OptionsCommand optionsCommand;
+    public OptionsCommandEntry optionsCommand;
+
     @Override
     public void run() {
         Optional<OptionLoader> optionLoader = RegistryUtils.findEntry(optionsCommand.masterCommand.getRootRegistry(), OptionLoader.class);

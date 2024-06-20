@@ -3,10 +3,13 @@ package ch.realmtech.server.mod;
 import ch.realmtech.server.ecs.Context;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.mod.cells.*;
-import ch.realmtech.server.mod.commandes.CommandLoader;
-import ch.realmtech.server.mod.commandes.MasterServerCommandSupplierEntry;
-import ch.realmtech.server.mod.commandes.NewEchoCommand;
-import ch.realmtech.server.mod.commandes.NewEchoSubCommand;
+import ch.realmtech.server.mod.commandes.*;
+import ch.realmtech.server.mod.commandes.dump.*;
+import ch.realmtech.server.mod.commandes.masterCommand.MasterServerCommandSupplierEntry;
+import ch.realmtech.server.mod.commandes.options.*;
+import ch.realmtech.server.mod.commandes.time.TimeCommandEntry;
+import ch.realmtech.server.mod.commandes.time.TimeGetCommandEntry;
+import ch.realmtech.server.mod.commandes.time.TimeSetCommandEntry;
 import ch.realmtech.server.mod.crafts.craftingtable.*;
 import ch.realmtech.server.mod.crafts.furnace.*;
 import ch.realmtech.server.mod.factory.EditEntityFactory;
@@ -230,8 +233,37 @@ public class RealmTechCoreMod implements ModInitializer {
         commandRegistry.addEntry(new MasterServerCommandSupplierEntry());
 
         // sub commands
-        Registry<CommandEntry> commandServerRegistry = Registry.createRegistry(commandRegistry, "subCommands", "customCommands");
-        commandServerRegistry.addEntry(new NewEchoCommand());
-        commandServerRegistry.addEntry(new NewEchoSubCommand());
+        Registry<CommandEntry> subCommandRegistry = Registry.createRegistry(commandRegistry, "subCommands", "customCommands");
+        subCommandRegistry.addEntry(new EchoCommandEntry());
+        subCommandRegistry.addEntry(new GiveCommandEntry());
+        subCommandRegistry.addEntry(new NotifyCommandEntry());
+        subCommandRegistry.addEntry(new RuntimeInfoCommandEntry());
+        subCommandRegistry.addEntry(new StopCommandEntry());
+        subCommandRegistry.addEntry(new TpCommandEntry());
+        subCommandRegistry.addEntry(new WhereCommandEntry());
+
+        // dumps
+        subCommandRegistry.addEntry(new DumpCommandEntry());
+        subCommandRegistry.addEntry(new DumpChunksCommandEntry());
+        subCommandRegistry.addEntry(new DumpEntitiesCommandEntry());
+        subCommandRegistry.addEntry(new DumpInventoryCommandEntry());
+        subCommandRegistry.addEntry(new DumpPlayersCommandEntry());
+        subCommandRegistry.addEntry(new DumpSubscriptionCommandEntry());
+        subCommandRegistry.addEntry(new DumpItemsCommandEntry());
+
+        // options
+        subCommandRegistry.addEntry(new OptionsCommandEntry());
+        subCommandRegistry.addEntry(new OptionsGetCommandEntry());
+        subCommandRegistry.addEntry(new OptionsListCommandEntry());
+        subCommandRegistry.addEntry(new OptionsReloadCommandEntry());
+        subCommandRegistry.addEntry(new OptionsResetCommandEntry());
+        subCommandRegistry.addEntry(new OptionsSaveCommandEntry());
+        subCommandRegistry.addEntry(new OptionsSetCommandEntry());
+
+        // time
+        subCommandRegistry.addEntry(new TimeCommandEntry());
+        subCommandRegistry.addEntry(new TimeGetCommandEntry());
+        subCommandRegistry.addEntry(new TimeSetCommandEntry());
+
     }
 }

@@ -1,6 +1,12 @@
 package ch.realmtech.server.mod.commandes.masterCommand;
 
 import ch.realmtech.server.ServerContext;
+import ch.realmtech.server.ecs.Context;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommunItf;
+import ch.realmtech.server.ecs.system.ServerCommandExecute;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.serialize.SerializerController;
+import com.artemis.World;
 
 import java.io.PrintWriter;
 
@@ -20,5 +26,41 @@ public class MasterServerCommandNew extends MasterCommonCommandNew implements Ru
     @Override
     public void run() {
 
+    }
+
+    @Override
+    public World getWorld() {
+        return serverContext.getEcsEngineServer().getWorld();
+    }
+
+    @Override
+    public SerializerController getSerializerController() {
+        return serverContext.getSerializerController();
+    }
+
+    @Override
+    public Registry<?> getRootRegistry() {
+        return serverContext.getRootRegistry();
+    }
+
+    @Override
+    public Context getContext() {
+        return serverContext;
+    }
+
+    @Override
+    public SystemsAdminCommunItf getSystemAdmin() {
+        return serverContext.getSystemsAdminServer();
+    }
+
+    public String getSenderString() {
+        String senderString;
+        if (senderId == ServerCommandExecute.SERVER_SENDER) {
+            senderString = "[SERVER]";
+        } else {
+            senderString = serverContext.getSystemsAdminServer().getPlayerManagerServer().getPlayerConnexionComponentById(senderId).getUsername();
+        }
+
+        return senderString;
     }
 }

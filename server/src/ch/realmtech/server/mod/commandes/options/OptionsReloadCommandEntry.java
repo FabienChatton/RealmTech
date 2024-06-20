@@ -1,6 +1,7 @@
-package ch.realmtech.server.cli;
+package ch.realmtech.server.mod.commandes.options;
 
 import ch.realmtech.server.mod.options.OptionLoader;
+import ch.realmtech.server.registry.CommandEntry;
 import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.OptionServerEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -13,9 +14,14 @@ import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
 @Command(name = "reload", description = "Reload options from file")
-public class OptionsReloadCommand implements Runnable {
+public class OptionsReloadCommandEntry extends CommandEntry {
+    public OptionsReloadCommandEntry() {
+        super("Reload");
+    }
+
     @ParentCommand
-    OptionsCommand optionsCommand;
+    public OptionsCommandEntry optionsCommand;
+
     @Override
     public void run() {
         Optional<OptionLoader> optionLoaderOpt = RegistryUtils.findEntry(optionsCommand.masterCommand.getRootRegistry(), OptionLoader.class);

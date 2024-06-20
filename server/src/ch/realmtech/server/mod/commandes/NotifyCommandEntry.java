@@ -1,17 +1,22 @@
-package ch.realmtech.server.cli;
-
+package ch.realmtech.server.mod.commandes;
 
 import ch.realmtech.server.divers.Notify;
 import ch.realmtech.server.ecs.component.PlayerConnexionComponent;
 import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
+import ch.realmtech.server.mod.commandes.masterCommand.MasterServerCommandNew;
 import ch.realmtech.server.packet.clientPacket.NotifySendPacket;
+import ch.realmtech.server.registry.CommandEntry;
 
 import static picocli.CommandLine.*;
 
 @Command(name = "notify", description = "Notify a player")
-public class NotifyServerCommand implements Runnable {
+public class NotifyCommandEntry extends CommandEntry {
+    public NotifyCommandEntry() {
+        super("Notify");
+    }
+
     @ParentCommand
-    private MasterServerCommand masterCommand;
+    public MasterServerCommandNew masterCommand;
 
     @Parameters(index = "0", description = "The player identifier, username or uuid")
     private String playerIdentifier;

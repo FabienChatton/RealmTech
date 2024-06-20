@@ -1,6 +1,11 @@
 package ch.realmtech.server.mod.commandes.masterCommand;
 
+import ch.realmtech.server.ecs.Context;
+import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommunItf;
 import ch.realmtech.server.mod.ClientContext;
+import ch.realmtech.server.registry.Registry;
+import ch.realmtech.server.serialize.SerializerController;
+import com.artemis.World;
 
 import java.io.PrintWriter;
 
@@ -18,5 +23,30 @@ public class MasterClientCommandNew extends MasterCommonCommandNew implements Ru
     @Override
     public void run() {
 
+    }
+
+    @Override
+    public World getWorld() {
+        return clientContext.getWorld();
+    }
+
+    @Override
+    public SerializerController getSerializerController() {
+        return clientContext.getSerializerController();
+    }
+
+    @Override
+    public Registry<?> getRootRegistry() {
+        return clientContext.getRootRegistry();
+    }
+
+    @Override
+    public Context getContext() {
+        return clientContext;
+    }
+
+    @Override
+    public SystemsAdminCommunItf getSystemAdmin() {
+        return clientContext.getSystemsAdminClient();
     }
 }

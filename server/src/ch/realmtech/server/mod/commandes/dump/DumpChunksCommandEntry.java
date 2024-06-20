@@ -1,21 +1,26 @@
-package ch.realmtech.server.cli;
+package ch.realmtech.server.mod.commandes.dump;
 
 import ch.realmtech.server.ecs.component.InfChunkComponent;
+import ch.realmtech.server.registry.CommandEntry;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
 
-import java.util.concurrent.Callable;
-
-import static picocli.CommandLine.*;
+import static picocli.CommandLine.Command;
+import static picocli.CommandLine.ParentCommand;
 
 @Command(name = "chunks", description = "dump all loaded chunk")
-public class DumpChunksCommand implements Callable<Integer> {
+public class DumpChunksCommandEntry extends CommandEntry {
+    public DumpChunksCommandEntry() {
+        super("DumpChunks");
+    }
+
     @ParentCommand
-    private DumpCommand dumpCommand;
+    public DumpCommandEntry dumpCommand;
+
 
     @Override
-    public Integer call() throws Exception {
+    public void run() {
         ComponentMapper<InfChunkComponent> mChunk = dumpCommand.masterCommand.getWorld().getMapper(InfChunkComponent.class);
         IntBag chunkEntities = dumpCommand.masterCommand.getWorld().getAspectSubscriptionManager().get(Aspect.all(
                 InfChunkComponent.class
@@ -27,6 +32,5 @@ public class DumpChunksCommand implements Callable<Integer> {
         }
         if (chunkEntities.isEmpty()) dumpCommand.masterCommand.output.println("no chunk loaded");
         else dumpCommand.masterCommand.output.println("Chunk count: " + chunkEntities.size());
-        return 0;
     }
 }

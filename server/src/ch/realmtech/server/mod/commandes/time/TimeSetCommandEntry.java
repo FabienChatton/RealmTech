@@ -1,19 +1,24 @@
-package ch.realmtech.server.cli;
-
+package ch.realmtech.server.mod.commandes.time;
 
 import ch.realmtech.server.ecs.system.TimeSystem;
 import ch.realmtech.server.packet.ServerConnexion;
 import ch.realmtech.server.packet.clientPacket.TimeSetPacket;
+import ch.realmtech.server.registry.CommandEntry;
 
 import static picocli.CommandLine.*;
 
 @Command(name = "set", description = "set time")
-public class TimeSetCommand implements Runnable {
+public class TimeSetCommandEntry extends CommandEntry {
+    public TimeSetCommandEntry() {
+        super("TimeSet");
+    }
+
     @ParentCommand
-    TimeCommand timeCommand;
+    public TimeCommandEntry timeCommand;
 
     @Parameters(index = "0", description = "Time value. Can be an absolute time (1, 23, 84.23...) or a relative time (day, night).")
     private String time;
+
     @Override
     public void run() {
         TimeSystem timeSystem = timeCommand.masterServerCommand.serverContext.getSystemsAdminServer().getTimeSystem();
@@ -21,7 +26,7 @@ public class TimeSetCommand implements Runnable {
         float parseDelta;
         try {
             // set absolute time
-             parseDelta = Float.parseFloat(time);
+            parseDelta = Float.parseFloat(time);
         } catch (NumberFormatException e) {
             float actualDelta = timeCommand.masterServerCommand.serverContext.getSystemsAdminServer().getTimeSystem().getAccumulatedDelta();
             if (time.equals("day")) {

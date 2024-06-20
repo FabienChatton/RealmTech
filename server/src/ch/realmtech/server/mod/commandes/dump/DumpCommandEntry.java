@@ -1,28 +1,25 @@
-package ch.realmtech.server.cli;
+package ch.realmtech.server.mod.commandes.dump;
 
-
+import ch.realmtech.server.mod.commandes.masterCommand.MasterCommonCommandNew;
+import ch.realmtech.server.registry.CommandEntry;
 import picocli.CommandLine;
 
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import static picocli.CommandLine.*;
 
 @Command(name = "dump",  description = "master dump command, see subcommands for more dump details.\n" +
-                                        "Each subcommands has a verbose option",
-        subcommands = {
-                DumpChunksCommand.class,
-                DumpItemsCommand.class,
-                DumpPlayersCommand.class,
-                DumpInventoryCommand.class,
-                DumpEntities.class,
-                DumpSubscription.class,
-        }
-)
-public class DumpCommand implements Callable<Integer> {
+        "Each subcommands has a verbose option", mixinStandardHelpOptions = true)
+public class DumpCommandEntry extends CommandEntry {
+
+    public DumpCommandEntry() {
+        super("Dump");
+    }
+
     @ParentCommand
-    CommunMasterCommand masterCommand;
+    public MasterCommonCommandNew masterCommand;
+
     private int verboseLevel = 0;
 
     @Option(names = {"-v", "--verbose"}, description = "Show more detail about. verbose can be multiple for ever more detail", scope = ScopeType.INHERIT)
@@ -51,11 +48,10 @@ public class DumpCommand implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public void run() {
         CommandLine commandLine = new CommandLine(this);
         commandLine.setErr(masterCommand.output);
         commandLine.setOut(masterCommand.output);
         commandLine.usage(masterCommand.output);
-        return 0;
     }
 }

@@ -110,7 +110,7 @@ public class ServerExecuteContext implements ServerExecute {
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (PrintWriter printWriter = new PrintWriter(baos, true, StandardCharsets.US_ASCII)) {
-                serverContext.getCommandeExecute().execute(stringCommande, printWriter, playerId);
+                serverContext.getSystemsAdminServer().getServerCommandExecute().execute(stringCommande, printWriter, playerId);
             }
             serverContext.getServerConnexion().sendPacketTo(new WriteToConsolePacket(baos.toString()), clientChannel);
         });

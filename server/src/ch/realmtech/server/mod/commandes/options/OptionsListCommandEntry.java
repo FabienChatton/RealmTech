@@ -1,6 +1,6 @@
-package ch.realmtech.server.cli;
+package ch.realmtech.server.mod.commandes.options;
 
-
+import ch.realmtech.server.registry.CommandEntry;
 import ch.realmtech.server.registry.Entry;
 import ch.realmtech.server.registry.OptionEntry;
 import ch.realmtech.server.registry.RegistryUtils;
@@ -12,9 +12,14 @@ import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
 @Command(name = "list", description = "list name and value of all available options")
-public class OptionsListCommand implements Runnable {
+public class OptionsListCommandEntry extends CommandEntry {
+    public OptionsListCommandEntry() {
+        super("OptionsList");
+    }
+
     @ParentCommand
-    OptionsCommand optionsCommand;
+    public OptionsCommandEntry optionsCommand;
+
     @Override
     @SuppressWarnings("rawtypes")
     public void run() {
@@ -30,4 +35,5 @@ public class OptionsListCommand implements Runnable {
 
         optionEntries.forEach((optionEntry) -> optionsCommand.masterCommand.output.println(String.format("%s -> %s", optionEntry.getName(), optionEntry.getValue())));
     }
+
 }
