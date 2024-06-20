@@ -42,6 +42,21 @@ task dist(type: Jar) {
     with jar
 }
 
+task javadocJar(type: Jar) {
+    archiveClassifier.set('javadoc')
+    from project(":server").javadoc
+    from project(":core").javadoc
+    from javadoc
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from project(':server').sourceSets.main.allSource
+    from project(':core').sourceSets.main.allSource
+    from sourceSets.main.allSource
+}
+
 
 publishing {
     repositories {
@@ -58,6 +73,8 @@ publishing {
     publications {
         gpr(MavenPublication) {
             artifact tasks.dist
+            artifact tasks.javadocJar
+            artifact tasks.sourcesJar
         }
     }
 }
