@@ -380,7 +380,12 @@ public class PlayerManagerServer extends Manager {
         }
 
         serverContext.getServerConnexion().sendPacketToSubscriberForChunkPosExcept(new PlayerCreateConnexion(playerUuid), chunkPosX, chunkPosY, clientChanel);
-        // serverContext.getServerConnexion().broadCastPacketExcept(new PlayerCreateConnexion(playerUuid), clientChanel);
+
+        // Subscription to his inventory
+        systemsAdminServer.getPlayerSubscriptionSystem().addEntitySubscriptionToPlayer(thisPlayerId, connexionJoueurReussitArg.inventoryUuid());
+        systemsAdminServer.getPlayerSubscriptionSystem().addEntitySubscriptionToPlayer(thisPlayerId, connexionJoueurReussitArg.inventoryCraftResultUuid());
+        systemsAdminServer.getPlayerSubscriptionSystem().addEntitySubscriptionToPlayer(thisPlayerId, connexionJoueurReussitArg.inventoryCraftUuid());
+        systemsAdminServer.getPlayerSubscriptionSystem().addEntitySubscriptionToPlayer(thisPlayerId, connexionJoueurReussitArg.inventoryCursorUuid());
     }
 
     public void eatItem(Channel clientChannel, UUID itemUuid) {

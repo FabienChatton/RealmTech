@@ -124,8 +124,10 @@ public class ServerExecuteContext implements ServerExecute {
                 ComponentMapper<InventoryComponent> mInventory = serverContext.getEcsEngineServer().getWorld().getMapper(InventoryComponent.class);
                 InventoryComponent srcInventoryComponent = mInventory.get(serverContext.getSystemsAdminServer().getInventoryManager().getInventoryByUUID(srcInventory));
                 InventoryComponent dstInventoryComponent = mInventory.get(serverContext.getSystemsAdminServer().getInventoryManager().getInventoryByUUID(dstInventory));
-                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), clientChannel);
-                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), clientChannel);
+                serverContext.getServerConnexion().sendPacketToSubscriberForEntity(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), srcInventory);
+                serverContext.getServerConnexion().sendPacketToSubscriberForEntity(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), dstInventory);
+//                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(srcInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(srcInventoryComponent)), clientChannel);
+//                serverContext.getServerConnexion().sendPacketTo(new InventorySetPacket(dstInventory, serverContext.getSerializerController().getInventorySerializerManager().encode(dstInventoryComponent)), clientChannel);
                 if (mutatedInventories != null) {
                     for (int mutatedInventory : mutatedInventories) {
                         UUID mutatedInventoryUuid = serverContext.getSystemsAdminServer().getUuidEntityManager().getEntityUuid(mutatedInventory);
