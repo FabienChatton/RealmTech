@@ -62,10 +62,10 @@ public class WeaponRayManager extends Manager {
         Vector2 vectorEnd = vectorClick.cpy().sub(vectorStart.cpy()).setLength(range).add(vectorStart);
         IntBag entities = rayCast(vectorStart, vectorEnd, Aspect
                 .all(LifeComponent.class, PositionComponent.class)
-                .one(EnemyComponent.class, PlayerConnexionComponent.class), getFirstHit());
+                .one(EnemyComponent.class, PlayerConnexionComponent.class), getAllHits());
 
         if (!entities.isEmpty()) {
-            return entities.get(0);
+            return getClosest(entities, playerPos.toVector2());
         } else {
             return -1;
         }
@@ -117,5 +117,30 @@ public class WeaponRayManager extends Manager {
             bodyAccumulator.add(fixture.getBody());
             return 0;
         };
+    }
+
+    private BodyHitsCallback getAllHits() {
+        return (bodyAccumulator, fixture, point, normal, fraction) -> {
+            bodyAccumulator.add(fixture.getBody());
+            return 1;
+        };
+    }
+
+    private int getClosest(IntBag entities, Vector2 pos) {
+        if (entities.isEmpty()) return -1;
+        int closestEntityId = entities.get(0);
+        float closestEntityDst = mBox2d.get(closestEntityId).body.getPosition().dst2(pos);
+
+        for (int i = 1; i < entities.size(); i++) {
+            int entityId = entities.get(i);
+            Vector2 enemyVector = mBox2d.get(entityId).body.getPosition();
+            float dst = enemyVector.dst2(pos);
+            if (dst < closestEntityDst) {
+                closestEntityId = entityId;
+                closestEntityDst = dst;
+            }
+        }
+
+        return closestEntityId;
     }
 }
