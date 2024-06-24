@@ -83,8 +83,9 @@ docker run -d -p 25533:25533 -v ./RealmTechData/:/app/RealmTechData -e PORT=2553
 
 ### 0.2
 
-1. [ ] Mode survie
-2. [ ] Construction de bâtiment
+1. [x] Mode survie
+2. [x] Support basique mod
+3. [x] Quêtes
 
 ### 0.3
 
