@@ -4,7 +4,6 @@ import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.component.MainPlayerComponent;
 import ch.realmtech.core.input.InputMapper;
 import ch.realmtech.core.screen.GameScreen;
-import ch.realmtech.core.screen.ScreenType;
 import ch.realmtech.server.ecs.component.PlayerDeadComponent;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Exclude;
@@ -21,11 +20,6 @@ public class PlayerGameInteractionSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
-            context.nextFrame(() -> context.setScreen(ScreenType.GAME_PAUSE));
-        }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             context.withGameScreen((gameScreen) -> gameScreen.toggleDebugTable(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)));
         }

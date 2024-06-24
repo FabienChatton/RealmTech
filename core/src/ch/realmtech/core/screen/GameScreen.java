@@ -12,6 +12,7 @@ import ch.realmtech.server.ecs.system.MapManager;
 import ch.realmtech.server.packet.serverPacket.AskPlayerRespawn;
 import ch.realmtech.server.packet.serverPacket.GetPlayerInventorySessionPacket;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -86,6 +87,11 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(float delta) {
         super.update(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
+            Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_PAUSE));
+        }
 
         context.getWorldOr((ecsEngine) -> context.nextFrame(() -> {
             try {

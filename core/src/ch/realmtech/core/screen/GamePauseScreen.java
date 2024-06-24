@@ -31,7 +31,7 @@ public class GamePauseScreen extends AbstractScreen {
     public void update(float delta) {
         super.update(delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            context.setScreen(ScreenType.GAME_SCREEN);
+            Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_SCREEN));
         }
     }
 
