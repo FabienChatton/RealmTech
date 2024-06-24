@@ -90,6 +90,7 @@ public class GameScreen extends AbstractScreen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             context.getSystemsAdminClient().getPlayerInventorySystem().closePlayerInventory();
+            context.getSystemsAdminClient().getQuestPlayerSystem().closeQuest();
             Gdx.app.postRunnable(() -> context.setScreen(ScreenType.GAME_PAUSE));
         }
 
