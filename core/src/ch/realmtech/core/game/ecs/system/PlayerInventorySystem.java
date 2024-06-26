@@ -155,7 +155,7 @@ public class PlayerInventorySystem extends BaseSystem {
         if (isEnabled()) {
             super.setEnabled(false);
             Gdx.input.setInputProcessor(context.getInputManager());
-            context.getGameStage().getBatch().setShader(null);
+            systemsAdminClient.getMapRendererSystem().setDrawBlur(false);
             context.getSoundManager().playOpenInventory();
             overWindow.remove();
             inGameSystemOnInventoryOpen.onInventoryClose(world);
@@ -184,7 +184,7 @@ public class PlayerInventorySystem extends BaseSystem {
             currentOnInventoryClose = currentInventoryArgs.onInventoryClose();
             refreshInventory(currentInventoryArgs);
             if (inventoryBlurOption) {
-                context.getGameStage().getBatch().setShader(grayShader.shaderProgram);
+                systemsAdminClient.getMapRendererSystem().setDrawBlur(true);
             }
             context.getSoundManager().playOpenInventory();
             inGameSystemOnInventoryOpen.onInventoryOpen(world);

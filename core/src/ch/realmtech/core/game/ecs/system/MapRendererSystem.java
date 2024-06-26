@@ -3,6 +3,8 @@ package ch.realmtech.core.game.ecs.system;
 import ch.realmtech.core.RealmTech;
 import ch.realmtech.core.game.ecs.component.TiledTextureComponent;
 import ch.realmtech.core.game.ecs.plugin.SystemsAdminClient;
+import ch.realmtech.core.shader.BlurShader;
+import ch.realmtech.core.shader.Shaders;
 import ch.realmtech.server.ecs.component.CellComponent;
 import ch.realmtech.server.ecs.component.FaceComponent;
 import ch.realmtech.server.ecs.component.InfChunkComponent;
@@ -15,8 +17,10 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
@@ -58,10 +62,14 @@ public class MapRendererSystem extends IteratingSystem {
     };
     private TiledTextureOptionEntry tiledTextureOptionEntry;
     private List<List<List<Integer>>> chunksCache;
+    private boolean drawBlur;
+    private Shaders blurShader;
+
     @Override
     protected void initialize() {
         super.initialize();
         tiledTextureOptionEntry = RegistryUtils.findEntryOrThrow(systemsAdminClient.getRootRegistry(), TiledTextureOptionEntry.class);
+        blurShader = new BlurShader();
     }
 
     public void refreshCache() {
@@ -80,6 +88,67 @@ public class MapRendererSystem extends IteratingSystem {
     }
 
     private void draw(List<List<List<Integer>>> chunks, InfMapComponent infMapComponent) {
+        if (drawBlur) {
+            drawBlur(chunks, infMapComponent);
+        } else {
+            drawCells(chunks, infMapComponent);
+        }
+    }
+
+    private void drawBlur(List<List<List<Integer>>> chunks, InfMapComponent infMapComponent) {
+        FrameBuffer fboNormal = new FrameBuffer(Pixmap.Format.RGBA8888, RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT, false);
+        FrameBuffer fboBlurHorizontal = new FrameBuffer(Pixmap.Format.RGBA8888, RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT, false);
+        FrameBuffer fboBlurVertical = new FrameBuffer(Pixmap.Format.RGBA8888, RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT, false);
+
+        // draw normal on a fbo
+        {
+            fboNormal.begin();
+            gameStage.getBatch().setShader(null);
+            drawCells(chunks, infMapComponent);
+            gameStage.getBatch().flush();
+            fboNormal.end();
+        }
+
+        // set blur shader
+        context.getUiStage().getBatch().setShader(blurShader.shaderProgram);
+
+        // draw with blur horizontal with normal
+        {
+            fboBlurHorizontal.begin();
+            blurShader.shaderProgram.setUniformf("dir", 0f, 0f); // horizontal
+            context.getUiStage().getBatch().begin();
+            context.getUiStage().getBatch().draw(fboNormal.getColorBufferTexture(), 0, 0);
+            context.getUiStage().getBatch().end();
+            fboBlurHorizontal.end();
+        }
+
+        // draw with blur vertical with horizontal
+        {
+            fboBlurVertical.begin();
+            blurShader.shaderProgram.setUniformf("dir", 0f, 0f); // horizontal
+            context.getUiStage().getBatch().begin();
+            context.getUiStage().getBatch().draw(fboBlurHorizontal.getColorBufferTexture(), 0, 0);
+            context.getUiStage().getBatch().end();
+            fboBlurVertical.end();
+        }
+
+        // draw fbo with blur
+        gameStage.getBatch().setShader(null);
+        context.getUiStage().getBatch().setShader(null);
+
+        TextureRegion finalFboTexture = new TextureRegion(fboBlurVertical.getColorBufferTexture(), RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
+        finalFboTexture.flip(false, true);
+
+        context.getUiStage().getBatch().begin();
+        context.getUiStage().getBatch().draw(finalFboTexture, 0, 0);
+        context.getUiStage().getBatch().end();
+
+        fboNormal.dispose();
+        fboBlurHorizontal.dispose();
+        fboBlurVertical.dispose();
+    }
+
+    private void drawCells(List<List<List<Integer>>> chunks, InfMapComponent infMapComponent) {
         for (int i = chunks.size() - 1; i >= 0; i--) {
             for (List<Integer> cellComponents : chunks.get(i)) {
                 for (Integer cellId : cellComponents) {
@@ -131,5 +200,12 @@ public class MapRendererSystem extends IteratingSystem {
             chunks.add(arrayLayerCell);
         }
         return chunks;
+    }
+
+    public void setDrawBlur(boolean b) {
+        drawBlur = b;
+        if (!b) {
+            gameStage.getBatch().setShader(null);
+        }
     }
 }
