@@ -127,6 +127,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void draw() {
+        super.draw();
         try {
             context.process(Gdx.graphics.getDeltaTime());
             uiStage.draw();

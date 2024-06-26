@@ -19,7 +19,6 @@ public class GameCameraListener implements Subcriber<float[]> {
         float y = zoomAmount[1] / SENSIBILITY;
         if (gameCamera.zoom + y >= MIN_ZOOM && gameCamera.zoom + y <= MAX_ZOOM) {
             gameCamera.zoom += y;
-            gameCamera.update();
         }
     }
 }

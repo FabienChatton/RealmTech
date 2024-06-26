@@ -64,7 +64,12 @@ public abstract class AbstractScreen implements Screen {
     }
 
     public void draw() {
+        gameStage.getCamera().update();
+        gameStage.getBatch().setProjectionMatrix(gameStage.getCamera().combined);
         gameStage.draw();
+
+        uiStage.getCamera().update();
+        uiStage.getBatch().setProjectionMatrix(uiStage.getCamera().projection);
         uiStage.draw();
     }
 

@@ -17,6 +17,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.annotations.All;
 import com.artemis.annotations.Wire;
 import com.artemis.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -96,9 +97,9 @@ public class MapRendererSystem extends IteratingSystem {
     }
 
     private void drawBlur(List<List<List<Integer>>> chunks, InfMapComponent infMapComponent) {
-        FrameBuffer fboNormal = new FrameBuffer(Pixmap.Format.RGBA8888, RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT, false);
-        FrameBuffer fboBlurHorizontal = new FrameBuffer(Pixmap.Format.RGBA8888, RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT, false);
-        FrameBuffer fboBlurVertical = new FrameBuffer(Pixmap.Format.RGBA8888, RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT, false);
+        FrameBuffer fboNormal = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        FrameBuffer fboBlurHorizontal = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        FrameBuffer fboBlurVertical = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 
         // draw normal on a fbo
         {
@@ -115,7 +116,7 @@ public class MapRendererSystem extends IteratingSystem {
         // draw with blur horizontal with normal
         {
             fboBlurHorizontal.begin();
-            blurShader.shaderProgram.setUniformf("dir", 0f, 0f); // horizontal
+            blurShader.shaderProgram.setUniformf("dir", 1f, 0f); // horizontal
             context.getUiStage().getBatch().begin();
             context.getUiStage().getBatch().draw(fboNormal.getColorBufferTexture(), 0, 0);
             context.getUiStage().getBatch().end();
@@ -125,7 +126,7 @@ public class MapRendererSystem extends IteratingSystem {
         // draw with blur vertical with horizontal
         {
             fboBlurVertical.begin();
-            blurShader.shaderProgram.setUniformf("dir", 0f, 0f); // horizontal
+            blurShader.shaderProgram.setUniformf("dir", 0f, 1f); // horizontal
             context.getUiStage().getBatch().begin();
             context.getUiStage().getBatch().draw(fboBlurHorizontal.getColorBufferTexture(), 0, 0);
             context.getUiStage().getBatch().end();
@@ -136,7 +137,7 @@ public class MapRendererSystem extends IteratingSystem {
         gameStage.getBatch().setShader(null);
         context.getUiStage().getBatch().setShader(null);
 
-        TextureRegion finalFboTexture = new TextureRegion(fboBlurVertical.getColorBufferTexture(), RealmTech.SCREEN_WIDTH, RealmTech.SCREEN_HEIGHT);
+        TextureRegion finalFboTexture = new TextureRegion(fboBlurVertical.getColorBufferTexture());
         finalFboTexture.flip(false, true);
 
         context.getUiStage().getBatch().begin();
@@ -203,9 +204,9 @@ public class MapRendererSystem extends IteratingSystem {
     }
 
     public void setDrawBlur(boolean b) {
-        drawBlur = b;
-        if (!b) {
-            gameStage.getBatch().setShader(null);
-        }
+//        drawBlur = b;
+//        if (!b) {
+//            gameStage.getBatch().setShader(null);
+//        }
     }
 }
