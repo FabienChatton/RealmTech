@@ -82,6 +82,10 @@ public class PlayerInventorySystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        float with = inventoryStage.getWidth() * 0.5f;
+        float height = inventoryStage.getHeight() * 0.5f;
+        inventoryWindow.setBounds((inventoryStage.getWidth() - with) * 0.5f, (inventoryStage.getHeight() - height) * 0.5f, with, height);
+
         showMouseOverLabel();
         inventoryStage.setDebugAll(uiStage.isDebugAll());
         inventoryStage.act();
@@ -134,9 +138,6 @@ public class PlayerInventorySystem extends BaseSystem {
             }
         };
 
-        float with = inventoryStage.getWidth() * 0.5f;
-        float height = inventoryStage.getHeight() * 0.5f;
-        inventoryWindow.setBounds((inventoryStage.getWidth() - with) / 2, (inventoryStage.getHeight() - height) / 2, with, height);
         inventoryStage.addActor(inventoryWindow);
         setEnabled(false);
         blurShader = new BlurShader();
