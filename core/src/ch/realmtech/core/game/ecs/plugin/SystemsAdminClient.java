@@ -50,6 +50,7 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
         putCustomSystem(32, PlayerGameInteractionSystem.class, PlayerGameInteractionSystem::new);
         putCustomSystem(33, PlayerDeadClientManager.class, PlayerDeadClientManager::new);
         putCustomSystem(34, HitClientManager.class, HitClientManager::new);
+        putCustomSystem(35, ConsoleCommandWrapperManager.class, ConsoleCommandWrapperManager::new);
 
         // render
         putCustomSystem(101, GameStageBatchBeginSystem.class, GameStageBatchBeginSystem::new);
@@ -232,6 +233,10 @@ public class SystemsAdminClient extends SystemsAdminCommun implements SystemsAdm
 
     public TickSlaveEmulationSystem getTickSlaveEmulationSystem() {
         return getCustomSystem(TickSlaveEmulationSystem.class);
+    }
+
+    public ConsoleCommandWrapperManager getConsoleCommandWrapperManager() {
+        return getCustomSystem(ConsoleCommandWrapperManager.class);
     }
 
     @Override

@@ -11,16 +11,19 @@ import ch.realmtech.server.registry.RegistryUtils;
 import com.artemis.BaseSystem;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +96,13 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
             pages.add(page);
             for (int itemPerPage = 0; itemIndex < items.size() && itemPerPage < itemPerPageMax; itemIndex++, itemPerPage++) {
                 ItemEntry item = (ItemEntry) items.get(itemIndex);
-                Actor actorImage = new NeiTableActor(context, item);
+                final NeiTableActor actorImage = new NeiTableActor(context, item);
+                actorImage.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        onNeiTableItem(context, actorImage, event, x, y);
+                    }
+                });
                 actorImage.setSize(32, 32);
                 if (itemIndex % itemPerRow == 0) {
                     page.row();
@@ -133,6 +142,16 @@ public class InventoryNeiSystem extends BaseSystem implements OnPlayerInventoryO
     @Override
     public List<InputProcessor> getInputProcessors() {
         return List.of(inventoryNeiStage);
+    }
+
+    private void onNeiTableItem(RealmTech context, NeiTableActor neiTableActor, InputEvent event, float x, float y) {
+        int number;
+        if (event.getKeyCode() == Input.Keys.SHIFT_LEFT) {
+            number = 64;
+        } else {
+            number = 1;
+        }
+        context.getSystemsAdminClient().getConsoleCommandWrapperManager().giveItemToMe(neiTableActor.getItemRegisterEntry(), number);
     }
 }
 

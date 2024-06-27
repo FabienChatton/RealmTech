@@ -28,4 +28,8 @@ public class AuthControllerClient {
         }
         clientConnexion.sendAndFlushPacketToServer(new AskPlayerConnexion(username));
     }
+
+    public String getUsername() {
+        return username;
+    }
 }
