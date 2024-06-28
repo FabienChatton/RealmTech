@@ -19,10 +19,7 @@ import ch.realmtech.server.mod.mobs.ChickenMobEntry;
 import ch.realmtech.server.mod.mobs.ZombieMobEntry;
 import ch.realmtech.server.mod.options.OptionLoader;
 import ch.realmtech.server.mod.options.client.*;
-import ch.realmtech.server.mod.options.server.AuthServerBaseUrlServerOptionEntry;
-import ch.realmtech.server.mod.options.server.RenderDistanceOptionEntry;
-import ch.realmtech.server.mod.options.server.VerifyAccessTokenUrnOptionEntry;
-import ch.realmtech.server.mod.options.server.VerifyTokenOptionEntry;
+import ch.realmtech.server.mod.options.server.*;
 import ch.realmtech.server.mod.options.server.mob.*;
 import ch.realmtech.server.mod.packets.PacketLoader;
 import ch.realmtech.server.mod.questCategory.Tier0QuestCategory;
@@ -203,6 +200,7 @@ public class RealmTechCoreMod implements ModInitializer {
         serverOptionRegistry.addEntry(new NaturalSpawnCoolDownOptionEntry());
         serverOptionRegistry.addEntry(new EnemyFocusPlayerDstOptionEntry());
         serverOptionRegistry.addEntry(new EnemyDispawnDstOptionEntry());
+        serverOptionRegistry.addEntry(new ServerNameOptionEntry());
 
         // client options
         Registry<OptionClientEntry<?>> clientOptionRegistry = Registry.createRegistry(optionsRegistry, "client", "customOptions", "clientOptions");
@@ -242,6 +240,7 @@ public class RealmTechCoreMod implements ModInitializer {
         subCommandRegistry.addEntry(new StopCommandEntry());
         subCommandRegistry.addEntry(new TpCommandEntry());
         subCommandRegistry.addEntry(new WhereCommandEntry());
+        subCommandRegistry.addEntry(new ServerInfoCommandEntry());
 
         // dumps
         subCommandRegistry.addEntry(new DumpCommandEntry());

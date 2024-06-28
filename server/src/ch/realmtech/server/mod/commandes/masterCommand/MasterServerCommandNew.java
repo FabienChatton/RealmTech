@@ -2,7 +2,7 @@ package ch.realmtech.server.mod.commandes.masterCommand;
 
 import ch.realmtech.server.ServerContext;
 import ch.realmtech.server.ecs.Context;
-import ch.realmtech.server.ecs.plugin.commun.SystemsAdminCommunItf;
+import ch.realmtech.server.ecs.plugin.server.SystemsAdminServer;
 import ch.realmtech.server.ecs.system.ServerCommandExecute;
 import ch.realmtech.server.registry.Registry;
 import ch.realmtech.server.serialize.SerializerController;
@@ -49,7 +49,7 @@ public class MasterServerCommandNew extends MasterCommonCommandNew implements Ru
     }
 
     @Override
-    public SystemsAdminCommunItf getSystemAdmin() {
+    public SystemsAdminServer getSystemAdmin() {
         return serverContext.getSystemsAdminServer();
     }
 

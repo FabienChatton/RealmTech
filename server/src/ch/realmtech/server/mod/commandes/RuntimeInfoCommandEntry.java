@@ -12,7 +12,7 @@ import java.util.Date;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.ParentCommand;
 
-@Command(name = "runtime-info", aliases = "info", description = "Show info about the runtime environment")
+@Command(name = "runtime-info", description = "Show info about the runtime environment")
 public class RuntimeInfoCommandEntry extends CommandEntry {
     public RuntimeInfoCommandEntry() {
         super("Info");

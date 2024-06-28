@@ -35,6 +35,7 @@ public class SystemsAdminServer extends SystemsAdminCommun {
         putCustomSystem(10, QuestManagerServer.class, QuestManagerServer::new);
         putCustomSystem(10, QuestValidatorSystem.class, QuestValidatorSystem::new);
         putCustomSystem(10, PlayerDeadSystem.class, PlayerDeadSystem::new);
+        putCustomSystem(10, ServerInfoManager.class, ServerInfoManager::new);
 
         putCustomSystem(10, CraftingSystem.class, CraftingSystem::new);
         putCustomSystem(10, CraftingManager.class, CraftingManager::new);
@@ -186,5 +187,9 @@ public class SystemsAdminServer extends SystemsAdminCommun {
 
     public ServerCommandExecute getServerCommandExecute() {
         return getCustomSystem(ServerCommandExecute.class);
+    }
+
+    public ServerInfoManager getServerInfoManager() {
+        return getCustomSystem(ServerInfoManager.class);
     }
 }
