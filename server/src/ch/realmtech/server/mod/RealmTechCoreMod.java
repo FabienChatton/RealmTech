@@ -201,6 +201,7 @@ public class RealmTechCoreMod implements ModInitializer {
         serverOptionRegistry.addEntry(new EnemyFocusPlayerDstOptionEntry());
         serverOptionRegistry.addEntry(new EnemyDispawnDstOptionEntry());
         serverOptionRegistry.addEntry(new ServerNameOptionEntry());
+        serverOptionRegistry.addEntry(new ServerEphemeralNameOptionEntry());
 
         // client options
         Registry<OptionClientEntry<?>> clientOptionRegistry = Registry.createRegistry(optionsRegistry, "client", "customOptions", "clientOptions");
