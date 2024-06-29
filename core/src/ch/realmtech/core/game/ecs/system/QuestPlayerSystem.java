@@ -147,7 +147,7 @@ public class QuestPlayerSystem extends BaseSystem {
         questContentTable.add(contentScrollPane).expand().fillX().left().top();
         questWindow.add(questContentTable).expand().fill().left().top().row();
 
-        CheckBox isCompletedCheckBox = new CheckBox("isCompleted", context.getSkin());
+        CheckBox isCompletedCheckBox = new CheckBox("Completed", context.getSkin());
         int mainPlayerId = systemsAdminClient.getPlayerManagerClient().getMainPlayer();
         if (mQuestPlayerProperty.has(mainPlayerId)) {
             QuestPlayerPropertyComponent questPlayerPropertyComponent = mQuestPlayerProperty.get(mainPlayerId);
