@@ -157,7 +157,7 @@ public class QuestPlayerSystem extends BaseSystem {
                             isCompletedCheckBox.setDisabled(true);
                         }
                     },
-                    () -> logger.info("Can not find quest property: {}", selectedQuest));
+                    () -> logger.debug("Can not find quest property: {}", selectedQuest));
         }
 
         isCompletedCheckBox.addListener(new ClickListener() {
